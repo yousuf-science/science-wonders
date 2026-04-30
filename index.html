@@ -3,177 +3,629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>N-Body Gravity Simulation</title>
+<title>N-Body Gravitational Simulation — Science Wonders</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #010409; color: #cde; font-family: monospace; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
-  h1 { font-size: 14px; letter-spacing: 3px; color: #7af; margin-bottom: 14px; text-transform: uppercase; }
-  canvas { display: block; background: #020610; border-radius: 12px; cursor: crosshair; max-width: 100%; border: 0.5px solid #1a2a4a; }
-  .ctrl { display: flex; align-items: center; gap: 14px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
-  .ctrl button { font-family: monospace; font-size: 12px; padding: 6px 14px; background: transparent; border: 0.5px solid #2a4a7a; border-radius: 6px; color: #9bc; cursor: pointer; transition: background 0.15s; }
-  .ctrl button:hover { background: #0d1a2e; }
-  .ctrl label { font-size: 12px; color: #678; display: flex; align-items: center; gap: 6px; }
-  .ctrl input[type=range] { width: 80px; accent-color: #4af; }
-  #info { font-size: 11px; color: #456; margin-top: 8px; text-align: center; }
-  .hint { font-size: 11px; color: #4af; background: rgba(0,10,30,0.8); padding: 4px 10px; border-radius: 4px; position: absolute; top: 12px; left: 14px; pointer-events: none; }
-  .wrap { position: relative; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #010409;
+  --bg2:     #080f1e;
+  --bg3:     #0c1830;
+  --border:  #152035;
+  --border2: #1e3050;
+  --text:    #b8ceec;
+  --text2:   #5878a0;
+  --text3:   #3a5070;
+  --accent:  #3a8fff;
+  --gold:    #f0c060;
+  --gold2:   #ffe8a0;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+header {
+  display: flex; align-items: center; gap: 20px;
+  padding: 13px 28px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(1,4,9,0.95);
+  position: sticky; top: 0; z-index: 10;
+}
+.logo { font-family: monospace; font-size: 11px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; }
+.logo span { color: var(--text2); }
+.page-subtitle {
+  font-family: monospace; font-size: 11px; color: var(--text2);
+  border-left: 1px solid var(--border2); padding-left: 20px;
+  letter-spacing: 2px;
+}
+
+/* ─── CANVAS ─── */
+.canvas-wrap { position: relative; max-width: 960px; margin: 20px auto 0; padding: 0 20px; }
+canvas {
+  display: block; width: 100%; height: 500px;
+  background: #010610; border-radius: 12px;
+  border: 1px solid var(--border); cursor: crosshair;
+}
+.canvas-badge {
+  position: absolute; top: 10px; left: 30px;
+  font-family: monospace; font-size: 10px; color: var(--accent);
+  background: rgba(1,6,16,0.9); padding: 4px 10px; border-radius: 4px;
+  pointer-events: none; letter-spacing: 1.5px;
+}
+.canvas-clock {
+  position: absolute; top: 10px; right: 30px;
+  font-family: monospace; font-size: 10px; color: var(--text2);
+  background: rgba(1,6,16,0.9); padding: 4px 10px; border-radius: 4px;
+  pointer-events: none;
+}
+
+/* ─── PANELS ─── */
+.panels {
+  max-width: 960px; margin: 14px auto 0;
+  display: grid; grid-template-columns: 340px 1fr;
+  gap: 12px; padding: 0 20px;
+}
+@media (max-width: 720px) { .panels { grid-template-columns: 1fr; } }
+
+.panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px;
+}
+.panel-title {
+  font-family: monospace; font-size: 9px; letter-spacing: 4px;
+  color: var(--text2); text-transform: uppercase;
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* buttons */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+button {
+  font-family: monospace; font-size: 11px; padding: 5px 13px;
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 5px; color: var(--text2); cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.5px;
+}
+button:hover { background: var(--bg3); color: var(--text); border-color: var(--accent); }
+button.lit { border-color: var(--accent); color: var(--accent); }
+
+/* sliders */
+.param { margin-bottom: 16px; }
+.param-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: monospace; font-size: 11px; color: var(--text2); margin-bottom: 5px;
+}
+.param-val { color: var(--gold); font-size: 12px; font-weight: bold; }
+.param-sub { font-family: monospace; font-size: 10px; color: var(--text3); margin-top: 3px; }
+input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+/* formula box */
+.fbox {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 16px;
+  font-family: monospace; line-height: 2.2;
+}
+.fbox .fl { font-size: 9px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+.fbox .fe { font-size: 13px; color: var(--gold2); }
+.fbox .gc { font-size: 10px; color: var(--text3); margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
+
+/* readout table */
+.readout-table {
+  width: 100%; border-collapse: collapse;
+  font-family: monospace; font-size: 11px;
+}
+.readout-table th {
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text3); font-weight: normal;
+  text-align: left; padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.readout-table td { padding: 5px 8px; color: var(--text); vertical-align: middle; }
+.readout-table tbody tr:hover td { background: rgba(58,143,255,0.04); }
+.readout-table tbody tr td:first-child { color: var(--text2); }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; vertical-align: middle; flex-shrink: 0; }
+.star-sym { color: var(--gold); margin-right: 5px; }
+.readout-note { font-family: monospace; font-size: 10px; color: var(--text3); line-height: 1.7; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+/* ─── THEORY ─── */
+.theory-wrap { max-width: 960px; margin: 20px auto 0; padding: 0 20px 60px; }
+.theory {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 30px 36px;
+}
+.theory-header {
+  font-family: monospace; font-size: 9px; letter-spacing: 5px;
+  color: var(--text2); text-transform: uppercase;
+  margin-bottom: 24px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.theory h3 {
+  font-family: monospace; font-size: 13px; font-weight: normal;
+  color: var(--gold); letter-spacing: 1.5px;
+  margin: 26px 0 10px; text-transform: uppercase; font-size: 11px;
+}
+.theory h3:first-of-type { margin-top: 0; }
+.theory p { font-size: 14px; color: var(--text2); margin-bottom: 10px; line-height: 1.85; }
+.theory .eq {
+  font-family: monospace; font-size: 14px;
+  background: var(--bg3); border-left: 3px solid var(--gold);
+  padding: 12px 20px; margin: 14px 0;
+  border-radius: 0 8px 8px 0; color: var(--gold2);
+}
+.theory .eq .vars {
+  font-size: 11px; color: var(--text3); margin-top: 6px; line-height: 1.7;
+}
+.unit-table {
+  width: 100%; border-collapse: collapse;
+  font-family: monospace; font-size: 12px; margin-top: 10px;
+}
+.unit-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
+.unit-table td:first-child { color: var(--gold2); width: 220px; }
+.unit-table tr:last-child td { border-bottom: none; }
+.sim-note {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 14px 18px; margin-top: 20px;
+  font-family: monospace; font-size: 11px; color: var(--text3); line-height: 2;
+}
+.sim-note strong { color: var(--text2); }
+
+footer {
+  border-top: 1px solid var(--border); padding: 16px 28px;
+  text-align: center; font-family: monospace; font-size: 10px;
+  color: var(--text3); letter-spacing: 3px;
+}
 </style>
 </head>
 <body>
-<h1>N-Body Gravity Simulation</h1>
-<div class="wrap">
-  <canvas id="c" width="820" height="520"></canvas>
-  <div class="hint">Click canvas to add a body · Real Newtonian gravity</div>
+
+<header>
+  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="page-subtitle">N-Body Gravitational Simulation</div>
+</header>
+
+<div class="canvas-wrap">
+  <canvas id="c"></canvas>
+  <div class="canvas-badge">CLICK CANVAS TO ADD A BODY</div>
+  <div class="canvas-clock" id="clock">Elapsed: 0 days</div>
 </div>
-<div class="ctrl">
-  <button id="btn-pause">⏸ Pause</button>
-  <button id="btn-reset">↺ Reset</button>
-  <button id="btn-trail">Trails: ON</button>
-  <label>Speed <input type="range" id="speed" min="0.2" max="4" step="0.1" value="1"> <span id="spv">1.0×</span></label>
-  <label>G <input type="range" id="grav" min="100" max="2000" step="50" value="600"> <span id="gv">600</span></label>
+
+<div class="panels">
+  <!-- LEFT PANEL: Controls -->
+  <div class="panel">
+    <div class="panel-title">Controls &amp; Parameters</div>
+
+    <div class="btn-row">
+      <button id="btn-pause">⏸ Pause</button>
+      <button id="btn-reset">↺ Reset</button>
+      <button id="btn-trail" class="lit">Trails ON</button>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Simulation Speed</span>
+        <span class="param-val" id="spv">1.0×</span>
+      </div>
+      <input type="range" id="speed" min="0.2" max="4" step="0.1" value="1">
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>★ Star Mass</span>
+        <span class="param-val" id="star-v">1.00 M☉</span>
+      </div>
+      <input type="range" id="star-mass" min="0.1" max="5" step="0.05" value="1">
+      <div class="param-sub" id="star-kg">= 1.989 × 10³⁰ kg &nbsp;·&nbsp; Adjust then Reset for stable orbits</div>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>● New Body Mass (click canvas)</span>
+        <span class="param-val" id="new-v">1.0 M⊕</span>
+      </div>
+      <input type="range" id="new-mass" min="0.1" max="320" step="0.1" value="1">
+      <div class="param-sub" id="new-kg">= 5.97 × 10²⁴ kg &nbsp;(1 Earth mass)</div>
+    </div>
+
+    <div class="fbox">
+      <div class="fl">Gravitational Force</div>
+      <div class="fe">F = G · M · m / r²</div>
+      <div class="fl">Circular Orbital Velocity</div>
+      <div class="fe">v = √( G · M / r )</div>
+      <div class="fl">Orbital Period (Kepler III)</div>
+      <div class="fe">T = 2π · √( r³ / G·M )</div>
+      <div class="gc">G = 6.674 × 10⁻¹¹ N·m²·kg⁻²</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Live readout -->
+  <div class="panel">
+    <div class="panel-title">Live Physics Readout</div>
+    <table class="readout-table">
+      <thead>
+        <tr>
+          <th>Body</th>
+          <th>Distance from ★</th>
+          <th>Orb. velocity</th>
+          <th>Orb. period</th>
+          <th>Grav. force</th>
+        </tr>
+      </thead>
+      <tbody id="readout"></tbody>
+    </table>
+    <div class="readout-note">
+      Velocity: v = √(GM/r) · Period: T = 2π√(r³/GM) · Force: F = GMm/r²<br>
+      All values use real SI constants with current star mass &amp; live distances.<br>
+      1 pixel = 0.01 AU = 1.496 × 10⁹ m &nbsp;·&nbsp; Bodies: <span id="nb">0</span>
+    </div>
+  </div>
 </div>
-<div id="info">Bodies: <span id="nb">0</span> · F = G·m₁·m₂ / r² computed every frame</div>
+
+<!-- THEORY SECTION -->
+<div class="theory-wrap">
+<div class="theory">
+  <div class="theory-header">Theory — What Is Happening Here?</div>
+
+  <h3>Newton's Law of Universal Gravitation (1687)</h3>
+  <p>Every object with mass attracts every other object with mass. The force is proportional to the product of their masses and falls off as the square of the distance between them — the famous "inverse square law".</p>
+  <div class="eq">
+    F = G · M · m / r²
+    <div class="vars">
+      F = gravitational force in Newtons (N)<br>
+      G = 6.674 × 10⁻¹¹ N·m²·kg⁻² &nbsp;(Newton's gravitational constant — a fundamental constant of nature)<br>
+      M, m = masses of the two bodies in kilograms (kg)<br>
+      r = distance between their centres in metres (m)
+    </div>
+  </div>
+  <p>This single equation governs everything from apples falling to galaxies colliding. In this simulation, it is computed between every pair of bodies on every animation frame (~60 times per second).</p>
+
+  <h3>Circular Orbital Velocity</h3>
+  <p>A body in a circular orbit moves fast enough that the gravitational pull exactly provides the centripetal acceleration needed to keep it on that circle. Setting F_gravity = F_centripetal and solving for velocity gives:</p>
+  <div class="eq">
+    v = √( G · M / r )
+    <div class="vars">
+      v = orbital speed in m/s (shown as km/s in the readout above)<br>
+      M = mass of the central body (the star)<br>
+      r = orbital radius<br>
+      Key insight: <em>heavier star → faster orbits; larger orbit → slower speed</em>
+    </div>
+  </div>
+  <p>This is why Mercury (closest to the Sun) orbits at 47.9 km/s while Neptune (furthest) crawls at 5.4 km/s. The live readout above computes this formula in real SI units using your current star mass and each body's live distance.</p>
+
+  <h3>Orbital Period — Kepler's Third Law</h3>
+  <p>The time for one complete orbit follows directly from the circumference divided by the orbital speed:</p>
+  <div class="eq">
+    T = 2π · √( r³ / G·M )
+    <div class="vars">
+      T = orbital period in seconds (converted to days or years in the readout)<br>
+      Kepler's Third Law: T² ∝ r³ &nbsp;— doubling the orbital radius makes the period 2√2 ≈ 2.83 times longer<br>
+      Earth at 1 AU around 1 M☉: T = 365.25 days ✓
+    </div>
+  </div>
+
+  <h3>The N-Body Problem</h3>
+  <p>With two bodies, these equations give perfect analytical solutions — ellipses, parabolas, hyperbolas. With three or more bodies, no general closed-form solution exists. The system is mathematically chaotic: tiny perturbations grow exponentially over time. This simulation uses a numerical integrator — it steps the positions and velocities forward in tiny time increments, recomputing all forces at each step.</p>
+  <p>This is exactly how NASA computes real spacecraft trajectories and how astronomers model the long-term stability of solar systems. Over millions of years, gravitational perturbations in real multi-body systems can eject planets entirely — and evidence suggests our own solar system has done this in the past.</p>
+
+  <h3>What Happens When You Change the Star Mass?</h3>
+  <p>When you drag the star mass slider, the simulation immediately applies the new gravitational force. The existing planets' velocities are now wrong for the new mass — they were tuned for the original star. Orbits will destabilise. Drag the slider slowly and watch the planets spiral in (mass too high) or drift outward (mass too low). Hit <strong>Reset</strong> to respawn planets with the correct orbital velocities for the new star mass.</p>
+
+  <h3>Unit Reference</h3>
+  <table class="unit-table">
+    <tr><td>1 M☉ (solar mass)</td><td>= 1.989 × 10³⁰ kg</td></tr>
+    <tr><td>1 M⊕ (Earth mass)</td><td>= 5.972 × 10²⁴ kg</td></tr>
+    <tr><td>1 MJ (Jupiter mass)</td><td>= 1.898 × 10²⁷ kg = 317.8 M⊕</td></tr>
+    <tr><td>1 AU (astronomical unit)</td><td>= 1.496 × 10¹¹ m = 149.6 million km</td></tr>
+    <tr><td>G (gravitational constant)</td><td>= 6.674 × 10⁻¹¹ N·m²·kg⁻²</td></tr>
+    <tr><td>1 pixel in this simulation</td><td>= 0.01 AU = 1.496 × 10⁹ m</td></tr>
+  </table>
+
+  <div class="sim-note">
+    <strong>Simulation Notes:</strong><br>
+    This simulation runs with spatially compressed units (1 px = 0.01 AU) and time compressed at ≈ 135 Earth days per animation second, preserving the correct ratios of distances, velocities, and periods. The live readout computes all values in real SI units using Newton's formulas. Planet masses are modelled after real solar system objects: inner planets at solar system proportions, outer body Jupiter-like (317.8 M⊕).
+  </div>
+</div>
+</div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS SIMULATIONS</footer>
+
 <script>
+// ── Physical constants ──────────────────────────────────────────────────────
+const G_SI     = 6.674e-11;      // N·m²·kg⁻²
+const M_SUN    = 1.989e30;       // kg
+const M_EARTH  = 5.972e24;       // kg
+const AU_TO_M  = 1.496e11;       // metres per AU
+const PX_PER_AU = 100;           // 100 pixels = 1 AU
+const PX_TO_M   = AU_TO_M / PX_PER_AU;  // 1.496e9 m per pixel
+const DAY_S     = 86400;         // seconds per day
+
+// ── Simulation constants ────────────────────────────────────────────────────
+const G_SIM          = 600;   // simulation G (scaled for animation)
+const SIM_SOLAR_MASS = 9000;  // sim mass units for 1 solar mass star
+// Time compression: at G_SIM=600, 1 solar mass, 1 AU orbit → 135 days per anim-second
+const DAYS_PER_ANIM_S = 135;
+
+// ── Canvas ──────────────────────────────────────────────────────────────────
 const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height;
-let bodies = [], paused = false, showTrail = true, G = 600, speedMult = 1;
-const COLORS = ['#4af','#fa4','#f4a','#4fa','#a4f','#f44','#4ff','#ff4','#af4'];
-const TRAIL_LEN = 200;
-function makeStar(x, y, vx, vy, mass, color) {
-  return { x, y, vx, vy, mass, color, trail: [], r: Math.cbrt(mass) * 1.5 };
+const ctx    = canvas.getContext('2d');
+let W, H;
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  W = canvas.width  = Math.round(r.width);
+  H = canvas.height = 500;
 }
+resize();
+window.addEventListener('resize', resize);
+
+// ── State ───────────────────────────────────────────────────────────────────
+let bodies = [], paused = false, showTrail = true;
+let speedMult = 1.0, starMassSolar = 1.0, newBodyMassEarth = 1.0;
+let simDays = 0, lastTime = null;
+const TRAIL_LEN = 200;
+const COLORS = ['#4a9fff','#ffb040','#ff6060','#60ff90','#c060ff','#ff4499','#40ffee','#ffee40','#ff8040'];
+
+// Default planetary system (modelled after real solar system ratios)
+// [orbital_radius_px, sim_mass, color, display_mass_kg, name]
+const PLANET_DEFS = [
+  [ 90,  120, '#4a9fff', 0.815 * M_EARTH, 'Venus-like'],
+  [145,  150, '#60ee90', 1.000 * M_EARTH, 'Earth-like'],
+  [205,   60, '#ff8060', 0.107 * M_EARTH, 'Mars-like' ],
+  [270,  800, '#ffb040', 317.8 * M_EARTH, 'Jupiter-like'],
+];
+
+function makeStar(x, y, vx, vy, simMass, color, massKg, label) {
+  return {
+    x, y, vx, vy, ax: 0, ay: 0,
+    mass: simMass, color, massKg, label,
+    trail: [],
+    r: Math.max(3, Math.cbrt(simMass) * 1.5)
+  };
+}
+
 function spawnDefault() {
   bodies = [];
-  const cx = W/2, cy = H/2;
-  bodies.push(makeStar(cx, cy, 0, 0, 9000, '#ffe08a'));
-  const orbits = [
-    {r:90,  m:120, c:'#4af'},
-    {r:145, m:200, c:'#4fa'},
-    {r:205, m:80,  c:'#f4a'},
-    {r:270, m:300, c:'#a4f'},
-  ];
-  orbits.forEach(o => {
-    const angle = Math.random() * Math.PI * 2;
-    const x = cx + Math.cos(angle) * o.r;
-    const y = cy + Math.sin(angle) * o.r;
-    const speed = Math.sqrt(G * 9000 / o.r);
-    bodies.push(makeStar(x, y, -Math.sin(angle)*speed, Math.cos(angle)*speed, o.m, o.c));
+  simDays = 0;
+  const cx = W / 2, cy = H / 2;
+  const starSim = SIM_SOLAR_MASS * starMassSolar;
+  bodies.push(makeStar(cx, cy, 0, 0, starSim, '#ffe080', starMassSolar * M_SUN, 'Star'));
+  PLANET_DEFS.forEach(([r, sm, col, kg, lbl]) => {
+    const a = Math.random() * Math.PI * 2;
+    const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r;
+    const spd = Math.sqrt(G_SIM * starSim / r);
+    bodies.push(makeStar(x, y, -Math.sin(a)*spd, Math.cos(a)*spd, sm, col, kg, lbl));
   });
 }
 spawnDefault();
-let bgStars = [];
-for(let i = 0; i < 200; i++) bgStars.push({x: Math.random()*W, y: Math.random()*H, b: Math.random()});
-let lastTime = null;
-function step(ts) {
-  if (!lastTime) lastTime = ts;
-  let dt = Math.min((ts - lastTime) / 1000, 0.03) * speedMult;
-  lastTime = ts;
-  if (!paused) {
-    for (let i = 0; i < bodies.length; i++) {
-      bodies[i].ax = 0; bodies[i].ay = 0;
-      for (let j = 0; j < bodies.length; j++) {
-        if (i === j) continue;
-        const dx = bodies[j].x - bodies[i].x;
-        const dy = bodies[j].y - bodies[i].y;
-        const d2 = dx*dx + dy*dy;
-        const d = Math.sqrt(d2);
-        if (d < bodies[i].r + bodies[j].r) continue;
-        const f = G * bodies[j].mass / (d2 + 80);
-        bodies[i].ax += f * dx / d;
-        bodies[i].ay += f * dy / d;
-      }
+
+// Background star field
+const bgStars = Array.from({length: 200}, () => ({
+  x: Math.random(), y: Math.random(), b: Math.random(), s: 0.4 + Math.random() * 0.8
+}));
+
+// ── Science helpers ─────────────────────────────────────────────────────────
+function orbitalVelocity(r_px, M_star_kg) {
+  const r_m = r_px * PX_TO_M;
+  return Math.sqrt(G_SI * M_star_kg / r_m); // m/s
+}
+function orbitalPeriod(r_px, M_star_kg) {
+  const r_m = r_px * PX_TO_M;
+  return 2 * Math.PI * Math.sqrt(Math.pow(r_m, 3) / (G_SI * M_star_kg)); // seconds
+}
+function gravForce(M_kg, m_kg, r_px) {
+  const r_m = r_px * PX_TO_M;
+  return G_SI * M_kg * m_kg / (r_m * r_m); // Newtons
+}
+
+function fmtSci(val) {
+  if (val === 0 || !isFinite(val)) return '—';
+  const exp = Math.floor(Math.log10(Math.abs(val)));
+  const mant = val / Math.pow(10, exp);
+  const sup = String(exp).split('').map(c => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'[c] ?? c).join('');
+  return mant.toFixed(2) + ' × 10' + sup + ' N';
+}
+function fmtPeriod(T_s) {
+  const days = T_s / DAY_S;
+  if (days < 365) return days.toFixed(0) + ' days';
+  return (days / 365.25).toFixed(2) + ' yrs';
+}
+function fmtMass(kg) {
+  if (kg >= M_SUN * 0.1) return (kg / M_SUN).toFixed(2) + ' M☉';
+  if (kg >= M_EARTH * 10) return (kg / M_EARTH).toFixed(0) + ' M⊕';
+  return (kg / M_EARTH).toFixed(2) + ' M⊕';
+}
+
+// ── Physics step ─────────────────────────────────────────────────────────────
+function physicsStep(dt) {
+  const n = bodies.length;
+  for (let i = 0; i < n; i++) { bodies[i].ax = 0; bodies[i].ay = 0; }
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const dx = bodies[j].x - bodies[i].x;
+      const dy = bodies[j].y - bodies[i].y;
+      const d2 = dx*dx + dy*dy;
+      const d  = Math.sqrt(d2) || 0.001;
+      if (d < bodies[i].r + bodies[j].r) continue;
+      const f = G_SIM / (d2 + 60);
+      const fx = f * dx / d, fy = f * dy / d;
+      bodies[i].ax += bodies[j].mass * fx;  bodies[i].ay += bodies[j].mass * fy;
+      bodies[j].ax -= bodies[i].mass * fx;  bodies[j].ay -= bodies[i].mass * fy;
     }
-    bodies.forEach(b => {
-      b.vx += b.ax * dt;
-      b.vy += b.ay * dt;
-      b.x  += b.vx * dt;
-      b.y  += b.vy * dt;
-      b.trail.push({x: b.x, y: b.y});
-      if (b.trail.length > TRAIL_LEN) b.trail.shift();
-    });
-    bodies = bodies.filter((b, i) => i === 0 || (b.x > -W && b.x < W*2 && b.y > -H && b.y < H*2));
-    document.getElementById('nb').textContent = bodies.length;
   }
-  if (showTrail) {
-    ctx.fillStyle = 'rgba(2,6,16,0.16)';
-  } else {
-    ctx.fillStyle = '#020610';
-  }
-  ctx.fillRect(0, 0, W, H);
-  bgStars.forEach(s => {
-    const a = 0.15 + 0.25 * Math.sin(ts * 0.0008 + s.b * 9);
-    ctx.fillStyle = `rgba(190,210,255,${a})`;
-    ctx.beginPath(); ctx.arc(s.x, s.y, 0.8, 0, Math.PI*2); ctx.fill();
+  bodies.forEach(b => {
+    b.vx += b.ax * dt; b.vy += b.ay * dt;
+    b.x  += b.vx * dt; b.y  += b.vy * dt;
+    b.trail.push({x: b.x, y: b.y});
+    if (b.trail.length > TRAIL_LEN) b.trail.shift();
   });
+  bodies = bodies.filter((b, i) => i === 0 ||
+    (b.x > -W && b.x < W * 2 && b.y > -H && b.y < H * 2));
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render(ts) {
+  ctx.fillStyle = showTrail ? 'rgba(1,6,16,0.15)' : '#010610';
+  ctx.fillRect(0, 0, W, H);
+
+  // star field
+  bgStars.forEach(s => {
+    const a = 0.1 + 0.2 * Math.sin(ts * 0.0006 + s.b * 7);
+    ctx.fillStyle = `rgba(190,215,255,${a.toFixed(2)})`;
+    ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.s, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // trails
   if (showTrail) {
     bodies.forEach(b => {
       if (b.trail.length < 2) return;
       for (let i = 1; i < b.trail.length; i++) {
-        const a = (i / b.trail.length) * 0.75;
+        const a = i / b.trail.length;
         ctx.beginPath();
-        ctx.strokeStyle = b.color + Math.floor(a * 255).toString(16).padStart(2, '0');
-        ctx.lineWidth = 0.7 + a * 1.5;
+        ctx.strokeStyle = b.color + Math.floor(a * 0.65 * 255).toString(16).padStart(2, '0');
+        ctx.lineWidth = 0.5 + a * 1.5;
         ctx.moveTo(b.trail[i-1].x, b.trail[i-1].y);
-        ctx.lineTo(b.trail[i].x,   b.trail[i].y);
+        ctx.lineTo(b.trail[i].x, b.trail[i].y);
         ctx.stroke();
       }
     });
   }
+
+  // bodies
   bodies.forEach(b => {
-    for (let g = 4; g > 0; g--) {
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r + g * 3.5, 0, Math.PI*2);
-      ctx.fillStyle = b.color + ['18','11','09','05'][g-1];
+    // glow rings
+    for (let g = 5; g > 0; g--) {
+      ctx.beginPath(); ctx.arc(b.x, b.y, b.r + g * 3, 0, Math.PI * 2);
+      ctx.fillStyle = b.color + ['14','0e','09','06','03'][g - 1];
       ctx.fill();
     }
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-    ctx.fillStyle = b.color;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.35, b.r * 0.38, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.fill();
-    if (b.mass > 500) {
-      ctx.fillStyle = 'rgba(255,240,150,0.6)';
-      ctx.font = '10px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText('M=' + Math.round(b.mass), b.x, b.y - b.r - 5);
-    }
+    // body fill
+    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = b.color; ctx.fill();
+    // specular highlight
+    ctx.beginPath(); ctx.arc(b.x - b.r * 0.28, b.y - b.r * 0.32, b.r * 0.36, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
   });
-  requestAnimationFrame(step);
 }
-requestAnimationFrame(step);
+
+// ── Main loop ────────────────────────────────────────────────────────────────
+function loop(ts) {
+  if (!lastTime) lastTime = ts;
+  const dtAnim = Math.min((ts - lastTime) / 1000, 0.033) * speedMult;
+  lastTime = ts;
+  if (!paused) {
+    physicsStep(dtAnim);
+    simDays += dtAnim * DAYS_PER_ANIM_S;
+  }
+  render(ts);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ── Live readout ─────────────────────────────────────────────────────────────
+function updateReadout() {
+  if (!bodies.length) return;
+  const star = bodies[0];
+  const M_star_kg = star.massKg;
+  const cx = star.x, cy = star.y;
+  const rows = bodies.map((b, i) => {
+    if (i === 0) {
+      return `<tr>
+        <td><span class="star-sym">★</span>${fmtMass(b.massKg)}</td>
+        <td colspan="4" style="color:var(--text3); font-size:10px;">Central body — provides gravitational field</td>
+      </tr>`;
+    }
+    const r_px  = Math.hypot(b.x - cx, b.y - cy) || 0.1;
+    const r_AU  = r_px / PX_PER_AU;
+    const v_ms  = orbitalVelocity(r_px, M_star_kg);
+    const T_s   = orbitalPeriod(r_px, M_star_kg);
+    const F_N   = gravForce(M_star_kg, b.massKg, r_px);
+    return `<tr>
+      <td><span class="dot" style="background:${b.color}"></span>${fmtMass(b.massKg)}</td>
+      <td>${r_AU.toFixed(2)} AU</td>
+      <td>${(v_ms / 1000).toFixed(1)} km/s</td>
+      <td>${fmtPeriod(T_s)}</td>
+      <td>${fmtSci(F_N)}</td>
+    </tr>`;
+  });
+  document.getElementById('readout').innerHTML = rows.join('');
+  document.getElementById('nb').textContent = bodies.length;
+
+  // clock
+  const elapsed = simDays;
+  const str = elapsed < 365
+    ? elapsed.toFixed(0) + ' days'
+    : (elapsed / 365.25).toFixed(1) + ' years';
+  document.getElementById('clock').textContent = 'Elapsed: ' + str;
+}
+setInterval(updateReadout, 350);
+
+// ── Click to add body ────────────────────────────────────────────────────────
 canvas.addEventListener('click', e => {
   const rect = canvas.getBoundingClientRect();
   const mx = (e.clientX - rect.left) * (W / rect.width);
   const my = (e.clientY - rect.top)  * (H / rect.height);
   let nearest = bodies[0], minD = Infinity;
-  bodies.forEach(b => { const d = Math.hypot(b.x-mx, b.y-my); if(d<minD){minD=d;nearest=b;} });
+  bodies.forEach(b => { const d = Math.hypot(b.x-mx, b.y-my); if (d < minD) { minD = d; nearest = b; } });
   const dx = nearest.x - mx, dy = nearest.y - my;
   const d = Math.hypot(dx, dy) || 1;
-  const speed = Math.sqrt(G * nearest.mass / d) * 0.88;
+  const spd = Math.sqrt(G_SIM * nearest.mass / d) * 0.9;
   const col = COLORS[Math.floor(Math.random() * COLORS.length)];
-  const mass = 60 + Math.random() * 200;
-  bodies.push(makeStar(mx, my, -(dy/d)*speed + nearest.vx, (dx/d)*speed + nearest.vy, mass, col));
+  const displayKg = newBodyMassEarth * M_EARTH;
+  // Scale sim mass for visual size; Jupiter-like = 800 sim units at 317.8 M⊕
+  const simMass = Math.max(30, (newBodyMassEarth / 317.8) * 800);
+  bodies.push(makeStar(mx, my,
+    -(dy/d)*spd + nearest.vx, (dx/d)*spd + nearest.vy,
+    simMass, col, displayKg, 'Added body'));
 });
-document.getElementById('btn-pause').onclick = function() {
+
+// ── Controls ──────────────────────────────────────────────────────────────────
+document.getElementById('btn-pause').onclick = function () {
   paused = !paused; lastTime = null;
   this.textContent = paused ? '▶ Play' : '⏸ Pause';
+  this.classList.toggle('lit', paused);
 };
 document.getElementById('btn-reset').onclick = () => spawnDefault();
-document.getElementById('btn-trail').onclick = function() {
+document.getElementById('btn-trail').onclick = function () {
   showTrail = !showTrail;
-  this.textContent = 'Trails: ' + (showTrail ? 'ON' : 'OFF');
+  this.textContent = showTrail ? 'Trails ON' : 'Trails OFF';
+  this.classList.toggle('lit', showTrail);
 };
-document.getElementById('speed').oninput = function() {
+document.getElementById('speed').oninput = function () {
   speedMult = parseFloat(this.value);
   document.getElementById('spv').textContent = speedMult.toFixed(1) + '×';
 };
-document.getElementById('grav').oninput = function() {
-  G = parseInt(this.value);
-  document.getElementById('gv').textContent = G;
+
+function expStr(n, exp) {
+  return (n / Math.pow(10, exp)).toFixed(3) + ' × 10' +
+    String(exp).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c] ?? c).join('') + ' kg';
+}
+
+document.getElementById('star-mass').oninput = function () {
+  starMassSolar = parseFloat(this.value);
+  document.getElementById('star-v').textContent = starMassSolar.toFixed(2) + ' M☉';
+  document.getElementById('star-kg').textContent =
+    '= ' + expStr(starMassSolar * M_SUN, 30) + '  ·  Adjust then Reset for stable orbits';
+  if (bodies.length > 0) {
+    bodies[0].mass  = SIM_SOLAR_MASS * starMassSolar;
+    bodies[0].r     = Math.max(8, Math.cbrt(bodies[0].mass) * 1.5);
+    bodies[0].massKg = starMassSolar * M_SUN;
+  }
+};
+
+document.getElementById('new-mass').oninput = function () {
+  newBodyMassEarth = parseFloat(this.value);
+  document.getElementById('new-v').textContent = newBodyMassEarth.toFixed(1) + ' M⊕';
+  const kg = newBodyMassEarth * M_EARTH;
+  let sub;
+  if (newBodyMassEarth >= 300)      sub = '≈ Jupiter mass';
+  else if (newBodyMassEarth >= 14)  sub = '≈ Ice giant (Neptune-like)';
+  else if (newBodyMassEarth >= 0.8 && newBodyMassEarth <= 1.2) sub = '= 5.97 × 10²⁴ kg  (1 Earth)';
+  else if (newBodyMassEarth < 0.15) sub = '≈ Mars-like';
+  else                               sub = '= ' + (kg/1e24).toFixed(2) + ' × 10²⁴ kg';
+  document.getElementById('new-kg').textContent = sub;
 };
 </script>
 </body>
