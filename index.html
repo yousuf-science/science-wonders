@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Wonders</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #010409; color: #b8ceec; font-family: Georgia, serif; min-height: 100vh; }
+header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 32px; border-bottom: 1px solid #152035;
+  background: rgba(1,4,9,0.97); position: sticky; top: 0; z-index: 10;
+}
+.logo { font-family: monospace; font-size: 12px; letter-spacing: 5px; color: #f0c060; text-transform: uppercase; }
+.logo span { color: #5878a0; }
+.tagline { font-family: monospace; font-size: 11px; color: #3a5070; border-left: 1px solid #1e3050; padding-left: 16px; letter-spacing: 2px; }
+.hero { text-align: center; padding: 70px 20px 50px; }
+.hero h1 { font-size: 32px; font-weight: normal; color: #ddeeff; letter-spacing: 2px; margin-bottom: 14px; }
+.hero p { font-size: 15px; color: #5878a0; max-width: 520px; margin: 0 auto; line-height: 1.8; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+.card {
+  background: #080f1e; border: 1px solid #152035;
+  border-radius: 12px; padding: 28px; cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+  text-decoration: none; display: block; color: inherit;
+}
+.card:hover { border-color: #3a8fff; transform: translateY(-3px); }
+.card-icon { font-size: 28px; margin-bottom: 16px; }
+.card-title { font-family: monospace; font-size: 15px; color: #ddeeff; letter-spacing: 1px; margin-bottom: 10px; }
+.card-desc { font-size: 13px; color: #5878a0; line-height: 1.8; margin-bottom: 18px; }
+.card-tag {
+  display: inline-block; font-family: monospace; font-size: 10px;
+  letter-spacing: 2px; padding: 3px 10px; border-radius: 4px;
+  background: #0c1830; border: 1px solid #1e3050; color: #3a8fff;
+}
+.card-link {
+  display: inline-block; margin-top: 16px; font-family: monospace;
+  font-size: 11px; color: #3a8fff; letter-spacing: 1px;
+}
+footer {
+  text-align: center; padding: 20px;
+  font-family: monospace; font-size: 10px;
+  color: #3a5070; border-top: 1px solid #152035; letter-spacing: 3px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="tagline">Interactive Physics Simulations</div>
+</header>
+
+<div class="hero">
+  <h1>Explore the Universe Interactively</h1>
+  <p>Real physics equations, visualised in your browser. Click any simulation below to explore.</p>
+</div>
+
+<div class="grid">
+
+  <a class="card" href="gravity.html">
+    <div class="card-icon">🌌</div>
+    <div class="card-title">N-Body Gravitational Simulation</div>
+    <div class="card-desc">Watch planets orbit a star under real Newtonian gravity. Add bodies, adjust star mass, and see live orbital velocities and periods computed in SI units.</div>
+    <span class="card-tag">CLASSICAL MECHANICS</span>
+    <div class="card-link">Launch simulation →</div>
+  </a>
+
+  <a class="card" href="double-slit.html">
+    <div class="card-icon">🌊</div>
+    <div class="card-title">Double Slit Experiment</div>
+    <div class="card-desc">See why quantum particles make interference fringes. The experiment that proved light and matter behave as waves — and baffled physicists for centuries.</div>
+    <span class="card-tag">QUANTUM MECHANICS</span>
+    <div class="card-link">Launch simulation →</div>
+  </a>
+
+</div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS &nbsp;·&nbsp; YOUSUF-SCIENCE</footer>
+
+</body>
+</html>
