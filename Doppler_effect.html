@@ -114,8 +114,19 @@ footer{border-top:1px solid var(--border);padding:16px 28px;text-align:center;fo
       <button id="btn-skip">⏭ Skip Stage</button>
       <button id="btn-narrate">🔇 Narration</button>
     </div>
-    <div id="narration-box" style="display:none;font-family:monospace;font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:8px 12px;margin-bottom:12px;color:var(--gold2);line-height:1.8;">
-      <span id="narration-text">—</span>
+    <div id="narration-box" style="display:none;font-family:monospace;font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:8px 12px;margin-bottom:12px;line-height:1.9;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
+        <span style="color:var(--text3);letter-spacing:1px;">VOICE</span>
+        <select id="voice-select" style="flex:1;min-width:120px;background:var(--bg2);color:var(--text);border:1px solid var(--border2);border-radius:4px;font-family:monospace;font-size:10px;padding:2px 6px;cursor:pointer;">
+          <option>Loading voices…</option>
+        </select>
+        <span style="color:var(--text3);">Rate</span>
+        <input type="range" id="sl-rate" min="0.5" max="1.5" step="0.05" value="0.92" style="width:60px;accent-color:var(--accent);">
+        <span id="rate-v" style="color:var(--gold);width:28px;">0.9×</span>
+      </div>
+      <div style="color:var(--text3);font-size:9px;letter-spacing:1px;margin-bottom:4px;">NOW SPEAKING</div>
+      <span id="narration-text" style="color:var(--gold2);">—</span>
+      <div style="color:var(--text3);font-size:9px;margin-top:6px;">⏸ Simulation pauses between stages while narrating</div>
     </div>
     <div class="param">
       <div class="param-row"><span>Simulation speed</span><span class="param-val" id="spd-v">3×</span></div>
@@ -246,6 +257,18 @@ let stage      = 0;
 let stageT     = 0;
 let simT       = 0;
 let lastTs     = null;
+
+// ── Narration state (declared early so updateStageUI can safely reference it) ─
+let narrateOn     = false;
+let speaking      = false;
+let lastNarrStage = -1;
+let chosenVoice   = null;
+function maybeNarrateStage() {
+  if (narrateOn && stage !== lastNarrStage) {
+    lastNarrStage = stage;
+    setTimeout(() => narrate(NARRATION[stage]), 800);
+  }
+}
 
 // ── Particle & planet arrays ──────────────────────────────────────────────────
 let particles  = [];   // {x,y,vx,vy,r,mass,col,alive,phase}
@@ -407,8 +430,8 @@ function simStep(dt) {
   stageT += dt;
   simT   += dt;
 
-  // Auto-advance stages
-  if (stage < 4 && stageT > STAGE_DUR[stage]) nextStage();
+  // Auto-advance stages — but wait for narration to finish before moving on
+  if (stage < 4 && stageT > STAGE_DUR[stage] && !(narrateOn && speaking)) nextStage();
 
   // ── Stage 0: nebula collapse ─────────────────────────────────────────────
   if (stage === 0) {
@@ -807,24 +830,142 @@ init();
 requestAnimationFrame(loop);
 setInterval(updateSidebar, 400);
 
+// ── Narration engine ──────────────────────────────────────────────────────────
+// (narrateOn, speaking, lastNarrStage, chosenVoice, maybeNarrateStage declared at top)
+
+const NARRATION = [
+  `Stage 1: Nebula Collapse. What you are seeing is a giant molecular cloud — mostly hydrogen and helium — beginning to collapse under its own gravity. This process, called the Jeans instability, begins when the cloud's gravity overcomes its thermal pressure. A nearby supernova likely triggered this collapse for our own solar system, 4.6 billion years ago. Watch the coloured wisps fall inward toward the center, where a new star will be born.`,
+  `Stage 2: Disk Formation. As the cloud collapses, conservation of angular momentum takes over — just like a spinning ice skater pulling in their arms. The cloud cannot fall into a point, so it flattens into a spinning protoplanetary disk. Notice the inner regions orbit faster than the outer ones — this is Keplerian differential rotation. The dashed ring marks the snow line, where temperatures drop low enough for water to freeze solid.`,
+  `Stage 3: Dust Clumping. Solid grains in the disk begin sticking together through electrostatic forces and gentle collisions. Watch small planetesimals appear — these are the seeds of future planets. Inside the snow line you see rocky orange bodies forming. Beyond it, icy blue bodies form where four times more solid material is available. The largest seeds will grow fastest through gravitational focusing — this is where real planets begin.`,
+  `Stage 4: Runaway Accretion. The largest planetesimals now grow dramatically — their gravity bends the paths of nearby particles inward, sweeping them up far faster than small bodies can. This is called runaway accretion. Watch the particle count drop rapidly as planets grow larger and larger. Occasionally two protoplanets collide in a giant impact — our own Moon formed this way, when a Mars-sized body called Theia struck the early Earth around 4.5 billion years ago.`,
+  `Stage 5: Final Planetary System. The gas has been swept away by the young star's powerful solar wind, ending planet growth. What remains is a stable planetary system — the result of 4 billion years of cosmic evolution compressed into minutes. Rocky terrestrial worlds orbit close to the star. Gas and ice giants — some adorned with rings — occupy the outer regions. This exact process built every solar system in the Milky Way, and explains the extraordinary variety discovered by the Kepler and James Webb space telescopes.`,
+];
+
+let speechRate = 0.92;
+
+function populateVoiceDropdown() {
+  if (!window.speechSynthesis) return;
+  const voices  = speechSynthesis.getVoices();
+  const sel     = document.getElementById('voice-select');
+  if (!voices.length) return;
+  sel.innerHTML = '';
+
+  // Group: Female English, Male English, Other English, All others
+  const groups = [
+    { label: '— Female English —', voices: voices.filter(v => v.lang.startsWith('en') && /female|woman|girl|zira|samantha|karen|moira|fiona|victoria|susan|kate/i.test(v.name)) },
+    { label: '— Male English —',   voices: voices.filter(v => v.lang.startsWith('en') && /male|man|guy|david|mark|daniel|alex|fred|lee|james|george|rishi/i.test(v.name)) },
+    { label: '— English —',        voices: voices.filter(v => v.lang.startsWith('en') && !/female|woman|girl|male|man|guy|david|mark|daniel|alex|fred|lee|james|george|rishi|zira|samantha|karen|moira|fiona|victoria|susan|kate/i.test(v.name)) },
+    { label: '— Other Languages —',voices: voices.filter(v => !v.lang.startsWith('en')) },
+  ];
+
+  let firstSet = false;
+  groups.forEach(g => {
+    if (!g.voices.length) return;
+    const og = document.createElement('optgroup');
+    og.label = g.label;
+    g.voices.forEach(v => {
+      const opt    = document.createElement('option');
+      opt.value    = v.name;
+      opt.textContent = `${v.name} (${v.lang})`;
+      if (!firstSet) { opt.selected = true; chosenVoice = v; firstSet = true; }
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+
+  // Pre-select a good default
+  const preferred =
+    voices.find(v => v.name === 'Google UK English Female') ||
+    voices.find(v => v.lang === 'en-GB' && /female|woman/i.test(v.name)) ||
+    voices.find(v => v.lang.startsWith('en'));
+  if (preferred) {
+    sel.value  = preferred.name;
+    chosenVoice = preferred;
+  }
+}
+
+function pickVoice() {
+  if (!window.speechSynthesis) return;
+  populateVoiceDropdown();
+}
+if (window.speechSynthesis) {
+  speechSynthesis.onvoiceschanged = pickVoice;
+  pickVoice();
+}
+
+function narrate(text) {
+  if (!narrateOn || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  speaking = true;  // set immediately — don't wait for onstart
+  const utt    = new SpeechSynthesisUtterance(text);
+  if (chosenVoice) utt.voice = chosenVoice;
+  utt.rate   = speechRate;
+  utt.pitch  = 1.0;
+  utt.volume = 1.0;
+  utt.onstart = () => {
+    document.getElementById('narration-text').textContent = text;
+  };
+  utt.onend = utt.onerror = () => {
+    speaking = false;
+    // If stage timer already expired while we were speaking, advance now
+    if (!paused && stage < 4 && stageT > STAGE_DUR[stage]) nextStage();
+  };
+  speechSynthesis.speak(utt);
+}
+
+function stopNarration() {
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  speaking = false;
+}
+
 // ── Controls ──────────────────────────────────────────────────────────────────
-document.getElementById('btn-restart').onclick = () => init();
-document.getElementById('btn-skip').onclick    = () => nextStage();
-document.getElementById('btn-pause').onclick   = function() {
-  paused=!paused; lastTs=null;
-  this.textContent=paused?'▶ Play':'⏸ Pause';
-  this.classList.toggle('lit',paused);
+document.getElementById('btn-restart').onclick = function() {
+  stopNarration();
+  lastNarrStage = -1;
+  init();
+  if (narrateOn) setTimeout(() => narrate(NARRATION[0]), 1000);
+};
+
+document.getElementById('btn-skip').onclick = () => nextStage();
+
+document.getElementById('btn-pause').onclick = function() {
+  paused = !paused; lastTs = null;
+  this.textContent = paused ? '▶ Play' : '⏸ Pause';
+  this.classList.toggle('lit', paused);
+  if (window.speechSynthesis) {
+    if (paused) speechSynthesis.pause();
+    else speechSynthesis.resume();
+  }
+};
+
+document.getElementById('btn-narrate').onclick = function() {
+  if (!window.speechSynthesis) {
+    alert('Your browser does not support speech synthesis. Please use Chrome, Edge, or Safari.');
+    return;
+  }
+  narrateOn = !narrateOn;
+  this.textContent = narrateOn ? '🔊 Narration ON' : '🔇 Narration';
+  this.classList.toggle('lit', narrateOn);
+  document.getElementById('narration-box').style.display = narrateOn ? 'block' : 'none';
+  if (narrateOn) {
+    pickVoice();
+    lastNarrStage = -1;
+    maybeNarrateStage();
+  } else {
+    stopNarration();
+    document.getElementById('narration-text').textContent = '—';
+  }
 };
 
 document.getElementById('sl-spd').oninput = function() {
   speedMult = parseFloat(this.value);
-  document.getElementById('spd-v').textContent = speedMult+'×';
+  document.getElementById('spd-v').textContent = speedMult + '×';
 };
 document.getElementById('sl-mass').oninput = function() {
-  diskMassLv = parseInt(this.value)-1;
-  const labels=['Light','Medium','Heavy'];
-  const parts =[300,500,750];
-  const exp   =['3 planets expected','4 planets expected','5-6 planets expected'];
+  diskMassLv = parseInt(this.value) - 1;
+  const labels = ['Light','Medium','Heavy'];
+  const parts  = [300, 500, 750];
+  const exp    = ['3 planets expected','4 planets expected','5–6 planets expected'];
   document.getElementById('mass-v').textContent   = labels[diskMassLv];
   document.getElementById('mass-sub').textContent = `~${parts[diskMassLv]} particles · ${exp[diskMassLv]}`;
 };
@@ -833,110 +974,17 @@ document.getElementById('sl-turb').oninput = function() {
   document.getElementById('turb-v').textContent = ['Low','Medium','High'][turbLv];
 };
 
-
-let narrateOn  = false;
-let speaking   = false;
-let lastNarrStage = -1;
-
-const NARRATION = [
-  // Stage 0 — Nebula
-  `Stage 1: Nebula Collapse. What you are seeing is a giant molecular cloud — mostly hydrogen and helium — beginning to collapse under its own gravity. This process, called the Jeans instability, begins when the cloud's gravity overcomes its thermal pressure. A nearby supernova likely triggered this collapse for our own solar system, 4.6 billion years ago. Watch the coloured wisps fall inward.`,
-
-  // Stage 1 — Disk
-  `Stage 2: Disk Formation. As the cloud collapses, conservation of angular momentum takes over — just like a spinning ice skater pulling in their arms. The cloud cannot fall into a point, so it flattens into a spinning protoplanetary disk. Notice the inner regions orbit faster than the outer ones — this is Keplerian differential rotation, the same physics that governs planets today. The dashed ring marks the snow line, where water freezes solid.`,
-
-  // Stage 2 — Clumping
-  `Stage 3: Dust Clumping. Solid grains in the disk begin sticking together through electrostatic forces and gentle collisions. Watch small planetesimals appear — seeds of future planets. Inside the snow line, you see rocky orange bodies. Beyond the snow line, icy blue bodies form, where four times more solid material is available. The largest seeds will grow fastest through gravitational focusing.`,
-
-  // Stage 3 — Accretion
-  `Stage 4: Runaway Accretion. The largest planetesimals now grow dramatically — their gravity bends the paths of nearby particles inward, sweeping them up far faster than small bodies can. This runaway accretion produces a few dominant protoplanets. Watch the particle count drop as planets grow. Occasionally two protoplanets collide in a giant impact — our own Moon formed this way, when a Mars-sized body struck the early Earth.`,
-
-  // Stage 4 — Final system
-  `Stage 5: Final Planetary System. The gas has been swept away by the young star's solar wind, ending planet growth. What remains is a stable planetary system. Rocky terrestrial worlds orbit close to the star. Gas and ice giants — some with rings — occupy the outer regions. This is the same process that built every solar system in the galaxy. The diversity of planet sizes and orbits you see here mirrors the extraordinary variety found by the Kepler and James Webb space telescopes.`,
-];
-
-// Pick a good voice — prefer a natural English voice
-let chosenVoice = null;
-function pickVoice() {
+document.getElementById('voice-select').onchange = function() {
+  if (!window.speechSynthesis) return;
   const voices = speechSynthesis.getVoices();
-  // Priority: Google UK English Female, then any en-GB, then en-US, then first available
-  chosenVoice =
-    voices.find(v => v.name === 'Google UK English Female') ||
-    voices.find(v => v.lang === 'en-GB' && !v.name.includes('Male')) ||
-    voices.find(v => v.lang.startsWith('en-US') && v.name.toLowerCase().includes('female')) ||
-    voices.find(v => v.lang.startsWith('en')) ||
-    voices[0] || null;
-}
-speechSynthesis.onvoiceschanged = pickVoice;
-pickVoice();
-
-function narrate(text) {
-  if (!narrateOn || !('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  speaking = false;
-  const utt = new SpeechSynthesisUtterance(text);
-  if (chosenVoice) utt.voice = chosenVoice;
-  utt.rate  = 0.92;   // slightly slower — clearer for science content
-  utt.pitch = 1.0;
-  utt.volume = 1.0;
-  utt.onstart = () => {
-    speaking = true;
-    document.getElementById('narration-text').textContent = text;
-  };
-  utt.onend = utt.onerror = () => { speaking = false; };
-  speechSynthesis.speak(utt);
-}
-
-function stopNarration() {
-  speechSynthesis.cancel();
-  speaking = false;
-}
-
-// maybeNarrateStage is called from within updateStageUI (which nextStage already calls)
-function maybeNarrateStage() {
-  if (narrateOn && stage !== lastNarrStage) {
-    lastNarrStage = stage;
-    setTimeout(() => narrate(NARRATION[stage]), 800);
-  }
-}
-
-// Narration button
-document.getElementById('btn-narrate').onclick = function() {
-  if (!('speechSynthesis' in window)) {
-    alert('Sorry — your browser does not support speech synthesis. Try Chrome or Edge.');
-    return;
-  }
-  narrateOn = !narrateOn;
-  this.textContent = narrateOn ? '🔊 Narration ON' : '🔇 Narration';
-  this.classList.toggle('lit', narrateOn);
-  document.getElementById('narration-box').style.display = narrateOn ? 'block' : 'none';
-
-  if (narrateOn) {
-    pickVoice();
-    lastNarrStage = -1; // force re-narrate current stage
-    maybeNarrateStage();
-  } else {
-    stopNarration();
-    document.getElementById('narration-text').textContent = '—';
-  }
+  chosenVoice  = voices.find(v => v.name === this.value) || chosenVoice;
 };
 
-// Pause speech when sim is paused, resume when unpaused
-const _origPauseBtn = document.getElementById('btn-pause').onclick;
-document.getElementById('btn-pause').onclick = function() {
-  _origPauseBtn.call(this);
-  if (paused) { if (narrateOn) speechSynthesis.pause(); }
-  else        { if (narrateOn) speechSynthesis.resume(); }
+document.getElementById('sl-rate').oninput = function() {
+  speechRate = parseFloat(this.value);
+  document.getElementById('rate-v').textContent = speechRate.toFixed(1) + '×';
 };
 
-// Re-narrate on restart
-const _origRestart = document.getElementById('btn-restart').onclick;
-document.getElementById('btn-restart').onclick = function() {
-  stopNarration();
-  lastNarrStage = -1;
-  _origRestart();
-  if (narrateOn) setTimeout(() => narrate(NARRATION[0]), 1000);
-};
 </script>
 </body>
 </html>
