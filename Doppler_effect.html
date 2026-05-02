@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doppler Effect — Science Wonders</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;
+  --accent:#3a8fff;--gold:#f0c060;--gold2:#ffe8a0;
+  --cyan:#20d0ff;--red:#ff4f60;--violet:#c060ff;--green:#40ffaa;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;}
+
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+
+.canvas-wrap{position:relative;max-width:960px;margin:20px auto 0;padding:0 20px;}
+canvas{display:block;width:100%;border-radius:12px;border:1px solid var(--border);cursor:crosshair;}
+.badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.9);padding:4px 10px;border-radius:4px;pointer-events:none;letter-spacing:1px;}
+.badge-tl{top:10px;left:30px;}
+.badge-tr{top:10px;right:30px;color:var(--text2);}
+.badge-bl{bottom:14px;left:30px;color:var(--text3);}
+
+.panels{max-width:960px;margin:14px auto 0;display:grid;grid-template-columns:330px 1fr;gap:12px;padding:0 20px;}
+@media(max-width:720px){.panels{grid-template-columns:1fr;}}
+
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+button{font-family:monospace;font-size:11px;padding:5px 12px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.5px;}
+button:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+button.s-on{border-color:var(--cyan);color:var(--cyan);}
+button.l-on{border-color:var(--violet);color:var(--violet);}
+button.lit{border-color:var(--accent);color:var(--accent);}
+
+.mode-bar{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:7px;border:1px solid;margin-bottom:14px;font-family:monospace;font-size:11px;transition:all .3s;}
+.mode-bar.s{border-color:rgba(32,208,255,.35);background:rgba(32,208,255,.05);color:var(--cyan);}
+.mode-bar.l{border-color:rgba(192,96,255,.35);background:rgba(192,96,255,.05);color:var(--violet);}
+.mdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+.param{margin-bottom:14px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.param-val{font-size:12px;font-weight:bold;}
+.param-sub{font-family:monospace;font-size:10px;color:var(--text3);margin-top:3px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+.mach-bar-wrap{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin:6px 0 4px;}
+.mach-bar{height:100%;border-radius:4px;transition:background .3s;width:0;}
+
+.fbox{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:14px;font-family:monospace;line-height:2.1;}
+.fbox .fl{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:6px;}
+.fbox .fe{font-size:12px;color:var(--gold2);}
+.fbox .gc{font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+.rtable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11px;}
+.rtable th{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border);}
+.rtable td{padding:5px 8px;color:var(--text);vertical-align:middle;}
+.rtable td:first-child{color:var(--text2);}
+.rtable tbody tr:hover td{background:rgba(58,143,255,.04);}
+
+.theory-wrap{max-width:960px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px 36px;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:26px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold2);}
+.theory .eq .vars{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.8;}
+.highlight-box{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+.hb-red{background:rgba(255,79,96,.04);border:1px solid rgba(255,79,96,.2);color:#ff8898;}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.2);color:#d090ff;}
+.utab{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:10px;}
+.utab td{padding:6px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.utab td:first-child{color:var(--gold2);width:240px;}
+.utab tr:last-child td{border-bottom:none;}
+footer{border-top:1px solid var(--border);padding:16px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="page-subtitle">Doppler Effect — Sound &amp; Light</div>
+</header>
+
+<div class="canvas-wrap">
+  <canvas id="c" height="440"></canvas>
+  <div class="badge badge-tl" id="badge-mode" style="color:var(--cyan)">🔊 SOUND MODE</div>
+  <div class="badge badge-tr" id="badge-mach">Mach 0.00</div>
+  <div class="badge badge-bl">Drag the 👁 observer · Source moves automatically</div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">Controls &amp; Parameters</div>
+
+    <div class="mode-bar s" id="mode-bar">
+      <div class="mdot" id="mdot" style="background:var(--cyan)"></div>
+      <span id="mode-text">Sound — mechanical wave in air</span>
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-sound" class="s-on">🔊 Sound</button>
+      <button id="btn-light">💡 Light</button>
+      <button id="btn-pause">⏸ Pause</button>
+      <button id="btn-reset">↺ Reset</button>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Source speed</span>
+        <span class="param-val" id="speed-v" style="color:var(--cyan)">0.50 v<sub>w</sub></span>
+      </div>
+      <input type="range" id="sl-speed" min="0" max="1.6" step="0.01" value="0.5">
+      <div class="mach-bar-wrap"><div class="mach-bar" id="mach-bar"></div></div>
+      <div class="param-sub" id="speed-sub">340 m/s · Subsonic · No shock wave</div>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Source frequency f₀</span>
+        <span class="param-val" id="freq-v" style="color:var(--gold)">440 Hz</span>
+      </div>
+      <input type="range" id="sl-freq" min="100" max="1200" step="10" value="440">
+      <div class="param-sub" id="freq-sub">A4 concert pitch · λ₀ = 0.77 m</div>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Path</span>
+        <span class="param-val" id="path-v" style="color:var(--text2)">Linear →</span>
+      </div>
+      <input type="range" id="sl-path" min="0" max="1" step="1" value="0">
+      <div class="param-sub">Linear (left→right) or Circular orbit</div>
+    </div>
+
+    <div class="fbox">
+      <div class="fl">Doppler formula (sound, observer at rest)</div>
+      <div class="fe">f_obs = f₀ · v_w / (v_w − v_s)</div>
+      <div class="fl">Moving observer</div>
+      <div class="fe">f_obs = f₀ · (v_w + v_o) / v_w</div>
+      <div class="fl">Relativistic Doppler (light)</div>
+      <div class="fe">f_obs = f₀ · √( (1−β) / (1+β) )</div>
+      <div class="fl">Mach cone half-angle</div>
+      <div class="fe">sin θ = v_w / v_s = 1 / M</div>
+      <div class="gc">v_w = wave speed · v_s = source speed · v_o = observer speed<br>β = v_s/c · M = Mach number · f₀ = emitted frequency</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Live Physics Readout</div>
+    <table class="rtable">
+      <thead><tr><th>Quantity</th><th>Symbol</th><th>Value</th><th>Note</th></tr></thead>
+      <tbody id="readout"></tbody>
+    </table>
+    <div style="margin-top:12px;font-family:monospace;font-size:10px;color:var(--text3);line-height:1.9;">
+      Blue wavefronts = compressed (observer approaching source)<br>
+      Red wavefronts = stretched (observer receding from source)<br>
+      White cone at M &gt; 1 = Mach shock wave / sonic boom<br>
+      👁 = observer · click &amp; drag to reposition
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">Theory — What Is Happening Here?</div>
+
+  <h3>The Doppler Effect</h3>
+  <p>Named after Austrian physicist Christian Doppler (1842), the Doppler effect describes the change in frequency of a wave perceived by an observer when the source and observer are moving relative to each other. It applies to all waves — sound, light, water ripples — wherever there is a wave medium or propagation.</p>
+  <p>When a source moves <em>toward</em> an observer, it chases its own wavefronts, compressing them. The observer receives more wave crests per second — a higher frequency (higher pitch for sound, blueshift for light). When the source moves <em>away</em>, wavefronts stretch out — lower frequency (lower pitch, redshift).</p>
+
+  <h3>The Doppler Formula — Sound</h3>
+  <div class="eq">f_obs = f₀ · v_w / (v_w − v_s · cos α)
+    <div class="vars">f₀ = emitted frequency (Hz) · v_w = speed of sound (343 m/s in air at 20°C)<br>
+    v_s = speed of source · α = angle between source velocity and observer direction<br>
+    + sign in denominator → source receding → lower frequency<br>
+    − sign → source approaching → higher frequency</div>
+  </div>
+  <div class="highlight-box hb-cyan">
+    <strong>Example:</strong> Ambulance siren at f₀ = 700 Hz, v_s = 30 m/s (108 km/h)<br>
+    Approaching: f = 700 × 343 / (343 − 30) = <strong>768 Hz</strong> (higher pitch)<br>
+    Receding: &nbsp;&nbsp;&nbsp;f = 700 × 343 / (343 + 30) = <strong>643 Hz</strong> (lower pitch)<br>
+    You hear a drop of 125 Hz as it passes — that's the classic doppler "whoosh"
+  </div>
+
+  <h3>Light — The Relativistic Doppler Effect</h3>
+  <p>For light, there is no medium (no "ether"), so only the relative velocity between source and observer matters. Special relativity gives a different formula:</p>
+  <div class="eq">f_obs = f₀ · √( (1 − β) / (1 + β) )
+    <div class="vars">β = v/c (fraction of speed of light) · c = 2.998 × 10⁸ m/s<br>
+    β &gt; 0 → receding → f_obs &lt; f₀ → redshift<br>
+    β &lt; 0 → approaching → f_obs &gt; f₀ → blueshift<br>
+    At v = 0.5c: f_obs = f₀ × √(0.5/1.5) = 0.577 f₀ (massive redshift)</div>
+  </div>
+  <div class="highlight-box hb-violet">
+    <strong>Cosmological redshift:</strong> Edwin Hubble (1929) observed that distant galaxies are all redshifted — their light is stretched because they are receding. The further the galaxy, the faster it recedes, and the greater the redshift. This was direct evidence that the universe is expanding — and led to the Big Bang theory.
+  </div>
+
+  <h3>The Mach Number and Sonic Boom</h3>
+  <p>The Mach number M = v_s / v_w compares the source speed to the wave speed. Three regimes exist:</p>
+  <div class="highlight-box hb-cyan">
+    <strong>M &lt; 1 — Subsonic:</strong> Source slower than sound · wavefronts pile up in front but never overlap · Doppler shift but no shock wave<br>
+    <strong>M = 1 — Transonic:</strong> Source exactly at sound speed · all wavefronts pile up at the source · pressure builds to infinity in theory — the "sound barrier"<br>
+    <strong>M &gt; 1 — Supersonic:</strong> Source outruns its own wavefronts · a Mach cone forms · the cone edge is a shock wave of enormous pressure — heard as a <strong>sonic boom</strong>
+  </div>
+  <div class="eq">sin θ = 1 / M &nbsp;&nbsp;&nbsp;(Mach cone half-angle)
+    <div class="vars">θ = half-angle of the Mach cone from the direction of travel<br>
+    At M=1.5: θ = sin⁻¹(1/1.5) = 41.8° · At M=2: θ = 30° · Higher Mach = narrower cone<br>
+    Fighter jets at M=1.2 produce a cone of ~56° half-angle</div>
+  </div>
+
+  <h3>Real-World Applications</h3>
+  <div class="highlight-box hb-red">
+    <strong>Medical:</strong> Doppler ultrasound measures blood flow velocity in arteries and veins — reflected sound from moving red blood cells is Doppler-shifted.<br>
+    <strong>Astronomy:</strong> Stellar radial velocities, exoplanet detection (star "wobble"), pulsar timing.<br>
+    <strong>Radar &amp; LIDAR:</strong> Police speed guns, weather radar, aircraft collision avoidance — all use Doppler shift of reflected radio/laser pulses.<br>
+    <strong>Cosmology:</strong> Redshift of galaxy spectra measures recession speed and distance — the foundation of observational cosmology.
+  </div>
+
+  <table class="utab">
+    <tr><td>Speed of sound in air (20°C)</td><td>343 m/s = 1235 km/h</td></tr>
+    <tr><td>Speed of sound in water</td><td>1480 m/s</td></tr>
+    <tr><td>Speed of light c</td><td>2.998 × 10⁸ m/s</td></tr>
+    <tr><td>Mach 1</td><td>343 m/s at sea level, 20°C</td></tr>
+    <tr><td>SR-71 Blackbird</td><td>Mach 3.3 (fastest jet)</td></tr>
+    <tr><td>Hubble constant H₀</td><td>~70 km/s per megaparsec (recession rate)</td></tr>
+  </table>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS SIMULATIONS</footer>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const V_SOUND  = 343;       // m/s
+const C_LIGHT  = 2.998e8;   // m/s
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+// ── State ────────────────────────────────────────────────────────────────────
+let soundMode = true;
+let paused    = false;
+let srcSpeed  = 0.5;   // fraction of wave speed
+let f0        = 440;   // Hz emitted
+let circularPath = false;
+let t = 0, lastTs = null;
+
+// ── Canvas ───────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H;
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  W = canvas.width  = Math.round(r.width);
+  H = canvas.height = 440;
+}
+resize(); window.addEventListener('resize', resize);
+
+// ── Source & waves ───────────────────────────────────────────────────────────
+// Wave ring: {x, y, r, age, maxR}
+let rings = [];
+let emitAcc = 0;
+
+// Source position & velocity (in canvas pixels)
+let sx, sy, svx, svy;
+const WAVE_PX_PER_S = 200;   // visual wave speed in px/s
+const PATH_MARGIN   = 80;
+
+function resetSource() {
+  rings = [];
+  emitAcc = 0;
+  t = 0;
+  if (circularPath) {
+    sx = W / 2; sy = H / 2;
+  } else {
+    sx = PATH_MARGIN; sy = H / 2;
+  }
+  updateSourceVelocity();
+}
+
+function updateSourceVelocity() {
+  const spd = srcSpeed * WAVE_PX_PER_S;
+  if (circularPath) {
+    // tangential — computed per frame
+    svx = 0; svy = -spd;
+  } else {
+    svx = spd; svy = 0;
+  }
+}
+
+// Observer
+let ox, oy, dragging = false;
+function resetObs() {
+  ox = W * 0.72; oy = H * 0.35;
+}
+
+resetSource();
+resetObs();
+
+// ── Physics helpers ───────────────────────────────────────────────────────────
+function dopplerSound(vsComp) {
+  // vsComp = component of source velocity toward observer (px/s)
+  const vsRatio = vsComp / WAVE_PX_PER_S;
+  const denom = 1 - vsRatio;
+  if (Math.abs(denom) < 0.01) return f0 * 20; // near singularity
+  return f0 / denom;
+}
+
+function dopplerLight(vsComp) {
+  const beta = vsComp / WAVE_PX_PER_S * srcSpeed;
+  const clampedBeta = Math.max(-0.9999, Math.min(0.9999, beta * srcSpeed));
+  return f0 * Math.sqrt((1 - clampedBeta) / (1 + clampedBeta));
+}
+
+function freqToNote(f) {
+  const midi = Math.round(12 * Math.log2(f / 440) + 69);
+  const name = NOTE_NAMES[((midi % 12) + 12) % 12];
+  const oct  = Math.floor(midi / 12) - 1;
+  return `${name}${oct}`;
+}
+
+function freqToColor(fObs, fEm) {
+  const ratio = fObs / fEm;
+  if (ratio > 1.02) {
+    const t = Math.min(1, (ratio - 1) * 3);
+    return `rgba(${(20+t*235)|0},${(200-t*155)|0},${(255-t*200)|0},`;
+  } else if (ratio < 0.98) {
+    const t = Math.min(1, (1 - ratio) * 3);
+    return `rgba(${(20+t*235)|0},${(50-t*30)|0},${(60+t*30)|0},`;
+  }
+  return 'rgba(200,220,255,';
+}
+
+// ── Simulation step ───────────────────────────────────────────────────────────
+function simStep(dt) {
+  const spd = srcSpeed * WAVE_PX_PER_S;
+
+  // Move source
+  if (circularPath) {
+    const cx0 = W / 2, cy0 = H / 2;
+    const rad = Math.min(W, H) * 0.28;
+    const omega = spd / rad;
+    t += dt;
+    sx = cx0 + rad * Math.cos(omega * t - Math.PI / 2);
+    sy = cy0 + rad * Math.sin(omega * t - Math.PI / 2);
+    svx = -rad * omega * Math.sin(omega * t - Math.PI / 2);
+    svy =  rad * omega * Math.cos(omega * t - Math.PI / 2);
+  } else {
+    sx += svx * dt;
+    sy += svy * dt;
+    t  += dt;
+    if (sx > W + PATH_MARGIN) { sx = -PATH_MARGIN; rings = []; }
+  }
+
+  // Emit rings at f0 rate
+  const emitInterval = 1 / f0;  // seconds between rings (scaled visually)
+  const visualInterval = emitInterval * (WAVE_PX_PER_S / (f0 * 0.77));
+  // Simplified: emit every 1/30 s for visual clarity at scaled speed
+  const EMIT_RATE = Math.max(4, Math.min(30, f0 / 20));
+  emitAcc += dt;
+  const emitT = 1 / EMIT_RATE;
+  while (emitAcc >= emitT) {
+    rings.push({ x: sx, y: sy, r: 0, age: 0 });
+    emitAcc -= emitT;
+  }
+
+  // Grow rings
+  rings.forEach(rr => { rr.r += WAVE_PX_PER_S * dt; rr.age += dt; });
+  // Remove old rings
+  rings = rings.filter(rr => rr.r < Math.max(W, H) * 1.4);
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render() {
+  ctx.fillStyle = '#010812';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid guide lines
+  ctx.strokeStyle = 'rgba(30,50,80,.3)';
+  ctx.lineWidth = .5;
+  for (let x = 0; x < W; x += 60) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 60) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Draw wave rings
+  const M = srcSpeed;
+  rings.forEach(rr => {
+    // color based on compression direction toward observer
+    const dx = ox - rr.x, dy = oy - rr.y;
+    const distObs = Math.sqrt(dx * dx + dy * dy);
+    const onRing  = Math.abs(distObs - rr.r) < 12;
+    // compute approximate wavelength compression at observer angle
+    const angObs = Math.atan2(dy, dx);
+    const svMag  = Math.sqrt(svx * svx + svy * svy) || 1;
+    const cosA   = (svx * Math.cos(angObs) + svy * Math.sin(angObs)) / svMag;
+    const approxRatio = (1 - M * cosA);
+    const alpha = Math.max(0, 0.6 - rr.age * 0.08);
+
+    let col;
+    if (approxRatio < 0.85)      col = `rgba(60,180,255,${alpha.toFixed(2)})`;
+    else if (approxRatio > 1.15) col = `rgba(255,80,80,${alpha.toFixed(2)})`;
+    else                          col = `rgba(180,210,255,${alpha.toFixed(2)})`;
+
+    ctx.beginPath();
+    ctx.arc(rr.x, rr.y, rr.r, 0, Math.PI * 2);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = onRing ? 2.5 : 1.2;
+    ctx.stroke();
+  });
+
+  // Mach cone (when supersonic)
+  if (M > 1.0) {
+    const sinT = 1 / M;
+    const cosT = Math.sqrt(1 - sinT * sinT);
+    const svMag = Math.sqrt(svx * svx + svy * svy) || 1;
+    const nx = svx / svMag, ny = svy / svMag;
+    // perp
+    const px2 = -ny, py2 = nx;
+    const coneLen = Math.max(W, H) * 1.5;
+    // top ray
+    const tx1 = nx * cosT + px2 * sinT, ty1 = ny * cosT + py2 * sinT;
+    // bot ray
+    const tx2 = nx * cosT - px2 * sinT, ty2 = ny * cosT - py2 * sinT;
+
+    ctx.save();
+    const grad = ctx.createLinearGradient(sx, sy, sx - nx * coneLen, sy - ny * coneLen);
+    grad.addColorStop(0,   'rgba(255,220,80,.55)');
+    grad.addColorStop(0.3, 'rgba(255,150,50,.25)');
+    grad.addColorStop(1,   'rgba(255,80,30,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(sx - tx1 * coneLen, sy - ty1 * coneLen);
+    ctx.lineTo(sx - tx2 * coneLen, sy - ty2 * coneLen);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cone edges
+    ctx.strokeStyle = 'rgba(255,200,60,.8)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - tx1 * coneLen, sy - ty1 * coneLen); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx - tx2 * coneLen, sy - ty2 * coneLen); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Angle label
+    const theta = Math.asin(sinT) * 180 / Math.PI;
+    ctx.fillStyle = 'rgba(255,210,70,.7)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`θ=${theta.toFixed(1)}°`, sx + 10, sy - 12);
+    ctx.restore();
+  }
+
+  // Source velocity arrow
+  const svMag = Math.sqrt(svx * svx + svy * svy) || 1;
+  const arLen = 36;
+  const ax = sx + (svx / svMag) * arLen, ay = sy + (svy / svMag) * arLen;
+  ctx.strokeStyle = 'rgba(255,200,80,.8)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ax, ay); ctx.stroke();
+  const ha = Math.atan2(svy, svx);
+  ctx.fillStyle = 'rgba(255,200,80,.8)';
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(ax - 9 * Math.cos(ha - .4), ay - 9 * Math.sin(ha - .4));
+  ctx.lineTo(ax - 9 * Math.cos(ha + .4), ay - 9 * Math.sin(ha + .4));
+  ctx.closePath(); ctx.fill();
+
+  // Source dot
+  for (let g = 4; g > 0; g--) {
+    ctx.beginPath(); ctx.arc(sx, sy, 8 + g * 3, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,220,80,${(0.06 - g * 0.012).toFixed(3)})`; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffe060'; ctx.fill();
+  ctx.beginPath(); ctx.arc(sx - 2.5, sy - 2.5, 3, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.7)';
+  ctx.font = 'bold 8px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('S', sx, sy + 3);
+
+  // Path guide
+  if (circularPath) {
+    const rad = Math.min(W, H) * 0.28;
+    ctx.beginPath(); ctx.arc(W / 2, H / 2, rad, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(60,100,160,.2)'; ctx.lineWidth = 1;
+    ctx.setLineDash([4, 6]); ctx.stroke(); ctx.setLineDash([]);
+  }
+
+  // Observer
+  const obs_color = soundMode ? '#20d0ff' : '#c060ff';
+  for (let g = 3; g > 0; g--) {
+    ctx.beginPath(); ctx.arc(ox, oy, 10 + g * 3, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(32,208,255,${(0.07 - g * 0.018).toFixed(3)})`; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(ox, oy, 10, 0, Math.PI * 2);
+  ctx.fillStyle = obs_color; ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.font = '12px serif'; ctx.textAlign = 'center';
+  ctx.fillText('👁', ox, oy + 4);
+
+  // Line from source to observer
+  ctx.setLineDash([3, 5]);
+  ctx.strokeStyle = 'rgba(180,200,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ox, oy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Distance label
+  const distPx = Math.sqrt((ox - sx) ** 2 + (oy - sy) ** 2);
+  const midX = (sx + ox) / 2, midY = (sy + oy) / 2;
+  ctx.fillStyle = 'rgba(100,150,200,.5)';
+  ctx.font = '9px monospace'; ctx.textAlign = 'center';
+  ctx.fillText(`r = ${distPx.toFixed(0)} px`, midX, midY - 6);
+}
+
+// ── Observer frequency ────────────────────────────────────────────────────────
+function getObsFreq() {
+  const dx = ox - sx, dy = oy - sy;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  // Component of source velocity toward observer
+  const cosA = (svx * dx + svy * dy) / (Math.sqrt(svx**2+svy**2)||1) / dist;
+  const vsToward = srcSpeed * WAVE_PX_PER_S * cosA;
+  if (soundMode) return dopplerSound(vsToward / WAVE_PX_PER_S);
+  return dopplerLight(vsToward / WAVE_PX_PER_S);
+}
+
+// ── Main loop ─────────────────────────────────────────────────────────────────
+function loop(ts) {
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min((ts - lastTs) / 1000, 0.033);
+  lastTs = ts;
+  if (!paused) simStep(dt);
+  render();
+
+  // Mach badge
+  const M = srcSpeed;
+  const machEl = document.getElementById('badge-mach');
+  if (soundMode) {
+    machEl.textContent = `Mach ${M.toFixed(2)}`;
+    machEl.style.color = M >= 1 ? '#ffaa30' : 'var(--text2)';
+  } else {
+    machEl.textContent = `β = ${M.toFixed(2)}c`;
+    machEl.style.color = 'var(--violet)';
+  }
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ── Live readout ──────────────────────────────────────────────────────────────
+function updateReadout() {
+  const fObs = getObsFreq();
+  const M    = srcSpeed;
+  const vSrc = soundMode ? (M * V_SOUND) : (M * 3e8);
+  const vSrcStr = soundMode
+    ? `${(M * V_SOUND).toFixed(1)} m/s = ${(M * V_SOUND * 3.6).toFixed(0)} km/h`
+    : `${(M * 100).toFixed(1)}% of c`;
+
+  const shift = ((fObs / f0) - 1) * 100;
+  const shiftStr = shift >= 0
+    ? `+${shift.toFixed(1)}% (blue)` : `${shift.toFixed(1)}% (red)`;
+
+  let waveLen = '';
+  if (soundMode) {
+    waveLen = `${(V_SOUND / fObs * 100).toFixed(1)} cm`;
+  } else {
+    waveLen = `${(3e8 / fObs * 1e9).toFixed(1)} nm`;
+  }
+
+  const rows = [
+    ['Emitted freq.',  'f₀',    `${f0} Hz`,               soundMode?freqToNote(f0):''],
+    ['Observed freq.', 'f_obs', `${fObs.toFixed(1)} Hz`,  soundMode?freqToNote(fObs):''],
+    ['Frequency shift','Δf/f₀', shiftStr,                  ''],
+    ['Source speed',   'v_s',   vSrcStr,                   soundMode?`M = ${M.toFixed(2)}`:`β=${M.toFixed(3)}`],
+    ['Wave speed',     'v_w',   soundMode?'343 m/s':'c = 3×10⁸ m/s', ''],
+    ['Obs. wavelength','λ_obs', waveLen,                   soundMode?`λ₀=${(V_SOUND/f0*100).toFixed(1)} cm`:''],
+    ['Mach / β',       'M',     M.toFixed(3),              M>=1?'⚠ SUPERSONIC':'Subsonic'],
+    soundMode && M >= 1 ? ['Mach angle','θ',`${(Math.asin(1/Math.max(1.001,M))*180/Math.PI).toFixed(1)}°`,'sin θ = 1/M'] : null,
+  ].filter(Boolean);
+
+  document.getElementById('readout').innerHTML = rows.map(([n,s,v,f])=>`
+    <tr>
+      <td>${n}</td><td style="color:var(--gold)">${s}</td>
+      <td style="color:var(--cyan)">${v}</td>
+      <td style="color:var(--text3);font-size:10px;">${f}</td>
+    </tr>`).join('');
+}
+setInterval(updateReadout, 300);
+
+// ── Sliders ───────────────────────────────────────────────────────────────────
+document.getElementById('sl-speed').oninput = function() {
+  srcSpeed = parseFloat(this.value);
+  updateSourceVelocity();
+  const M = srcSpeed;
+  const pct = Math.min(100, (M / 1.6) * 100);
+  const bar = document.getElementById('mach-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = M >= 1 ? 'linear-gradient(90deg,#ff8800,#ff4400)'
+    : M > 0.8 ? 'linear-gradient(90deg,#ffcc00,#ff8800)'
+    : 'linear-gradient(90deg,#20d0ff,#3a8fff)';
+
+  const sv = document.getElementById('speed-v');
+  sv.textContent = M.toFixed(2) + ' v';
+  sv.style.color = M >= 1 ? 'var(--gold)' : M > 0.8 ? '#ffcc00' : 'var(--cyan)';
+
+  const sub = document.getElementById('speed-sub');
+  if (soundMode) {
+    const kmh = (M * V_SOUND * 3.6).toFixed(0);
+    const regime = M >= 1 ? '🔴 SUPERSONIC — Shock wave active!' : M > 0.8 ? '⚠ Transonic' : 'Subsonic · No shock wave';
+    sub.textContent = `${(M*V_SOUND).toFixed(0)} m/s = ${kmh} km/h · ${regime}`;
+  } else {
+    sub.textContent = `${(M*100).toFixed(1)}% of c · Relativistic Doppler`;
+  }
+};
+
+document.getElementById('sl-freq').oninput = function() {
+  f0 = parseInt(this.value);
+  document.getElementById('freq-v').textContent = f0 + ' Hz';
+  const note = freqToNote(f0);
+  const wl   = (V_SOUND / f0 * 100).toFixed(2);
+  document.getElementById('freq-sub').textContent = `Note ≈ ${note} · λ₀ = ${wl} cm`;
+};
+
+document.getElementById('sl-path').oninput = function() {
+  circularPath = this.value === '1';
+  document.getElementById('path-v').textContent = circularPath ? 'Circular ⭮' : 'Linear →';
+  resetSource();
+};
+
+// ── Mode toggle ───────────────────────────────────────────────────────────────
+function setMode(sound) {
+  soundMode = sound;
+  const mb = document.getElementById('mode-bar');
+  const md = document.getElementById('mdot');
+  const bm = document.getElementById('badge-mode');
+  if (sound) {
+    mb.className = 'mode-bar s'; md.style.background = 'var(--cyan)';
+    document.getElementById('mode-text').textContent = 'Sound — mechanical wave in air';
+    document.getElementById('btn-sound').className = 's-on';
+    document.getElementById('btn-light').className = '';
+    bm.textContent = '🔊 SOUND MODE'; bm.style.color = 'var(--cyan)';
+    document.getElementById('freq-sub').textContent =
+      `Note ≈ ${freqToNote(f0)} · λ₀ = ${(V_SOUND/f0*100).toFixed(2)} cm`;
+  } else {
+    mb.className = 'mode-bar l'; md.style.background = 'var(--violet)';
+    document.getElementById('mode-text').textContent = 'Light — relativistic Doppler (β = v/c)';
+    document.getElementById('btn-sound').className = '';
+    document.getElementById('btn-light').className = 'l-on';
+    bm.textContent = '💡 LIGHT MODE'; bm.style.color = 'var(--violet)';
+    document.getElementById('freq-sub').textContent = `λ₀ = ${(3e8/f0*1e9).toFixed(1)} nm`;
+  }
+}
+document.getElementById('btn-sound').onclick = () => setMode(true);
+document.getElementById('btn-light').onclick = () => setMode(false);
+
+document.getElementById('btn-pause').onclick = function() {
+  paused = !paused; lastTs = null;
+  this.textContent = paused ? '▶ Play' : '⏸ Pause';
+  this.classList.toggle('lit', paused);
+};
+document.getElementById('btn-reset').onclick = () => { resetSource(); resetObs(); };
+
+// ── Observer drag ─────────────────────────────────────────────────────────────
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const cl = e.touches ? e.touches[0] : e;
+  return { x: (cl.clientX - rect.left) * (W / rect.width),
+           y: (cl.clientY - rect.top)  * (H / rect.height) };
+}
+function startDrag(e) {
+  const p = getPos(e);
+  if (Math.hypot(p.x - ox, p.y - oy) < 22) { dragging = true; e.preventDefault(); }
+}
+function moveDrag(e) {
+  if (!dragging) return;
+  const p = getPos(e);
+  ox = Math.max(10, Math.min(W - 10, p.x));
+  oy = Math.max(10, Math.min(H - 10, p.y));
+  e.preventDefault();
+}
+function endDrag() { dragging = false; }
+
+canvas.addEventListener('mousedown',  startDrag);
+canvas.addEventListener('mousemove',  moveDrag);
+canvas.addEventListener('mouseup',    endDrag);
+canvas.addEventListener('touchstart', startDrag, {passive:false});
+canvas.addEventListener('touchmove',  moveDrag,  {passive:false});
+canvas.addEventListener('touchend',   endDrag);
+</script>
+</body>
+</html>
