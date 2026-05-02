@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planet Formation — Science Wonders</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;
+  --accent:#3a8fff;--gold:#f0c060;--gold2:#ffe8a0;
+  --cyan:#20d0ff;--red:#ff4f60;--violet:#c060ff;--green:#40ffaa;--orange:#ff9040;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;}
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+
+.canvas-wrap{position:relative;max-width:960px;margin:20px auto 0;padding:0 20px;}
+canvas{display:block;width:100%;border-radius:12px;border:1px solid var(--border);}
+.badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.92);padding:4px 10px;border-radius:4px;pointer-events:none;letter-spacing:1px;}
+.badge-tl{top:10px;left:30px;color:var(--gold);}
+.badge-tr{top:10px;right:30px;color:var(--text2);}
+
+/* Stage progress bar */
+.stage-bar-wrap{max-width:960px;margin:12px auto 0;padding:0 20px;}
+.stage-bar-outer{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;height:32px;display:flex;position:relative;}
+.stage-seg{flex:1;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);border-right:1px solid var(--border);transition:all .5s;cursor:default;}
+.stage-seg:last-child{border-right:none;}
+.stage-seg.active{color:var(--gold);background:rgba(240,192,96,.08);}
+.stage-seg.done{color:var(--green);background:rgba(64,255,170,.05);}
+
+.panels{max-width:960px;margin:14px auto 0;display:grid;grid-template-columns:310px 1fr;gap:12px;padding:0 20px;}
+@media(max-width:720px){.panels{grid-template-columns:1fr;}}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+button{font-family:monospace;font-size:11px;padding:5px 12px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.5px;}
+button:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+button.lit{border-color:var(--accent);color:var(--accent);}
+button.go{border-color:var(--green);color:var(--green);}
+
+.param{margin-bottom:13px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.param-sub{font-family:monospace;font-size:10px;color:var(--text3);margin-top:3px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+.planet-list{font-family:monospace;font-size:11px;}
+.planet-row{display:flex;align-items:center;gap:8px;padding:5px 6px;border-bottom:1px solid var(--border);transition:background .2s;}
+.planet-row:last-child{border-bottom:none;}
+.planet-row:hover{background:rgba(58,143,255,.05);}
+.pdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.pname{color:var(--text);flex:1;}
+.pmass{color:var(--gold2);width:70px;text-align:right;font-size:10px;}
+.porb{color:var(--cyan);width:60px;text-align:right;font-size:10px;}
+
+.fbox{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:14px;font-family:monospace;line-height:2.1;}
+.fbox .fl{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-top:6px;}
+.fbox .fe{font-size:12px;color:var(--gold2);}
+.fbox .gc{font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+.theory-wrap{max-width:960px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px 36px;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:26px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold2);}
+.theory .eq .vars{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.8;}
+.hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-gold{background:rgba(240,192,96,.05);border:1px solid rgba(240,192,96,.2);color:#d4aa60;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+.hb-red{background:rgba(255,79,96,.04);border:1px solid rgba(255,79,96,.2);color:#ff8898;}
+.utab{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:10px;}
+.utab td{padding:6px 12px;border-bottom:1px solid var(--border);color:var(--text2);}
+.utab td:first-child{color:var(--gold2);width:220px;}
+.utab tr:last-child td{border-bottom:none;}
+footer{border-top:1px solid var(--border);padding:16px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="page-subtitle">Planet Formation — Nebular Hypothesis</div>
+</header>
+
+<div class="canvas-wrap">
+  <canvas id="c" height="480"></canvas>
+  <div class="badge badge-tl" id="stage-badge">Stage 1 — Nebula Collapse</div>
+  <div class="badge badge-tr" id="stat-badge">Particles: 0</div>
+</div>
+
+<div class="stage-bar-wrap">
+  <div class="stage-bar-outer">
+    <div class="stage-seg active" id="seg0">1 · Nebula</div>
+    <div class="stage-seg" id="seg1">2 · Disk</div>
+    <div class="stage-seg" id="seg2">3 · Clumping</div>
+    <div class="stage-seg" id="seg3">4 · Accretion</div>
+    <div class="stage-seg" id="seg4">5 · Final System</div>
+  </div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">Controls</div>
+    <div class="btn-row">
+      <button id="btn-restart" class="go">▶ Restart</button>
+      <button id="btn-pause">⏸ Pause</button>
+      <button id="btn-skip">⏭ Skip Stage</button>
+      <button id="btn-narrate">🔇 Narration</button>
+    </div>
+    <div id="narration-box" style="display:none;font-family:monospace;font-size:10px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:8px 12px;margin-bottom:12px;color:var(--gold2);line-height:1.8;">
+      <span id="narration-text">—</span>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Simulation speed</span><span class="param-val" id="spd-v">3×</span></div>
+      <input type="range" id="sl-spd" min="1" max="8" step="0.5" value="3">
+      <div class="param-sub">Higher = faster formation</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Disk mass</span><span class="param-val" id="mass-v">Medium</span></div>
+      <input type="range" id="sl-mass" min="1" max="3" step="1" value="2">
+      <div class="param-sub" id="mass-sub">~500 particles · 4 planets expected</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Turbulence</span><span class="param-val" id="turb-v">Low</span></div>
+      <input type="range" id="sl-turb" min="0" max="2" step="1" value="0">
+      <div class="param-sub">Higher turbulence → fewer, larger planets</div>
+    </div>
+
+    <div class="fbox">
+      <div class="fl">Jeans Instability (collapse condition)</div>
+      <div class="fe">M &gt; M_J = (5kT/Gm)^(3/2) · (3/4πρ)^(1/2)</div>
+      <div class="fl">Keplerian orbital velocity</div>
+      <div class="fe">v_orb = √(GM★/r)</div>
+      <div class="fl">Accretion — Hill sphere radius</div>
+      <div class="fe">r_H = a · (m/3M★)^(1/3)</div>
+      <div class="fl">Angular momentum (conserved)</div>
+      <div class="fe">L = m · r × v = const</div>
+      <div class="gc">k = Boltzmann · T = temperature · G = gravity<br>ρ = density · a = orbital radius · M★ = star mass</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Forming Planets</div>
+    <div id="planet-list" class="planet-list">
+      <div style="font-family:monospace;font-size:11px;color:var(--text3);padding:8px;">Waiting for planetesimals to form...</div>
+    </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+      <div style="font-family:monospace;font-size:9px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;margin-bottom:10px;">Live Stats</div>
+      <div id="live-stats" style="font-family:monospace;font-size:11px;color:var(--text2);line-height:2;"></div>
+    </div>
+    <div style="margin-top:10px;font-family:monospace;font-size:10px;color:var(--text3);line-height:1.8;">
+      🟠 Rocky / terrestrial (inside snow line)<br>
+      🔵 Icy / gas giant (outside snow line)<br>
+      ❄ Snow line = where water freezes (~2.7 AU)<br>
+      Hill sphere shown as faint ring around each body
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">Theory — How Planets Are Born</div>
+
+  <h3>The Nebular Hypothesis</h3>
+  <p>Our solar system formed about 4.6 billion years ago from a giant cloud of gas and dust — the solar nebula — which was mostly hydrogen and helium with traces of heavier elements forged in previous generations of stars. The nebular hypothesis, first proposed by Kant and Laplace in the 18th century and confirmed by modern astrophysics, describes five key stages.</p>
+
+  <h3>Stage 1 — Nebula Collapse: Jeans Instability</h3>
+  <p>A molecular cloud collapses under its own gravity when its mass exceeds the Jeans mass — the threshold where gravity overcomes thermal pressure. A shockwave from a nearby supernova likely triggered our nebula's collapse.</p>
+  <div class="eq">M_J = (5kT / Gm)^(3/2) · (3 / 4πρ)^(1/2)
+    <div class="vars">k = Boltzmann constant · T = cloud temperature · G = gravitational constant<br>m = mean particle mass · ρ = cloud density<br>Lower temperature or higher density → smaller M_J → easier to collapse</div>
+  </div>
+
+  <h3>Stage 2 — Disk Formation: Conservation of Angular Momentum</h3>
+  <p>As the cloud collapses, any tiny initial rotation is amplified enormously — like a spinning ice skater pulling in their arms. The cloud cannot collapse into a point; instead it flattens into a spinning protoplanetary disk. Angular momentum L = m·r×v is strictly conserved throughout this process.</p>
+  <div class="eq">L = m · r · v = constant → v ∝ 1/r as r decreases
+    <div class="vars">This is why the disk spins faster near the centre (Keplerian differential rotation)<br>Inner orbits: ~50 km/s · Outer orbits: ~5 km/s · Same as planets in our solar system today</div>
+  </div>
+
+  <h3>Stage 3 — Dust Settling and Clumping</h3>
+  <p>Within the disk, heavier dust grains settle toward the midplane and begin sticking together through van der Waals forces and electrostatic attraction. Millimetre grains grow to centimetres, then metres. This "planetesimal" stage (bodies up to ~1000 km) is the least understood — the "metre-size barrier" is a major open problem in planetary science, because metre-sized bodies drift inward toward the star too fast to grow further.</p>
+  <div class="hbox hb-gold">
+    <strong>The Snow Line:</strong> At ~2.7 AU from our Sun, temperatures drop below ~170 K and water ice can exist. Beyond the snow line, solid material is 4× more abundant (water, ammonia, methane all freeze solid). This is why inner planets are small and rocky while outer planets became giant. Jupiter formed just outside the snow line where material was most plentiful.
+  </div>
+
+  <h3>Stage 4 — Runaway and Oligarchic Accretion</h3>
+  <p>Once planetesimals reach ~1 km in size, gravitational focusing takes over — their gravity bends the paths of nearby particles inward, sweeping up material faster than a simple collision rate would allow. The largest bodies grow fastest (runaway accretion), then slow as they clear their feeding zones (oligarchic accretion). Each growing protoplanet dominates a region called its Hill sphere.</p>
+  <div class="eq">r_H = a · (m_planet / 3M_star)^(1/3)
+    <div class="vars">r_H = Hill sphere radius (gravitational domain of the planet)<br>a = orbital semi-major axis · m_planet = planet mass · M_star = star mass<br>Earth's Hill sphere: ~1.5 million km (the Moon orbits well within it at 384,000 km)</div>
+  </div>
+  <div class="eq">dM/dt ∝ M^(4/3) &nbsp;(runaway accretion phase)
+    <div class="vars">Mass grows super-linearly — larger bodies grow proportionally faster<br>This produces a few dominant protoplanets rather than many small ones</div>
+  </div>
+
+  <h3>Stage 5 — Final Assembly and Clearing</h3>
+  <p>The last stage involves violent giant impacts between protoplanets — our Moon formed this way when a Mars-sized body called Theia struck the proto-Earth ~4.5 billion years ago. The young Sun's solar wind (T Tauri phase) blows away remaining gas, ending planet growth. Leftover material becomes asteroids, comets, and Kuiper Belt objects.</p>
+  <div class="hbox hb-cyan">
+    <strong>Giant Planet Migration:</strong> Jupiter and Saturn likely formed further out and migrated inward (then outward) in what is called the Grand Tack hypothesis. This scattered the early asteroid belt and may have delivered water to Earth via icy comets and asteroids — a crucial step for life.
+  </div>
+  <div class="hbox hb-red">
+    <strong>Late Heavy Bombardment (~4.1–3.8 Ga):</strong> A gravitational instability among the giant planets — possibly triggered by Jupiter and Saturn crossing a 2:1 resonance — sent a wave of debris inward, bombarding the inner solar system. The lunar craters we see today are largely scars from this event.
+  </div>
+
+  <table class="utab">
+    <tr><td>Solar system age</td><td>4.568 billion years</td></tr>
+    <tr><td>Disk lifetime</td><td>~3–10 million years (gas dispersed by stellar wind)</td></tr>
+    <tr><td>Snow line (our Sun)</td><td>~2.7 AU (~404 million km)</td></tr>
+    <tr><td>Moon-forming impact</td><td>~4.5 Ga · impactor = "Theia" (Mars-sized)</td></tr>
+    <tr><td>Hill sphere — Earth</td><td>~1.5 million km</td></tr>
+    <tr><td>Hill sphere — Jupiter</td><td>~53 million km</td></tr>
+    <tr><td>Jeans mass (typical GMC)</td><td>~1–10 M☉ at T=10K, n=10⁴ cm⁻³</td></tr>
+  </table>
+</div></div>
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS SIMULATIONS</footer>
+
+<script>
+// ── Canvas ────────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, CX, CY;
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  W = canvas.width = Math.round(r.width);
+  H = canvas.height = 480;
+  CX = W / 2; CY = H / 2;
+}
+resize(); window.addEventListener('resize', () => { resize(); });
+
+// ── Sim parameters ────────────────────────────────────────────────────────────
+const DISK_LEVELS  = [300, 500, 750];   // particles per mass level
+const TURB_VALS    = [0.008, 0.025, 0.06];
+const STAGE_NAMES  = ['Nebula Collapse','Disk Formation','Dust Clumping','Runaway Accretion','Final System'];
+const STAGE_DUR    = [6, 8, 10, 999, 999]; // seconds (real) per stage
+const SNOW_LINE_R  = 0.38; // fraction of max disk radius
+
+let speedMult  = 3;
+let diskMassLv = 1;   // 0,1,2
+let turbLv     = 0;
+let paused     = false;
+let stage      = 0;
+let stageT     = 0;
+let simT       = 0;
+let lastTs     = null;
+
+// ── Particle & planet arrays ──────────────────────────────────────────────────
+let particles  = [];   // {x,y,vx,vy,r,mass,col,alive,phase}
+let planets    = [];   // {x,y,vx,vy,mass,col,r,orb,name,rocky}
+
+// ── Background stars ──────────────────────────────────────────────────────────
+let bgStars = [];
+function makeBgStars() {
+  bgStars = Array.from({length:180}, () => ({
+    x: Math.random(), y: Math.random(), b: Math.random(), s: 0.3+Math.random()*0.9
+  }));
+}
+makeBgStars();
+
+// ── Colour helpers ────────────────────────────────────────────────────────────
+function tempColor(rFrac, alpha=1) {
+  // Hot inner disk = orange/yellow, cold outer = blue/white
+  if (rFrac < SNOW_LINE_R) {
+    const t = rFrac / SNOW_LINE_R;
+    const r = (255)|0, g = (120+t*100)|0, b = (20+t*40)|0;
+    return `rgba(${r},${g},${b},${alpha})`;
+  } else {
+    const t = (rFrac - SNOW_LINE_R) / (1 - SNOW_LINE_R);
+    const r = (80-t*40)|0, g = (160-t*40)|0, b = (220+t*35)|0;
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+}
+
+function planetColor(rocky) {
+  return rocky
+    ? ['#e87040','#d05030','#c8a060','#b06030'][Math.floor(Math.random()*4)]
+    : ['#4090d0','#50b0e8','#6080c0','#80c0f0'][Math.floor(Math.random()*4)];
+}
+
+// ── Orbit helpers ─────────────────────────────────────────────────────────────
+function keplerV(r) {
+  // Circular orbital speed (sim units, star mass normalised)
+  return Math.sqrt(220 / (r + 2));
+}
+
+function diskRadius() { return Math.min(CX, CY) * 0.82; }
+
+// ── Initialise simulation ─────────────────────────────────────────────────────
+function init() {
+  particles = []; planets = []; stage = 0; stageT = 0; simT = 0; lastTs = null;
+  const N    = DISK_LEVELS[diskMassLv];
+  const turb = TURB_VALS[turbLv];
+  const maxR = diskRadius();
+
+  // Nebula colors — real nebulae glow in hydrogen-alpha red, OIII teal, SII orange, and starlight blue
+  const NEBULA_COLS = [
+    'rgba(220,80,120,A)','rgba(180,60,200,A)','rgba(80,160,255,A)',
+    'rgba(60,220,200,A)','rgba(255,140,60,A)','rgba(255,80,100,A)',
+    'rgba(140,80,255,A)','rgba(200,220,255,A)',
+  ];
+  function nebulaCol() {
+    const c = NEBULA_COLS[Math.floor(Math.random()*NEBULA_COLS.length)];
+    const a = (0.5 + Math.random()*0.5).toFixed(2);
+    return c.replace('A', a);
+  }
+
+  for (let i = 0; i < N; i++) {
+    // Spread across the FULL canvas in clumpy filaments
+    const arm   = Math.floor(Math.random() * 4); // 4 filament arms
+    const armAng = arm * Math.PI/2 + (Math.random()-0.5)*1.2;
+    const armR   = 0.15*Math.min(W,H) + Math.random() * 0.52*Math.min(W,H);
+    const spread = 0.18 * Math.min(W,H);
+    const px = CX + Math.cos(armAng)*armR + (Math.random()-0.5)*spread;
+    const py = CY + Math.sin(armAng)*armR*0.7 + (Math.random()-0.5)*spread*0.7;
+
+    particles.push({
+      x: Math.max(4, Math.min(W-4, px)),
+      y: Math.max(4, Math.min(H-4, py)),
+      vx: (Math.random()-0.5) * 4,
+      vy: (Math.random()-0.5) * 4,
+      r: 1.0 + Math.random()*2.0,
+      mass: 0.3 + Math.random()*0.7,
+      col: nebulaCol(),
+      alive: true,
+      rFrac: Math.random(),
+      ang: armAng,
+      rad: armR,
+      turb: (Math.random()-0.5)*turb,
+      phase: 0,
+    });
+  }
+  updateStageUI();
+}
+
+// ── Stage transition ──────────────────────────────────────────────────────────
+function nextStage() {
+  stage = Math.min(4, stage + 1);
+  stageT = 0;
+
+  if (stage === 1) {
+    // Transition particles to Keplerian disk orbits
+    const maxR = diskRadius();
+    particles.forEach(p => {
+      if (!p.alive) return;
+      const dx = p.x - CX, dy = p.y - CY;
+      let r  = Math.sqrt(dx*dx + dy*dy);
+      if (r < 8) r = 8;
+      const rFrac = Math.min(1, r / maxR);
+      p.rad   = r;
+      p.rFrac = rFrac;
+      p.ang   = Math.atan2(dy, dx);
+      const v = keplerV(r);
+      p.vx = -Math.sin(p.ang) * v + (Math.random()-0.5) * TURB_VALS[turbLv] * v * 4;
+      p.vy =  Math.cos(p.ang) * v + (Math.random()-0.5) * TURB_VALS[turbLv] * v * 4;
+      p.phase = 1;
+    });
+  }
+
+  if (stage === 2) {
+    // Seed planetesimals from clumps
+    const maxR = diskRadius();
+    const nSeeds = 3 + diskMassLv * 2 + (turbLv === 0 ? 2 : 0);
+    for (let i = 0; i < nSeeds; i++) {
+      const rFrac = 0.15 + Math.random() * 0.75;
+      const rad   = rFrac * maxR;
+      const ang   = Math.random() * Math.PI * 2;
+      const rocky = rFrac < SNOW_LINE_R;
+      const v     = keplerV(rad);
+      planets.push({
+        x:    CX + Math.cos(ang) * rad,
+        y:    CY + Math.sin(ang) * rad,
+        vx:  -Math.sin(ang) * v,
+        vy:   Math.cos(ang) * v,
+        mass: 3 + Math.random() * 5,
+        col:  planetColor(rocky),
+        r:    4,
+        orb:  rad,
+        ang,
+        rocky,
+        name: '',
+        born: simT,
+      });
+    }
+  }
+
+  if (stage === 4) namePlanets();
+  updateStageUI();
+}
+
+// ── Name planets ──────────────────────────────────────────────────────────────
+const ROCKY_NAMES = ['Vulcan','Hermes','Terra','Ares'];
+const GAS_NAMES   = ['Kronos','Zeus','Poseidon','Ouranos'];
+function namePlanets() {
+  const sorted = [...planets].sort((a,b) => a.orb - b.orb);
+  let ri=0, gi=0;
+  sorted.forEach(p => {
+    if (!p.name) p.name = p.rocky ? (ROCKY_NAMES[ri++]||'Rock-'+(ri)) : (GAS_NAMES[gi++]||'Gas-'+(gi));
+  });
+}
+
+// ── Physics step ──────────────────────────────────────────────────────────────
+function simStep(dt) {
+  const maxR = diskRadius();
+  stageT += dt;
+  simT   += dt;
+
+  // Auto-advance stages
+  if (stage < 4 && stageT > STAGE_DUR[stage]) nextStage();
+
+  // ── Stage 0: nebula collapse ─────────────────────────────────────────────
+  if (stage === 0) {
+    const prog = Math.min(1, stageT / STAGE_DUR[0]);
+    particles.forEach(p => {
+      if (!p.alive) return;
+      const dx = CX - p.x, dy = CY - p.y;
+      const d  = Math.sqrt(dx*dx + dy*dy) + 1;
+      // Gravity strengthens as collapse progresses
+      const f  = (8 + prog*30) / (d*0.5 + 8);
+      p.vx += dx/d * f * dt;
+      p.vy += dy/d * f * dt;
+      // Light drag keeps things from going too fast
+      p.vx *= 0.97; p.vy *= 0.97;
+      p.x  += p.vx * dt; p.y += p.vy * dt;
+      // Gradually recolor toward disk colors as they approach center
+      const r2 = Math.sqrt((p.x-CX)**2+(p.y-CY)**2);
+      p.rFrac = Math.min(1, r2/diskRadius());
+    });
+  }
+
+  // ── Stage 1+: Keplerian disk ─────────────────────────────────────────────
+  if (stage >= 1) {
+    const turb = TURB_VALS[turbLv];
+    particles.forEach(p => {
+      if (!p.alive) return;
+      const dx = p.x - CX, dy = p.y - CY;
+      const r  = Math.sqrt(dx*dx + dy*dy) + 0.1;
+      // Gravity toward star
+      const f  = 220 / (r * r + 1);
+      p.vx -= (dx/r) * f * dt;
+      p.vy -= (dy/r) * f * dt;
+      // Weak gas drag to circularise
+      const vCirc  = keplerV(r);
+      const ang    = Math.atan2(dy, dx);
+      const vtx    = -Math.sin(ang) * vCirc;
+      const vty    =  Math.cos(ang) * vCirc;
+      const drag   = 0.25 * dt;
+      p.vx += (vtx - p.vx) * drag;
+      p.vy += (vty - p.vy) * drag;
+      // Turbulence
+      if (turb > 0) { p.vx += (Math.random()-0.5)*turb*60*dt; p.vy += (Math.random()-0.5)*turb*60*dt; }
+      p.x += p.vx * dt; p.y += p.vy * dt;
+      p.rFrac = Math.sqrt((p.x-CX)**2+(p.y-CY)**2) / maxR;
+    });
+  }
+
+  // ── Planets orbit & accrete ──────────────────────────────────────────────
+  if (stage >= 2) {
+    // Planet gravity & orbit
+    planets.forEach(pl => {
+      const dx = pl.x - CX, dy = pl.y - CY;
+      const r  = Math.sqrt(dx*dx + dy*dy) + 0.1;
+      const f  = 220 / (r*r + 1);
+      pl.vx -= (dx/r) * f * dt;
+      pl.vy -= (dy/r) * f * dt;
+      // Circularise gradually
+      const vC  = keplerV(r);
+      const ang = Math.atan2(dy, dx);
+      const vtx = -Math.sin(ang)*vC, vty = Math.cos(ang)*vC;
+      const drag = 0.1 * dt;
+      pl.vx += (vtx - pl.vx) * drag; pl.vy += (vty - pl.vy) * drag;
+      pl.x += pl.vx * dt; pl.y += pl.vy * dt;
+      pl.orb = r;
+      pl.ang = Math.atan2(pl.y-CY, pl.x-CX);
+
+      // Hill sphere accretion radius
+      const hillR = pl.orb * Math.pow(pl.mass / (3 * 9000), 1/3);
+      const accrR = Math.max(pl.r * 2.5, hillR * 0.3);
+
+      // Accrete nearby particles
+      particles.forEach(p => {
+        if (!p.alive) return;
+        const pdx = p.x - pl.x, pdy = p.y - pl.y;
+        if (Math.abs(pdx) > accrR + 5 || Math.abs(pdy) > accrR + 5) return;
+        const pd = Math.sqrt(pdx*pdx + pdy*pdy);
+        if (pd < accrR) {
+          // Conserve momentum
+          const tm = pl.mass + p.mass;
+          pl.vx = (pl.vx*pl.mass + p.vx*p.mass)/tm;
+          pl.vy = (pl.vy*pl.mass + p.vy*p.mass)/tm;
+          pl.mass += p.mass;
+          pl.r = Math.max(5, Math.pow(pl.mass, 0.38) * 1.8);
+          p.alive = false;
+        }
+      });
+    });
+
+    // Planet-planet accretion (giant impacts)
+    for (let i=0; i<planets.length; i++) {
+      for (let j=i+1; j<planets.length; j++) {
+        const a=planets[i], b=planets[j];
+        const d=Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);
+        if (d < a.r + b.r + 2) {
+          // Merge smaller into larger
+          const [big, small] = a.mass >= b.mass ? [a,b] : [b,a];
+          const tm = big.mass + small.mass;
+          big.vx = (big.vx*big.mass + small.vx*small.mass)/tm;
+          big.vy = (big.vy*big.mass + small.vy*small.mass)/tm;
+          big.mass = tm;
+          big.r    = Math.max(5, Math.pow(big.mass, 0.38)*1.8);
+          big.rocky = big.orb < SNOW_LINE_R * maxR;
+          big.col  = planetColor(big.rocky);
+          planets.splice(planets.indexOf(small),1);
+        }
+      }
+    }
+
+    // Remove dead particles
+    if (Math.random() < 0.05) particles = particles.filter(p => p.alive);
+  }
+}
+
+// ── Color helper ──────────────────────────────────────────────────────────────
+function shadeColor(hex, amt) {
+  // Works with #rrggbb hex or named colors — parse via canvas trick
+  const tmp = document.createElement('canvas');
+  tmp.width = tmp.height = 1;
+  const tc = tmp.getContext('2d');
+  tc.fillStyle = hex; tc.fillRect(0,0,1,1);
+  const d = tc.getImageData(0,0,1,1).data;
+  const r = Math.max(0,Math.min(255,d[0]+amt));
+  const g = Math.max(0,Math.min(255,d[1]+amt));
+  const b = Math.max(0,Math.min(255,d[2]+amt));
+  return `rgb(${r},${g},${b})`;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render(ts) {
+  ctx.fillStyle = '#010610';
+  ctx.fillRect(0,0,W,H);
+
+  // Background stars
+  bgStars.forEach(s => {
+    const a = 0.12 + 0.15*Math.sin(ts*0.0005+s.b*9);
+    ctx.fillStyle = `rgba(200,215,255,${a.toFixed(2)})`;
+    ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.s, 0, Math.PI*2); ctx.fill();
+  });
+
+  const maxR = diskRadius();
+
+  // Snow line (stage 2+)
+  if (stage >= 1) {
+    const slR = SNOW_LINE_R * maxR;
+    ctx.beginPath(); ctx.arc(CX, CY, slR, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(80,180,255,.12)';
+    ctx.lineWidth = 1; ctx.setLineDash([4,6]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(80,180,255,.35)';
+    ctx.font = '9px monospace'; ctx.textAlign = 'left';
+    ctx.fillText('❄ snow line', CX + slR * 0.72, CY - 6);
+  }
+
+  // Disk rotation guide (stage 1+)
+  if (stage >= 1 && stage < 4) {
+    for (let rr = maxR*0.15; rr < maxR; rr += maxR*0.18) {
+      ctx.beginPath(); ctx.arc(CX, CY, rr, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba(40,70,120,.15)'; ctx.lineWidth=.5; ctx.stroke();
+    }
+  }
+
+  // Particles — color blends from nebula hues to disk temp colors during transition
+  particles.forEach(p => {
+    if (!p.alive) return;
+    let col = p.col;
+    if (stage >= 1) col = tempColor(p.rFrac);
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = col;
+    ctx.fill();
+  });
+
+  // Nebula cloud glow (stage 0) — dramatic full-canvas colored wisps
+  if (stage === 0) {
+    const prog = Math.min(1, stageT / STAGE_DUR[0]);
+    // Large outer glow — purple/red nebula haze
+    const gRad = Math.max(W, H) * (0.75 - prog * 0.35);
+    const grd  = ctx.createRadialGradient(CX,CY, 0, CX,CY, gRad);
+    grd.addColorStop(0,   `rgba(255,200,80,${(0.06*(1-prog*0.7)).toFixed(3)})`);
+    grd.addColorStop(0.2, `rgba(200,80,160,${(0.10*(1-prog*0.6)).toFixed(3)})`);
+    grd.addColorStop(0.5, `rgba(80,60,200,${(0.09*(1-prog*0.5)).toFixed(3)})`);
+    grd.addColorStop(0.8, `rgba(30,80,180,${(0.06*(1-prog*0.4)).toFixed(3)})`);
+    grd.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+
+    // Pillars of creation — 3 cone-shaped filaments
+    if (prog < 0.7) {
+      const pillars = [[0.3, -0.9],[0.95, 0.3],[-0.8, 0.5]];
+      pillars.forEach(([nx,ny]) => {
+        const len = Math.max(W,H)*(0.6-prog*0.4);
+        const gr  = ctx.createLinearGradient(CX,CY, CX+nx*len, CY+ny*len);
+        gr.addColorStop(0, `rgba(255,160,80,${(0.15*(1-prog)).toFixed(2)})`);
+        gr.addColorStop(0.4, `rgba(180,60,200,${(0.08*(1-prog)).toFixed(2)})`);
+        gr.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.save();
+        ctx.translate(CX,CY);
+        const a = Math.atan2(ny,nx);
+        ctx.rotate(a);
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.lineTo(len, -len*0.2*(1-prog*0.5));
+        ctx.lineTo(len,  len*0.2*(1-prog*0.5));
+        ctx.closePath();
+        ctx.fillStyle = gr; ctx.fill();
+        ctx.restore();
+      });
+    }
+  }
+
+  // Planets — detailed rendering
+  planets.forEach(pl => {
+    const pr = pl.r;
+
+    // Hill sphere ring
+    const hillR = pl.orb * Math.pow(pl.mass/(3*9000), 1/3);
+    ctx.beginPath(); ctx.arc(pl.x, pl.y, Math.min(hillR*0.3, 65), 0, Math.PI*2);
+    ctx.strokeStyle = pl.col + '20'; ctx.lineWidth=1; ctx.stroke();
+
+    // Outer atmosphere glow
+    for (let g=5;g>0;g--) {
+      ctx.beginPath(); ctx.arc(pl.x, pl.y, pr+g*3, 0, Math.PI*2);
+      ctx.fillStyle = pl.col + ['20','14','0e','08','04'][g-1]; ctx.fill();
+    }
+
+    if (pl.rocky) {
+      // ── Rocky planet ──────────────────────────────────────────────────────
+      // Base sphere with radial gradient
+      const rg = ctx.createRadialGradient(pl.x-pr*.3, pl.y-pr*.3, pr*.05, pl.x, pl.y, pr);
+      const bc = pl.col;
+      rg.addColorStop(0, '#fff0d0');
+      rg.addColorStop(0.25, bc);
+      rg.addColorStop(0.7, shadeColor(bc, -40));
+      rg.addColorStop(1, shadeColor(bc, -80));
+      ctx.beginPath(); ctx.arc(pl.x, pl.y, pr, 0, Math.PI*2);
+      ctx.fillStyle = rg; ctx.fill();
+
+      // Continent patches (only if big enough to see)
+      if (pr > 6) {
+        ctx.save(); ctx.beginPath(); ctx.arc(pl.x, pl.y, pr, 0, Math.PI*2); ctx.clip();
+        const seed = pl.born || 0;
+        const nPatches = 3 + Math.floor(pr/4);
+        for (let k=0; k<nPatches; k++) {
+          const pa = (seed*1.3 + k*2.4) % (Math.PI*2);
+          const pr2 = pr * (0.25 + ((seed*7+k*3)%100)/300);
+          const px2 = pl.x + Math.cos(pa)*pr*(0.2+((k*17)%40)/100);
+          const py2 = pl.y + Math.sin(pa)*pr*(0.15+((k*13)%35)/100);
+          ctx.beginPath(); ctx.arc(px2, py2, pr2, 0, Math.PI*2);
+          ctx.fillStyle = shadeColor(bc, -25) + 'cc'; ctx.fill();
+        }
+        // Polar ice caps
+        ctx.fillStyle = 'rgba(240,248,255,.55)';
+        ctx.beginPath(); ctx.ellipse(pl.x, pl.y-pr*.7, pr*.45, pr*.28, 0, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(pl.x, pl.y+pr*.72, pr*.3, pr*.18, 0, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+
+    } else {
+      // ── Gas giant ─────────────────────────────────────────────────────────
+      ctx.save(); ctx.beginPath(); ctx.arc(pl.x, pl.y, pr, 0, Math.PI*2); ctx.clip();
+
+      // Base color
+      ctx.beginPath(); ctx.arc(pl.x, pl.y, pr, 0, Math.PI*2);
+      ctx.fillStyle = pl.col; ctx.fill();
+
+      // Horizontal atmospheric bands
+      const nBands = 5 + Math.floor(pr/4);
+      for (let k=0; k<nBands; k++) {
+        const bw = pr * (0.08 + Math.random()*0.14);
+        const by = pl.y - pr + (k/(nBands)) * pr*2;
+        const bright = k%2===0 ? 30 : -30;
+        ctx.fillStyle = shadeColor(pl.col, bright) + 'b0';
+        ctx.fillRect(pl.x - pr, by, pr*2, bw);
+      }
+
+      // Storm spot (for big gas giants)
+      if (pr > 10) {
+        const sx = pl.x - pr*0.2, sy = pl.y + pr*0.15;
+        const sRad = pr * 0.22;
+        const sg2 = ctx.createRadialGradient(sx, sy, 0, sx, sy, sRad);
+        sg2.addColorStop(0, 'rgba(255,200,120,.7)');
+        sg2.addColorStop(.5, 'rgba(220,100,60,.4)');
+        sg2.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = sg2;
+        ctx.beginPath(); ctx.ellipse(sx, sy, sRad, sRad*.6, 0, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+
+      // Limb darkening
+      const ld = ctx.createRadialGradient(pl.x, pl.y, pr*.5, pl.x, pl.y, pr);
+      ld.addColorStop(0, 'rgba(0,0,0,0)');
+      ld.addColorStop(1, 'rgba(0,0,0,.5)');
+      ctx.beginPath(); ctx.arc(pl.x, pl.y, pr, 0, Math.PI*2);
+      ctx.fillStyle = ld; ctx.fill();
+
+      // Rings for large gas giants (stage 4 or mass > 150)
+      if (pr > 12 && (stage === 4 || pl.mass > 150)) {
+        ctx.save();
+        ctx.translate(pl.x, pl.y);
+        ctx.scale(1, 0.28); // tilt rings
+        const r1 = pr*1.45, r2 = pr*2.1, r3 = pr*2.5;
+        // Outer diffuse ring
+        const rng2 = ctx.createRadialGradient(0,0,r1,0,0,r3);
+        rng2.addColorStop(0,   pl.col + '00');
+        rng2.addColorStop(0.1, pl.col + '60');
+        rng2.addColorStop(0.5, pl.col + '40');
+        rng2.addColorStop(0.8, pl.col + '20');
+        rng2.addColorStop(1,   pl.col + '00');
+        ctx.beginPath();
+        ctx.arc(0,0,r3,0,Math.PI*2); ctx.arc(0,0,r1,0,Math.PI*2,true);
+        ctx.fillStyle = rng2; ctx.fill();
+        ctx.restore();
+
+        // Ring front half over planet
+        ctx.save();
+        ctx.translate(pl.x, pl.y);
+        ctx.scale(1, 0.28);
+        ctx.beginPath(); ctx.arc(0,0,r2,0,Math.PI); // bottom half arc only
+        ctx.strokeStyle = pl.col + '70'; ctx.lineWidth = pr*0.18; ctx.stroke();
+        ctx.restore();
+      }
+    }
+
+    // Specular highlight (on top of everything)
+    ctx.beginPath(); ctx.arc(pl.x-pr*.28, pl.y-pr*.32, pr*.32, 0, Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.2)'; ctx.fill();
+
+    // Label
+    if (stage === 4 || pl.mass > 80) {
+      ctx.font = `bold ${Math.min(11, 8+Math.floor(pr/6))}px monospace`;
+      ctx.textAlign='center';
+      ctx.fillStyle='rgba(255,240,200,.85)';
+      ctx.fillText(pl.name || (pl.rocky?'●rocky':'◉ gas'), pl.x, pl.y - pr - 7);
+      if (stage===4 && pr > 8) {
+        ctx.font='9px monospace'; ctx.fillStyle='rgba(160,180,220,.55)';
+        ctx.fillText((pl.orb/diskRadius()*5.2).toFixed(1)+' AU', pl.x, pl.y + pr + 13);
+      }
+    }
+  });
+
+  // Star (always)
+  const starR = stage < 1 ? 6 + stageT * 1.5 : 14;
+  for (let g=6;g>0;g--) {
+    ctx.beginPath(); ctx.arc(CX, CY, starR+g*5, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,230,120,${(0.06-g*0.009).toFixed(3)})`; ctx.fill();
+  }
+  ctx.beginPath(); ctx.arc(CX, CY, starR, 0, Math.PI*2);
+  const sg = ctx.createRadialGradient(CX,CY,0,CX,CY,starR);
+  sg.addColorStop(0,'#fff8d0'); sg.addColorStop(.5,'#ffe060'); sg.addColorStop(1,'#ff9020');
+  ctx.fillStyle=sg; ctx.fill();
+}
+
+// ── UI updates ────────────────────────────────────────────────────────────────
+function updateStageUI() {
+  document.getElementById('stage-badge').textContent = `Stage ${stage+1} — ${STAGE_NAMES[stage]}`;
+  for (let i=0;i<5;i++) {
+    const el = document.getElementById('seg'+i);
+    el.className = 'stage-seg' + (i<stage?' done':i===stage?' active':'');
+  }
+}
+
+function updateSidebar() {
+  const alive = particles.filter(p=>p.alive).length;
+  document.getElementById('stat-badge').textContent = `Particles: ${alive}`;
+  document.getElementById('live-stats').innerHTML = [
+    `Stage: <span style="color:var(--gold)">${STAGE_NAMES[stage]}</span>`,
+    `Particles left: <span style="color:var(--cyan)">${alive}</span>`,
+    `Planets forming: <span style="color:var(--green)">${planets.length}</span>`,
+    `Sim time: <span style="color:var(--text)">${simT.toFixed(1)} s</span>`,
+    `Speed: <span style="color:var(--gold)">${speedMult}×</span>`,
+  ].map(s=>`<div>${s}</div>`).join('');
+
+  if (planets.length > 0) {
+    const sorted = [...planets].sort((a,b)=>a.orb-b.orb);
+    const maxR   = diskRadius();
+    document.getElementById('planet-list').innerHTML = sorted.map(pl => `
+      <div class="planet-row">
+        <div class="pdot" style="background:${pl.col}"></div>
+        <div class="pname">${pl.name || (pl.rocky?'Planetesimal (rocky)':'Planetesimal (icy)')}</div>
+        <div class="pmass">${pl.mass.toFixed(0)} M</div>
+        <div class="porb">${(pl.orb/maxR*5.2).toFixed(2)} AU</div>
+      </div>`).join('');
+  }
+}
+
+// ── Main loop ─────────────────────────────────────────────────────────────────
+function loop(ts) {
+  if (!lastTs) lastTs = ts;
+  const dtReal = Math.min((ts - lastTs)/1000, 0.033);
+  lastTs = ts;
+  const dt = dtReal * speedMult;
+  if (!paused) simStep(dt);
+  render(ts);
+  requestAnimationFrame(loop);
+}
+
+init();
+requestAnimationFrame(loop);
+setInterval(updateSidebar, 400);
+
+// ── Controls ──────────────────────────────────────────────────────────────────
+document.getElementById('btn-restart').onclick = () => init();
+document.getElementById('btn-skip').onclick    = () => nextStage();
+document.getElementById('btn-pause').onclick   = function() {
+  paused=!paused; lastTs=null;
+  this.textContent=paused?'▶ Play':'⏸ Pause';
+  this.classList.toggle('lit',paused);
+};
+
+document.getElementById('sl-spd').oninput = function() {
+  speedMult = parseFloat(this.value);
+  document.getElementById('spd-v').textContent = speedMult+'×';
+};
+document.getElementById('sl-mass').oninput = function() {
+  diskMassLv = parseInt(this.value)-1;
+  const labels=['Light','Medium','Heavy'];
+  const parts =[300,500,750];
+  const exp   =['3 planets expected','4 planets expected','5-6 planets expected'];
+  document.getElementById('mass-v').textContent   = labels[diskMassLv];
+  document.getElementById('mass-sub').textContent = `~${parts[diskMassLv]} particles · ${exp[diskMassLv]}`;
+};
+document.getElementById('sl-turb').oninput = function() {
+  turbLv = parseInt(this.value);
+  document.getElementById('turb-v').textContent = ['Low','Medium','High'][turbLv];
+};
+
+
+let narrateOn  = false;
+let speaking   = false;
+let lastNarrStage = -1;
+
+const NARRATION = [
+  // Stage 0 — Nebula
+  `Stage 1: Nebula Collapse. What you are seeing is a giant molecular cloud — mostly hydrogen and helium — beginning to collapse under its own gravity. This process, called the Jeans instability, begins when the cloud's gravity overcomes its thermal pressure. A nearby supernova likely triggered this collapse for our own solar system, 4.6 billion years ago. Watch the coloured wisps fall inward.`,
+
+  // Stage 1 — Disk
+  `Stage 2: Disk Formation. As the cloud collapses, conservation of angular momentum takes over — just like a spinning ice skater pulling in their arms. The cloud cannot fall into a point, so it flattens into a spinning protoplanetary disk. Notice the inner regions orbit faster than the outer ones — this is Keplerian differential rotation, the same physics that governs planets today. The dashed ring marks the snow line, where water freezes solid.`,
+
+  // Stage 2 — Clumping
+  `Stage 3: Dust Clumping. Solid grains in the disk begin sticking together through electrostatic forces and gentle collisions. Watch small planetesimals appear — seeds of future planets. Inside the snow line, you see rocky orange bodies. Beyond the snow line, icy blue bodies form, where four times more solid material is available. The largest seeds will grow fastest through gravitational focusing.`,
+
+  // Stage 3 — Accretion
+  `Stage 4: Runaway Accretion. The largest planetesimals now grow dramatically — their gravity bends the paths of nearby particles inward, sweeping them up far faster than small bodies can. This runaway accretion produces a few dominant protoplanets. Watch the particle count drop as planets grow. Occasionally two protoplanets collide in a giant impact — our own Moon formed this way, when a Mars-sized body struck the early Earth.`,
+
+  // Stage 4 — Final system
+  `Stage 5: Final Planetary System. The gas has been swept away by the young star's solar wind, ending planet growth. What remains is a stable planetary system. Rocky terrestrial worlds orbit close to the star. Gas and ice giants — some with rings — occupy the outer regions. This is the same process that built every solar system in the galaxy. The diversity of planet sizes and orbits you see here mirrors the extraordinary variety found by the Kepler and James Webb space telescopes.`,
+];
+
+// Pick a good voice — prefer a natural English voice
+let chosenVoice = null;
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  // Priority: Google UK English Female, then any en-GB, then en-US, then first available
+  chosenVoice =
+    voices.find(v => v.name === 'Google UK English Female') ||
+    voices.find(v => v.lang === 'en-GB' && !v.name.includes('Male')) ||
+    voices.find(v => v.lang.startsWith('en-US') && v.name.toLowerCase().includes('female')) ||
+    voices.find(v => v.lang.startsWith('en')) ||
+    voices[0] || null;
+}
+speechSynthesis.onvoiceschanged = pickVoice;
+pickVoice();
+
+function narrate(text) {
+  if (!narrateOn || !('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  speaking = false;
+  const utt = new SpeechSynthesisUtterance(text);
+  if (chosenVoice) utt.voice = chosenVoice;
+  utt.rate  = 0.92;   // slightly slower — clearer for science content
+  utt.pitch = 1.0;
+  utt.volume = 1.0;
+  utt.onstart = () => {
+    speaking = true;
+    document.getElementById('narration-text').textContent = text;
+  };
+  utt.onend = utt.onerror = () => { speaking = false; };
+  speechSynthesis.speak(utt);
+}
+
+function stopNarration() {
+  speechSynthesis.cancel();
+  speaking = false;
+}
+
+// Hook narration into stage changes
+const _origNextStage = nextStage;
+function nextStageWithNarration() {
+  _origNextStage();
+  setTimeout(() => narrate(NARRATION[stage]), 800); // short delay so sim starts first
+}
+
+// Override nextStage globally
+// (we patch the updateStageUI trigger instead)
+function maybeNarrateStage() {
+  if (narrateOn && stage !== lastNarrStage) {
+    lastNarrStage = stage;
+    setTimeout(() => narrate(NARRATION[stage]), 800);
+  }
+}
+
+// Patch updateStageUI to also trigger narration check
+const _origUpdateStageUI = updateStageUI;
+function updateStageUI() {
+  _origUpdateStageUI();
+  maybeNarrateStage();
+}
+
+// Narration button
+document.getElementById('btn-narrate').onclick = function() {
+  if (!('speechSynthesis' in window)) {
+    alert('Sorry — your browser does not support speech synthesis. Try Chrome or Edge.');
+    return;
+  }
+  narrateOn = !narrateOn;
+  this.textContent = narrateOn ? '🔊 Narration ON' : '🔇 Narration';
+  this.classList.toggle('lit', narrateOn);
+  document.getElementById('narration-box').style.display = narrateOn ? 'block' : 'none';
+
+  if (narrateOn) {
+    pickVoice();
+    lastNarrStage = -1; // force re-narrate current stage
+    maybeNarrateStage();
+  } else {
+    stopNarration();
+    document.getElementById('narration-text').textContent = '—';
+  }
+};
+
+// Pause speech when sim is paused, resume when unpaused
+const _origPauseBtn = document.getElementById('btn-pause').onclick;
+document.getElementById('btn-pause').onclick = function() {
+  _origPauseBtn.call(this);
+  if (paused) { if (narrateOn) speechSynthesis.pause(); }
+  else        { if (narrateOn) speechSynthesis.resume(); }
+};
+
+// Re-narrate on restart
+const _origRestart = document.getElementById('btn-restart').onclick;
+document.getElementById('btn-restart').onclick = function() {
+  stopNarration();
+  lastNarrStage = -1;
+  _origRestart();
+  if (narrateOn) setTimeout(() => narrate(NARRATION[0]), 1000);
+};
+</script>
+</body>
+</html>
