@@ -112,6 +112,11 @@ footer{border-top:1px solid var(--border);padding:16px 28px;text-align:center;fo
       <button id="btn-light">💡 Light</button>
       <button id="btn-pause">⏸ Pause</button>
       <button id="btn-reset">↺ Reset</button>
+      <button id="btn-audio">🔇 Hear It</button>
+    </div>
+    <div id="audio-info" style="display:none;font-family:monospace;font-size:10px;color:var(--text3);margin-bottom:10px;padding:7px 10px;background:var(--bg3);border-radius:6px;border:1px solid var(--border2);">
+      🎵 Playing Doppler-shifted tone at observer position<br>
+      <span id="audio-freq-display" style="color:var(--cyan);">— Hz</span> &nbsp;·&nbsp; <span id="audio-note-display" style="color:var(--gold);">—</span> &nbsp;·&nbsp; Move the 👁 observer to hear pitch change
     </div>
 
     <div class="param">
@@ -533,28 +538,7 @@ function getObsFreq() {
   return dopplerLight(vsToward / WAVE_PX_PER_S);
 }
 
-// ── Main loop ─────────────────────────────────────────────────────────────────
-function loop(ts) {
-  if (!lastTs) lastTs = ts;
-  const dt = Math.min((ts - lastTs) / 1000, 0.033);
-  lastTs = ts;
-  if (!paused) simStep(dt);
-  render();
-
-  // Mach badge
-  const M = srcSpeed;
-  const machEl = document.getElementById('badge-mach');
-  if (soundMode) {
-    machEl.textContent = `Mach ${M.toFixed(2)}`;
-    machEl.style.color = M >= 1 ? '#ffaa30' : 'var(--text2)';
-  } else {
-    machEl.textContent = `β = ${M.toFixed(2)}c`;
-    machEl.style.color = 'var(--violet)';
-  }
-
-  requestAnimationFrame(loop);
-}
-requestAnimationFrame(loop);
+// ── Main loop defined below after audio setup ─────────────────────────────────
 
 // ── Live readout ──────────────────────────────────────────────────────────────
 function updateReadout() {
@@ -695,6 +679,97 @@ canvas.addEventListener('mouseup',    endDrag);
 canvas.addEventListener('touchstart', startDrag, {passive:false});
 canvas.addEventListener('touchmove',  moveDrag,  {passive:false});
 canvas.addEventListener('touchend',   endDrag);
+
+// ── Web Audio — Real-time Doppler tone ────────────────────────────────────────
+let audioCtx = null, oscillator = null, gainNode = null, audioOn = false;
+
+function startAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Oscillator — we'll update its frequency every animation frame
+    oscillator = audioCtx.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = getObsFreq();
+
+    // Soft gain to avoid clipping
+    gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0;
+
+    // Add subtle reverb via convolver for realism
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    oscillator.start();
+  }
+
+  // Fade in smoothly
+  gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+  gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
+  gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.3);
+  audioOn = true;
+
+  document.getElementById('btn-audio').textContent = '🔊 Mute';
+  document.getElementById('btn-audio').classList.add('lit');
+  document.getElementById('audio-info').style.display = 'block';
+}
+
+function stopAudio() {
+  if (gainNode && audioCtx) {
+    gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+  }
+  audioOn = false;
+  document.getElementById('btn-audio').textContent = '🔇 Hear It';
+  document.getElementById('btn-audio').classList.remove('lit');
+  document.getElementById('audio-info').style.display = 'none';
+}
+
+document.getElementById('btn-audio').onclick = function() {
+  if (!soundMode) {
+    this.textContent = '🔇 Sound only';
+    setTimeout(() => { this.textContent = '🔇 Hear It'; }, 1500);
+    return;
+  }
+  audioOn ? stopAudio() : startAudio();
+};
+
+// Update oscillator frequency every frame to track Doppler shift live
+const _origLoop = loop;
+function loop(ts) {
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min((ts - lastTs) / 1000, 0.033);
+  lastTs = ts;
+  if (!paused) simStep(dt);
+  render();
+
+  // Update audio frequency smoothly (glide 80ms)
+  if (audioOn && oscillator && audioCtx && soundMode) {
+    const fObs = getObsFreq();
+    const clamped = Math.max(20, Math.min(4000, fObs));
+    oscillator.frequency.setTargetAtTime(clamped, audioCtx.currentTime, 0.08);
+
+    // Update audio info display
+    document.getElementById('audio-freq-display').textContent = clamped.toFixed(1) + ' Hz';
+    document.getElementById('audio-note-display').textContent = freqToNote(clamped);
+  }
+
+  // Mach badge
+  const M = srcSpeed;
+  const machEl = document.getElementById('badge-mach');
+  if (soundMode) {
+    machEl.textContent = `Mach ${M.toFixed(2)}`;
+    machEl.style.color = M >= 1 ? '#ffaa30' : 'var(--text2)';
+  } else {
+    machEl.textContent = `β = ${M.toFixed(2)}c`;
+    machEl.style.color = 'var(--violet)';
+  }
+
+  requestAnimationFrame(loop);
+}
+// Restart the loop with audio-aware version (cancel old frame via flag)
+lastTs = null;
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
