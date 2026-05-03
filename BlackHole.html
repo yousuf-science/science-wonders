@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-32ZMW31TWT');
+    </script>
+
+    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Hole Formation — Science Wonders</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#06101e;--bg3:#0a1828;
+  --border:#152035;--border2:#1e3050;
+  --text:#c0d8f0;--text2:#5878a0;--text3:#3a5070;
+  --gold:#f0c060;--gold2:#ffe8a0;
+  --cyan:#20d8ff;--violet:#b060ff;--green:#40ffaa;
+  --orange:#ff9040;--red:#ff4060;--pink:#ff60c0;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;}
+header{display:flex;align-items:center;gap:20px;padding:12px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.98);position:sticky;top:0;z-index:20;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.hdr-sub{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+
+/* ── Canvas ── */
+.cwrap{position:relative;max-width:960px;margin:18px auto 0;padding:0 20px;}
+canvas{display:block;width:100%;border-radius:14px;border:1px solid #1a3060;background:#000;}
+.cbadge{position:absolute;font-family:monospace;font-size:10px;background:rgba(0,8,20,.92);padding:5px 12px;border-radius:5px;pointer-events:none;letter-spacing:1.2px;}
+.cb-tl{top:12px;left:32px;font-size:12px;font-weight:bold;}
+.cb-tr{top:12px;right:32px;color:var(--text2);}
+
+/* ── Stage bar ── */
+.sbar-wrap{max-width:960px;margin:10px auto 0;padding:0 20px;}
+.sbar{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;height:32px;display:flex;}
+.sseg{flex:1;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:9px;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);border-right:1px solid var(--border);transition:all .5s;cursor:pointer;}
+.sseg:last-child{border-right:none;}
+.sseg:hover{background:rgba(255,255,255,.03);color:var(--text2);}
+.sseg.active{color:var(--gold);background:rgba(240,192,96,.09);font-weight:bold;}
+.sseg.done{color:var(--green);background:rgba(64,255,170,.05);}
+
+/* ── Layout ── */
+.main{max-width:960px;margin:12px auto 0;display:grid;grid-template-columns:290px 1fr;gap:12px;padding:0 20px;}
+@media(max-width:700px){.main{grid-template-columns:1fr;}}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.ptitle{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--border);}
+
+/* ── Buttons ── */
+.brow{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
+button{font-family:monospace;font-size:11px;padding:5px 12px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;}
+button:hover{background:var(--bg3);color:var(--text);border-color:#4080c0;}
+button.lit{border-color:#3a8fff;color:#3a8fff;}
+button.go{border-color:var(--green);color:var(--green);}
+button.danger{border-color:var(--red);color:var(--red);}
+
+/* ── Sliders ── */
+.ctrl{margin-bottom:11px;}
+.ctrl-row{display:flex;justify-content:space-between;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctrl-val{color:var(--gold);font-weight:bold;}
+.ctrl-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:#3a8fff;cursor:pointer;height:18px;}
+
+/* ── Narration ── */
+.nbox{display:none;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:10px 13px;margin-bottom:11px;font-family:monospace;font-size:10px;line-height:1.85;}
+.nctrls{display:flex;gap:7px;align-items:center;margin-bottom:7px;flex-wrap:wrap;}
+.nctrls select{flex:1;min-width:110px;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:4px;font-family:monospace;font-size:10px;padding:2px 6px;}
+#narr-text{color:var(--gold2);line-height:1.75;}
+
+/* ── Stage-specific controls ── */
+.stage-ctrls{transition:opacity .4s;}
+
+/* ── Fact panel ── */
+.factbox{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:13px 15px;font-size:13px;color:var(--text2);line-height:1.85;min-height:88px;}
+.factbox strong{color:var(--gold2);}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px;}
+.statcell{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 9px;}
+.slbl{font-family:monospace;font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:2px;}
+.sval{font-family:monospace;font-size:12px;font-weight:bold;}
+
+/* ── Theory ── */
+.theory-wrap{max-width:960px;margin:18px auto;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px 34px;}
+.thdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:22px;padding-bottom:11px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:24px 0 9px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:9px;line-height:1.85;}
+.teq{font-family:monospace;font-size:12px;background:var(--bg3);border-left:3px solid var(--gold);padding:11px 18px;margin:12px 0;border-radius:0 7px 7px 0;color:var(--gold2);}
+.teq .tv{font-size:10px;color:var(--text3);margin-top:5px;line-height:1.8;}
+.hbox{border-radius:7px;padding:13px 16px;margin:14px 0;font-family:monospace;font-size:12px;line-height:1.85;}
+.hb-g{background:rgba(240,192,96,.05);border:1px solid rgba(240,192,96,.18);color:#d4aa60;}
+.hb-c{background:rgba(32,216,255,.04);border:1px solid rgba(32,216,255,.16);color:#7ae8ff;}
+.hb-r{background:rgba(255,64,96,.04);border:1px solid rgba(255,64,96,.18);color:#ff9098;}
+.utab{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:9px;}
+.utab td{padding:6px 11px;border-bottom:1px solid var(--border);color:var(--text2);}
+.utab td:first-child{color:var(--gold2);width:230px;}
+.utab tr:last-child td{border-bottom:none;}
+footer{border-top:1px solid var(--border);padding:14px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="hdr-sub">Black Hole Formation</div>
+</header>
+
+<div class="cwrap">
+  <canvas id="c" height="500"></canvas>
+  <div class="cbadge cb-tl" id="sb">⭐ Stage 1 — A Living Star</div>
+  <div class="cbadge cb-tr" id="sb2">25 × Sun's mass</div>
+</div>
+
+<div class="sbar-wrap">
+  <div class="sbar" id="sbar">
+    <div class="sseg active" id="seg0">1·Star</div>
+    <div class="sseg" id="seg1">2·Giant</div>
+    <div class="sseg" id="seg2">3·Supernova</div>
+    <div class="sseg" id="seg3">4·Collapse</div>
+    <div class="sseg" id="seg4">5·Black Hole</div>
+    <div class="sseg" id="seg5">6·Accretion</div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <div class="ptitle">Controls</div>
+    <div class="brow">
+      <button id="btn-restart" class="go">▶ Restart</button>
+      <button id="btn-pause">⏸ Pause</button>
+      <button id="btn-skip">⏭ Next</button>
+      <button id="btn-narrate">🔇 Voice</button>
+    </div>
+
+    <div class="nbox" id="nbox">
+      <div class="nctrls">
+        <span style="color:var(--text3);font-size:9px;">VOICE</span>
+        <select id="vsel"><option>Loading…</option></select>
+        <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".88" style="width:50px;">
+        <span id="rate-v" style="color:var(--gold);min-width:26px;">0.9×</span>
+      </div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">NOW SPEAKING</div>
+      <div id="narr-text">—</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:6px;">⏳ Stage waits until voice finishes</div>
+    </div>
+
+    <!-- Always-visible: star mass -->
+    <div class="ctrl">
+      <div class="ctrl-row"><span>Star mass</span><span class="ctrl-val" id="cv-mass">25 × Sun</span></div>
+      <input type="range" id="sl-mass" min="8" max="80" step="1" value="25">
+      <div class="ctrl-sub" id="cs-mass">Massive — ends as black hole · r_s = 74 km</div>
+    </div>
+
+    <!-- Stage-specific controls -->
+    <div class="stage-ctrls" id="stage-ctrls">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel">
+    <div class="ptitle" id="fact-title">What Is Happening?</div>
+    <div class="factbox" id="factbox">Loading…</div>
+    <div class="statgrid" id="statgrid">
+      <div class="statcell"><div class="slbl">Star Mass</div><div class="sval" id="sv0" style="color:var(--gold);">25 M☉</div></div>
+      <div class="statcell"><div class="slbl">Core Temp</div><div class="sval" id="sv1" style="color:var(--orange);">15M °C</div></div>
+      <div class="statcell"><div class="slbl">Event Horizon</div><div class="sval" id="sv2" style="color:var(--red);">74 km</div></div>
+      <div class="statcell"><div class="slbl">Stage</div><div class="sval" id="sv3" style="color:var(--cyan);">1 / 6</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <div class="thdr">The Full Story — In Plain Language</div>
+  <h3>What is a Star?</h3>
+  <p>A star is a giant ball of hydrogen gas so massive that gravity squeezes its core until hydrogen atoms fuse into helium, releasing light and heat. This outward energy push perfectly balances gravity's inward pull — for millions to billions of years.</p>
+  <h3>Why Do Massive Stars Die Faster?</h3>
+  <p>Heavier gravity means more fuel burned faster. Our Sun lasts 10 billion years. A star 25× heavier burns so furiously it exhausts its fuel in just 7 million years — then catastrophe strikes.</p>
+  <h3>The Red Giant Phase</h3>
+  <p>When hydrogen runs out, the core shrinks and heats until helium ignites. The extra energy puffs the star into a red supergiant hundreds of times its original size. Inside, heavier and heavier elements burn in shells — until iron forms. Iron cannot release energy by fusing. The fire goes out permanently.</p>
+  <div class="hbox hb-g"><strong>Why iron is special:</strong> Every element lighter than iron releases energy when fused. Iron absorbs it. Once the core is iron, fusion stops forever — and gravity wins instantly.</div>
+  <h3>The Supernova</h3>
+  <p>The iron core collapses in under a second — releasing more energy than our Sun will produce in its entire lifetime. The outer star is blasted away in a supernova so bright it outshines 200 billion stars.</p>
+  <div class="hbox hb-c"><strong>You are made of supernovae:</strong> The gold in jewellery, iron in blood, calcium in bones — all forged in dying stars and scattered by explosions like this, billions of years ago.</div>
+  <h3>Birth of a Black Hole</h3>
+  <p>If the core remnant exceeds ~2-3 solar masses, nothing stops the collapse. It crosses the Schwarzschild radius — the event horizon — where escape velocity exceeds light speed. A black hole is born.</p>
+  <div class="teq">Event horizon radius = 2 × G × Mass / c²
+    <div class="tv">25 M☉ star → r_s ≈ 74 km · Sun → 3 km · Earth → 9 mm (a marble)</div>
+  </div>
+  <div class="hbox hb-r"><strong>Hawking Radiation:</strong> Black holes slowly evaporate via quantum effects — but a stellar black hole would take 10⁶⁷ years to disappear. The universe is only 1.4×10¹⁰ years old.</div>
+  <h3>The Accretion Disk</h3>
+  <p>Gas spiraling in forms a superheated disk glowing in X-rays — how we detect black holes. Magnetic fields launch relativistic jets perpendicular to the disk. The 2019 Event Horizon Telescope image showed exactly this glowing ring around a dark shadow.</p>
+  <table class="utab">
+    <tr><td>First black hole image</td><td>M87* — 2019, 6.5 billion M☉</td></tr>
+    <tr><td>Milky Way centre BH</td><td>Sgr A* — 4 million M☉</td></tr>
+    <tr><td>Nearest black hole</td><td>~1,600 light-years away</td></tr>
+    <tr><td>First gravitational waves</td><td>LIGO 2015 — merging black holes</td></tr>
+    <tr><td>Chandrasekhar limit</td><td>1.4 M☉ — max white dwarf mass</td></tr>
+    <tr><td>TOV limit</td><td>~2–3 M☉ — max neutron star mass</td></tr>
+  </table>
+</div></div>
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS SIMULATIONS</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// NARRATION STATE — must be at top
+// ═══════════════════════════════════════════════════════════════════════════
+let narrateOn=false, speaking=false, lastNarrStage=-1, chosenVoice=null, speechRate=.88;
+function maybeNarrate(){
+  if(narrateOn && stage!==lastNarrStage){
+    lastNarrStage=stage; speaking=true;
+    setTimeout(()=>narrate(NARR[stage]),900);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SIM STATE
+// ═══════════════════════════════════════════════════════════════════════════
+let stage=0, stageT=0, paused=false, lastTs=null;
+// Per-stage tuneable params
+let P={
+  mass:25,       // star mass (M☉)
+  speed:1.5,     // global speed mult
+  flares:6,      // stage 0: number of flares
+  rotation:1.0,  // stage 0/1: rotation speed
+  expand:1.0,    // stage 1: expansion rate
+  blastPow:1.0,  // stage 2: explosion power
+  turbulence:.5, // stage 3: collapse turbulence
+  diskDens:1.0,  // stage 5: disk density
+  jetPow:1.0,    // stage 5: jet power
+  zoom:1.0,      // stage 4/5: zoom level
+};
+
+const STAGE_DUR=[20,20,14,12,18,999];
+const STAGE_NAMES=['A Living Star','Growing into a Giant','The Great Explosion','Collapsing into Darkness','The Black Hole','Feeding the Monster'];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CANVAS
+// ═══════════════════════════════════════════════════════════════════════════
+const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
+let W,H,CX,CY;
+function resize(){
+  const r=canvas.getBoundingClientRect();
+  W=canvas.width=Math.round(r.width); H=canvas.height=500; CX=W/2; CY=H/2;
+}
+resize(); window.addEventListener('resize',resize);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BACKGROUND STARS — some are lensed in stages 4-5
+// ═══════════════════════════════════════════════════════════════════════════
+const BGS=Array.from({length:280},()=>({
+  x:Math.random(), y:Math.random(), b:.5+Math.random()*.5,
+  s:.2+Math.random()*1.0, tw:Math.random()*Math.PI*2, col:Math.random()
+}));
+
+function drawBg(ts,bright=1,lensR=0){
+  BGS.forEach(s=>{
+    let sx=s.x*W, sy=s.y*H;
+    // Gravitational lensing — bend stars around black hole
+    if(lensR>0){
+      const dx=sx-CX, dy=sy-CY, d=Math.sqrt(dx*dx+dy*dy);
+      if(d>lensR && d<lensR*5){
+        const bend=lensR*lensR*1.8/(d*d);
+        sx+=dx/d*-bend*15; sy+=dy/d*-bend*15;
+      }
+    }
+    const tw=.08+.08*Math.sin(ts*.0004+s.tw);
+    const hue=s.col<.3?'210,230,255':s.col<.6?'255,240,210':'255,200,220';
+    ctx.fillStyle=`rgba(${hue},${(bright*tw).toFixed(3)})`;
+    ctx.beginPath(); ctx.arc(sx,sy,s.s,0,Math.PI*2); ctx.fill();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PARTICLE SYSTEMS
+// ═══════════════════════════════════════════════════════════════════════════
+let ejecta=[], diskP=[], shockRings=[], prominences=[];
+
+function spawnProminences(){
+  prominences=Array.from({length:12},(_,i)=>({
+    baseAng:i/12*Math.PI*2, phase:Math.random()*Math.PI*2,
+    len:.4+Math.random()*.6, speed:.3+Math.random()*.4, width:4+Math.random()*8
+  }));
+}
+
+function spawnEjecta(){
+  ejecta=[];
+  const n=Math.floor(500*P.blastPow);
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, spd=(100+Math.random()*280)*P.blastPow;
+    const t=Math.random();
+    const col=t<.25?`255,${160+Math.random()*95|0},30`:
+               t<.5?`255,${220+Math.random()*35|0},60`:
+               t<.75?`255,${80+Math.random()*60|0},30`:'255,255,200';
+    ejecta.push({x:CX,y:CY,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd,
+      r:.8+Math.random()*2.8,col,life:1+Math.random()*.6,decay:.09+Math.random()*.1});
+  }
+  shockRings=[
+    {r:8,vr:250*P.blastPow,life:1,w:5,col:'255,250,200'},
+    {r:8,vr:160*P.blastPow,life:1,w:9,col:'255,180,60'},
+    {r:8,vr:90*P.blastPow,life:.9,w:14,col:'255,100,30'},
+  ];
+}
+
+function spawnDisk(){
+  diskP=[];
+  const bhR=bhPx(), n=Math.floor(420*P.diskDens);
+  for(let i=0;i<n;i++){
+    const orb=bhR*2.4+Math.pow(Math.random(),.5)*bhR*8;
+    const ang=Math.random()*Math.PI*2;
+    const heat=Math.pow(Math.max(0,1-(orb-bhR*2.4)/(bhR*8)),1.6);
+    diskP.push({orb,ang,heat,vang:3.2/Math.sqrt(orb/bhR),
+      z:Math.random()>.5?1:-1}); // z: front or back
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHYSICS HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+const G=6.674e-11, C=2.998e8, MSUN=1.989e30;
+function rsKm(){return (2*G*P.mass*MSUN/(C*C)/1000).toFixed(1);}
+function bhPx(){return Math.max(10,P.mass*1.1)*P.zoom;}
+
+function heatRGB(t){
+  // Black→deep red→orange→yellow→white-blue (like real accretion disks)
+  if(t<.25){const v=t/.25;return[v*180|0,0,v*20|0];}
+  if(t<.5){const v=(t-.25)/.25;return[(180+v*75)|0,v*80|0,20];}
+  if(t<.75){const v=(t-.5)/.25;return[255,(80+v*170)|0,(20+v*60)|0];}
+  const v=(t-.75)/.25;return[255,(250+v*5)|0,(80+v*175)|0];
+}
+function heatStr(t,a=1){const[r,g,b]=heatRGB(t);return`rgba(${r},${g},${b},${a})`;}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STAGE RENDERERS
+// ═══════════════════════════════════════════════════════════════════════════
+
+/* ── STAGE 0: Main sequence star ────────────────────────────────────────── */
+function renderS0(ts){
+  drawBg(ts,1);
+  const R=62+P.mass*.4, pulse=.5+.5*Math.sin(ts*.0022);
+  const rot=ts*P.rotation*.0006;
+
+  // Deep corona — layered glows
+  const coronaColors=['255,220,80','255,160,40','255,80,20','200,40,0'];
+  coronaColors.forEach((c,i)=>{
+    const layers=12-i*2;
+    for(let g=layers;g>0;g--){
+      ctx.beginPath(); ctx.arc(CX,CY,R+g*(14+i*6)+pulse*8,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${c},${(.022-g*.0012+pulse*.004).toFixed(4)})`; ctx.fill();
+    }
+  });
+
+  // Magnetic field lines arcing out
+  for(let m=0;m<8;m++){
+    const ma=rot+m/8*Math.PI*2;
+    const r1=R*.7, r2=R*1.8+pulse*20;
+    ctx.beginPath();
+    ctx.moveTo(CX+Math.cos(ma)*r1,CY+Math.sin(ma)*r1);
+    ctx.quadraticCurveTo(
+      CX+Math.cos(ma+.5)*r2, CY+Math.sin(ma+.5)*r2,
+      CX+Math.cos(ma+1.0)*R*.8, CY+Math.sin(ma+1.0)*R*.8
+    );
+    ctx.strokeStyle=`rgba(255,200,60,${(.15+pulse*.1).toFixed(2)})`; ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  // Solar prominences
+  prominences.forEach((pr,i)=>{
+    const a=pr.baseAng+rot*.5+Math.sin(ts*.001+pr.phase)*.3;
+    const len=(R*.6+pulse*R*.3)*pr.len;
+    const cx1=CX+Math.cos(a+.4)*(R+len*.4);
+    const cy1=CY+Math.sin(a+.4)*(R+len*.4);
+    const cx2=CX+Math.cos(a-.3)*(R+len*.7);
+    const cy2=CY+Math.sin(a-.3)*(R+len*.7);
+    const ex=CX+Math.cos(a+.05)*(R+len);
+    const ey=CY+Math.sin(a+.05)*(R+len);
+    ctx.beginPath(); ctx.moveTo(CX+Math.cos(a)*R,CY+Math.sin(a)*R);
+    ctx.bezierCurveTo(cx1,cy1,cx2,cy2,ex,ey);
+    const g=ctx.createLinearGradient(CX+Math.cos(a)*R,CY+Math.sin(a)*R,ex,ey);
+    g.addColorStop(0,`rgba(255,220,60,.7)`); g.addColorStop(.5,`rgba(255,120,20,.5)`); g.addColorStop(1,'rgba(255,60,0,0)');
+    ctx.strokeStyle=g; ctx.lineWidth=pr.width*(1+pulse*.3); ctx.stroke();
+  });
+
+  // Star body with realistic gradient
+  const sg=ctx.createRadialGradient(CX-R*.2,CY-R*.2,2,CX,CY,R);
+  sg.addColorStop(0,'#fff9f0'); sg.addColorStop(.2,'#fff5c0'); sg.addColorStop(.5,'#ffe060');
+  sg.addColorStop(.8,'#ff9020'); sg.addColorStop(1,'#e05000');
+  ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.fillStyle=sg; ctx.fill();
+
+  // Surface: convection cells + dark sunspot regions
+  ctx.save(); ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.clip();
+  for(let i=0;i<24;i++){
+    const ca=rot+i*.261+ts*.00015, cr=R*(.55+.42*Math.abs(Math.sin(i*1.7)));
+    const cs=R*(.08+.05*Math.sin(i*2.3+ts*.001));
+    ctx.beginPath(); ctx.arc(CX+Math.cos(ca)*cr,CY+Math.sin(ca)*cr,cs,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,${140+Math.sin(i+ts*.001)*60|0},0,.14)`; ctx.fill();
+  }
+  // Sunspots
+  for(let s=0;s<P.flares;s++){
+    const sa=rot*.7+s/P.flares*Math.PI*2+ts*.0002;
+    const sr=R*(.4+.45*Math.sin(s*2.1));
+    ctx.beginPath(); ctx.ellipse(CX+Math.cos(sa)*sr,CY+Math.sin(sa)*sr,R*.065,R*.04,sa,0,Math.PI*2);
+    ctx.fillStyle='rgba(120,40,0,.35)'; ctx.fill();
+  }
+  ctx.restore();
+
+  // Flare jets — pointed outward
+  for(let f=0;f<P.flares;f++){
+    const fa=rot+f/P.flares*Math.PI*2+Math.sin(ts*.0014+f)*0.3;
+    const fl=25+40*Math.sin(ts*.0018+f*1.7+pulse);
+    const fw=6+5*Math.sin(ts*.002+f);
+    ctx.save(); ctx.translate(CX,CY); ctx.rotate(fa);
+    const fg=ctx.createLinearGradient(R,0,R+fl,0);
+    fg.addColorStop(0,`rgba(255,230,60,.7)`); fg.addColorStop(.4,`rgba(255,140,20,.4)`); fg.addColorStop(1,'rgba(255,60,0,0)');
+    ctx.beginPath(); ctx.moveTo(R,-fw/2); ctx.lineTo(R+fl,0); ctx.lineTo(R,fw/2); ctx.closePath();
+    ctx.fillStyle=fg; ctx.fill(); ctx.restore();
+  }
+
+  ctx.textAlign='center'; ctx.font='bold 12px monospace';
+  ctx.fillStyle='rgba(255,235,100,.8)'; ctx.fillText('🔥 HYDROGEN FUSION',CX,CY-R-28);
+  ctx.font='10px monospace'; ctx.fillStyle='rgba(255,200,60,.55)';
+  ctx.fillText('Radiation pressure ⇌ Gravity — perfectly balanced',CX,CY-R-12);
+}
+
+/* ── STAGE 1: Red supergiant ────────────────────────────────────────────── */
+function renderS1(ts){
+  drawBg(ts,.5);
+  const prog=Math.min(1,stageT/STAGE_DUR[1]*P.expand);
+  const R=Math.min(CY*.9, 65+prog*210), rot=ts*.0004*P.rotation;
+
+  // Outer atmosphere glow — multiple red/orange halos
+  for(let g=16;g>0;g--){
+    ctx.beginPath(); ctx.arc(CX,CY,R+g*18,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${180+g*4},${30+g*3},${g*2},.015)`; ctx.fill();
+  }
+  // Mid glow
+  const mg=ctx.createRadialGradient(CX,CY,R*.5,CX,CY,R*2.5);
+  mg.addColorStop(0,'rgba(255,80,10,.1)'); mg.addColorStop(.5,'rgba(200,30,0,.05)'); mg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=mg; ctx.fillRect(0,0,W,H);
+
+  // Convective envelope — visible bubbling
+  ctx.save(); ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.clip();
+  const rg=ctx.createRadialGradient(CX,CY,0,CX,CY,R);
+  rg.addColorStop(0,'#fff8e0'); rg.addColorStop(.1,'#ffdd80'); rg.addColorStop(.3,'#ff8820');
+  rg.addColorStop(.65,'#cc2800'); rg.addColorStop(.9,'#8a1000'); rg.addColorStop(1,'#600000');
+  ctx.fillStyle=rg; ctx.fillRect(CX-R-1,CY-R-1,R*2+2,R*2+2);
+  // Convection cells — large and slow
+  for(let i=0;i<32;i++){
+    const ca=rot*.6+i*.196, cr=R*(.6+.36*Math.abs(Math.sin(i*1.9+ts*.0002)));
+    ctx.beginPath(); ctx.arc(CX+Math.cos(ca)*cr,CY+Math.sin(ca)*cr,R*(.1+.06*Math.sin(i*2.7))*(1+Math.sin(ts*.0008+i)*.2),0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,${60+Math.sin(i)*40|0},0,.09)`; ctx.fill();
+  }
+  ctx.restore();
+
+  // Shell structure (interior onion layers) — visible through translucency
+  const shells=[
+    {r:.15,col:'rgba(255,255,240,.55)',lbl:'Fe'},
+    {r:.22,col:'rgba(200,180,255,.35)',lbl:'Si'},
+    {r:.3,col:'rgba(100,200,255,.25)',lbl:'O'},
+    {r:.4,col:'rgba(80,255,160,.18)',lbl:'C'},
+    {r:.52,col:'rgba(255,180,60,.12)',lbl:'He'},
+  ];
+  shells.forEach(sh=>{
+    ctx.beginPath(); ctx.arc(CX,CY,R*sh.r,0,Math.PI*2);
+    ctx.strokeStyle=sh.col; ctx.lineWidth=1.5+sh.r*2; ctx.stroke();
+    ctx.fillStyle=sh.col; ctx.font='8px monospace'; ctx.textAlign='left';
+    ctx.fillText(sh.lbl,CX+R*sh.r+3,CY+4);
+  });
+
+  ctx.textAlign='center'; ctx.font='bold 11px monospace';
+  ctx.fillStyle='rgba(255,180,80,.85)';
+  ctx.fillText('🌡 RED SUPERGIANT',CX,Math.max(18,CY-R-22));
+  ctx.font='10px monospace'; ctx.fillStyle='rgba(255,130,50,.55)';
+  ctx.fillText(`Swelling to ${(1+prog*400).toFixed(0)}× the Sun's diameter`,CX,Math.max(32,CY-R-7));
+  // Iron core label
+  ctx.font='9px monospace'; ctx.fillStyle='rgba(255,255,200,.65)';
+  ctx.fillText('☠ Iron core — fusion stops here',CX,CY+4);
+}
+
+/* ── STAGE 2: Supernova ─────────────────────────────────────────────────── */
+function renderS2(ts){
+  const prog=Math.min(1,stageT/STAGE_DUR[2]);
+  // Blinding white flash at t=0
+  if(prog<.07){
+    const f=1-prog/.07;
+    ctx.fillStyle=`rgba(255,252,220,${f.toFixed(3)})`; ctx.fillRect(0,0,W,H);
+  }
+  drawBg(ts,.3+prog*.7);
+
+  // Shock rings
+  shockRings.forEach(sr=>{
+    if(sr.life<=0)return;
+    const a=Math.min(1,sr.life*1.3).toFixed(2);
+    ctx.beginPath(); ctx.arc(CX,CY,sr.r,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(${sr.col},${a})`; ctx.lineWidth=sr.w*sr.life; ctx.stroke();
+    // Secondary diffuse ring
+    ctx.beginPath(); ctx.arc(CX,CY,sr.r,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(${sr.col},${(sr.life*.15).toFixed(3)})`; ctx.lineWidth=sr.w*sr.life*4; ctx.stroke();
+  });
+
+  // Main expanding nebula cloud
+  const sR=18+prog*Math.max(W,H)*.76;
+  const clouds=[
+    {s:.8,col:'255,200,80',a:.55},
+    {s:.65,col:'255,120,30',a:.35},
+    {s:.5,col:'255,60,20',a:.2},
+  ];
+  clouds.forEach(cl=>{
+    const g=ctx.createRadialGradient(CX,CY,sR*(.5+cl.s*.1),CX,CY,sR*cl.s);
+    g.addColorStop(0,`rgba(${cl.col},${(cl.a*(1-prog*.7)).toFixed(3)})`);
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(CX,CY,sR*cl.s,0,Math.PI*2); ctx.fill();
+  });
+  // Color rings — real supernova remnants have colored shells
+  const rColors=['255,80,40','255,160,60','200,220,255','180,140,255'];
+  rColors.forEach((c,i)=>{
+    ctx.beginPath(); ctx.arc(CX,CY,sR*(.7+i*.08),0,Math.PI*2);
+    ctx.strokeStyle=`rgba(${c},${Math.max(0,(.25-i*.03)*(1-prog*.5)).toFixed(3)})`;
+    ctx.lineWidth=2; ctx.stroke();
+  });
+
+  // Ejecta particles
+  ejecta.forEach(p=>{
+    if(p.life<=0)return;
+    const a=Math.min(1,p.life); const glow=p.life>0.6?Math.min(1,(p.life-.4)*2):0;
+    if(glow>0){
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.col},${(glow*.12).toFixed(3)})`; ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.col},${a.toFixed(2)})`; ctx.fill();
+  });
+
+  // Neutron star remnant
+  const nR=Math.max(5,14*(1-prog*.6));
+  for(let g=8;g>0;g--){
+    ctx.beginPath(); ctx.arc(CX,CY,nR+g*4,0,Math.PI*2);
+    ctx.fillStyle=`rgba(120,160,255,${(.04-g*.003).toFixed(4)})`; ctx.fill();
+  }
+  const ncg=ctx.createRadialGradient(CX,CY,0,CX,CY,nR);
+  ncg.addColorStop(0,'#ffffff'); ncg.addColorStop(.3,'#d0e0ff'); ncg.addColorStop(1,'#4060ff');
+  ctx.beginPath(); ctx.arc(CX,CY,nR,0,Math.PI*2); ctx.fillStyle=ncg; ctx.fill();
+  // Pulsar beams from neutron star
+  if(prog>.3){
+    const ba=ts*.012*P.rotation, beamA=(1-prog)*.7;
+    [[ba],[ba+Math.PI]].forEach(([a])=>{
+      const bg=ctx.createLinearGradient(CX,CY,CX+Math.cos(a)*200,CY+Math.sin(a)*200);
+      bg.addColorStop(0,`rgba(180,220,255,${beamA.toFixed(2)})`);
+      bg.addColorStop(.3,`rgba(100,160,255,${(beamA*.4).toFixed(2)})`);
+      bg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.moveTo(CX,CY);
+      ctx.lineTo(CX+Math.cos(a-0.05)*200,CY+Math.sin(a-0.05)*200);
+      ctx.lineTo(CX+Math.cos(a+0.05)*200,CY+Math.sin(a+0.05)*200);
+      ctx.closePath(); ctx.fillStyle=bg; ctx.fill();
+    });
+  }
+
+  ctx.textAlign='center'; ctx.font=`bold ${11+prog*4|0}px monospace`;
+  ctx.fillStyle=`rgba(255,230,80,${Math.min(1,prog*6).toFixed(2)})`;
+  ctx.fillText('💥 SUPERNOVA!',CX,CY-120);
+  ctx.font='10px monospace'; ctx.fillStyle='rgba(255,180,60,.75)';
+  ctx.fillText('Outshining 200 billion stars',CX,CY-102);
+  ctx.font='9px monospace'; ctx.fillStyle='rgba(160,255,180,.55)';
+  ctx.fillText(`Scattering gold, iron, calcium into the galaxy...`,CX,CY+120);
+}
+
+/* ── STAGE 3: Collapse ──────────────────────────────────────────────────── */
+function renderS3(ts){
+  const prog=Math.min(1,stageT/STAGE_DUR[3]);
+  drawBg(ts,.7+prog*.3);
+
+  // Warped spacetime grid — increasingly bent toward centre
+  const gs=44, warp=prog*3200*P.turbulence;
+  ctx.lineWidth=.8;
+  for(let gx=0;gx<=W;gx+=gs){
+    ctx.beginPath(); ctx.strokeStyle=`rgba(140,90,255,${(.15+prog*.12).toFixed(2)})`;
+    for(let gy=0;gy<=H;gy+=5){
+      const dx=gx-CX,dy=gy-CY,d=Math.sqrt(dx*dx+dy*dy)+1;
+      const p2=warp/(d+50);
+      const nx=gx-dx/d*p2+Math.sin(ts*.001+gy*.02)*prog*P.turbulence*3;
+      const ny=gy-dy/d*p2+Math.sin(ts*.001+gx*.02)*prog*P.turbulence*3;
+      gy===0?ctx.moveTo(nx,ny):ctx.lineTo(nx,ny);
+    }
+    ctx.stroke();
+  }
+  for(let gy=0;gy<=H;gy+=gs){
+    ctx.beginPath(); ctx.strokeStyle=`rgba(100,60,200,${(.12+prog*.1).toFixed(2)})`;
+    for(let gx=0;gx<=W;gx+=5){
+      const dx=gx-CX,dy=gy-CY,d=Math.sqrt(dx*dx+dy*dy)+1;
+      const p2=warp/(d+50);
+      const nx=gx-dx/d*p2+Math.sin(ts*.001+gy*.02)*prog*P.turbulence*3;
+      const ny=gy-dy/d*p2+Math.sin(ts*.001+gx*.02)*prog*P.turbulence*3;
+      gx===0?ctx.moveTo(nx,ny):ctx.lineTo(nx,ny);
+    }
+    ctx.stroke();
+  }
+
+  // Spacetime ripples — circular waves moving inward
+  for(let r=0;r<5;r++){
+    const rr=((ts*.05*40+r*60)%280)+20;
+    const ra=Math.max(0,.5-rr/280);
+    ctx.beginPath(); ctx.arc(CX,CY,rr,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(180,120,255,${(ra*prog).toFixed(3)})`; ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  // Collapsing core
+  const cR=Math.max(3,22*(1-prog*.9));
+  for(let g=10;g>0;g--){
+    ctx.beginPath(); ctx.arc(CX,CY,cR+g*prog*12,0,Math.PI*2);
+    ctx.fillStyle=`rgba(120,70,255,${(.08*prog).toFixed(4)})`; ctx.fill();
+  }
+  const cg=ctx.createRadialGradient(CX,CY,0,CX,CY,cR);
+  cg.addColorStop(0,'#ffffff'); cg.addColorStop(.35,'#c0b0ff'); cg.addColorStop(1,'#5030cc');
+  ctx.beginPath(); ctx.arc(CX,CY,cR,0,Math.PI*2); ctx.fillStyle=cg; ctx.fill();
+
+  // Matter infall streams — spiral shaped
+  for(let s=0;s<16;s++){
+    const sa=ts*.0008+s/16*Math.PI*2;
+    const sd=100+60*Math.sin(s*1.4)-prog*70;
+    const ex=CX+Math.cos(sa)*(cR+6), ey=CY+Math.sin(sa)*(cR+6);
+    const sx2=CX+Math.cos(sa+.6)*sd, sy2=CY+Math.sin(sa+.6)*sd;
+    ctx.beginPath();
+    ctx.moveTo(sx2,sy2);
+    ctx.quadraticCurveTo(CX+Math.cos(sa+.3)*sd*.5,CY+Math.sin(sa+.3)*sd*.5,ex,ey);
+    const sfrac=(.25+prog*.5);
+    ctx.strokeStyle=`rgba(200,150,255,${sfrac.toFixed(2)})`; ctx.lineWidth=1+prog; ctx.stroke();
+    // Arrow tip
+    const aa=Math.atan2(ey-CY,ex-CX);
+    ctx.fillStyle=`rgba(200,150,255,${sfrac.toFixed(2)})`;
+    ctx.beginPath(); ctx.moveTo(ex,ey);
+    ctx.lineTo(ex-8*Math.cos(aa-.5),ey-8*Math.sin(aa-.5));
+    ctx.lineTo(ex-8*Math.cos(aa+.5),ey-8*Math.sin(aa+.5));
+    ctx.closePath(); ctx.fill();
+  }
+
+  ctx.textAlign='center'; ctx.font='bold 12px monospace'; ctx.fillStyle='rgba(200,160,255,.9)';
+  ctx.fillText('SPACETIME COLLAPSING',CX,CY-118);
+  ctx.font='10px monospace'; ctx.fillStyle='rgba(170,130,255,.65)';
+  ctx.fillText('Every force in nature is helpless to stop it',CX,CY-100);
+  if(prog>.55){
+    ctx.font='bold 12px monospace'; ctx.fillStyle='rgba(255,100,120,.9)';
+    ctx.fillText('⚫ EVENT HORIZON FORMING',CX,CY+108);
+    ctx.font='10px monospace'; ctx.fillStyle='rgba(255,120,140,.55)';
+    ctx.fillText(`Schwarzschild radius: ${rsKm()} km`,CX,CY+124);
+  }
+}
+
+/* ── STAGE 4: Black hole ────────────────────────────────────────────────── */
+function renderS4(ts){
+  const prog=Math.min(1,stageT/STAGE_DUR[4]);
+  const bhR=bhPx();
+  drawBg(ts,1,bhR);
+
+  // Dramatic purple/violet outer nebula remnant
+  const og=ctx.createRadialGradient(CX,CY,bhR*3,CX,CY,Math.min(W,H)*.6);
+  og.addColorStop(0,'rgba(80,30,140,.08)'); og.addColorStop(.5,'rgba(40,10,80,.04)'); og.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=og; ctx.fillRect(0,0,W,H);
+
+  // Einstein ring — bent light forms a bright ring exactly at photon sphere
+  const photR=bhR*1.5;
+  const erg=ctx.createRadialGradient(CX,CY,photR*.8,CX,CY,photR*1.2);
+  erg.addColorStop(0,'rgba(200,180,255,0)');
+  erg.addColorStop(.5,`rgba(220,200,255,${(.45*prog).toFixed(2)})`);
+  erg.addColorStop(1,'rgba(200,180,255,0)');
+  ctx.beginPath(); ctx.arc(CX,CY,photR,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(230,210,255,${(.6*prog).toFixed(2)})`;
+  ctx.lineWidth=3*prog; ctx.stroke();
+
+  // Gravitational lensing rings — multiple
+  for(let i=8;i>0;i--){
+    ctx.beginPath(); ctx.arc(CX,CY,bhR*(1.6+i*.55),0,Math.PI*2);
+    const la=(.2-i*.018)*prog;
+    ctx.strokeStyle=`rgba(${i>4?'180,150,255':'140,200,255'},${Math.max(0,la).toFixed(3)})`;
+    ctx.lineWidth=1.2; ctx.stroke();
+  }
+
+  // Photon sphere glow
+  for(let g=16;g>0;g--){
+    ctx.beginPath(); ctx.arc(CX,CY,bhR+g*8,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${g>8?'100,40,200':'60,20,140'},${(.028*prog).toFixed(4)})`; ctx.fill();
+  }
+
+  // Event horizon — pure void
+  ctx.beginPath(); ctx.arc(CX,CY,bhR,0,Math.PI*2); ctx.fillStyle='#000'; ctx.fill();
+  // Purple rim
+  ctx.beginPath(); ctx.arc(CX,CY,bhR,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(200,140,255,${(.8*prog).toFixed(2)})`; ctx.lineWidth=3; ctx.stroke();
+
+  // Hawking radiation — quantum foam at event horizon
+  if(prog>.4){
+    const ha=Math.min(1,(prog-.4)/.6);
+    const n=Math.floor(14*ha);
+    for(let i=0;i<n;i++){
+      const pa=(ts*.0014+i*(.449+i*.02))%(Math.PI*2);
+      const pr=bhR+3+Math.sin(ts*.003+i)*2;
+      // Virtual pair
+      ctx.beginPath(); ctx.arc(CX+Math.cos(pa)*pr,CY+Math.sin(pa)*pr,1.8,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,180,${ha.toFixed(2)})`; ctx.fill();
+      // Escaping particle
+      const er=bhR+14+(ts*.003*25+i*7)%35;
+      ctx.beginPath(); ctx.arc(CX+Math.cos(pa)*er,CY+Math.sin(pa)*er,1.2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,255,200,${(ha*.55).toFixed(2)})`; ctx.fill();
+    }
+  }
+
+  // Time dilation rings — visualising time slowing
+  for(let r=1;r<5;r++){
+    const tr=bhR*(1.5+r*.8);
+    ctx.beginPath(); ctx.arc(CX,CY,tr,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(255,220,100,${((.08-r*.015)*prog).toFixed(3)})`; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  ctx.textAlign='center';
+  ctx.font='bold 14px monospace'; ctx.fillStyle=`rgba(220,180,255,${prog.toFixed(2)})`;
+  ctx.fillText('⚫ BLACK HOLE',CX,CY-bhR-28);
+  ctx.font='10px monospace'; ctx.fillStyle=`rgba(190,150,255,${(prog*.8).toFixed(2)})`;
+  ctx.fillText(`Event horizon: ${rsKm()} km — not even light escapes`,CX,CY-bhR-11);
+  ctx.font='10px monospace'; ctx.fillStyle=`rgba(180,140,255,${(prog*.65).toFixed(2)})`;
+  ctx.fillText('Time slows to a stop near the event horizon',CX,CY+bhR+18);
+  if(prog>.4){
+    ctx.font='9px monospace'; ctx.fillStyle=`rgba(180,255,200,${((prog-.4)*.7).toFixed(2)})`;
+    ctx.fillText('✨ Hawking radiation — evaporating over 10⁶⁷ years',CX,CY+bhR+34);
+  }
+}
+
+/* ── STAGE 5: Accretion disk ────────────────────────────────────────────── */
+function renderS5(ts){
+  const bhR=bhPx();
+  drawBg(ts,.9,bhR);
+
+  // Nebula background — glowing gas far out
+  const ng=ctx.createRadialGradient(CX,CY,bhR*4,CX,CY,Math.min(W,H)*.7);
+  ng.addColorStop(0,'rgba(60,20,120,.12)'); ng.addColorStop(.5,'rgba(30,10,80,.06)'); ng.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=ng; ctx.fillRect(0,0,W,H);
+
+  const diskTilt=.25; // perspective tilt
+
+  // Outer diffuse disk glow
+  ctx.save(); ctx.translate(CX,CY); ctx.scale(1,diskTilt);
+  for(let g=6;g>0;g--){
+    const dr=bhR*(2+g*1.5);
+    const dg=ctx.createRadialGradient(0,0,bhR*1.5,0,0,dr);
+    dg.addColorStop(0,heatStr(1,.12)); dg.addColorStop(.4,heatStr(.5,.06)); dg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=dg; ctx.fillRect(-dr,-dr,dr*2,dr*2);
+  }
+  ctx.restore();
+
+  // Back half of disk (behind BH)
+  const backP=diskP.filter(p=>Math.sin(p.ang)<0);
+  backP.forEach(p=>{
+    const px=CX+Math.cos(p.ang)*p.orb;
+    const py=CY+Math.sin(p.ang)*p.orb*diskTilt;
+    const[r,g,b]=heatRGB(p.heat);
+    const a=Math.max(0,(.4+p.heat*.55)*.75);
+    ctx.beginPath(); ctx.arc(px,py,1.8+p.heat*1.2,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${r},${g},${b},${a.toFixed(2)})`; ctx.fill();
+    if(p.heat>.8){
+      ctx.beginPath(); ctx.arc(px,py,(2+p.heat*2)*1.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},.06)`; ctx.fill();
+    }
+  });
+
+  // Lensing rings
+  for(let i=6;i>0;i--){
+    ctx.beginPath(); ctx.arc(CX,CY,bhR*(1.4+i*.5),0,Math.PI*2);
+    ctx.strokeStyle=`rgba(${i>3?'180,140,255':'120,200,255'},${(.14-i*.018).toFixed(3)})`;
+    ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  // Photon sphere
+  ctx.beginPath(); ctx.arc(CX,CY,bhR*1.5,0,Math.PI*2);
+  ctx.strokeStyle='rgba(200,170,255,.5)'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Glow around BH
+  for(let g=12;g>0;g--){
+    ctx.beginPath(); ctx.arc(CX,CY,bhR+g*7,0,Math.PI*2);
+    ctx.fillStyle='rgba(70,30,160,.022)'; ctx.fill();
+  }
+  // Event horizon
+  ctx.beginPath(); ctx.arc(CX,CY,bhR,0,Math.PI*2); ctx.fillStyle='#000'; ctx.fill();
+  ctx.beginPath(); ctx.arc(CX,CY,bhR,0,Math.PI*2);
+  ctx.strokeStyle='rgba(180,120,255,.6)'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Front half of disk (in front of BH) — brighter
+  const frontP=diskP.filter(p=>Math.sin(p.ang)>=0);
+  frontP.forEach(p=>{
+    const px=CX+Math.cos(p.ang)*p.orb;
+    const py=CY+Math.sin(p.ang)*p.orb*diskTilt;
+    const[r,g,b]=heatRGB(p.heat);
+    const a=Math.max(0,.5+p.heat*.5);
+    ctx.beginPath(); ctx.arc(px,py,2+p.heat*1.5,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${r},${g},${b},${a.toFixed(2)})`; ctx.fill();
+    if(p.heat>.7){
+      ctx.beginPath(); ctx.arc(px,py,(2+p.heat*2)*2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},.08)`; ctx.fill();
+    }
+  });
+
+  // Relativistic jets — dramatic, animated
+  const jH=H*.82*P.jetPow;
+  [[-1,'220,180,255'],[1,'160,220,255']].forEach(([d,col],ji)=>{
+    // Main beam
+    const jg=ctx.createLinearGradient(CX,CY,CX,CY+d*jH);
+    jg.addColorStop(0,`rgba(${col},.95)`); jg.addColorStop(.08,`rgba(${col},.65)`);
+    jg.addColorStop(.35,`rgba(${col},.25)`); jg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.moveTo(CX,CY);
+    ctx.lineTo(CX-12*P.jetPow,CY+d*jH); ctx.lineTo(CX+12*P.jetPow,CY+d*jH);
+    ctx.closePath(); ctx.fillStyle=jg; ctx.fill();
+    // Bright core
+    const jcg=ctx.createLinearGradient(CX,CY,CX,CY+d*jH*.5);
+    jcg.addColorStop(0,'rgba(255,255,255,.7)'); jcg.addColorStop(.4,'rgba(210,230,255,.3)'); jcg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.moveTo(CX,CY);
+    ctx.lineTo(CX-4,CY+d*jH*.5); ctx.lineTo(CX+4,CY+d*jH*.5);
+    ctx.closePath(); ctx.fillStyle=jcg; ctx.fill();
+    // Moving plasma blobs in jet
+    const blobSpeed=120*P.jetPow;
+    for(let b=0;b<6;b++){
+      const by=CY+d*((ts*.001*blobSpeed+b*jH/6)%(jH*.88)+jH*.05);
+      const bf=1-Math.abs(by-CY)/(jH*.9);
+      const br=3+bf*4;
+      const bg2=ctx.createRadialGradient(CX,by,0,CX,by,br*2.5);
+      bg2.addColorStop(0,`rgba(255,255,255,${(bf*.7).toFixed(2)})`);
+      bg2.addColorStop(.5,`rgba(${col},${(bf*.4).toFixed(2)})`);
+      bg2.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=bg2; ctx.beginPath(); ctx.arc(CX,by,br*2.5,0,Math.PI*2); ctx.fill();
+    }
+  });
+
+  // X-ray flares from disk
+  const flareCount=3;
+  for(let f=0;f<flareCount;f++){
+    const fa=ts*.001*2.3+f*2.094;
+    const fr=bhR*3+Math.sin(ts*.003+f*1.7)*bhR*2;
+    const fx=CX+Math.cos(fa)*fr, fy=CY+Math.sin(fa)*fr*diskTilt;
+    const ff=(.5+.5*Math.sin(ts*.006+f*2.1))*.3;
+    ctx.beginPath(); ctx.arc(fx,fy,6+ff*8,0,Math.PI*2);
+    ctx.fillStyle=`rgba(255,220,100,${ff.toFixed(2)})`; ctx.fill();
+    ctx.beginPath(); ctx.arc(fx,fy,2,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,200,.8)'; ctx.fill();
+  }
+
+  // Labels
+  ctx.textAlign='center'; ctx.font='bold 12px monospace'; ctx.fillStyle='rgba(210,170,255,.9)';
+  ctx.fillText('⚫ BLACK HOLE — FEEDING',CX,26);
+  ctx.font='10px monospace'; ctx.fillStyle='rgba(150,210,255,.6)';
+  ctx.fillText('Accretion disk glowing in X-rays · Relativistic jets',CX,42);
+  ctx.textAlign='right'; ctx.font='9px monospace'; ctx.fillStyle='rgba(180,200,255,.5)';
+  ctx.fillText('▲ jet',CX-16,CY-jH*.38); ctx.fillText('▼ jet',CX-16,CY+jH*.38);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SIM STEP
+// ═══════════════════════════════════════════════════════════════════════════
+function simStep(dt){
+  stageT+=dt;
+  if(stage<5 && stageT>STAGE_DUR[stage] && !(narrateOn&&speaking)) nextStage();
+  ejecta.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.992;p.vy*=.992;p.life-=p.decay*dt;});
+  shockRings.forEach(sr=>{sr.r+=sr.vr*dt;sr.life-=.22*dt;});
+  const bhR=bhPx();
+  diskP.forEach(p=>{
+    p.ang+=p.vang*dt*P.diskDens*.8;
+    p.orb-=dt*.5*P.diskDens;
+    if(p.orb<bhR*2.1){p.orb=bhR*6.5+Math.random()*bhR*3;p.heat=.05+Math.random()*.2;}
+    p.heat=Math.pow(Math.max(0,1-(p.orb-bhR*2.1)/(bhR*7.5)),1.6);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MAIN LOOP
+// ═══════════════════════════════════════════════════════════════════════════
+const RENDERS=[renderS0,renderS1,renderS2,renderS3,renderS4,renderS5];
+function loop(ts){
+  if(!lastTs)lastTs=ts;
+  const dt=Math.min((ts-lastTs)/1000,.033)*P.speed;
+  lastTs=ts;
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+  if(!paused)simStep(dt);
+  RENDERS[stage](ts);
+  updateLiveStats();
+  requestAnimationFrame(loop);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STAGE UI + DYNAMIC CONTROLS
+// ═══════════════════════════════════════════════════════════════════════════
+const FACTS=[
+  `A star this massive is like a giant bonfire burning hydrogen in its centre. The fire pushes outward, gravity pulls inward — and for <strong>millions of years they balance perfectly</strong>. The star rotates, flares erupt from its surface, and magnetic field lines arc thousands of kilometres into space.`,
+  `The hydrogen is almost gone. The core shrinks and heats until helium ignites. The outer layers swell into a <strong>red supergiant</strong>. Inside, you can see the shell layers — helium, carbon, oxygen, silicon, iron — each burning faster than the last. Iron is where everything ends.`,
+  `The iron core collapses in <strong>less than one second</strong>. The rebound blasts the outer star apart — a <strong>supernova</strong> outshining 200 billion stars. Watch the shockwaves and ejecta expand. A neutron star briefly forms at the centre, firing pulsar beams as it spins.`,
+  `The core is too heavy. Spacetime itself is bending inward — you can see the grid distorting. Streams of matter spiral in from all directions. The core crosses the <strong>Schwarzschild radius</strong>. A black hole is born. Nothing can stop it.`,
+  `The <strong>perfectly black circle</strong> is the event horizon. The purple glow is the photon sphere — where light orbits the black hole. The bright ring is gravitational lensing bending starlight around it. Time runs <strong>slower and slower</strong> the closer you get.`,
+  `Gas spiraling in forms a <strong>superheated accretion disk</strong> — blue is coolest, through orange to brilliant white-hot near the centre. <strong>Relativistic jets</strong> fire perpendicular at near light-speed. X-ray flares pulse from the disk. This blazing light is how we detect black holes.`,
+];
+
+// Stage-specific controls definition
+const STAGE_CTRL_DEFS=[
+  // Stage 0 — Star
+  [
+    {id:'sl-flares',label:'Solar flares',param:'flares',min:2,max:14,step:1,fmt:v=>`${v} flares`},
+    {id:'sl-rot',label:'Rotation speed',param:'rotation',min:.2,max:4,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+  ],
+  // Stage 1 — Giant
+  [
+    {id:'sl-expand',label:'Expansion rate',param:'expand',min:.3,max:2,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+    {id:'sl-rot2',label:'Rotation speed',param:'rotation',min:.1,max:3,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+  ],
+  // Stage 2 — Supernova
+  [
+    {id:'sl-blast',label:'Explosion power',param:'blastPow',min:.3,max:2,step:.1,fmt:v=>`${v.toFixed(1)}×`,onchange:()=>{spawnEjecta();}},
+  ],
+  // Stage 3 — Collapse
+  [
+    {id:'sl-turb',label:'Turbulence',param:'turbulence',min:.1,max:2,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+  ],
+  // Stage 4 — Black hole
+  [
+    {id:'sl-zoom4',label:'Zoom',param:'zoom',min:.4,max:2.5,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+  ],
+  // Stage 5 — Accretion
+  [
+    {id:'sl-dens',label:'Disk density',param:'diskDens',min:.2,max:2.5,step:.1,fmt:v=>`${v.toFixed(1)}×`,onchange:()=>{spawnDisk();}},
+    {id:'sl-jet',label:'Jet power',param:'jetPow',min:.2,max:2,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+    {id:'sl-zoom5',label:'Zoom',param:'zoom',min:.4,max:2.5,step:.1,fmt:v=>`${v.toFixed(1)}×`},
+  ],
+];
+
+const STAT_LABELS=[
+  ['⭐ 7M yr lifespan','🔥 Core: 15 million °C','📏 r_s = ','⚡ Luminosity'],
+  ['🌡 Surface: 3,500°C','🔥 Core: 200 million °C','📏 r_s = ','⚡ Iron core forming'],
+  ['💥 Energy > Sun\'s life','🌡 Core: billions °C','📏 r_s = ','⭐ Stardust scattered'],
+  ['⏱ Collapse < 1 second','🌀 Spacetime warping','📏 r_s = ','⚫ Event horizon forming'],
+  ['⚫ Event horizon: ','🌡 Hawking: ~10⁻⁹ K','📏 r_s = ','⏳ Lasts 10⁶⁷ years'],
+  ['⚫ Event horizon: ','🔥 Disk: millions °C','📏 r_s = ','🔵 Jets: near light speed'],
+];
+
+function buildStageControls(){
+  const sc=document.getElementById('stage-ctrls');
+  sc.innerHTML='';
+  const defs=STAGE_CTRL_DEFS[stage];
+  defs.forEach(def=>{
+    const d=document.createElement('div'); d.className='ctrl';
+    const vId=def.id+'-v';
+    d.innerHTML=`<div class="ctrl-row"><span>${def.label}</span><span class="ctrl-val" id="${vId}">${def.fmt(P[def.param])}</span></div>
+    <input type="range" id="${def.id}" min="${def.min}" max="${def.max}" step="${def.step}" value="${P[def.param]}">`;
+    sc.appendChild(d);
+    // Wire up after append
+    setTimeout(()=>{
+      const el=document.getElementById(def.id);
+      if(!el)return;
+      el.oninput=function(){
+        P[def.param]=parseFloat(this.value);
+        document.getElementById(vId).textContent=def.fmt(P[def.param]);
+        if(def.onchange)def.onchange();
+      };
+    },0);
+  });
+  // Always add speed slider at bottom
+  const sp=document.createElement('div'); sp.className='ctrl';
+  sp.innerHTML=`<div class="ctrl-row"><span>Simulation speed</span><span class="ctrl-val" id="cv-spd">${P.speed}×</span></div>
+  <input type="range" id="sl-spd2" min=".5" max="6" step=".5" value="${P.speed}">
+  <div class="ctrl-sub">Slower = easier to follow narration</div>`;
+  sc.appendChild(sp);
+  setTimeout(()=>{
+    const el=document.getElementById('sl-spd2');
+    if(!el)return;
+    el.oninput=function(){P.speed=parseFloat(this.value);document.getElementById('cv-spd').textContent=P.speed+'×';};
+  },0);
+}
+
+function updateStageUI(){
+  document.getElementById('sb').textContent=`Stage ${stage+1} — ${STAGE_NAMES[stage]}`;
+  for(let i=0;i<6;i++)document.getElementById('seg'+i).className='sseg'+(i<stage?' done':i===stage?' active':'');
+  document.getElementById('factbox').innerHTML=FACTS[stage];
+  buildStageControls();
+  maybeNarrate();
+}
+
+function updateLiveStats(){
+  const rs=rsKm();
+  const sl=STAT_LABELS[stage];
+  const v0=sl[0]+(stage>=4?rs+' km':'');
+  const v2=sl[2]+rs+' km';
+  const v3=sl[3]+(stage===0?` ${Math.pow(P.mass,3.5).toExponential(1)} L☉`:'');
+  document.getElementById('sv0').textContent=P.mass+' M☉';
+  document.getElementById('sv1').textContent=sl[1];
+  document.getElementById('sv2').textContent=v2;
+  document.getElementById('sv3').textContent=`${stage+1} / 6`;
+  document.getElementById('sb2').textContent=P.mass+'× Sun\'s mass';
+  document.getElementById('cs-mass').textContent=
+    P.mass>=20?`Massive — ends as black hole · r_s = ${rs} km`:
+    P.mass>=8?`May form neutron star · r_s = ${rs} km`:`Too small for supernova`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STAGE TRANSITION
+// ═══════════════════════════════════════════════════════════════════════════
+function nextStage(){
+  stage=Math.min(5,stage+1); stageT=0;
+  if(stage===2)spawnEjecta();
+  if(stage===5)spawnDisk();
+  updateStageUI();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NARRATION
+// ═══════════════════════════════════════════════════════════════════════════
+const NARR=[
+  `You are looking at a star 25 times heavier than our own Sun. Deep in its centre, hydrogen atoms are being crushed together so hard they fuse, releasing enormous energy as light and heat. This energy pushes outward. Gravity pulls inward. They balance perfectly — this balance is what a star is, a constant tug of war between fire and gravity. Our Sun has been doing this for 5 billion years and will do it for 5 billion more. Watch the surface — flares are erupting, magnetic field lines arc thousands of kilometres into space. But this star burns so furiously it will only last 7 million years. Then something incredible happens.`,
+
+  `The star has now used up most of its hydrogen. Without enough fire pushing outward, the core starts shrinking. As it shrinks it heats up — hot enough to start burning helium instead. This sudden energy rush puffs the outer layers outward enormously. The star swells into a red supergiant. Look at the shell layers inside — helium, carbon, oxygen, silicon, all burning in onion-like rings around the core. Each shell burns faster than the one outside it. The last fuel is silicon, which burns to iron in just one day. And iron is the end of the road. You cannot get energy from burning iron — it costs energy instead. Once the core is iron, the fire goes out forever.`,
+
+  `The iron core has just collapsed in less than one second. In that single moment, more energy was released than our Sun will produce in its entire 10 billion year life. The outer star is blasted away in a supernova. Watch the shockwaves expand outward. A supernova can outshine an entire galaxy of 200 billion stars for weeks. Notice the neutron star forming at the centre — spinning so fast it fires beams of radiation like a lighthouse. And here is something wonderful — all the gold in your jewellery, all the iron in your blood, all the calcium in your bones — these atoms were made inside stars and scattered by explosions exactly like this one, billions of years ago. You are literally made of stardust.`,
+
+  `The core is too heavy for even a neutron star to survive. Nothing in nature can stop it now. Watch the spacetime grid bend inward — this is not just the core collapsing, space itself is curving catastrophically. Matter is spiraling in from all directions. The core crosses the Schwarzschild radius — the point of no return. Once inside this boundary, escape velocity exceeds the speed of light. Not matter, not light, not any signal can get out. A black hole has been born. Notice the grid lines distorting more and more — this is what general relativity predicts, and it has been confirmed by gravitational wave detectors every time two black holes merge.`,
+
+  `You are now looking at a black hole. The perfectly black circle is the event horizon — the boundary of no return — ${rsKm()} kilometres across. The glowing ring just outside it is the photon sphere, where light travels in circles around the black hole forever. The faint rings beyond that are background stars whose light is being bent around the black hole — gravitational lensing. Time near the event horizon runs so slowly that to an outside observer, anything falling in appears to freeze and fade away. The tiny sparkling dots near the edge are Hawking radiation — the black hole is very slowly evaporating. But it will take longer than 10 followed by 67 zeros years to disappear completely.`,
+
+  `When gas falls toward the black hole, it cannot drop straight in. Angular momentum makes it spin faster and faster, forming a superheated accretion disk. Look at the colours — deep red furthest out, then orange, then yellow, then brilliant white-hot near the inner edge — that innermost region reaches millions of degrees. It blazes so brightly in X-rays that telescopes in space can detect black holes this way across the entire galaxy. The blue beams above and below are relativistic jets — plasma fired at nearly the speed of light, sometimes extending millions of light-years into space. Watch the bright flares pulsing in the disk — those are real. In 2019, the Event Horizon Telescope photographed a black hole for the first time, and it looked exactly like what you are watching right now.`,
+];
+
+function populateVoices(){
+  if(!window.speechSynthesis)return;
+  const voices=speechSynthesis.getVoices(), sel=document.getElementById('vsel');
+  if(!voices.length)return; sel.innerHTML='';
+  const groups=[
+    {l:'— Female English —',v:voices.filter(v=>v.lang.startsWith('en')&&/female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Male English —',  v:voices.filter(v=>v.lang.startsWith('en')&&/male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name))},
+    {l:'— English —',       v:voices.filter(v=>v.lang.startsWith('en')&&!/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Other —',         v:voices.filter(v=>!v.lang.startsWith('en'))},
+  ];
+  groups.forEach(g=>{
+    if(!g.v.length)return;
+    const og=document.createElement('optgroup'); og.label=g.l;
+    g.v.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;og.appendChild(o);});
+    sel.appendChild(og);
+  });
+  const pref=voices.find(v=>v.name==='Google UK English Female')||voices.find(v=>v.lang==='en-GB'&&/female/i.test(v.name))||voices.find(v=>v.lang.startsWith('en'));
+  if(pref){sel.value=pref.name;chosenVoice=pref;}
+  else if(voices[0]){sel.value=voices[0].name;chosenVoice=voices[0];}
+}
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=populateVoices;populateVoices();}
+
+function narrate(text){
+  if(!narrateOn||!window.speechSynthesis)return;
+  speechSynthesis.cancel(); speaking=true;
+  document.getElementById('narr-text').textContent=text;
+  const sents=text.match(/[^.!?]+[.!?]+[\s]*/g)||[text];
+  let idx=0;
+  function next(){
+    if(!narrateOn){speaking=false;return;}
+    if(idx>=sents.length){
+      speaking=false;
+      if(!paused&&stage<5&&stageT>STAGE_DUR[stage])nextStage();
+      return;
+    }
+    const u=new SpeechSynthesisUtterance(sents[idx].trim());
+    if(chosenVoice)u.voice=chosenVoice;
+    u.rate=speechRate;u.pitch=1;u.volume=1;
+    u.onend=()=>{idx++;next();}; u.onerror=()=>{idx++;next();};
+    speechSynthesis.speak(u);
+  }
+  next();
+}
+function stopNarration(){if(window.speechSynthesis)speechSynthesis.cancel();speaking=false;}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════════════════════
+document.getElementById('btn-restart').onclick=function(){
+  stopNarration();lastNarrStage=-1;stage=0;stageT=0;lastTs=null;
+  ejecta=[];diskP=[];shockRings=[];P.zoom=1;
+  spawnProminences();updateStageUI();
+  if(narrateOn)setTimeout(()=>narrate(NARR[0]),1000);
+};
+document.getElementById('btn-pause').onclick=function(){
+  paused=!paused;lastTs=null;this.textContent=paused?'▶ Play':'⏸ Pause';
+  this.classList.toggle('lit',paused);
+  if(window.speechSynthesis){if(paused)speechSynthesis.pause();else speechSynthesis.resume();}
+};
+document.getElementById('btn-skip').onclick=()=>{stopNarration();speaking=false;nextStage();};
+document.getElementById('btn-narrate').onclick=function(){
+  if(!window.speechSynthesis){alert('Speech not supported. Please use Chrome, Edge, or Safari.');return;}
+  narrateOn=!narrateOn;
+  this.textContent=narrateOn?'🔊 Voice ON':'🔇 Voice';this.classList.toggle('lit',narrateOn);
+  document.getElementById('nbox').style.display=narrateOn?'block':'none';
+  if(narrateOn){populateVoices();lastNarrStage=-1;maybeNarrate();}
+  else{stopNarration();document.getElementById('narr-text').textContent='—';}
+};
+document.getElementById('sl-mass').oninput=function(){
+  P.mass=parseInt(this.value);document.getElementById('cv-mass').textContent=P.mass+'× Sun';
+  spawnProminences();
+};
+document.getElementById('vsel').onchange=function(){
+  const v=speechSynthesis.getVoices().find(v=>v.name===this.value);if(v)chosenVoice=v;
+};
+document.getElementById('sl-rate').oninput=function(){
+  speechRate=parseFloat(this.value);document.getElementById('rate-v').textContent=speechRate.toFixed(1)+'×';
+};
+// Click stage segments to jump
+document.getElementById('sbar').addEventListener('click',e=>{
+  const seg=e.target.closest('.sseg');if(!seg)return;
+  const idx=parseInt(seg.id.replace('seg',''));
+  stopNarration();speaking=false;
+  while(stage<idx)nextStage();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+spawnProminences();
+updateStageUI();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
