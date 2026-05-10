@@ -1,0 +1,2229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Twin Paradox · Cosmic Time Traveler | Science Wonders</title>
+<meta name="description" content="An interactive twin paradox simulator. Pick a destination — Mars, Andromeda, anywhere — and see how much your twin ages while you fly at relativistic speed." />
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-deep: #03050d;
+  --bg-mid: #080d1c;
+  --bg-panel: rgba(14, 22, 44, 0.7);
+  --bg-glass: rgba(20, 30, 56, 0.45);
+  --border: rgba(120, 180, 255, 0.16);
+  --border-strong: rgba(150, 200, 255, 0.32);
+  --text: #e8eeff;
+  --text-dim: #8a96b8;
+  --text-mute: #5b6688;
+  --cyan: #4fd1ff;
+  --cyan-glow: rgba(79, 209, 255, 0.45);
+  --violet: #b18cff;
+  --violet-glow: rgba(177, 140, 255, 0.45);
+  --amber: #ffc857;
+  --amber-glow: rgba(255, 200, 87, 0.45);
+  --danger: #ff6b8b;
+  --success: #6bffa3;
+  --ff-display: 'Unbounded', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { background: var(--bg-deep); }
+
+body {
+  font-family: var(--ff-body);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Cosmic gradient background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 18% 20%, rgba(79, 209, 255, 0.10), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 82% 78%, rgba(177, 140, 255, 0.10), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255, 200, 87, 0.04), transparent 70%),
+    var(--bg-deep);
+  z-index: -3;
+}
+
+/* Starfield */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  pointer-events: none;
+}
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle var(--dur, 3s) infinite ease-in-out;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Layout */
+.shell {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 28px;
+  padding: 12px 0 4px;
+}
+header .eyebrow {
+  font-family: var(--ff-body);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+header h1 {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: clamp(28px, 5vw, 52px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  background: linear-gradient(120deg, #fff 0%, var(--cyan) 40%, var(--violet) 70%, var(--amber) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+header .tagline {
+  font-size: 15px;
+  color: var(--text-dim);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Panels */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+
+/* Scene panel */
+.scene-panel {
+  height: 180px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+.scene-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.scene-warp-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    repeating-linear-gradient(90deg,
+      transparent 0,
+      transparent 40px,
+      rgba(255,255,255,0.06) 40px,
+      rgba(255,255,255,0.10) 41px,
+      transparent 41px,
+      transparent 80px);
+  transition: opacity 0.5s ease;
+  mix-blend-mode: screen;
+}
+.scene-panel.warping .scene-warp-overlay {
+  opacity: 1;
+  animation: warpStreak 0.6s linear infinite;
+}
+@keyframes warpStreak {
+  to { background-position: -80px 0; }
+}
+
+/* Twins row */
+.twins-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.twin-panel {
+  position: relative;
+  height: 360px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+.twin-panel .twin-label {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 4;
+  font-family: var(--ff-display);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: rgba(0,0,0,0.45);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+.earth-twin .twin-label { color: var(--cyan); border-color: var(--cyan-glow); }
+.traveler-twin .twin-label { color: var(--violet); border-color: var(--violet-glow); }
+
+.twin-panel .age-readout {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 4;
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--text);
+  background: rgba(0,0,0,0.55);
+  padding: 6px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(8px);
+  min-width: 80px;
+  text-align: center;
+  line-height: 1;
+}
+.earth-twin .age-readout { color: var(--cyan); }
+.traveler-twin .age-readout { color: var(--violet); }
+.twin-panel .age-readout small {
+  display: block;
+  font-family: var(--ff-body);
+  font-weight: 500;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-top: 4px;
+}
+
+.twin-figure-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 3;
+}
+.twin-figure {
+  width: 60%;
+  max-width: 200px;
+  height: 70%;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.6));
+}
+
+/* Civilization background SVG */
+.civ-bg, .traveler-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.civ-stage, .trav-stage {
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.civ-stage.active, .trav-stage.active {
+  opacity: 1;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.stat-card {
+  padding: 14px 16px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-align: center;
+}
+.stat-card .stat-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 6px;
+}
+.stat-card .stat-value {
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: clamp(16px, 2.8vw, 22px);
+  color: var(--text);
+  line-height: 1.1;
+  word-break: break-word;
+}
+.stat-card.earth .stat-value { color: var(--cyan); }
+.stat-card.trav .stat-value { color: var(--violet); }
+.stat-card.gamma .stat-value { color: var(--amber); }
+
+/* Controls panel */
+.controls-panel {
+  margin-bottom: 18px;
+}
+.control-group { margin-bottom: 22px; }
+.control-group:last-child { margin-bottom: 0; }
+.control-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.control-label .control-value {
+  color: var(--cyan);
+  font-family: var(--ff-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: none;
+}
+
+/* Destination chips */
+.dest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dest-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+.dest-chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.dest-chip.active {
+  background: rgba(79, 209, 255, 0.13);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  box-shadow: 0 0 16px var(--cyan-glow);
+}
+.dest-chip .icon { font-size: 16px; line-height: 1; }
+
+/* Custom distance input */
+.custom-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease;
+}
+.custom-row.visible {
+  opacity: 1;
+  max-height: 80px;
+  margin-top: 12px;
+}
+.custom-row input {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+}
+.custom-row input:focus { border-color: var(--cyan); }
+.custom-row select {
+  padding: 10px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Speed presets */
+.speed-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.speed-preset {
+  padding: 7px 13px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-family: 'DM Sans', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.speed-preset:hover { color: var(--text); border-color: var(--border-strong); }
+.speed-preset.active {
+  background: rgba(177, 140, 255, 0.15);
+  border-color: var(--violet);
+  color: var(--violet);
+}
+
+/* Slider */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: linear-gradient(to right, var(--cyan), var(--violet), var(--amber));
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  border: 3px solid var(--bg-deep);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 14px var(--cyan-glow);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  border: 3px solid var(--bg-deep);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 14px var(--cyan-glow);
+}
+
+/* Number input for starting age */
+.age-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.age-input {
+  width: 90px;
+  padding: 10px 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--ff-display);
+  font-weight: 600;
+  font-size: 18px;
+  text-align: center;
+  outline: none;
+}
+.age-input:focus { border-color: var(--cyan); }
+.age-hint {
+  font-size: 12px;
+  color: var(--text-mute);
+}
+
+/* Survival warning */
+.survival-card {
+  display: none;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(255, 107, 139, 0.10), rgba(255, 200, 87, 0.08));
+  border: 1px solid rgba(255, 107, 139, 0.4);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  align-items: center;
+  gap: 14px;
+}
+.survival-card.visible { display: flex; }
+.survival-card .warn-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.survival-card .warn-content {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+}
+.survival-card .warn-content strong { color: var(--danger); }
+.save-btn {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  background: var(--success);
+  color: var(--bg-deep);
+  border: none;
+  border-radius: 10px;
+  font-family: var(--ff-display);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.save-btn:hover { transform: scale(1.04); }
+
+/* Action buttons */
+.action-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.btn {
+  flex: 1;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.btn-launch {
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  color: var(--bg-deep);
+  box-shadow: 0 6px 24px rgba(79, 209, 255, 0.35);
+}
+.btn-launch:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(79, 209, 255, 0.5);
+}
+.btn-launch:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-reset {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border-strong);
+  flex: 0 0 auto;
+  padding: 14px 24px;
+}
+.btn-reset:hover { color: var(--text); border-color: var(--cyan); }
+
+/* Result modal */
+.result-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 5, 13, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+.result-overlay.visible { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.result-card {
+  max-width: 580px;
+  width: 100%;
+  background: var(--bg-mid);
+  border: 1px solid var(--border-strong);
+  border-radius: 22px;
+  padding: 32px 28px;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--cyan-glow);
+  animation: rise 0.6s cubic-bezier(.2,.8,.2,1);
+}
+.result-close-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, color 0.2s, border-color 0.2s;
+  font-family: inherit;
+  padding: 0;
+  z-index: 5;
+}
+.result-close-x:hover {
+  color: var(--text);
+  border-color: var(--cyan);
+  transform: rotate(90deg);
+}
+@keyframes rise { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.result-card .result-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.result-card .result-headline {
+  font-family: var(--ff-display);
+  font-weight: 800;
+  font-size: clamp(24px, 5vw, 36px);
+  line-height: 1.1;
+  text-align: center;
+  margin-bottom: 18px;
+  background: linear-gradient(120deg, var(--cyan), var(--violet), var(--amber));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.result-cell {
+  padding: 14px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+}
+.result-cell .label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  margin-bottom: 6px;
+}
+.result-cell .value {
+  font-family: var(--ff-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--text);
+}
+.result-cell.earth .value { color: var(--cyan); }
+.result-cell.trav .value { color: var(--violet); }
+.result-flavor {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 22px;
+  padding: 16px;
+  background: var(--bg-glass);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.result-flavor strong { color: var(--amber); }
+.result-actions {
+  display: flex;
+  gap: 10px;
+}
+.result-actions .btn { font-size: 13px; padding: 12px 16px; }
+
+/* Skip button during animation */
+.skip-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  padding: 10px 18px;
+  background: rgba(20, 30, 56, 0.9);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: none;
+  backdrop-filter: blur(8px);
+}
+.skip-btn.visible { display: block; }
+.skip-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* Footer */
+footer {
+  margin-top: 40px;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-mute);
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--cyan); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* Theory / Calculations section */
+.theory-wrap {
+  margin-top: 36px;
+}
+.theory {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px clamp(20px, 4vw, 40px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+.theory-hdr {
+  font-family: var(--ff-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 26px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.theory h3 {
+  font-family: var(--ff-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin: 28px 0 12px;
+}
+.theory h3:first-of-type { margin-top: 0; }
+.theory p {
+  font-size: 15px;
+  color: var(--text-dim);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+.theory em { color: var(--amber); font-style: italic; }
+.theory strong { color: var(--text); }
+.theory .eq {
+  font-family: 'Consolas', 'DM Mono', ui-monospace, monospace;
+  font-size: 13.5px;
+  background: rgba(20, 30, 56, 0.55);
+  border-left: 3px solid var(--amber);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 0 10px 10px 0;
+  color: #ffe2a0;
+  line-height: 1.85;
+  word-wrap: break-word;
+}
+.theory .eq .vars {
+  font-size: 12px;
+  color: var(--text-mute);
+  margin-top: 8px;
+  font-family: var(--ff-body);
+  line-height: 1.6;
+}
+.hbox {
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.hbox strong { color: inherit; filter: brightness(1.15); }
+.hbox-cyan   { background: rgba(79, 209, 255, 0.06); border: 1px solid rgba(79, 209, 255, 0.22); color: #b3e5ff; }
+.hbox-violet { background: rgba(177, 140, 255, 0.06); border: 1px solid rgba(177, 140, 255, 0.22); color: #d4bfff; }
+.hbox-amber  { background: rgba(255, 200, 87, 0.06); border: 1px solid rgba(255, 200, 87, 0.22); color: #ffe2a0; }
+.utab {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin-top: 10px;
+}
+.utab td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+  vertical-align: top;
+}
+.utab td:first-child { color: var(--amber); width: 38%; font-weight: 500; }
+.utab tr:last-child td { border-bottom: none; }
+
+/* Mobile */
+@media (max-width: 760px) {
+  .shell { padding: 18px 14px 50px; }
+  .twins-row { grid-template-columns: 1fr; }
+  .twin-panel { height: 320px; }
+  .stats-row { grid-template-columns: 1fr; gap: 8px; }
+  .scene-panel { height: 140px; }
+  .panel { padding: 14px; }
+  .twin-panel .age-readout { font-size: 24px; }
+  .action-row { flex-direction: column; }
+  .btn-reset { flex: 1; }
+  .result-grid { grid-template-columns: 1fr; }
+  .theory { padding: 22px 18px; }
+  .theory p { font-size: 14px; }
+  .theory .eq { font-size: 12.5px; padding: 12px 14px; }
+  .utab td { padding: 8px 10px; font-size: 12.5px; }
+  .utab td:first-child { width: 44%; }
+}
+
+/* Visually hidden label */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+
+<div class="starfield" id="starfield"></div>
+
+<div class="shell">
+
+  <header>
+    <div class="eyebrow">Science Wonders · Special Relativity</div>
+    <h1>Twin Paradox</h1>
+    <p class="tagline">Pick a destination. Pick a speed. Watch your twin grow old while you barely age — special relativity, made personal.</p>
+  </header>
+
+  <!-- Scene -->
+  <div class="panel scene-panel" id="scenePanel">
+    <svg class="scene-svg" viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+      <defs>
+        <radialGradient id="earthGrad" cx="0.4" cy="0.4">
+          <stop offset="0%" stop-color="#7fc8ff"/>
+          <stop offset="55%" stop-color="#2c6db0"/>
+          <stop offset="100%" stop-color="#0c2a4d"/>
+        </radialGradient>
+        <radialGradient id="rocketFlame" cx="0.5" cy="0.5">
+          <stop offset="0%" stop-color="#fff8d4"/>
+          <stop offset="40%" stop-color="#ffc857"/>
+          <stop offset="100%" stop-color="rgba(255,107,139,0)"/>
+        </radialGradient>
+        <linearGradient id="rocketBody" x1="0" x2="1">
+          <stop offset="0%" stop-color="#e8eeff"/>
+          <stop offset="100%" stop-color="#8a96b8"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Earth -->
+      <g transform="translate(80, 90)">
+        <circle r="40" fill="url(#earthGrad)" />
+        <circle r="40" fill="none" stroke="rgba(79,209,255,0.25)" stroke-width="1"/>
+        <ellipse rx="50" ry="6" fill="rgba(79,209,255,0.08)" />
+        <text x="0" y="65" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8a96b8" letter-spacing="2">EARTH</text>
+      </g>
+
+      <!-- Destination -->
+      <g id="destGroup" transform="translate(1100, 90)">
+        <circle id="destCircle" r="34" fill="#ffc857" opacity="0.9"/>
+        <circle r="34" fill="none" stroke="rgba(255,200,87,0.3)" stroke-width="1"/>
+        <text id="destText" x="0" y="65" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8a96b8" letter-spacing="2">MOON</text>
+      </g>
+
+      <!-- Travel path -->
+      <line x1="135" y1="90" x2="1055" y2="90" stroke="rgba(177,140,255,0.18)" stroke-width="1" stroke-dasharray="4 6"/>
+
+      <!-- Rocket -->
+      <g id="rocket" transform="translate(135, 90)">
+        <ellipse cx="-22" cy="0" rx="20" ry="6" fill="url(#rocketFlame)" id="rocketFlame"/>
+        <path d="M -8 -8 L 14 0 L -8 8 Z" fill="url(#rocketBody)"/>
+        <circle cx="4" cy="0" r="2" fill="#4fd1ff"/>
+      </g>
+    </svg>
+    <div class="scene-warp-overlay"></div>
+  </div>
+
+  <!-- Twins -->
+  <div class="twins-row">
+    <!-- Earth twin -->
+    <div class="twin-panel earth-twin">
+      <div class="twin-label">Earth Twin</div>
+      <div class="age-readout">
+        <span id="ageEarth">8</span>
+        <small>years</small>
+      </div>
+
+      <!-- Civilization background -->
+      <svg class="civ-bg" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <!-- Sky gradient (set per stage in JS by toggling group) -->
+        <!-- Stage 0: Modern city (present) -->
+        <g class="civ-stage active" data-stage="0">
+          <rect x="0" y="0" width="400" height="360" fill="url(#sky-modern)"/>
+          <defs>
+            <linearGradient id="sky-modern" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#0a1530"/>
+              <stop offset="100%" stop-color="#1a2a55"/>
+            </linearGradient>
+          </defs>
+          <!-- Skyscrapers -->
+          <g fill="#0e1a38" opacity="0.95">
+            <rect x="0" y="220" width="40" height="140"/>
+            <rect x="40" y="200" width="50" height="160"/>
+            <rect x="90" y="180" width="30" height="180"/>
+            <rect x="120" y="150" width="60" height="210"/>
+            <rect x="180" y="190" width="40" height="170"/>
+            <rect x="220" y="170" width="50" height="190"/>
+            <rect x="270" y="200" width="35" height="160"/>
+            <rect x="305" y="160" width="55" height="200"/>
+            <rect x="360" y="210" width="40" height="150"/>
+          </g>
+          <!-- Lit windows -->
+          <g fill="#ffc857" opacity="0.85">
+            <rect x="10" y="240" width="4" height="6"/><rect x="22" y="260" width="4" height="6"/><rect x="58" y="220" width="4" height="6"/>
+            <rect x="72" y="250" width="4" height="6"/><rect x="100" y="200" width="4" height="6"/><rect x="135" y="170" width="4" height="6"/>
+            <rect x="155" y="200" width="4" height="6"/><rect x="195" y="220" width="4" height="6"/><rect x="240" y="190" width="4" height="6"/>
+            <rect x="285" y="220" width="4" height="6"/><rect x="320" y="180" width="4" height="6"/><rect x="375" y="240" width="4" height="6"/>
+          </g>
+        </g>
+
+        <!-- Stage 1: Near-future -->
+        <g class="civ-stage" data-stage="1">
+          <rect x="0" y="0" width="400" height="360" fill="#0d1838"/>
+          <g fill="#0c1a3b">
+            <polygon points="0,360 0,160 50,140 50,360"/>
+            <polygon points="60,360 60,100 110,80 130,360"/>
+            <polygon points="140,360 140,90 200,60 220,360"/>
+            <polygon points="230,360 230,130 280,110 280,360"/>
+            <polygon points="290,360 290,80 360,50 380,360"/>
+          </g>
+          <!-- Glowing accents on towers -->
+          <g stroke="#4fd1ff" stroke-width="1.2" opacity="0.7" fill="none">
+            <line x1="25" y1="160" x2="25" y2="360"/>
+            <line x1="95" y1="100" x2="115" y2="360"/>
+            <line x1="170" y1="90" x2="200" y2="360"/>
+            <line x1="255" y1="130" x2="255" y2="360"/>
+            <line x1="325" y1="80" x2="345" y2="360"/>
+          </g>
+          <!-- Flying vehicles -->
+          <g fill="#b18cff">
+            <ellipse cx="80" cy="50" rx="6" ry="2"/>
+            <ellipse cx="200" cy="35" rx="7" ry="2"/>
+            <ellipse cx="320" cy="60" rx="5" ry="2"/>
+          </g>
+        </g>
+
+        <!-- Stage 2: Far-future utopia -->
+        <g class="civ-stage" data-stage="2">
+          <rect x="0" y="0" width="400" height="360" fill="#100d28"/>
+          <!-- Orbital ring arc -->
+          <path d="M -60 80 Q 200 -20 460 80" fill="none" stroke="#b18cff" stroke-width="2" opacity="0.7"/>
+          <path d="M -60 80 Q 200 -20 460 80" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.4"/>
+          <!-- Mega-towers -->
+          <g fill="#1a1240">
+            <polygon points="0,360 0,40 40,30 60,360"/>
+            <polygon points="80,360 80,20 120,10 140,360"/>
+            <polygon points="160,360 160,0 220,-10 240,360"/>
+            <polygon points="260,360 260,30 310,15 330,360"/>
+            <polygon points="350,360 350,40 400,30 400,360"/>
+          </g>
+          <!-- Glow on towers -->
+          <g stroke="#ffc857" stroke-width="1" opacity="0.6" fill="none">
+            <line x1="20" y1="40" x2="50" y2="360"/>
+            <line x1="100" y1="20" x2="130" y2="360"/>
+            <line x1="190" y1="0" x2="230" y2="360"/>
+            <line x1="285" y1="30" x2="320" y2="360"/>
+            <line x1="375" y1="40" x2="400" y2="360"/>
+          </g>
+          <!-- Floating lights -->
+          <g fill="#fff">
+            <circle cx="60" cy="100" r="1.5"/>
+            <circle cx="170" cy="80" r="1.5"/>
+            <circle cx="280" cy="110" r="1.5"/>
+            <circle cx="350" cy="90" r="1.5"/>
+          </g>
+        </g>
+
+        <!-- Stage 3: Post-human ruins (overgrown) -->
+        <g class="civ-stage" data-stage="3">
+          <rect x="0" y="0" width="400" height="360" fill="#0a1a18"/>
+          <!-- Sky -->
+          <ellipse cx="320" cy="60" rx="40" ry="12" fill="rgba(255,200,87,0.12)"/>
+          <!-- Crumbling buildings -->
+          <g fill="#1a2418">
+            <polygon points="0,360 0,180 30,170 38,200 50,190 60,360"/>
+            <polygon points="70,360 70,140 100,130 105,200 130,190 130,360"/>
+            <polygon points="150,360 150,160 200,150 195,250 220,240 230,360"/>
+            <polygon points="260,360 260,180 290,170 295,360"/>
+            <polygon points="320,360 320,200 360,190 360,360"/>
+          </g>
+          <!-- Vines/vegetation -->
+          <g fill="#2d4a2e" opacity="0.85">
+            <ellipse cx="20" cy="240" rx="30" ry="20"/>
+            <ellipse cx="85" cy="220" rx="40" ry="25"/>
+            <ellipse cx="180" cy="260" rx="50" ry="30"/>
+            <ellipse cx="280" cy="240" rx="35" ry="22"/>
+            <ellipse cx="350" cy="270" rx="40" ry="25"/>
+          </g>
+          <!-- Trees -->
+          <g fill="#3a5a3a">
+            <circle cx="40" cy="280" r="22"/>
+            <circle cx="135" cy="290" r="25"/>
+            <circle cx="240" cy="290" r="20"/>
+            <circle cx="320" cy="285" r="22"/>
+          </g>
+        </g>
+
+        <!-- Stage 4: Ancient pyramid-style ruins, desert -->
+        <g class="civ-stage" data-stage="4">
+          <rect x="0" y="0" width="400" height="360" fill="#251a10"/>
+          <!-- Hazy sky -->
+          <ellipse cx="200" cy="40" rx="200" ry="40" fill="rgba(255,200,87,0.15)"/>
+          <!-- Distant pyramids -->
+          <g fill="#3a2a18" opacity="0.85">
+            <polygon points="40,260 100,180 160,260"/>
+            <polygon points="140,270 220,160 300,270"/>
+            <polygon points="270,260 330,190 390,260"/>
+          </g>
+          <!-- Broken columns -->
+          <g fill="#5a4530">
+            <rect x="20" y="240" width="8" height="50"/>
+            <rect x="45" y="250" width="8" height="40"/>
+            <rect x="180" y="240" width="8" height="40"/>
+            <rect x="200" y="245" width="8" height="35"/>
+            <rect x="320" y="245" width="8" height="45"/>
+          </g>
+          <!-- Sand dunes -->
+          <g fill="#3d2c18">
+            <path d="M 0 360 L 0 290 Q 100 270 200 295 Q 300 310 400 280 L 400 360 Z"/>
+          </g>
+          <g fill="#2a1f10">
+            <path d="M 0 360 L 0 320 Q 100 305 200 325 Q 300 335 400 315 L 400 360 Z"/>
+          </g>
+        </g>
+
+        <!-- Stage 5: Geological change -->
+        <g class="civ-stage" data-stage="5">
+          <rect x="0" y="0" width="400" height="360" fill="#0a1628"/>
+          <!-- Pale sky -->
+          <rect x="0" y="0" width="400" height="160" fill="url(#sky-glacial)"/>
+          <defs>
+            <linearGradient id="sky-glacial" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#1a2540"/>
+              <stop offset="100%" stop-color="#3a5570"/>
+            </linearGradient>
+          </defs>
+          <!-- New mountain ranges (jagged) -->
+          <g fill="#2a3a55">
+            <polygon points="0,260 60,140 90,180 130,120 180,180 220,150 270,200 320,140 370,200 400,180 400,260"/>
+          </g>
+          <!-- Glacier/ice caps -->
+          <g fill="#dae8f5" opacity="0.9">
+            <polygon points="60,140 70,160 90,180 50,180"/>
+            <polygon points="130,120 140,150 180,180 100,180"/>
+            <polygon points="270,200 290,170 320,140 340,180 290,200"/>
+          </g>
+          <!-- Frozen plain -->
+          <g fill="#5a7090">
+            <path d="M 0 260 Q 200 240 400 260 L 400 360 L 0 360 Z"/>
+          </g>
+          <g fill="#aac0d8" opacity="0.6">
+            <ellipse cx="80" cy="320" rx="50" ry="6"/>
+            <ellipse cx="240" cy="340" rx="80" ry="8"/>
+            <ellipse cx="350" cy="310" rx="40" ry="5"/>
+          </g>
+        </g>
+
+        <!-- Stage 6: Red giant Earth -->
+        <g class="civ-stage" data-stage="6">
+          <rect x="0" y="0" width="400" height="360" fill="#1a0608"/>
+          <!-- Huge red sun -->
+          <radialGradient id="redGiant" cx="0.5" cy="0.5">
+            <stop offset="0%" stop-color="#ffe0a0"/>
+            <stop offset="40%" stop-color="#ff7a3a"/>
+            <stop offset="80%" stop-color="#a02010"/>
+            <stop offset="100%" stop-color="rgba(160,32,16,0)"/>
+          </radialGradient>
+          <circle cx="200" cy="120" r="180" fill="url(#redGiant)" opacity="0.9"/>
+          <!-- Scorched ground -->
+          <g fill="#3a1408">
+            <path d="M 0 360 L 0 240 Q 100 220 200 250 Q 300 280 400 240 L 400 360 Z"/>
+          </g>
+          <g fill="#1a0808">
+            <path d="M 0 360 L 0 290 Q 100 280 200 305 Q 300 320 400 295 L 400 360 Z"/>
+          </g>
+          <!-- Cracks (lava) -->
+          <g stroke="#ff6b3b" stroke-width="1.5" fill="none" opacity="0.8">
+            <path d="M 30 320 Q 60 310 80 330 Q 100 350 120 340"/>
+            <path d="M 200 310 Q 230 320 260 305"/>
+            <path d="M 320 340 Q 350 325 380 340"/>
+          </g>
+        </g>
+      </svg>
+
+      <!-- Earth twin character -->
+      <div class="twin-figure-wrap">
+        <svg class="twin-figure" id="figEarth" viewBox="0 0 200 280" aria-hidden="true">
+          <!-- All stages drawn; we toggle visibility -->
+          <g id="figEarth-stage-0" class="char-stage"></g>
+          <g id="figEarth-stage-1" class="char-stage"></g>
+          <g id="figEarth-stage-2" class="char-stage"></g>
+          <g id="figEarth-stage-3" class="char-stage"></g>
+          <g id="figEarth-stage-4" class="char-stage"></g>
+          <g id="figEarth-stage-5" class="char-stage"></g>
+          <g id="figEarth-stage-6" class="char-stage"></g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Traveler twin -->
+    <div class="twin-panel traveler-twin">
+      <div class="twin-label">Traveler Twin</div>
+      <div class="age-readout">
+        <span id="ageTrav">8</span>
+        <small>years</small>
+      </div>
+
+      <!-- Cosmic background -->
+      <svg class="traveler-bg" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <radialGradient id="cosmicBg" cx="0.5" cy="0.5">
+            <stop offset="0%" stop-color="#1a1840"/>
+            <stop offset="60%" stop-color="#0a0a25"/>
+            <stop offset="100%" stop-color="#03050d"/>
+          </radialGradient>
+          <radialGradient id="nebula1" cx="0.3" cy="0.4">
+            <stop offset="0%" stop-color="rgba(177,140,255,0.4)"/>
+            <stop offset="100%" stop-color="rgba(177,140,255,0)"/>
+          </radialGradient>
+          <radialGradient id="nebula2" cx="0.7" cy="0.6">
+            <stop offset="0%" stop-color="rgba(79,209,255,0.3)"/>
+            <stop offset="100%" stop-color="rgba(79,209,255,0)"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="400" height="360" fill="url(#cosmicBg)"/>
+        <ellipse cx="120" cy="140" rx="160" ry="100" fill="url(#nebula1)"/>
+        <ellipse cx="280" cy="220" rx="140" ry="90" fill="url(#nebula2)"/>
+        <!-- Stars -->
+        <g fill="#fff">
+          <circle cx="50" cy="60" r="1.2"/><circle cx="120" cy="40" r="0.8"/><circle cx="200" cy="80" r="1.4"/>
+          <circle cx="280" cy="50" r="0.9"/><circle cx="350" cy="100" r="1.1"/><circle cx="80" cy="180" r="1.0"/>
+          <circle cx="160" cy="220" r="0.7"/><circle cx="240" cy="180" r="1.3"/><circle cx="320" cy="240" r="1.0"/>
+          <circle cx="40" cy="280" r="0.8"/><circle cx="180" cy="300" r="1.1"/><circle cx="290" cy="310" r="0.9"/>
+          <circle cx="370" cy="280" r="1.2"/><circle cx="100" cy="320" r="0.7"/><circle cx="220" cy="60" r="0.9"/>
+        </g>
+      </svg>
+
+      <div class="twin-figure-wrap">
+        <svg class="twin-figure" id="figTrav" viewBox="0 0 200 280" aria-hidden="true">
+          <g id="figTrav-stage-0" class="char-stage"></g>
+          <g id="figTrav-stage-1" class="char-stage"></g>
+          <g id="figTrav-stage-2" class="char-stage"></g>
+          <g id="figTrav-stage-3" class="char-stage"></g>
+          <g id="figTrav-stage-4" class="char-stage"></g>
+          <g id="figTrav-stage-5" class="char-stage"></g>
+          <g id="figTrav-stage-6" class="char-stage"></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card earth">
+      <div class="stat-label">Earth Time Elapsed</div>
+      <div class="stat-value" id="statEarthTime">0</div>
+    </div>
+    <div class="stat-card trav">
+      <div class="stat-label">Your Time Elapsed</div>
+      <div class="stat-value" id="statTravTime">0</div>
+    </div>
+    <div class="stat-card gamma">
+      <div class="stat-label">Lorentz γ Factor</div>
+      <div class="stat-value" id="statGamma">1.00</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="panel controls-panel">
+
+    <!-- Destination -->
+    <div class="control-group">
+      <div class="control-label">
+        <span>Destination</span>
+        <span class="control-value" id="destDistanceLabel">1.3 light-seconds away</span>
+      </div>
+      <div class="dest-chips" id="destChips"></div>
+      <div class="custom-row" id="customRow">
+        <input type="number" id="customDistance" placeholder="Distance" min="0.0001" step="0.1" value="100"/>
+        <select id="customUnit">
+          <option value="ly">light-years</option>
+          <option value="lh">light-hours</option>
+          <option value="lm">light-minutes</option>
+          <option value="ls">light-seconds</option>
+          <option value="km">kilometers</option>
+          <option value="au">AU (Earth–Sun)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Speed -->
+    <div class="control-group">
+      <div class="control-label">
+        <span>Speed</span>
+        <span class="control-value" id="speedLabel">0.500 c · γ = 1.155</span>
+      </div>
+      <div class="speed-presets" id="speedPresets"></div>
+      <div class="slider-row">
+        <input type="range" id="speedSlider" min="0" max="1000" value="500" />
+      </div>
+    </div>
+
+    <!-- Starting age -->
+    <div class="control-group">
+      <div class="control-label">
+        <span>Starting Age (Both Twins)</span>
+        <span class="control-value">child stage</span>
+      </div>
+      <div class="age-input-row">
+        <input type="number" id="startAge" class="age-input" min="3" max="80" value="8" />
+        <span class="age-hint">Both twins start as the same age. Default: 8 (child).</span>
+      </div>
+    </div>
+
+    <!-- Survival warning -->
+    <div class="survival-card" id="survivalCard">
+      <div class="warn-icon">⚠️</div>
+      <div class="warn-content">
+        <strong>You won't survive this trip.</strong>
+        <span id="survivalDetail"></span>
+        Want to go faster and make it back alive?
+      </div>
+      <button class="save-btn" id="saveBtn">Yes, save me</button>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-launch" id="launchBtn">🚀 Launch</button>
+      <button class="btn btn-reset" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <div class="theory-wrap"><div class="theory">
+    <div class="theory-hdr">Theory — The Math Behind the Time Travel</div>
+
+    <h3>The Setup</h3>
+    <p>Two twins start at the same age. One stays on Earth. The other boards a rocket, accelerates to a fraction of light speed <em>v</em>, travels to a chosen destination, turns around, and returns. When they reunite, the traveling twin is <em>measurably younger</em>. This is not science fiction — it has been verified with atomic clocks on commercial aircraft, with GPS satellites, and with cosmic-ray muons. Time itself runs at different rates for the two twins, and the difference is real, permanent, and irreversible.</p>
+
+    <h3>The Equations Used by This Simulation</h3>
+    <p>Special relativity tells us that the rate at which a moving clock ticks, as seen by a stationary observer, slows down by a factor γ (gamma), the <strong>Lorentz factor</strong>:</p>
+    <div class="eq">γ = 1 / √(1 − β²),  where β = v/c
+      <div class="vars">v is the rocket's speed; c is the speed of light. As v → c, β → 1 and γ → ∞: time on the rocket essentially stops.</div>
+    </div>
+
+    <p>For an idealized round-trip at constant speed v over a one-way distance d, the time elapsed on Earth is simply distance over speed (out and back):</p>
+    <div class="eq">t<sub>E</sub> = 2d / v
+      <div class="vars">Earth-frame elapsed time. Independent of γ — Earth doesn't care how fast the rocket is going.</div>
+    </div>
+
+    <p>The traveler's clock, however, runs slow by a factor of γ. So the time the traveler experiences is:</p>
+    <div class="eq">t<sub>T</sub> = t<sub>E</sub> / γ = (2d/v) · √(1 − v²/c²)
+      <div class="vars">Traveler-frame elapsed time. This is what the traveler ages during the round trip.</div>
+    </div>
+
+    <p>The age gap when they reunite is the difference between the two clocks:</p>
+    <div class="eq">Δt = t<sub>E</sub> − t<sub>T</sub> = t<sub>E</sub> · (1 − 1/γ)
+      <div class="vars">How many more years the Earth twin aged than the traveler. At v = 0.99c, γ ≈ 7.09, so the traveler ages only ~14% as much as Earth.</div>
+    </div>
+
+    <p>The "Yes, save me" button solves the inverse problem — given the destination and a maximum allowed traveler-time t<sub>max</sub> = (lifespan − starting age − 5), it finds the minimum velocity that keeps the traveler alive:</p>
+    <div class="eq">v<sub>min</sub> = 2d / √(t<sub>max</sub>² + 4d²)
+      <div class="vars">Derived by solving t<sub>T</sub> ≤ t<sub>max</sub> for v. The 5-year buffer is for safety; we add a tiny margin of 1.0001× to ensure the traveler doesn't land on their deathbed.</div>
+    </div>
+
+    <h3>"But Wait — Isn't This a Paradox?"</h3>
+    <p>The classic puzzle: from the rocket's reference frame, <em>Earth</em> is the one moving away and coming back. Shouldn't time dilation be symmetric — and shouldn't the Earth twin end up younger? This is why the situation is called a "paradox."</p>
+    <div class="hbox hbox-violet">
+      <strong>Resolution:</strong> the symmetry is broken by the <em>turnaround</em>. To return home, the traveler must decelerate, stop, and accelerate back — which means switching from one inertial reference frame to another. The Earth twin never does this. That asymmetry is physically real, and it's exactly where the "missing years" live in the traveler's accounting. The paradox is only apparent; the physics is unambiguous.
+    </div>
+
+    <h3>Experimental Verification</h3>
+    <div class="hbox hbox-cyan">
+      <strong>Hafele–Keating experiment (1971):</strong> Cesium atomic clocks were flown around the world on commercial jets, then compared with reference clocks on the ground. The flying clocks lost (or gained) tens of nanoseconds — exactly as predicted by special and general relativity combined.<br><br>
+      <strong>GPS satellites:</strong> must correct for ~38 microseconds per day of relativistic time dilation (a combination of velocity-induced slowing and weaker-gravity speeding). Without these corrections, GPS positions would drift by roughly 10 kilometers per day. Time dilation is the foundation of every map app on your phone.<br><br>
+      <strong>Muon decay:</strong> Cosmic-ray muons created in the upper atmosphere have a lab half-life of just 2.2 microseconds and should decay long before reaching the ground. Yet they arrive in droves, because at relativistic speeds <em>their</em> internal clocks run slow relative to ours — they live long enough to make the trip.
+    </div>
+
+    <h3>What This Simulation Idealizes</h3>
+    <p>To stay simple and intuitive, the simulation makes four physical idealizations. They keep the headline result (traveler ages less by factor γ) exactly correct, but smooth over engineering realities:</p>
+    <table class="utab">
+      <tr><td>Instant turnaround</td><td>Real rockets accelerate gradually. We assume the cruise speed is reached immediately and reversed instantly. For interplanetary trips this is a tiny correction; for interstellar trips a realistic 1g acceleration profile gives a similar γ but distributed over the journey.</td></tr>
+      <tr><td>No gravity wells</td><td>We ignore general-relativistic effects from planets and stars. They're small for free-flight trajectories far from massive bodies.</td></tr>
+      <tr><td>Constant velocity cruise</td><td>The rocket reaches v instantly, holds it, and reverses instantly at the destination. Real mission profiles use continuous acceleration.</td></tr>
+      <tr><td>Lifespan cap (~95 yrs)</td><td>Used by the "save me" suggestion. Real human lifespan varies; this is a simulation default, not a prediction.</td></tr>
+    </table>
+
+    <h3>Quick γ Reference — Build Your Intuition</h3>
+    <div class="hbox hbox-amber">
+      <strong>v = 0.5 c</strong> → γ ≈ 1.155 — barely noticeable<br>
+      <strong>v = 0.9 c</strong> → γ ≈ 2.294 — traveler ages less than half<br>
+      <strong>v = 0.99 c</strong> → γ ≈ 7.089 — Earth ages 7× the traveler<br>
+      <strong>v = 0.999 c</strong> → γ ≈ 22.37 — Earth ages 22× the traveler<br>
+      <strong>v = 0.9999 c</strong> → γ ≈ 70.71 — interstellar destinations now reachable in a lifetime<br>
+      <strong>v = 0.99999999 c</strong> → γ ≈ 7,071 — Andromeda in a few centuries of traveler time
+    </div>
+
+    <h3>Why It Matters</h3>
+    <p>The twin paradox is not a brain-teaser — it's a window into the structure of the universe. Time is not a universal background tick that everyone shares; it is a local quantity that depends on how fast you are moving and where you are in a gravitational field. Two clocks that read the same when they part can read different times when they meet again. <strong>This simulation lets you choose any destination and any speed, and watch the relativistic age gap unfold in real time.</strong> The math behind it is exactly the math used by physicists, navigators, and GPS engineers every day.</p>
+  </div></div>
+
+  <footer>
+    Part of <a href="https://yousuf-science.github.io/science-wonders" target="_blank" rel="noopener">Science Wonders</a> · Built for curiosity.
+  </footer>
+</div>
+
+<button class="skip-btn" id="skipBtn">Skip to result →</button>
+
+<!-- Result modal -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <button class="result-close-x" id="resultCloseX" aria-label="Close result popup">×</button>
+    <div class="result-eyebrow" id="resultEyebrow">Trip Complete</div>
+    <div class="result-headline" id="resultHeadline">You aged 4 years. Earth aged 9.</div>
+    <div class="result-grid">
+      <div class="result-cell earth">
+        <div class="label">Earth Twin</div>
+        <div class="value" id="resultEarth">—</div>
+      </div>
+      <div class="result-cell trav">
+        <div class="label">You</div>
+        <div class="value" id="resultTrav">—</div>
+      </div>
+    </div>
+    <div class="result-flavor" id="resultFlavor">—</div>
+    <div class="result-actions">
+      <button class="btn btn-launch" id="resultClose">Try Another Trip</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =============================================================
+   TWIN PARADOX SIMULATOR
+   Single-file, self-contained. Pure HTML/CSS/JS.
+   ============================================================= */
+
+(function(){
+  'use strict';
+
+  /* ----------------- Constants ----------------- */
+  const C_KM_S = 299792.458;
+  const SEC_PER_YEAR = 365.25 * 24 * 3600;
+  const KM_PER_LY = C_KM_S * SEC_PER_YEAR;
+  const KM_PER_AU = 149597870.7;
+
+  const LIFESPAN = 95;       // years; lifespan cap for survival check
+  const SAFETY_BUFFER = 5;   // years of headroom for "save me" suggestion
+  const ANIM_DURATION = 11;  // seconds for the launch animation
+
+  // Destinations: distance is ONE-WAY in light-years
+  const DESTINATIONS = [
+    { id: 'moon',    name: 'Moon',             icon: '🌙', distLy: 1.3 / SEC_PER_YEAR,                                blurb: 'Just a hop.' },
+    { id: 'mars',    name: 'Mars',             icon: '🔴', distLy: 12.5 * 60 / SEC_PER_YEAR,                          blurb: 'Closest planetary neighbour.' },
+    { id: 'jupiter', name: 'Jupiter',          icon: '🪐', distLy: 43 * 60 / SEC_PER_YEAR,                            blurb: 'King of the planets.' },
+    { id: 'pluto',   name: 'Pluto',            icon: '❄️', distLy: 5.5 * 3600 / SEC_PER_YEAR,                         blurb: 'Edge of the solar system.' },
+    { id: 'proxima', name: 'Proxima Centauri', icon: '⭐', distLy: 4.246,                                              blurb: 'Nearest star.' },
+    { id: 'sirius',  name: 'Sirius',           icon: '✨', distLy: 8.6,                                                blurb: 'Brightest in the night sky.' },
+    { id: 'vega',    name: 'Vega',             icon: '💫', distLy: 25.04,                                              blurb: 'A cosmic landmark.' },
+    { id: 'pleiades',name: 'Pleiades',         icon: '🌟', distLy: 444,                                                blurb: 'The Seven Sisters.' },
+    { id: 'gcenter', name: 'Galactic Center',  icon: '🌀', distLy: 26000,                                              blurb: 'Heart of the Milky Way.' },
+    { id: 'andromeda',name:'Andromeda Galaxy', icon: '🌌', distLy: 2.5e6,                                              blurb: 'Our nearest neighbour galaxy.' },
+    { id: 'custom',  name: 'Custom',           icon: '✏️', distLy: 100,                                                blurb: 'Pick your own distance.' }
+  ];
+
+  // Speed presets (fraction of c)
+  const SPEED_PRESETS = [
+    { label: '50%',     v: 0.5 },
+    { label: '90%',     v: 0.9 },
+    { label: '99%',     v: 0.99 },
+    { label: '99.9%',   v: 0.999 },
+    { label: '99.99%',  v: 0.9999 },
+    { label: '99.999%', v: 0.99999 }
+  ];
+
+  /* ----------------- State ----------------- */
+  const state = {
+    destinationId: 'moon',
+    distLy: DESTINATIONS[0].distLy,
+    velocityC: 0.5,
+    startAge: 8,
+    isAnimating: false,
+    animProgress: 0,
+    rafId: null,
+    animStart: 0
+  };
+
+  /* ----------------- DOM refs ----------------- */
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    starfield: $('starfield'),
+    scenePanel: $('scenePanel'),
+    rocket: $('rocket'),
+    destGroup: $('destGroup'),
+    destCircle: $('destCircle'),
+    destText: $('destText'),
+    ageEarth: $('ageEarth'),
+    ageTrav: $('ageTrav'),
+    figEarth: $('figEarth'),
+    figTrav: $('figTrav'),
+    statEarthTime: $('statEarthTime'),
+    statTravTime: $('statTravTime'),
+    statGamma: $('statGamma'),
+    destChips: $('destChips'),
+    customRow: $('customRow'),
+    customDistance: $('customDistance'),
+    customUnit: $('customUnit'),
+    speedPresets: $('speedPresets'),
+    speedSlider: $('speedSlider'),
+    speedLabel: $('speedLabel'),
+    destDistanceLabel: $('destDistanceLabel'),
+    startAge: $('startAge'),
+    survivalCard: $('survivalCard'),
+    survivalDetail: $('survivalDetail'),
+    saveBtn: $('saveBtn'),
+    launchBtn: $('launchBtn'),
+    resetBtn: $('resetBtn'),
+    skipBtn: $('skipBtn'),
+    resultOverlay: $('resultOverlay'),
+    resultEyebrow: $('resultEyebrow'),
+    resultHeadline: $('resultHeadline'),
+    resultEarth: $('resultEarth'),
+    resultTrav: $('resultTrav'),
+    resultFlavor: $('resultFlavor'),
+    resultClose: $('resultClose')
+  };
+
+  /* ----------------- Helpers ----------------- */
+  function gammaOf(v) { return 1 / Math.sqrt(Math.max(1e-30, 1 - v*v)); }
+
+  // Format a duration in years into human-readable string
+  function formatDuration(years) {
+    if (years < 1e-9) return '< 1 second';
+    const seconds = years * SEC_PER_YEAR;
+    if (seconds < 60) return seconds.toFixed(1) + ' seconds';
+    if (seconds < 3600) return (seconds/60).toFixed(1) + ' minutes';
+    if (seconds < 86400) return (seconds/3600).toFixed(1) + ' hours';
+    if (years < 1) return (years*365.25).toFixed(1) + ' days';
+    if (years < 1000) return years.toFixed(years < 10 ? 2 : 1) + ' years';
+    if (years < 1e6) return (years/1000).toFixed(2) + ' thousand years';
+    if (years < 1e9) return (years/1e6).toFixed(2) + ' million years';
+    return (years/1e9).toFixed(2) + ' billion years';
+  }
+
+  function formatDistance(ly) {
+    if (ly * SEC_PER_YEAR < 60) return (ly * SEC_PER_YEAR).toFixed(2) + ' light-seconds away';
+    if (ly * SEC_PER_YEAR < 3600) return (ly * SEC_PER_YEAR / 60).toFixed(1) + ' light-minutes away';
+    if (ly * SEC_PER_YEAR < 86400) return (ly * SEC_PER_YEAR / 3600).toFixed(1) + ' light-hours away';
+    if (ly < 1) return (ly * 365.25).toFixed(1) + ' light-days away';
+    if (ly < 1000) return ly.toFixed(2) + ' light-years away';
+    if (ly < 1e6) return (ly/1000).toFixed(2) + ' thousand light-years away';
+    return (ly/1e6).toFixed(2) + ' million light-years away';
+  }
+
+  function formatAge(age) {
+    if (age > 110) return '✝';
+    if (age > 1000) return '✝';
+    return Math.floor(age);
+  }
+
+  // Round-trip Earth time, given d (one-way in ly) and v (in c)
+  function earthTimeRT(d, v) { return 2 * d / v; }
+
+  // Round-trip traveler time
+  function travelerTimeRT(d, v) {
+    const tE = earthTimeRT(d, v);
+    return tE / gammaOf(v);
+  }
+
+  // Min v needed so traveler time <= maxT
+  function minVelocityForSurvival(d, maxT) {
+    // From t_T = 2d * sqrt(1-v²) / v <= maxT
+    // => v² >= 4d² / (maxT² + 4d²)
+    const v2 = (4 * d * d) / (maxT * maxT + 4 * d * d);
+    return Math.sqrt(v2);
+  }
+
+  // Map slider [0..1000] -> v [0.001..0.99999999]
+  // Use exponential mapping in (1 - v) space so high γ is reachable
+  function sliderToV(s) {
+    const t = s / 1000;
+    // (1 - v) goes from 1 down to 1e-12 logarithmically
+    const oneMinusV = Math.pow(10, -12 * t);
+    return Math.min(0.999999999999, 1 - oneMinusV);
+  }
+  function vToSlider(v) {
+    const oneMinusV = Math.max(1e-12, 1 - v);
+    const t = -Math.log10(oneMinusV) / 12;
+    return Math.round(Math.max(0, Math.min(1, t)) * 1000);
+  }
+
+  // Determine character age stage (0..6)
+  function ageStage(age) {
+    if (age < 13) return 0;       // child
+    if (age < 25) return 1;       // teen / young adult
+    if (age < 45) return 2;       // adult
+    if (age < 65) return 3;       // middle-aged
+    if (age < 85) return 4;       // elderly
+    if (age <= LIFESPAN + 15) return 5; // very elderly
+    return 6;                     // memorial
+  }
+
+  // Determine civilization stage (0..6) from Earth-time elapsed
+  function civStage(yearsElapsed) {
+    if (yearsElapsed < 30) return 0;
+    if (yearsElapsed < 200) return 1;
+    if (yearsElapsed < 2000) return 2;
+    if (yearsElapsed < 30000) return 3;
+    if (yearsElapsed < 500000) return 4;
+    if (yearsElapsed < 50e6) return 5;
+    return 6;
+  }
+
+  /* ----------------- SVG character drawing ----------------- */
+  // Draw all 7 stages of a character into a target SVG (figEarth or figTrav)
+  // Each stage is identified by a group id; we toggle visibility.
+  function drawCharacter(prefix, color) {
+    const stages = [
+      drawChild(color),
+      drawTeen(color),
+      drawAdult(color),
+      drawMiddleAged(color),
+      drawElderly(color),
+      drawVeryElderly(color),
+      drawMemorial(color)
+    ];
+    for (let i = 0; i < 7; i++) {
+      const g = document.getElementById(`${prefix}-stage-${i}`);
+      g.innerHTML = stages[i];
+      g.style.display = (i === 0) ? '' : 'none';
+    }
+  }
+
+  function drawChild(c) {
+    return `
+      <!-- Body (overalls) -->
+      <ellipse cx="100" cy="200" rx="36" ry="46" fill="#3a5a8a"/>
+      <rect x="78" y="160" width="44" height="50" fill="#3a5a8a"/>
+      <!-- Legs -->
+      <rect x="82" y="240" width="14" height="35" rx="6" fill="#3a5a8a"/>
+      <rect x="104" y="240" width="14" height="35" rx="6" fill="#3a5a8a"/>
+      <!-- Shoes -->
+      <ellipse cx="89" cy="275" rx="10" ry="4" fill="#1a1a2a"/>
+      <ellipse cx="111" cy="275" rx="10" ry="4" fill="#1a1a2a"/>
+      <!-- Arms -->
+      <ellipse cx="68" cy="180" rx="8" ry="22" fill="#f0c8a0"/>
+      <ellipse cx="132" cy="180" rx="8" ry="22" fill="#f0c8a0"/>
+      <!-- Neck -->
+      <rect x="92" y="148" width="16" height="14" fill="#f0c8a0"/>
+      <!-- Head (slightly oversized for child) -->
+      <circle cx="100" cy="115" r="38" fill="#f0c8a0"/>
+      <!-- Hair -->
+      <path d="M 65 110 Q 70 75 100 72 Q 130 75 135 110 Q 130 95 100 92 Q 75 95 65 110 Z" fill="#5a3a20"/>
+      <!-- Eyes (big) -->
+      <circle cx="88" cy="115" r="4" fill="#1a1a2a"/>
+      <circle cx="112" cy="115" r="4" fill="#1a1a2a"/>
+      <circle cx="89" cy="114" r="1.2" fill="#fff"/>
+      <circle cx="113" cy="114" r="1.2" fill="#fff"/>
+      <!-- Cheeks -->
+      <circle cx="78" cy="128" r="4" fill="#ffb0a0" opacity="0.6"/>
+      <circle cx="122" cy="128" r="4" fill="#ffb0a0" opacity="0.6"/>
+      <!-- Smile -->
+      <path d="M 88 134 Q 100 142 112 134" stroke="#1a1a2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Glow accent -->
+      <circle cx="100" cy="115" r="44" fill="${c}" opacity="0.08"/>
+    `;
+  }
+
+  function drawTeen(c) {
+    return `
+      <!-- Body -->
+      <path d="M 70 160 L 130 160 L 138 250 L 62 250 Z" fill="#5d3a8a"/>
+      <!-- Legs -->
+      <rect x="76" y="245" width="16" height="35" rx="4" fill="#2a3550"/>
+      <rect x="108" y="245" width="16" height="35" rx="4" fill="#2a3550"/>
+      <ellipse cx="84" cy="280" rx="11" ry="4" fill="#1a1a2a"/>
+      <ellipse cx="116" cy="280" rx="11" ry="4" fill="#1a1a2a"/>
+      <!-- Arms -->
+      <ellipse cx="62" cy="195" rx="8" ry="32" fill="#f0c8a0"/>
+      <ellipse cx="138" cy="195" rx="8" ry="32" fill="#f0c8a0"/>
+      <!-- Neck -->
+      <rect x="93" y="135" width="14" height="18" fill="#f0c8a0"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="105" rx="32" ry="36" fill="#f0c8a0"/>
+      <!-- Hair (longer) -->
+      <path d="M 68 100 Q 65 60 100 55 Q 138 58 134 105 Q 130 80 100 78 Q 75 82 68 100 Z" fill="#3a2010"/>
+      <!-- Eyes -->
+      <ellipse cx="89" cy="105" rx="3" ry="3.5" fill="#1a1a2a"/>
+      <ellipse cx="111" cy="105" rx="3" ry="3.5" fill="#1a1a2a"/>
+      <!-- Smile -->
+      <path d="M 90 124 Q 100 132 110 124" stroke="#1a1a2a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="105" r="42" fill="${c}" opacity="0.08"/>
+    `;
+  }
+
+  function drawAdult(c) {
+    return `
+      <!-- Body (jacket) -->
+      <path d="M 65 158 L 135 158 L 145 255 L 55 255 Z" fill="#2a3a5a"/>
+      <!-- Shirt collar -->
+      <path d="M 90 160 L 100 175 L 110 160" stroke="#fff" stroke-width="2" fill="none"/>
+      <!-- Legs -->
+      <rect x="74" y="248" width="18" height="36" rx="4" fill="#1a2030"/>
+      <rect x="108" y="248" width="18" height="36" rx="4" fill="#1a2030"/>
+      <ellipse cx="83" cy="282" rx="12" ry="4" fill="#0a0a18"/>
+      <ellipse cx="117" cy="282" rx="12" ry="4" fill="#0a0a18"/>
+      <!-- Arms -->
+      <ellipse cx="60" cy="200" rx="10" ry="34" fill="#2a3a5a"/>
+      <ellipse cx="140" cy="200" rx="10" ry="34" fill="#2a3a5a"/>
+      <!-- Hands -->
+      <circle cx="60" cy="234" r="8" fill="#e8b890"/>
+      <circle cx="140" cy="234" r="8" fill="#e8b890"/>
+      <!-- Neck -->
+      <rect x="93" y="133" width="14" height="20" fill="#e8b890"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="100" rx="30" ry="34" fill="#e8b890"/>
+      <!-- Hair (medium) -->
+      <path d="M 70 95 Q 70 60 100 55 Q 130 60 130 95 Q 128 80 100 78 Q 75 82 70 95 Z" fill="#3a1f0a"/>
+      <!-- Eyes -->
+      <circle cx="90" cy="100" r="2.5" fill="#1a1a2a"/>
+      <circle cx="110" cy="100" r="2.5" fill="#1a1a2a"/>
+      <!-- Slight smile -->
+      <path d="M 91 122 Q 100 128 109 122" stroke="#1a1a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="42" fill="${c}" opacity="0.07"/>
+    `;
+  }
+
+  function drawMiddleAged(c) {
+    return `
+      <!-- Body -->
+      <path d="M 62 158 L 138 158 L 150 256 L 50 256 Z" fill="#3a3a4a"/>
+      <path d="M 88 160 L 100 175 L 112 160" stroke="#bbb" stroke-width="2" fill="none"/>
+      <!-- Legs -->
+      <rect x="72" y="250" width="20" height="36" rx="4" fill="#1a2030"/>
+      <rect x="108" y="250" width="20" height="36" rx="4" fill="#1a2030"/>
+      <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
+      <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
+      <!-- Arms -->
+      <ellipse cx="56" cy="202" rx="10" ry="36" fill="#3a3a4a"/>
+      <ellipse cx="144" cy="202" rx="10" ry="36" fill="#3a3a4a"/>
+      <circle cx="56" cy="238" r="9" fill="#d8a888"/>
+      <circle cx="144" cy="238" r="9" fill="#d8a888"/>
+      <!-- Neck -->
+      <rect x="92" y="133" width="16" height="20" fill="#d8a888"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="100" rx="30" ry="34" fill="#d8a888"/>
+      <!-- Hair (gray streaks) -->
+      <path d="M 70 95 Q 72 62 100 58 Q 128 62 130 95 Q 128 82 100 80 Q 75 84 70 95 Z" fill="#4a3525"/>
+      <path d="M 75 78 Q 80 70 88 72" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M 113 72 Q 121 70 126 78" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Eyes with slight bags -->
+      <circle cx="90" cy="100" r="2.5" fill="#1a1a2a"/>
+      <circle cx="110" cy="100" r="2.5" fill="#1a1a2a"/>
+      <path d="M 86 105 Q 90 108 94 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
+      <path d="M 106 105 Q 110 108 114 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
+      <!-- Mouth (neutral) -->
+      <path d="M 92 122 Q 100 124 108 122" stroke="#1a1a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <!-- Forehead lines -->
+      <path d="M 84 82 Q 100 80 116 82" stroke="#a08070" stroke-width="0.8" fill="none" opacity="0.6"/>
+      <circle cx="100" cy="100" r="42" fill="${c}" opacity="0.06"/>
+    `;
+  }
+
+  function drawElderly(c) {
+    return `
+      <!-- Body (slightly stooped — head shifted forward) -->
+      <path d="M 62 162 L 138 162 L 150 258 L 50 258 Z" fill="#4a4a55"/>
+      <path d="M 88 163 L 100 178 L 112 163" stroke="#999" stroke-width="2" fill="none"/>
+      <!-- Legs -->
+      <rect x="72" y="252" width="20" height="34" rx="4" fill="#2a2a35"/>
+      <rect x="108" y="252" width="20" height="34" rx="4" fill="#2a2a35"/>
+      <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
+      <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
+      <!-- Arms -->
+      <ellipse cx="56" cy="204" rx="10" ry="36" fill="#4a4a55"/>
+      <ellipse cx="144" cy="204" rx="10" ry="36" fill="#4a4a55"/>
+      <circle cx="56" cy="240" r="9" fill="#c89878"/>
+      <circle cx="144" cy="240" r="9" fill="#c89878"/>
+      <!-- Cane -->
+      <line x1="148" y1="245" x2="156" y2="285" stroke="#5a3a20" stroke-width="3" stroke-linecap="round"/>
+      <!-- Neck -->
+      <rect x="92" y="135" width="16" height="20" fill="#c89878"/>
+      <!-- Head (tilted slightly) -->
+      <ellipse cx="100" cy="102" rx="30" ry="34" fill="#c89878"/>
+      <!-- Hair (mostly gray) -->
+      <path d="M 70 96 Q 72 64 100 60 Q 128 64 130 96 Q 128 84 100 82 Q 75 86 70 96 Z" fill="#aaa"/>
+      <!-- Glasses -->
+      <circle cx="90" cy="100" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
+      <circle cx="110" cy="100" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
+      <line x1="96" y1="100" x2="104" y2="100" stroke="#1a1a2a" stroke-width="1.5"/>
+      <!-- Eyes -->
+      <circle cx="90" cy="100" r="1.8" fill="#1a1a2a"/>
+      <circle cx="110" cy="100" r="1.8" fill="#1a1a2a"/>
+      <!-- Wrinkles -->
+      <path d="M 80 84 Q 100 82 120 84" stroke="#a08070" stroke-width="0.8" fill="none"/>
+      <path d="M 80 88 Q 100 86 120 88" stroke="#a08070" stroke-width="0.6" fill="none"/>
+      <path d="M 86 110 Q 90 113 94 110" stroke="#a08070" stroke-width="0.8" fill="none"/>
+      <path d="M 106 110 Q 110 113 114 110" stroke="#a08070" stroke-width="0.8" fill="none"/>
+      <!-- Mouth (small) -->
+      <path d="M 94 122 Q 100 124 106 122" stroke="#1a1a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="102" r="42" fill="${c}" opacity="0.05"/>
+    `;
+  }
+
+  function drawVeryElderly(c) {
+    return `
+      <!-- Body (more stooped) -->
+      <path d="M 60 168 L 140 168 L 152 260 L 48 260 Z" fill="#5a5560"/>
+      <path d="M 88 170 L 100 184 L 112 170" stroke="#888" stroke-width="2" fill="none"/>
+      <!-- Legs -->
+      <rect x="72" y="254" width="20" height="32" rx="4" fill="#3a3540"/>
+      <rect x="108" y="254" width="20" height="32" rx="4" fill="#3a3540"/>
+      <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
+      <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
+      <!-- Arms (one on cane) -->
+      <ellipse cx="55" cy="206" rx="10" ry="36" fill="#5a5560"/>
+      <ellipse cx="145" cy="206" rx="10" ry="34" fill="#5a5560"/>
+      <circle cx="55" cy="242" r="8" fill="#b88868"/>
+      <circle cx="145" cy="240" r="8" fill="#b88868"/>
+      <!-- Cane -->
+      <line x1="149" y1="244" x2="158" y2="285" stroke="#5a3a20" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="149" cy="244" r="3" fill="#3a2510"/>
+      <!-- Neck -->
+      <rect x="92" y="138" width="16" height="22" fill="#b88868"/>
+      <!-- Head (more forward) -->
+      <ellipse cx="100" cy="105" rx="30" ry="34" fill="#b88868"/>
+      <!-- Hair (white, thinning) -->
+      <path d="M 75 100 Q 78 72 100 68 Q 122 72 125 100 Q 122 90 100 88 Q 78 92 75 100 Z" fill="#eee"/>
+      <!-- Glasses -->
+      <circle cx="90" cy="103" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
+      <circle cx="110" cy="103" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
+      <line x1="96" y1="103" x2="104" y2="103" stroke="#1a1a2a" stroke-width="1.5"/>
+      <!-- Eyes -->
+      <circle cx="90" cy="103" r="1.5" fill="#1a1a2a"/>
+      <circle cx="110" cy="103" r="1.5" fill="#1a1a2a"/>
+      <!-- Heavy wrinkles -->
+      <path d="M 78 86 Q 100 84 122 86" stroke="#806858" stroke-width="0.8" fill="none"/>
+      <path d="M 78 91 Q 100 89 122 91" stroke="#806858" stroke-width="0.7" fill="none"/>
+      <path d="M 78 96 Q 100 94 122 96" stroke="#806858" stroke-width="0.5" fill="none"/>
+      <path d="M 84 116 Q 90 119 96 116" stroke="#806858" stroke-width="0.8" fill="none"/>
+      <path d="M 104 116 Q 110 119 116 116" stroke="#806858" stroke-width="0.8" fill="none"/>
+      <path d="M 80 130 L 76 138" stroke="#806858" stroke-width="0.5"/>
+      <path d="M 120 130 L 124 138" stroke="#806858" stroke-width="0.5"/>
+      <!-- Small mouth -->
+      <path d="M 95 126 Q 100 127 105 126" stroke="#1a1a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="105" r="42" fill="${c}" opacity="0.04"/>
+    `;
+  }
+
+  function drawMemorial(c) {
+    return `
+      <!-- Ground -->
+      <ellipse cx="100" cy="270" rx="70" ry="8" fill="#1a1a2a" opacity="0.6"/>
+      <!-- Gravestone -->
+      <path d="M 60 260 L 60 150 Q 60 110 100 110 Q 140 110 140 150 L 140 260 Z" fill="#3a3a48"/>
+      <path d="M 60 260 L 60 150 Q 60 110 100 110 Q 140 110 140 150 L 140 260 Z" fill="none" stroke="#5a5a70" stroke-width="2"/>
+      <!-- Cross/symbol -->
+      <line x1="100" y1="135" x2="100" y2="170" stroke="#9aa0b0" stroke-width="3" stroke-linecap="round"/>
+      <line x1="86" y1="148" x2="114" y2="148" stroke="#9aa0b0" stroke-width="3" stroke-linecap="round"/>
+      <!-- Inscription -->
+      <text x="100" y="200" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="600" fill="#cdd5e8" letter-spacing="2">REMEMBERED</text>
+      <text x="100" y="222" text-anchor="middle" font-family="DM Sans" font-size="9" fill="#9aa0b0" letter-spacing="1">A LIFE WELL LIVED</text>
+      <!-- Glow -->
+      <circle cx="100" cy="180" r="60" fill="${c}" opacity="0.06"/>
+      <!-- Flowers -->
+      <circle cx="78" cy="265" r="3" fill="#ff6b8b"/>
+      <circle cx="84" cy="266" r="2.5" fill="#ffc857"/>
+      <circle cx="90" cy="265" r="3" fill="#b18cff"/>
+    `;
+  }
+
+  /* ----------------- UI builders ----------------- */
+  function buildDestinationChips() {
+    els.destChips.innerHTML = '';
+    DESTINATIONS.forEach(d => {
+      const btn = document.createElement('button');
+      btn.className = 'dest-chip' + (d.id === state.destinationId ? ' active' : '');
+      btn.dataset.id = d.id;
+      btn.innerHTML = `<span class="icon">${d.icon}</span> ${d.name}`;
+      btn.addEventListener('click', () => selectDestination(d.id));
+      els.destChips.appendChild(btn);
+    });
+  }
+
+  function buildSpeedPresets() {
+    els.speedPresets.innerHTML = '';
+    SPEED_PRESETS.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'speed-preset';
+      btn.textContent = p.label + ' c';
+      btn.dataset.v = p.v;
+      btn.addEventListener('click', () => setVelocity(p.v));
+      els.speedPresets.appendChild(btn);
+    });
+  }
+
+  function buildStarfield() {
+    const sf = els.starfield;
+    sf.innerHTML = '';
+    const count = window.innerWidth < 700 ? 50 : 110;
+    for (let i = 0; i < count; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() * 2 + 0.5;
+      star.style.width = size + 'px';
+      star.style.height = size + 'px';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
+      star.style.setProperty('--delay', (Math.random() * 4) + 's');
+      sf.appendChild(star);
+    }
+  }
+
+  /* ----------------- Selection / state changes ----------------- */
+  function selectDestination(id) {
+    state.destinationId = id;
+    const dest = DESTINATIONS.find(d => d.id === id);
+    if (id === 'custom') {
+      els.customRow.classList.add('visible');
+      state.distLy = parseCustomDistance();
+    } else {
+      els.customRow.classList.remove('visible');
+      state.distLy = dest.distLy;
+    }
+    // Update chips
+    els.destChips.querySelectorAll('.dest-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.id === id);
+    });
+    // Update destination icon in scene
+    updateSceneDestination(dest);
+    updateReadouts();
+  }
+
+  function parseCustomDistance() {
+    const val = parseFloat(els.customDistance.value) || 0;
+    const unit = els.customUnit.value;
+    let ly = 0;
+    if (unit === 'ly') ly = val;
+    else if (unit === 'lh') ly = val * 3600 / SEC_PER_YEAR;
+    else if (unit === 'lm') ly = val * 60 / SEC_PER_YEAR;
+    else if (unit === 'ls') ly = val / SEC_PER_YEAR;
+    else if (unit === 'km') ly = val / KM_PER_LY;
+    else if (unit === 'au') ly = val * KM_PER_AU / KM_PER_LY;
+    return Math.max(1e-12, ly);
+  }
+
+  function setVelocity(v) {
+    state.velocityC = Math.max(0.001, Math.min(0.99999999999, v));
+    els.speedSlider.value = vToSlider(state.velocityC);
+    updateSpeedPresetButtons();
+    updateReadouts();
+  }
+
+  function updateSpeedPresetButtons() {
+    els.speedPresets.querySelectorAll('.speed-preset').forEach(b => {
+      const v = parseFloat(b.dataset.v);
+      b.classList.toggle('active', Math.abs(v - state.velocityC) < 1e-6);
+    });
+  }
+
+  function updateSceneDestination(dest) {
+    if (!dest) return;
+    // Pick a representative color/size for the destination icon
+    let fill = '#ffc857', r = 28;
+    if (dest.id === 'moon') { fill = '#cdd5e8'; r = 18; }
+    else if (dest.id === 'mars') { fill = '#d6633a'; r = 24; }
+    else if (dest.id === 'jupiter') { fill = '#d8a86b'; r = 36; }
+    else if (dest.id === 'pluto') { fill = '#b8c4d8'; r = 14; }
+    else if (dest.id === 'proxima') { fill = '#ff8a5a'; r = 20; }
+    else if (dest.id === 'sirius') { fill = '#dceaff'; r = 26; }
+    else if (dest.id === 'vega') { fill = '#c8e0ff'; r = 24; }
+    else if (dest.id === 'pleiades') { fill = '#b8c8ff'; r = 30; }
+    else if (dest.id === 'gcenter') { fill = '#3a1a2a'; r = 38; }
+    else if (dest.id === 'andromeda') { fill = '#9a8eff'; r = 42; }
+    else { fill = '#b18cff'; r = 26; }
+    els.destCircle.setAttribute('fill', fill);
+    els.destCircle.setAttribute('r', r);
+    els.destText.textContent = dest.name.toUpperCase();
+  }
+
+  /* ----------------- Live readouts ----------------- */
+  function updateReadouts() {
+    const v = state.velocityC;
+    const d = state.distLy;
+    const g = gammaOf(v);
+
+    // Distance label
+    els.destDistanceLabel.textContent = formatDistance(d);
+
+    // Speed label
+    let vStr;
+    if (v < 0.99) vStr = v.toFixed(3);
+    else if (v < 0.99999) vStr = v.toFixed(5);
+    else if (v < 0.99999999) vStr = v.toFixed(8);
+    else vStr = v.toPrecision(11);
+    let gStr = g < 100 ? g.toFixed(2) : g < 10000 ? g.toFixed(0) : g.toExponential(2);
+    els.speedLabel.textContent = `${vStr} c · γ = ${gStr}`;
+
+    // Stats (initial — when not running)
+    if (!state.isAnimating) {
+      els.statEarthTime.textContent = formatDuration(0);
+      els.statTravTime.textContent = formatDuration(0);
+      els.statGamma.textContent = gStr;
+    }
+
+    // Survival check
+    checkSurvival();
+  }
+
+  function checkSurvival() {
+    const sa = parseInt(els.startAge.value) || 8;
+    state.startAge = Math.max(3, Math.min(80, sa));
+    const tT = travelerTimeRT(state.distLy, state.velocityC);
+    const finalAge = state.startAge + tT;
+
+    if (finalAge > LIFESPAN) {
+      els.survivalCard.classList.add('visible');
+      const yearsOver = Math.round(finalAge - LIFESPAN);
+      els.survivalDetail.textContent =
+        ` You'd age ${formatDuration(tT)} en route — about ${yearsOver.toLocaleString()} years past a normal lifespan. `;
+    } else {
+      els.survivalCard.classList.remove('visible');
+    }
+  }
+
+  function applySaveMe() {
+    // Compute minimum velocity for survival with safety buffer
+    const maxT = LIFESPAN - state.startAge - SAFETY_BUFFER;
+    if (maxT <= 1) {
+      // Already too old to save
+      return;
+    }
+    const vMin = minVelocityForSurvival(state.distLy, maxT);
+    setVelocity(Math.min(0.999999999999, vMin * 1.0001));
+  }
+
+  /* ----------------- Animation ----------------- */
+  function launch() {
+    if (state.isAnimating) return;
+
+    const sa = parseInt(els.startAge.value) || 8;
+    state.startAge = Math.max(3, Math.min(80, sa));
+
+    state.isAnimating = true;
+    state.animStart = performance.now();
+
+    els.launchBtn.disabled = true;
+    els.skipBtn.classList.add('visible');
+    els.scenePanel.classList.add('warping');
+
+    // Track GA event if available
+    try {
+      if (typeof gtag === 'function') {
+        gtag('event', 'twin_paradox_launch', {
+          destination: state.destinationId,
+          velocity_c: state.velocityC,
+          start_age: state.startAge
+        });
+      }
+    } catch (e) {}
+
+    state.rafId = requestAnimationFrame(animate);
+  }
+
+  function animate(now) {
+    const elapsed = (now - state.animStart) / 1000;
+    let p = Math.min(1, elapsed / ANIM_DURATION);
+    state.animProgress = p;
+
+    const v = state.velocityC;
+    const d = state.distLy;
+    const tE_total = earthTimeRT(d, v);
+    const tT_total = travelerTimeRT(d, v);
+
+    const tE = p * tE_total;
+    const tT = p * tT_total;
+
+    // Update ages
+    const earthAge = state.startAge + tE;
+    const travAge = state.startAge + tT;
+    els.ageEarth.textContent = formatAge(earthAge);
+    els.ageTrav.textContent = formatAge(travAge);
+
+    // Update stats
+    els.statEarthTime.textContent = formatDuration(tE);
+    els.statTravTime.textContent = formatDuration(tT);
+
+    // Update character stages
+    setCharStage('figEarth', ageStage(earthAge));
+    setCharStage('figTrav', ageStage(travAge));
+
+    // Update civilization stage
+    setCivStage(civStage(tE));
+
+    // Move rocket
+    let pos;
+    if (p < 0.5) {
+      pos = p * 2; // 0 -> 1 (going right)
+      els.rocket.setAttribute('transform', `translate(${135 + pos * 920}, 90)`);
+    } else {
+      pos = (1 - p) * 2; // 1 -> 0 (coming back)
+      els.rocket.setAttribute('transform', `translate(${135 + pos * 920}, 90) scale(-1, 1)`);
+    }
+
+    if (p < 1) {
+      state.rafId = requestAnimationFrame(animate);
+    } else {
+      finishAnimation();
+    }
+  }
+
+  function setCharStage(prefix, stage) {
+    for (let i = 0; i < 7; i++) {
+      const g = document.getElementById(`${prefix}-stage-${i}`);
+      if (g) g.style.display = (i === stage) ? '' : 'none';
+    }
+  }
+
+  function setCivStage(stage) {
+    document.querySelectorAll('.earth-twin .civ-stage').forEach(g => {
+      g.classList.toggle('active', parseInt(g.dataset.stage) === stage);
+    });
+  }
+
+  function finishAnimation() {
+    state.isAnimating = false;
+    els.scenePanel.classList.remove('warping');
+    els.skipBtn.classList.remove('visible');
+    els.launchBtn.disabled = false;
+    showResult();
+  }
+
+  function skipAnimation() {
+    if (!state.isAnimating) return;
+    cancelAnimationFrame(state.rafId);
+    // Force final frame
+    state.animStart = performance.now() - ANIM_DURATION * 1000;
+    animate(performance.now());
+  }
+
+  /* ----------------- Result ----------------- */
+  function flavorTextFor(tE, tT, gap) {
+    if (tE < 1/SEC_PER_YEAR * 60) return `Barely a moment passed. Relativity exists at any speed — but at this distance and velocity, the effect is too tiny to feel.`;
+    if (tE < 1) return `Less than a year passed on Earth. Time dilation was real, but small. Try farther — or faster.`;
+    if (tE < 10) return `A handful of years passed back home. <strong>You aged ${formatDuration(tT)}</strong> while Earth aged ${formatDuration(tE)} — relativity is no longer subtle.`;
+    if (tE < 100) return `A generation passed on Earth. Friends grew old. The world you knew is no longer the world you return to. <strong>${formatDuration(gap)} of difference</strong> between two twins.`;
+    if (tE < 1000) return `Centuries passed. The civilization you left behind has transformed beyond recognition. <strong>${formatDuration(gap)} slipped past on Earth</strong> while you barely aged.`;
+    if (tE < 10000) return `Longer than recorded human history. Empires you'd never heard of rose and fell while you were away. The Earth in your memory exists only in archives now.`;
+    if (tE < 100000) return `Older than human civilization itself. Languages have evolved past recognition. The pyramids — ancient when you left — are now twice as ancient. <strong>${formatDuration(gap)}</strong> have passed.`;
+    if (tE < 1e6) return `Longer than Homo sapiens has existed. The species that built the rocket you launched in is likely gone. New ones may have come and gone in your absence.`;
+    if (tE < 1e8) return `Geological eras have rolled past. Mountain ranges you knew have eroded; new ones have risen. The continents have rearranged themselves while you were on your trip.`;
+    return `Earth itself is no longer recognizable. Stars you set out toward are dimmer or gone. You are a relic from a universe that no longer exists.`;
+  }
+
+  function showResult() {
+    const v = state.velocityC;
+    const d = state.distLy;
+    const tE = earthTimeRT(d, v);
+    const tT = travelerTimeRT(d, v);
+    const gap = tE - tT;
+    const dest = DESTINATIONS.find(x => x.id === state.destinationId);
+
+    const earthAge = state.startAge + tE;
+    const travAge = state.startAge + tT;
+
+    // Headline
+    let headline;
+    if (gap < 1/365) {
+      headline = `You both aged about the same.`;
+    } else if (gap < 2) {
+      headline = `Earth aged ${formatDuration(tE)}. You aged ${formatDuration(tT)}.`;
+    } else {
+      headline = `You aged ${formatDuration(tT)}.<br/>Earth aged ${formatDuration(tE)}.`;
+    }
+
+    els.resultEyebrow.textContent = `Round trip · ${dest.name}`;
+    els.resultHeadline.innerHTML = headline;
+    els.resultEarth.innerHTML = (earthAge > LIFESPAN)
+      ? `Passed away<br/><span style="font-size:13px;color:var(--text-mute);font-family:DM Sans;font-weight:400;">at age ${Math.min(LIFESPAN+10, Math.floor(earthAge))}</span>`
+      : `Age ${Math.floor(earthAge)}`;
+    els.resultTrav.innerHTML = (travAge > LIFESPAN)
+      ? `Passed away<br/><span style="font-size:13px;color:var(--text-mute);font-family:DM Sans;font-weight:400;">en route</span>`
+      : `Age ${Math.floor(travAge)}`;
+    els.resultFlavor.innerHTML = flavorTextFor(tE, tT, gap);
+
+    els.resultOverlay.classList.add('visible');
+  }
+
+  function closeResult() {
+    els.resultOverlay.classList.remove('visible');
+  }
+
+  function reset() {
+    if (state.isAnimating) {
+      cancelAnimationFrame(state.rafId);
+      state.isAnimating = false;
+      els.scenePanel.classList.remove('warping');
+      els.skipBtn.classList.remove('visible');
+      els.launchBtn.disabled = false;
+    }
+    closeResult();
+    // Reset rocket
+    els.rocket.setAttribute('transform', 'translate(135, 90)');
+    // Reset ages and stats
+    const sa = parseInt(els.startAge.value) || 8;
+    state.startAge = Math.max(3, Math.min(80, sa));
+    els.ageEarth.textContent = state.startAge;
+    els.ageTrav.textContent = state.startAge;
+    setCharStage('figEarth', ageStage(state.startAge));
+    setCharStage('figTrav', ageStage(state.startAge));
+    setCivStage(0);
+    updateReadouts();
+  }
+
+  /* ----------------- Init ----------------- */
+  function init() {
+    buildStarfield();
+    buildDestinationChips();
+    buildSpeedPresets();
+
+    // Draw both characters
+    drawCharacter('figEarth', '#4fd1ff');
+    drawCharacter('figTrav', '#b18cff');
+
+    // Set initial selection
+    selectDestination('moon');
+    setVelocity(0.5);
+
+    // Show initial age
+    els.ageEarth.textContent = state.startAge;
+    els.ageTrav.textContent = state.startAge;
+    setCharStage('figEarth', ageStage(state.startAge));
+    setCharStage('figTrav', ageStage(state.startAge));
+    setCivStage(0);
+
+    // Wire events
+    els.speedSlider.addEventListener('input', (e) => {
+      const v = sliderToV(parseInt(e.target.value));
+      state.velocityC = v;
+      updateSpeedPresetButtons();
+      updateReadouts();
+    });
+    els.startAge.addEventListener('input', () => {
+      const sa = parseInt(els.startAge.value) || 8;
+      state.startAge = Math.max(3, Math.min(80, sa));
+      els.ageEarth.textContent = state.startAge;
+      els.ageTrav.textContent = state.startAge;
+      setCharStage('figEarth', ageStage(state.startAge));
+      setCharStage('figTrav', ageStage(state.startAge));
+      updateReadouts();
+    });
+    els.customDistance.addEventListener('input', () => {
+      if (state.destinationId === 'custom') {
+        state.distLy = parseCustomDistance();
+        updateReadouts();
+      }
+    });
+    els.customUnit.addEventListener('change', () => {
+      if (state.destinationId === 'custom') {
+        state.distLy = parseCustomDistance();
+        updateReadouts();
+      }
+    });
+    els.saveBtn.addEventListener('click', applySaveMe);
+    els.launchBtn.addEventListener('click', launch);
+    els.resetBtn.addEventListener('click', reset);
+    els.skipBtn.addEventListener('click', skipAnimation);
+    els.resultClose.addEventListener('click', closeResult);
+    document.getElementById('resultCloseX').addEventListener('click', closeResult);
+    // Click outside the card closes the popup
+    els.resultOverlay.addEventListener('click', (ev) => {
+      if (ev.target === els.resultOverlay) closeResult();
+    });
+    // ESC key closes the popup
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && els.resultOverlay.classList.contains('visible')) closeResult();
+    });
+
+    // Rebuild starfield on resize (for density)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(buildStarfield, 200);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
