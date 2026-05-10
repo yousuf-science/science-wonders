@@ -11,95 +11,615 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Science Wonders</title>
+<title>Science Wonders — Interactive Physics Simulations</title>
+<meta name="description" content="Real physics, simulated in your browser. Built by a researcher to make natural science tangible — for anyone curious.">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #010409; color: #b8ceec; font-family: Georgia, serif; min-height: 100vh; }
+:root {
+  --bg: #010409;
+  --bg2: #080f1e;
+  --bg3: #0c1830;
+  --border: #152035;
+  --border2: #1e3050;
+  --text: #b8ceec;
+  --text2: #5878a0;
+  --text3: #3a5070;
+  --text-bright: #ddeeff;
+  --accent: #3a8fff;
+  --gold: #f0c060;
+  --gold-bright: #ffe8a0;
+  --cyan: #20d0ff;
+  --pink: #ff6090;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, 'Times New Roman', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Subtle starfield background */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 18%, rgba(184, 206, 236, 0.55), transparent),
+    radial-gradient(1px 1px at 60% 70%, rgba(240, 192, 96, 0.35), transparent),
+    radial-gradient(1px 1px at 80% 22%, rgba(184, 206, 236, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 40% 90%, rgba(58, 143, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 92% 52%, rgba(184, 206, 236, 0.45), transparent),
+    radial-gradient(1px 1px at 12% 65%, rgba(240, 192, 96, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 70% 38%, rgba(184, 206, 236, 0.4), transparent),
+    radial-gradient(1px 1px at 35% 12%, rgba(184, 206, 236, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 85% 82%, rgba(32, 208, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 50% 45%, rgba(184, 206, 236, 0.3), transparent),
+    radial-gradient(1px 1px at 25% 80%, rgba(240, 192, 96, 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 5% 40%, rgba(184, 206, 236, 0.35), transparent);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+
+/* Header */
 header {
-  display: flex; align-items: center; gap: 16px;
-  padding: 14px 32px; border-bottom: 1px solid #152035;
-  background: rgba(1,4,9,0.97); position: sticky; top: 0; z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 32px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(1, 4, 9, 0.92);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
-.logo { font-family: monospace; font-size: 12px; letter-spacing: 5px; color: #f0c060; text-transform: uppercase; }
-.logo span { color: #5878a0; }
-.tagline { font-family: monospace; font-size: 11px; color: #3a5070; border-left: 1px solid #1e3050; padding-left: 16px; letter-spacing: 2px; }
-.hero { text-align: center; padding: 70px 20px 50px; }
-.hero h1 { font-size: 32px; font-weight: normal; color: #ddeeff; letter-spacing: 2px; margin-bottom: 14px; }
-.hero p { font-size: 15px; color: #5878a0; max-width: 520px; margin: 0 auto; line-height: 1.8; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 960px; margin: 0 auto; padding: 0 24px 50px; }
+.logo {
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.logo .logo-star {
+  display: inline-block;
+  animation: starPulse 4s ease-in-out infinite;
+}
+@keyframes starPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.12); }
+}
+.logo span { color: var(--text2); }
+.tagline {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--text3);
+  border-left: 1px solid var(--border2);
+  padding-left: 16px;
+  letter-spacing: 2px;
+}
+.header-spacer { flex: 1; }
+.header-links {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.header-link {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text2);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.header-link:hover {
+  color: var(--accent);
+  border-color: var(--border2);
+  background: var(--bg3);
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 90px 24px 50px;
+  position: relative;
+}
+.hero-eyebrow {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  opacity: 0.85;
+}
+.hero h1 {
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: normal;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 22px;
+  line-height: 1.2;
+}
+.hero h1 .accent-word {
+  color: var(--gold);
+  font-style: italic;
+}
+.hero p {
+  font-size: 16px;
+  color: var(--text2);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.85;
+}
+
+/* Stats strip */
+.stats-strip {
+  display: flex;
+  justify-content: center;
+  margin: 40px auto 0;
+  max-width: 720px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+  flex-wrap: wrap;
+}
+.stat {
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+  padding: 4px 16px;
+  border-right: 1px solid var(--border);
+}
+.stat:last-child { border-right: none; }
+.stat-num {
+  font-family: monospace;
+  font-size: 20px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.stat-lbl {
+  font-family: monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+@media (max-width: 600px) {
+  .stat {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 10px;
+  }
+  .stat:last-child { border-bottom: none; }
+}
+
+/* Section divider */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 960px;
+  margin: 60px auto 26px;
+  padding: 0 24px;
+}
+.section-divider .line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
+}
+.section-divider .label {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text3);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.section-divider .label .star {
+  color: var(--gold);
+  display: inline-block;
+  margin: 0 6px;
+}
+
+/* Featured / Latest card */
+.featured-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.featured {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  background: linear-gradient(135deg, #0e1a3a 0%, #080f1e 60%, #080f1e 100%);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 32px clamp(24px, 4vw, 40px);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.featured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 90% 50%, rgba(58, 143, 255, 0.12), transparent 55%),
+    radial-gradient(circle at 5% 100%, rgba(240, 192, 96, 0.05), transparent 55%);
+  pointer-events: none;
+}
+.featured:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(58, 143, 255, 0.12);
+}
+.featured-icon {
+  position: relative;
+  font-size: 64px;
+  align-self: center;
+  filter: drop-shadow(0 0 24px rgba(58, 143, 255, 0.35));
+  animation: featuredPulse 4s ease-in-out infinite;
+  line-height: 1;
+}
+@keyframes featuredPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.featured-body { position: relative; }
+.featured-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 5px 11px;
+  border-radius: 4px;
+  background: rgba(255, 96, 144, 0.08);
+  border: 1px solid rgba(255, 96, 144, 0.4);
+  color: var(--pink);
+  margin-bottom: 12px;
+}
+.featured-tag .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 8px var(--pink);
+  animation: blink 1.6s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.featured-title {
+  font-family: monospace;
+  font-size: 20px;
+  color: var(--text-bright);
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+.featured-desc {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.85;
+  margin-bottom: 18px;
+  max-width: 580px;
+}
+.featured-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.featured-meta .cat {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--accent);
+}
+.featured-link {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+.featured-link .arrow {
+  display: inline-block;
+  transition: transform 0.25s;
+}
+.featured:hover .featured-link .arrow { transform: translateX(5px); }
+@media (max-width: 600px) {
+  .featured { grid-template-columns: 1fr; padding: 24px; gap: 12px; }
+  .featured-icon { text-align: center; font-size: 52px; }
+}
+
+/* Card grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px 50px;
+}
 .card {
-  background: #080f1e; border: 1px solid #152035;
-  border-radius: 12px; padding: 28px; cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s;
-  text-decoration: none; display: block; color: inherit;
+  position: relative;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  overflow: hidden;
 }
-.card:hover { border-color: #3a8fff; transform: translateY(-3px); }
-.card-icon { font-size: 28px; margin-bottom: 16px; }
-.card-title { font-family: monospace; font-size: 15px; color: #ddeeff; letter-spacing: 1px; margin-bottom: 10px; }
-.card-desc { font-size: 13px; color: #5878a0; line-height: 1.8; margin-bottom: 18px; }
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transition: left 0.7s ease;
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(58, 143, 255, 0.08);
+}
+.card:hover::after { left: 100%; }
+.card:hover .card-icon {
+  transform: scale(1.18) rotate(-4deg);
+  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
+}
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  display: inline-block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  line-height: 1;
+}
+.card-title {
+  font-family: monospace;
+  font-size: 15px;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.card-desc {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.8;
+  margin-bottom: 18px;
+  flex: 1;
+}
 .card-tag {
-  display: inline-block; font-family: monospace; font-size: 10px;
-  letter-spacing: 2px; padding: 3px 10px; border-radius: 4px;
-  background: #0c1830; border: 1px solid #1e3050; color: #3a8fff;
+  display: inline-block;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--accent);
+  align-self: flex-start;
 }
 .card-link {
-  display: inline-block; margin-top: 16px; font-family: monospace;
-  font-size: 11px; color: #3a8fff; letter-spacing: 1px;
+  margin-top: 16px;
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 1px;
 }
+.card-link .arrow {
+  display: inline-block;
+  transition: transform 0.25s;
+}
+.card:hover .card-link .arrow { transform: translateX(5px); }
 
-/* About section */
-.about-wrap { max-width: 720px; margin: 30px auto 60px; padding: 0 24px; }
-.about {
-  background: #080f1e; border: 1px solid #152035;
-  border-radius: 12px; padding: 36px 40px;
-  text-align: center;
+/* About */
+.about-wrap {
+  max-width: 720px;
+  margin: 30px auto 60px;
+  padding: 0 24px;
 }
+.about {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 40px clamp(24px, 5vw, 50px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(240, 192, 96, 0.06), transparent 70%);
+  pointer-events: none;
+}
+.about > * { position: relative; }
 .about-label {
-  font-family: monospace; font-size: 10px; letter-spacing: 4px;
-  color: #f0c060; text-transform: uppercase; margin-bottom: 16px;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 18px;
 }
 .about h2 {
-  font-size: 22px; font-weight: normal; color: #ddeeff;
-  letter-spacing: 1px; margin-bottom: 14px;
+  font-size: 24px;
+  font-weight: normal;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 14px;
 }
 .about-role {
-  font-family: monospace; font-size: 12px; color: #5878a0;
-  letter-spacing: 1.5px; margin-bottom: 22px;
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text2);
+  letter-spacing: 1.5px;
+  margin-bottom: 22px;
 }
 .about p {
-  font-size: 14px; color: #b8ceec; line-height: 1.9;
-  max-width: 540px; margin: 0 auto;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.95;
+  max-width: 560px;
+  margin: 0 auto;
 }
 .about-links {
-  margin-top: 26px; padding-top: 22px;
-  border-top: 1px solid #152035;
-  display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 .about-links a {
-  font-family: monospace; font-size: 11px; letter-spacing: 1.5px;
-  color: #3a8fff; text-decoration: none; padding: 6px 14px;
-  border: 1px solid #1e3050; border-radius: 5px;
-  transition: all 0.2s;
+  font-family: monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
-.about-links a:hover { border-color: #3a8fff; background: #0c1830; }
+.about-links a:hover {
+  border-color: var(--accent);
+  background: var(--bg3);
+  transform: translateY(-1px);
+}
 
+/* Footer */
 footer {
-  text-align: center; padding: 22px;
-  font-family: monospace; font-size: 10px;
-  color: #3a5070; border-top: 1px solid #152035; letter-spacing: 3px;
+  text-align: center;
+  padding: 30px 24px;
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+  letter-spacing: 3px;
+}
+.footer-links {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--text2);
+  text-decoration: none;
+  letter-spacing: 2px;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--accent); }
+.footer-tag { letter-spacing: 3px; margin-bottom: 12px; }
+.footer-fine {
+  font-size: 9px;
+  color: #2a3a55;
+  letter-spacing: 1.5px;
+  margin-top: 12px;
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  header { padding: 12px 16px; }
+  .tagline { display: none; }
+  .header-link { font-size: 9px; padding: 5px 8px; letter-spacing: 1.5px; }
+  .hero { padding: 60px 18px 40px; }
 }
 </style>
 </head>
 <body>
 
+<div class="starfield"></div>
+
 <header>
-  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="logo"><span class="logo-star">⭐</span> Science<span> Wonders</span></div>
   <div class="tagline">Interactive Physics Simulations</div>
+  <div class="header-spacer"></div>
+  <div class="header-links">
+    <a class="header-link" href="#about">About</a>
+    <a class="header-link" href="https://github.com/yousuf-science/science-wonders" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
 </header>
 
 <div class="hero">
-  <h1>Explore the Universe Interactively</h1>
-  <p>Real physics equations, visualised in your browser. Click any simulation below to explore.</p>
+  <div class="hero-eyebrow">Real Equations · Live in Your Browser · Zero Installs</div>
+  <h1>The universe, made <span class="accent-word">playable</span>.</h1>
+  <p>Every simulation here runs the actual physics equations — no shortcuts, no fakery. Push the sliders. Drag the masses. Launch the rocket. See what the universe really does.</p>
+
+  <div class="stats-strip">
+    <div class="stat">
+      <div class="stat-num">9</div>
+      <div class="stat-lbl">Simulations</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">Open Source</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-lbl">Installs Required</div>
+    </div>
+  </div>
+</div>
+
+<!-- Featured / Latest -->
+<div class="section-divider">
+  <span class="line"></span>
+  <span class="label"><span class="star">✦</span> Latest Release <span class="star">✦</span></span>
+  <span class="line"></span>
+</div>
+
+<div class="featured-wrap">
+  <a class="featured" href="twin-paradox.html">
+    <div class="featured-icon">⏱️</div>
+    <div class="featured-body">
+      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
+      <div class="featured-title">Twin Paradox</div>
+      <div class="featured-desc">Pick a destination — Mars, Andromeda, anywhere — and watch your twin grow old on Earth while you barely age. Witness Einstein's time dilation in action and see why a trip to the stars means leaving everyone you know behind.</div>
+      <div class="featured-meta">
+        <span class="cat">SPECIAL RELATIVITY</span>
+        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
+      </div>
+    </div>
+  </a>
+</div>
+
+<!-- All simulations -->
+<div class="section-divider">
+  <span class="line"></span>
+  <span class="label"><span class="star">✦</span> All Simulations <span class="star">✦</span></span>
+  <span class="line"></span>
 </div>
 
 <div class="grid">
@@ -109,7 +629,7 @@ footer {
     <div class="card-title">N-Body Gravitational Simulation</div>
     <div class="card-desc">Watch planets orbit a star under real Newtonian gravity. Add bodies, adjust star mass, and see live orbital velocities and periods computed in SI units.</div>
     <span class="card-tag">CLASSICAL MECHANICS</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="double-slit.html">
@@ -117,7 +637,7 @@ footer {
     <div class="card-title">Double Slit Experiment</div>
     <div class="card-desc">See why quantum particles make interference fringes. The experiment that proved light and matter behave as waves — and baffled physicists for centuries.</div>
     <span class="card-tag">QUANTUM MECHANICS</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="Doppler_effect.html">
@@ -125,7 +645,7 @@ footer {
     <div class="card-title">Doppler Effect</div>
     <div class="card-desc">Hear and see how sound waves compress and stretch as a source moves. The physics behind ambulance sirens, radar guns, and expanding galaxies.</div>
     <span class="card-tag">WAVE MECHANICS</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="Planet_formation.html">
@@ -133,7 +653,7 @@ footer {
     <div class="card-title">Planet Formation</div>
     <div class="card-desc">Witness how dust and gas clouds collapse under gravity to form planets. From a swirling protoplanetary disc to rocky worlds and gas giants.</div>
     <span class="card-tag">ASTROPHYSICS</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="BlackHole.html">
@@ -141,7 +661,7 @@ footer {
     <div class="card-title">Black Hole Formation</div>
     <div class="card-desc">Experience the dramatic collapse of a dying massive star. Simulate the transition from a supernova to a singularity where gravity warps spacetime beyond the point of no return.</div>
     <span class="card-tag">GENERAL RELATIVITY</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="CarbonDating.html">
@@ -149,7 +669,7 @@ footer {
     <div class="card-title">Carbon-14 Dating</div>
     <div class="card-desc">Model the radioactive decay of Carbon-14 isotopes over millennia. Learn how the steady ticking of an atomic clock allows us to calculate the age of ancient organic remains.</div>
     <span class="card-tag">NUCLEAR PHYSICS</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="double-pendulum.html">
@@ -157,48 +677,43 @@ footer {
     <div class="card-title">Double Pendulum</div>
     <div class="card-desc">Explore the "butterfly effect" in action. A simple two-part system that exhibits complex, chaotic behavior, demonstrating how tiny changes in initial conditions lead to vastly different outcomes.</div>
     <span class="card-tag">CHAOS THEORY</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
   <a class="card" href="induction.html">
     <div class="card-icon">🧲</div>
     <div class="card-title">Electromagnetic Induction</div>
-    <div class="card-desc">Move a magnet through a coil of wire to generate an electric current. Visualize Faraday’s Law in action and see the fundamental principle behind how power generators work.</div>
+    <div class="card-desc">Move a magnet through a coil of wire to generate an electric current. Visualize Faraday's Law in action and see the fundamental principle behind how power generators work.</div>
     <span class="card-tag">ELECTROMAGNETISM</span>
-    <div class="card-link">Launch simulation →</div>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
-  <a class="card" href="twin-paradox.html">
-  <div class="card-icon">⏱️</div>
-  <div class="card-title">Twin Paradox</div>
-  <div class="card-desc">Pick a destination — Mars, Andromeda, anywhere — and watch your twin grow old on Earth while you barely age. Witness Einstein's time dilation in action and see why a trip to the stars means leaving everyone you know behind.</div>
-  <span class="card-tag">SPECIAL RELATIVITY</span>
-  <div class="card-link">Launch simulation →</div>
-</a>
-  
 </div>
 
 <!-- ABOUT SECTION -->
-<div class="about-wrap">
+<div class="about-wrap" id="about">
   <div class="about">
     <div class="about-label">⭐ About the Creator</div>
     <h2>Hi, I'm Yousuf 👋</h2>
     <div class="about-role">Physics Researcher</div>
     <p>I love how a single equation can describe the dance of galaxies or the wobble of a pendulum. With Science Wonders, I am trying to make that beauty visible — not as static formulas, but as living, interactive worlds you can play with right in your browser. My hope is that someone, somewhere, has their first "wow!" moment about physics here.</p>
     <div class="about-links">
-      <a href="https://scholar.google.com/citations?user=GG5IkQkAAAAJ&hl=en" target="_blank">📚 Google Scholar</a>
-      <a href="https://github.com/yousuf-science" target="_blank">💻 GitHub</a>
+      <a href="https://scholar.google.com/citations?user=GG5IkQkAAAAJ&hl=en" target="_blank" rel="noopener">📚 Google Scholar</a>
+      <a href="https://github.com/yousuf-science" target="_blank" rel="noopener">💻 GitHub</a>
     </div>
   </div>
 </div>
 
-
 <footer>
-  SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS &nbsp;·&nbsp; YOUSUF-SCIENCE
-  <br><br>
-  <span style="font-size: 9px; color: #2a3a55;">
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="https://github.com/yousuf-science/science-wonders" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://scholar.google.com/citations?user=GG5IkQkAAAAJ&hl=en" target="_blank" rel="noopener">Scholar</a>
+  </div>
+  <div class="footer-tag">SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS &nbsp;·&nbsp; YOUSUF-SCIENCE</div>
+  <div class="footer-fine">
     This site uses Google Analytics to count anonymous visitors. No personal data is collected.
-  </span>
+  </div>
 </footer>
 
 </body>
