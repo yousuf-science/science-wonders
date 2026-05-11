@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lenses & Mirrors — Image Formation | Science Wonders</title>
+<meta name="description" content="An interactive optics simulation. Pick a lens or mirror, place an object, and see exactly what kind of image forms — real or virtual, erect or inverted, magnified or diminished.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;}
+
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+
+.canvas-wrap{position:relative;max-width:960px;margin:20px auto 0;padding:0 20px;}
+.bench-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:#010812;}
+svg#bench{display:block;width:100%;height:auto;cursor:default;}
+svg#bench .draggable{cursor:grab;}
+svg#bench .draggable:active{cursor:grabbing;}
+
+.badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.92);padding:5px 10px;border-radius:4px;pointer-events:none;letter-spacing:1.5px;border:1px solid var(--border2);}
+.badge-tl{top:10px;left:30px;color:var(--gold);}
+.badge-tr{top:10px;right:30px;color:var(--text2);}
+.badge-bl{bottom:14px;left:30px;color:var(--text3);font-size:9px;letter-spacing:1px;}
+
+/* Inline image label */
+.image-label{position:absolute;display:flex;gap:7px;align-items:center;font-family:monospace;font-size:11px;background:rgba(8,15,30,.97);border:1px solid;border-radius:6px;padding:6px 11px;white-space:nowrap;transform:translate(-50%,0);z-index:5;pointer-events:auto;}
+.image-label.real{border-color:var(--green);box-shadow:0 0 14px rgba(64,255,170,.18);}
+.image-label.virtual{border-color:var(--violet);border-style:dashed;box-shadow:0 0 14px rgba(192,96,255,.18);}
+.image-label .sep{color:var(--text3);}
+.tag{position:relative;text-decoration:underline dotted;text-underline-offset:3px;cursor:help;}
+.tag.t-real{color:var(--green);}
+.tag.t-virtual{color:var(--violet);}
+.tag.t-erect{color:var(--cyan);}
+.tag.t-inverted{color:var(--gold);}
+.tag.t-mag{color:var(--gold-bright);}
+.tag.t-dim{color:var(--accent);}
+.tag.t-same{color:var(--text-bright);}
+.tip{visibility:hidden;opacity:0;transition:opacity .15s;position:absolute;bottom:130%;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);padding:9px 13px;border-radius:7px;width:220px;font-size:11px;font-family:'Georgia',serif;color:var(--text);text-align:center;z-index:20;line-height:1.5;font-style:italic;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.5);}
+.tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--border2);}
+.tag:hover .tip,.tag:focus .tip{visibility:visible;opacity:1;}
+
+.panels{max-width:960px;margin:14px auto 0;display:grid;grid-template-columns:360px 1fr;gap:12px;padding:0 20px;}
+@media(max-width:760px){.panels{grid-template-columns:1fr;}}
+
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin-bottom:9px;margin-top:14px;}
+.section-label:first-child{margin-top:0;}
+
+.element-btns,.object-btns,.case-btns{display:grid;gap:6px;}
+.element-btns{grid-template-columns:repeat(2,1fr);}
+.object-btns{grid-template-columns:repeat(3,1fr);}
+.case-btns{grid-template-columns:repeat(2,1fr);}
+.element-btns button,.object-btns button,.case-btns button{font-family:monospace;font-size:10.5px;padding:8px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.5px;text-align:center;line-height:1.3;}
+.element-btns button:hover,.object-btns button:hover,.case-btns button:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.element-btns button.active,.object-btns button.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.case-btns button{font-size:10px;padding:7px 4px;}
+.object-btns button{font-size:14px;padding:9px 6px;}
+.object-btns button .obj-name{display:block;font-size:9px;letter-spacing:1.5px;color:inherit;opacity:.75;margin-top:3px;}
+
+.param{margin-bottom:12px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.param-val{font-size:12px;font-weight:bold;}
+.param-sub{font-family:monospace;font-size:9.5px;color:var(--text3);margin-top:3px;letter-spacing:.5px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+/* Readout panel */
+.readout-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.readout-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;}
+.readout-cell.wide{grid-column:span 2;}
+.r-label{font-family:monospace;font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.r-value{font-family:monospace;font-size:15px;color:var(--text-bright);letter-spacing:.5px;}
+.r-value.green{color:var(--green);}
+.r-value.violet{color:var(--violet);}
+.r-value.gold{color:var(--gold);}
+.r-value.cyan{color:var(--cyan);}
+.r-value.text{color:var(--text);}
+.r-sub{font-family:monospace;font-size:10px;color:var(--text3);margin-top:4px;}
+
+.fbox{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:14px;font-family:monospace;line-height:2;}
+.fbox .fl{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.fbox .fe{font-size:12px;color:var(--gold-bright);}
+.fbox .fe .nm{color:var(--cyan);}
+.fbox .gc{font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.7;}
+
+.ray-legend{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-family:monospace;font-size:10px;color:var(--text2);line-height:1.85;}
+.ray-legend .swatch{display:inline-block;width:18px;height:2px;vertical-align:middle;margin-right:7px;}
+.ray-legend .sw-cyan{background:var(--cyan);}
+.ray-legend .sw-violet{background:var(--violet);}
+.ray-legend .sw-gold{background:var(--gold);}
+.ray-legend .dashed{height:0;border-top:2px dashed var(--violet);}
+
+/* Theory */
+.theory-wrap{max-width:960px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,40px);}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:26px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-green{background:rgba(64,255,170,.04);border:1px solid rgba(64,255,170,.2);color:#8effc8;}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);font-size:11.5px;}
+.ctable td:first-child{color:var(--gold-bright);width:24%;}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable td.real{color:var(--green);}
+.ctable td.virtual{color:var(--violet);}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}
+footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){
+  header{padding:12px 16px;gap:10px;}
+  .page-subtitle{display:none;}
+  .badge{font-size:9px;padding:4px 8px;}
+  .badge-bl{display:none;}
+  .element-btns{grid-template-columns:1fr;}
+  .case-btns{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Lenses & Mirrors — Image Formation</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="canvas-wrap">
+  <div class="bench-frame">
+    <svg id="bench" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="bobGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff8d4"/>
+          <stop offset="100%" stop-color="rgba(255,200,87,0)"/>
+        </radialGradient>
+        <pattern id="mirrorHatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="6" stroke="#5878a0" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <g id="bench-grid"></g>
+      <g id="bench-axis"></g>
+      <g id="bench-fmarkers"></g>
+      <g id="bench-rays"></g>
+      <g id="bench-element"></g>
+      <g id="bench-object" class="draggable"></g>
+      <g id="bench-image"></g>
+      <g id="bench-labels"></g>
+    </svg>
+    <div id="img-label" class="image-label" hidden></div>
+    <div class="badge badge-tl" id="badge-element">CONVEX LENS</div>
+    <div class="badge badge-tr" id="badge-info">u = 30  ·  f = 10</div>
+    <div class="badge badge-bl">Drag the object to move it · Hover labels for definitions</div>
+  </div>
+</div>
+
+<div class="panels">
+  <!-- LEFT: Controls -->
+  <div class="panel">
+    <div class="panel-title">Setup &amp; Controls</div>
+
+    <div class="section-label">Optical Element</div>
+    <div class="element-btns" id="element-btns">
+      <button data-el="convex-lens" class="active">🔍 Convex Lens</button>
+      <button data-el="concave-lens">⊃⊂ Concave Lens</button>
+      <button data-el="concave-mirror">◗ Concave Mirror</button>
+      <button data-el="convex-mirror">◖ Convex Mirror</button>
+      <button data-el="plane-mirror" style="grid-column:span 2;">▮ Plane Mirror</button>
+    </div>
+
+    <div class="section-label">Object</div>
+    <div class="object-btns" id="object-btns">
+      <button data-obj="stick" class="active">🧍<span class="obj-name">FIGURE</span></button>
+      <button data-obj="mug">☕<span class="obj-name">MUG</span></button>
+      <button data-obj="elephant">🐘<span class="obj-name">ELEPHANT</span></button>
+    </div>
+
+    <div class="section-label">Parameters</div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Focal length |f|</span>
+        <span class="param-val" id="f-v" style="color:var(--gold)">10 cm</span>
+      </div>
+      <input type="range" id="sl-f" min="5" max="30" step="0.5" value="10">
+      <div class="param-sub" id="f-sub">Bigger |f| = weaker lens/mirror</div>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Object distance u</span>
+        <span class="param-val" id="u-v" style="color:var(--cyan)">30 cm</span>
+      </div>
+      <input type="range" id="sl-u" min="3" max="60" step="0.5" value="30">
+      <div class="param-sub">Distance from object to lens / mirror</div>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Object height</span>
+        <span class="param-val" id="h-v" style="color:var(--text-bright)">5 cm</span>
+      </div>
+      <input type="range" id="sl-h" min="2" max="10" step="0.5" value="7">
+    </div>
+
+    <div class="section-label">Quick Cases (click to jump)</div>
+    <div class="case-btns" id="case-btns"></div>
+  </div>
+
+  <!-- RIGHT: Live readout -->
+  <div class="panel">
+    <div class="panel-title">Image Formation Readout</div>
+
+    <div class="readout-grid">
+      <div class="readout-cell">
+        <div class="r-label">Image Type</div>
+        <div class="r-value" id="r-type">—</div>
+      </div>
+      <div class="readout-cell">
+        <div class="r-label">Orientation</div>
+        <div class="r-value" id="r-orient">—</div>
+      </div>
+      <div class="readout-cell">
+        <div class="r-label">Size</div>
+        <div class="r-value" id="r-size">—</div>
+        <div class="r-sub" id="r-size-sub"></div>
+      </div>
+      <div class="readout-cell">
+        <div class="r-label">Image Distance v</div>
+        <div class="r-value cyan" id="r-v">—</div>
+        <div class="r-sub" id="r-v-sub"></div>
+      </div>
+      <div class="readout-cell wide">
+        <div class="r-label">Magnification m = −v/u</div>
+        <div class="r-value gold" id="r-m">—</div>
+        <div class="r-sub" id="r-m-sub"></div>
+      </div>
+    </div>
+
+    <div class="fbox">
+      <div class="fl">Thin Lens / Mirror Equation</div>
+      <div class="fe">1/v = 1/f − 1/u</div>
+      <div class="fe" id="eq-numeric" style="color:var(--cyan);font-size:12px;margin-top:4px;">— </div>
+      <div class="gc" id="eq-explain">Pick an element and place an object.</div>
+    </div>
+
+    <div class="ray-legend">
+      <div><span class="swatch sw-cyan"></span> Parallel ray → refracts/reflects through focal point</div>
+      <div><span class="swatch sw-violet"></span> Through-centre ray (lens) / through-F ray (mirror)</div>
+      <div><span class="swatch sw-gold"></span> Through-F ray (lens) / through-C ray (mirror)</div>
+      <div style="margin-top:6px;"><span class="swatch dashed"></span> Dashed = ray <em>extended backward</em> (virtual image)</div>
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">Theory — How Images Form</div>
+
+  <h3>The Sign Convention</h3>
+  <p>Every result below comes from one master formula. To use it on any lens or mirror, we need a consistent sign convention. This simulation uses the most common one in introductory physics:</p>
+  <div class="hbox hb-gold">
+    <strong>u</strong> (object distance) is <em>always positive</em> — the object is in front of the element.<br>
+    <strong>f</strong> (focal length) is <em>positive</em> for converging elements (convex lens, concave mirror), <em>negative</em> for diverging elements (concave lens, convex mirror).<br>
+    <strong>v</strong> (image distance) is computed. <em>Positive v</em> means the image is real; <em>negative v</em> means the image is virtual.<br>
+    <strong>m</strong> (magnification) = −v/u. Positive m = erect (right-side up); negative m = inverted (upside down).
+  </div>
+
+  <h3>The Master Equation</h3>
+  <p>One equation governs all four curved elements. Plane mirrors are a trivial special case.</p>
+  <div class="eq">1/v = 1/f − 1/u  ⟹  v = uf / (u − f)
+    <div class="vars">Plug in u and the signed f. The sign of v tells you real vs virtual; the magnification m = −v/u tells you size and orientation.</div>
+  </div>
+
+  <h3>Real vs Virtual — The Crucial Distinction</h3>
+  <div class="hbox hb-green">
+    <strong>Real image:</strong> light rays actually converge at the image location. You can place a screen there and catch the image. Cameras, projectors, your retina, telescopes — all rely on real images.<br>
+    Real images form on the <em>opposite side</em> of a lens (light passed through) or on the <em>same side</em> as the object for a mirror (light reflected back).
+  </div>
+  <div class="hbox hb-violet">
+    <strong>Virtual image:</strong> light rays only <em>appear</em> to come from the image location — they actually diverge after the element. You can't project a virtual image onto a screen, but you can see it by looking through/at the element. Magnifying glasses, eyeglasses, makeup mirrors, security mirrors — all show virtual images.<br>
+    Virtual images form on the <em>same side</em> as the object for a lens, or <em>behind</em> a mirror.
+  </div>
+
+  <h3>The Five Cases of a Convex Lens (and Concave Mirror)</h3>
+  <p>Converging elements have <em>five different behaviours</em> depending on where the object sits relative to the focal point. The concave mirror behaves identically, just reflected back rather than transmitted through.</p>
+  <table class="ctable">
+    <tr><th>Object position</th><th>Image type</th><th>Orientation</th><th>Size</th></tr>
+    <tr><td>Beyond 2F</td><td class="real">Real</td><td>Inverted</td><td>Diminished</td></tr>
+    <tr><td>At 2F</td><td class="real">Real</td><td>Inverted</td><td>Same size</td></tr>
+    <tr><td>Between F and 2F</td><td class="real">Real</td><td>Inverted</td><td>Magnified</td></tr>
+    <tr><td>At F</td><td>— (image at infinity)</td><td>—</td><td>—</td></tr>
+    <tr><td>Inside F (between lens and F)</td><td class="virtual">Virtual</td><td>Erect</td><td>Magnified</td></tr>
+  </table>
+
+  <h3>Diverging Elements Are Simpler</h3>
+  <p>A <strong>concave lens</strong> and a <strong>convex mirror</strong> have only one behaviour, no matter where you place the object:</p>
+  <div class="hbox hb-violet">
+    <strong>Always Virtual · Always Erect · Always Diminished.</strong> The image is smaller than the object and on the same side (lens) or behind (mirror). This is why convex mirrors are used as security mirrors and car wing mirrors — they fit a wide field of view into a small reflection.
+  </div>
+
+  <h3>Plane Mirrors</h3>
+  <p>The simplest case. A plane mirror has f = ∞, so the equation gives v = −u: the image is at the same distance behind the mirror as the object is in front.</p>
+  <div class="hbox hb-cyan">
+    <strong>Always Virtual · Always Erect · Always Same Size.</strong> The only quirk is left-right reversal (handedness flip), which is a property of how mirrors fold space — not something captured in this 2D side-view.
+  </div>
+
+  <h3>Where You Meet Each Case in Daily Life</h3>
+  <table class="ctable">
+    <tr><th>Application</th><th>Element</th><th>What you see</th></tr>
+    <tr><td>📷 Camera / your retina</td><td>Convex lens (object beyond 2F)</td><td class="real">Real, inverted, diminished. Your brain re-flips the retinal image.</td></tr>
+    <tr><td>🔬 Microscope objective</td><td>Convex lens (object just outside F)</td><td class="real">Real, inverted, magnified.</td></tr>
+    <tr><td>🔎 Magnifying glass</td><td>Convex lens (object inside F)</td><td class="virtual">Virtual, erect, magnified.</td></tr>
+    <tr><td>👓 Reading glasses</td><td>Convex lens (mild)</td><td>Shifts apparent object distance.</td></tr>
+    <tr><td>👓 Glasses for short-sight</td><td>Concave lens</td><td class="virtual">Virtual, erect, diminished — moves the image inside the eye's range.</td></tr>
+    <tr><td>🔦 Car headlight reflector</td><td>Concave mirror (object at F)</td><td>Reflected rays emerge parallel — concentrated beam.</td></tr>
+    <tr><td>🪞 Shaving / makeup mirror</td><td>Concave mirror (object inside F)</td><td class="virtual">Virtual, erect, magnified.</td></tr>
+    <tr><td>🚗 Car wing mirror / shop security mirror</td><td>Convex mirror</td><td class="virtual">Virtual, erect, diminished — wide field of view.</td></tr>
+    <tr><td>🪟 Bathroom mirror</td><td>Plane mirror</td><td class="virtual">Virtual, erect, same size.</td></tr>
+  </table>
+
+  <h3>How to Read a Ray Diagram</h3>
+  <p>Three special rays are used to locate any image. Each follows a simple rule — you only need any two of them to find where the image lies, but drawing all three is a good check.</p>
+  <div class="hbox hb-cyan">
+    <strong>For a lens:</strong><br>
+    1. A ray <em>parallel</em> to the axis refracts through the far focal point.<br>
+    2. A ray through the <em>centre</em> of the lens passes undeviated.<br>
+    3. A ray through the <em>near focal point</em> emerges parallel to the axis.
+  </div>
+  <div class="hbox hb-cyan">
+    <strong>For a mirror:</strong><br>
+    1. A ray <em>parallel</em> to the axis reflects through (or from) the focal point.<br>
+    2. A ray through (or aimed at) the <em>focal point</em> reflects parallel to the axis.<br>
+    3. A ray through (or aimed at) the <em>centre of curvature</em> (2F) reflects back on itself.
+  </div>
+  <p>Where these reflected/refracted rays meet is where the image forms. If the rays diverge after the element, the image is virtual, and you find it by extending the rays <em>backward</em> until they meet — exactly what the dashed lines in the simulation show you.</p>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+
+// =====================================================================
+// State
+// =====================================================================
+const state = {
+  element: 'convex-lens',
+  object: 'stick',
+  f: 10,    // unsigned magnitude of focal length
+  u: 30,    // object distance (always positive)
+  h: 5,     // object height
+};
+
+// SVG dimensions
+const W = 800, Hgt = 360;
+const Ex = 400;          // element x-position
+const Ay = 200;          // optical axis y-position
+const SCALE = 6.0;       // pixels per cm
+
+// Element types
+function isLens() { return state.element.includes('lens'); }
+function isMirror() { return state.element.includes('mirror'); }
+function isConverging() { return state.element === 'convex-lens' || state.element === 'concave-mirror'; }
+function isPlane() { return state.element === 'plane-mirror'; }
+
+function signedF() {
+  if (isPlane()) return Infinity;
+  return isConverging() ? state.f : -state.f;
+}
+
+// =====================================================================
+// Physics
+// =====================================================================
+function compute() {
+  const u = state.u;
+  if (isPlane()) {
+    return { v: -u, m: 1, isVirtual: true, isReal: false, isInverted: false, atInfinity: false };
+  }
+  const f = signedF();
+  if (Math.abs(u - f) < 0.05) {
+    return { v: Infinity, m: Infinity, isVirtual: false, isReal: false, isInverted: false, atInfinity: true };
+  }
+  const v = (u * f) / (u - f);
+  const m = -v / u;
+  const isVirtual = v < 0;
+  return {
+    v, m,
+    isVirtual,
+    isReal: !isVirtual,
+    isInverted: m < 0,
+    atInfinity: Math.abs(v) > 200    // visually treat as infinity
+  };
+}
+
+// =====================================================================
+// Object shapes (normalised: base at y=0, top at y=-1)
+// Returns an SVG group with the figure drawn at origin, height 1.
+// =====================================================================
+function objectPath(type, idSuffix, color) {
+  // Coordinates assume base at (0,0), figure extends to (negativeY) up to y=-1
+  if (type === 'stick') {
+    return `
+      <circle cx="0" cy="-0.85" r="0.12" fill="${color}" />
+      <line x1="0" y1="-0.73" x2="0" y2="-0.42" stroke="${color}" stroke-width="0.06" stroke-linecap="round"/>
+      <line x1="0" y1="-0.66" x2="-0.18" y2="-0.48" stroke="${color}" stroke-width="0.06" stroke-linecap="round"/>
+      <line x1="0" y1="-0.66" x2="0.18" y2="-0.48" stroke="${color}" stroke-width="0.06" stroke-linecap="round"/>
+      <line x1="0" y1="-0.42" x2="-0.16" y2="0" stroke="${color}" stroke-width="0.06" stroke-linecap="round"/>
+      <line x1="0" y1="-0.42" x2="0.16" y2="0" stroke="${color}" stroke-width="0.06" stroke-linecap="round"/>
+    `;
+  }
+  if (type === 'mug') {
+    return `
+      <path d="M -0.18 -0.6 L 0.18 -0.6 L 0.16 0 L -0.16 0 Z" fill="${color}" opacity="0.85"/>
+      <path d="M 0.18 -0.5 Q 0.36 -0.45 0.36 -0.3 Q 0.36 -0.15 0.18 -0.1" fill="none" stroke="${color}" stroke-width="0.05" stroke-linecap="round"/>
+      <ellipse cx="0" cy="-0.6" rx="0.18" ry="0.04" fill="#3a1f0a"/>
+      <path d="M -0.06 -0.7 Q -0.02 -0.78 -0.06 -0.85" fill="none" stroke="${color}" stroke-width="0.025" opacity="0.55"/>
+      <path d="M 0.04 -0.72 Q 0.08 -0.8 0.04 -0.88" fill="none" stroke="${color}" stroke-width="0.025" opacity="0.55"/>
+    `;
+  }
+  if (type === 'elephant') {
+    return `
+      <ellipse cx="0.05" cy="-0.28" rx="0.32" ry="0.18" fill="${color}" opacity="0.9"/>
+      <circle cx="-0.3" cy="-0.42" r="0.16" fill="${color}" opacity="0.9"/>
+      <ellipse cx="-0.35" cy="-0.48" rx="0.1" ry="0.13" fill="${color}" opacity="0.7"/>
+      <path d="M -0.42 -0.4 Q -0.5 -0.25 -0.52 -0.08 Q -0.5 0 -0.46 0.02" fill="none" stroke="${color}" stroke-width="0.06" stroke-linecap="round"/>
+      <circle cx="-0.32" cy="-0.45" r="0.02" fill="#0a0a18"/>
+      <rect x="-0.16" y="-0.12" width="0.07" height="0.13" fill="${color}"/>
+      <rect x="-0.04" y="-0.12" width="0.07" height="0.13" fill="${color}"/>
+      <rect x="0.12" y="-0.12" width="0.07" height="0.13" fill="${color}"/>
+      <rect x="0.24" y="-0.12" width="0.07" height="0.13" fill="${color}"/>
+      <path d="M 0.35 -0.32 Q 0.42 -0.28 0.4 -0.2" fill="none" stroke="${color}" stroke-width="0.04" stroke-linecap="round"/>
+    `;
+  }
+  return '';
+}
+
+// =====================================================================
+// SVG render helpers
+// =====================================================================
+function el(parent, tag, attrs) {
+  const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) {
+    if (k === 'text') n.textContent = attrs[k];
+    else n.setAttribute(k, attrs[k]);
+  }
+  parent.appendChild(n);
+  return n;
+}
+function clearGroup(id) {
+  const g = document.getElementById(id);
+  while (g.firstChild) g.removeChild(g.firstChild);
+  return g;
+}
+
+// =====================================================================
+// Draw bench
+// =====================================================================
+function drawGrid() {
+  const g = clearGroup('bench-grid');
+  // subtle grid
+  for (let x = 50; x < W; x += 50) {
+    el(g, 'line', { x1:x, y1:0, x2:x, y2:Hgt, stroke:'rgba(30,50,80,.22)', 'stroke-width':1 });
+  }
+  for (let y = 30; y < Hgt; y += 40) {
+    el(g, 'line', { x1:0, y1:y, x2:W, y2:y, stroke:'rgba(30,50,80,.18)', 'stroke-width':1 });
+  }
+}
+
+function drawAxis() {
+  const g = clearGroup('bench-axis');
+  // optical axis
+  el(g, 'line', { x1:0, y1:Ay, x2:W, y2:Ay, stroke:'#5878a0', 'stroke-width':1, 'stroke-dasharray':'2 4' });
+  // axis label
+  el(g, 'text', { x:W-10, y:Ay-6, 'text-anchor':'end', 'font-family':'monospace', 'font-size':9, fill:'#3a5070', 'letter-spacing':1, text:'OPTICAL AXIS' });
+}
+
+function drawFmarkers() {
+  const g = clearGroup('bench-fmarkers');
+  if (isPlane()) return;
+  const fpix = state.f * SCALE;
+  // F markers on both sides of the element
+  const fPositions = [
+    { x: Ex - fpix, label: 'F' },
+    { x: Ex + fpix, label: 'F' },
+    { x: Ex - 2*fpix, label: '2F' },
+    { x: Ex + 2*fpix, label: '2F' }
+  ];
+  fPositions.forEach(p => {
+    if (p.x < 10 || p.x > W-10) return;
+    // small gold dot
+    el(g, 'circle', { cx:p.x, cy:Ay, r:3.5, fill:'#f0c060' });
+    el(g, 'circle', { cx:p.x, cy:Ay, r:6, fill:'none', stroke:'rgba(240,192,96,0.4)', 'stroke-width':1 });
+    el(g, 'text', { x:p.x, y:Ay+18, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', 'font-weight':'bold', text:p.label });
+  });
+}
+
+function drawElement() {
+  const g = clearGroup('bench-element');
+  const top = Ay - 140, bot = Ay + 140;
+
+  if (state.element === 'convex-lens') {
+    // biconvex
+    el(g, 'path', {
+      d: `M ${Ex} ${top} Q ${Ex+12} ${Ay} ${Ex} ${bot} Q ${Ex-12} ${Ay} ${Ex} ${top} Z`,
+      fill: 'rgba(32,208,255,0.10)', stroke: '#20d0ff', 'stroke-width': 1.5
+    });
+    // tiny direction arrows
+    el(g, 'polygon', { points:`${Ex-14},${top-4} ${Ex-18},${top+2} ${Ex-10},${top+2}`, fill:'#20d0ff', opacity:0.6 });
+    el(g, 'polygon', { points:`${Ex+14},${bot+4} ${Ex+18},${bot-2} ${Ex+10},${bot-2}`, fill:'#20d0ff', opacity:0.6 });
+  }
+  else if (state.element === 'concave-lens') {
+    // biconcave
+    el(g, 'path', {
+      d: `M ${Ex-8} ${top} Q ${Ex+4} ${Ay} ${Ex-8} ${bot} L ${Ex+8} ${bot} Q ${Ex-4} ${Ay} ${Ex+8} ${top} Z`,
+      fill: 'rgba(32,208,255,0.10)', stroke: '#20d0ff', 'stroke-width': 1.5
+    });
+    el(g, 'polygon', { points:`${Ex-14},${top+4} ${Ex-18},${top-2} ${Ex-10},${top-2}`, fill:'#20d0ff', opacity:0.6 });
+    el(g, 'polygon', { points:`${Ex+14},${bot-4} ${Ex+18},${bot+2} ${Ex+10},${bot+2}`, fill:'#20d0ff', opacity:0.6 });
+  }
+  else if (state.element === 'concave-mirror') {
+    // curved line opening toward the object (left)
+    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex-26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke:'#cdd5e8', 'stroke-width':2.5 });
+    // hatching on the back (right side of the curve)
+    for (let y = top; y < bot; y += 8) {
+      // approx x on curve at this y: quadratic Bezier
+      const t = (y - top) / (bot - top);
+      const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex-26) + t*t*Ex;
+      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1 });
+    }
+  }
+  else if (state.element === 'convex-mirror') {
+    // curved line bulging toward the object (left)
+    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex+26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke:'#cdd5e8', 'stroke-width':2.5 });
+    for (let y = top; y < bot; y += 8) {
+      const t = (y - top) / (bot - top);
+      const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex+26) + t*t*Ex;
+      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1 });
+    }
+  }
+  else if (state.element === 'plane-mirror') {
+    el(g, 'line', { x1:Ex, y1:top, x2:Ex, y2:bot, stroke:'#cdd5e8', 'stroke-width':2.5 });
+    for (let y = top; y < bot; y += 8) {
+      el(g, 'line', { x1:Ex, y1:y, x2:Ex+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1 });
+    }
+  }
+
+  // element label badge at top
+  const elNames = {
+    'convex-lens':'CONVEX LENS', 'concave-lens':'CONCAVE LENS',
+    'concave-mirror':'CONCAVE MIRROR', 'convex-mirror':'CONVEX MIRROR', 'plane-mirror':'PLANE MIRROR'
+  };
+  document.getElementById('badge-element').textContent = elNames[state.element];
+}
+
+function drawObject() {
+  const g = clearGroup('bench-object');
+  const Ox = Ex - state.u * SCALE;
+  if (Ox < 10 || Ox > W - 10) return;
+  const objSize = state.h * SCALE;
+  // base marker on the axis
+  el(g, 'circle', { cx:Ox, cy:Ay, r:3, fill:'#20d0ff' });
+  // object group
+  const og = el(g, 'g', { transform: `translate(${Ox} ${Ay}) scale(${objSize})` });
+  og.innerHTML = objectPath(state.object, '', '#20d0ff');
+  // object label
+  el(g, 'text', { x:Ox, y:Ay+34, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#20d0ff', text:'OBJECT' });
+  el(g, 'text', { x:Ox, y:Ay+46, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'#5878a0', text:`u = ${state.u.toFixed(1)} cm` });
+}
+
+function drawImage(result) {
+  const g = clearGroup('bench-image');
+  if (result.atInfinity) return;
+
+  const v = result.v;
+  let Ix;
+  if (isLens()) {
+    // For lens: positive v = real, on opposite side (right of element)
+    Ix = Ex + v * SCALE;
+  } else {
+    // For mirror: positive v = real, on object side (left)
+    Ix = Ex - v * SCALE;
+  }
+
+  // Clip if off-screen
+  if (Ix < 10 || Ix > W - 10) return;
+
+  const objSize = state.h * SCALE;
+  const imgSizeX = Math.abs(result.m) * objSize;
+  // y-scale is signed; negative when inverted (m<0)
+  const imgSizeY = result.m * objSize;
+
+  // Image group; positioned with base on optical axis, scaled (and flipped if inverted)
+  const ig = el(g, 'g', {
+    transform: `translate(${Ix} ${Ay}) scale(${imgSizeX} ${imgSizeY})`,
+    opacity: result.isVirtual ? 0.65 : 0.95
+  });
+  const color = result.isVirtual ? '#c060ff' : '#40ffaa';
+  ig.innerHTML = objectPath(state.object, '', color);
+
+  // base marker
+  el(g, 'circle', { cx:Ix, cy:Ay, r:3, fill: color });
+  // image labels (under axis)
+  el(g, 'text', { x:Ix, y:Ay+34, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:color, text:'IMAGE' });
+  const vDisplayed = Math.abs(v).toFixed(1);
+  el(g, 'text', { x:Ix, y:Ay+46, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'#5878a0',
+    text: result.isVirtual ? `|v| = ${vDisplayed} cm  (virtual)` : `v = ${vDisplayed} cm` });
+}
+
+// =====================================================================
+// Ray drawing — the heart of the visualisation
+// =====================================================================
+function drawRays(result) {
+  const g = clearGroup('bench-rays');
+  if (result.atInfinity) {
+    drawRaysAtInfinity();
+    return;
+  }
+  if (isPlane()) {
+    drawRaysPlaneMirror(result);
+    return;
+  }
+
+  const Ox = Ex - state.u * SCALE;
+  const Oy = Ay - state.h * SCALE;     // object top y (above axis = lower SVG y)
+  if (Ox < 10 || Ox > W - 10) return;
+
+  const v = result.v;
+  const Ix = isLens() ? Ex + v * SCALE : Ex - v * SCALE;
+  const Iy = Ay + (result.m * state.h * SCALE);   // image top y; negative-y if erect, positive-y if inverted (because m<0 in inverted)
+
+  if (state.element === 'convex-lens') {
+    drawRaysConvexLens(Ox, Oy, Ix, Iy, result);
+  } else if (state.element === 'concave-lens') {
+    drawRaysConcaveLens(Ox, Oy, Ix, Iy, result);
+  } else if (state.element === 'concave-mirror') {
+    drawRaysConcaveMirror(Ox, Oy, Ix, Iy, result);
+  } else if (state.element === 'convex-mirror') {
+    drawRaysConvexMirror(Ox, Oy, Ix, Iy, result);
+  }
+}
+
+function rayLine(g, x1, y1, x2, y2, color, dashed=false) {
+  el(g, 'line', {
+    x1, y1, x2, y2,
+    stroke: color, 'stroke-width': 1.5,
+    'stroke-dasharray': dashed ? '5 4' : 'none',
+    opacity: dashed ? 0.55 : 0.9
+  });
+}
+
+// extend a ray from (x1,y1) through (x2,y2) by additional length
+function extendBeyond(x1, y1, x2, y2, dist) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.hypot(dx, dy) || 1;
+  return { x: x2 + dx/len * dist, y: y2 + dy/len * dist };
+}
+
+function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
+  const g = document.getElementById('bench-rays');
+  const fpix = state.f * SCALE;
+  const F1x = Ex - fpix, F2x = Ex + fpix; // F1 = near (left), F2 = far (right)
+  const isReal = result.isReal;
+
+  // ===== Ray 1: parallel to axis, refracts through F2 (cyan)
+  // Solid: (Ox,Oy) → (Ex,Oy) → through F2 → continue right
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  if (isReal) {
+    // From (Ex,Oy), passes through F2 (F2x, Ay), and continues to image (Ix,Iy) — same line
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
+    // extend past image a bit
+    const ext = extendBeyond(Ex, Oy, Ix, Iy, 30);
+    rayLine(g, Ix, Iy, ext.x, ext.y, '#20d0ff');
+  } else {
+    // virtual: refracted ray from (Ex,Oy) goes through F2 and continues forward (right)
+    const ext = extendBeyond(Ex, Oy, F2x, Ay, 280);
+    rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
+    // dashed backward from (Ex,Oy) through (Ix,Iy)
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+  }
+
+  // ===== Ray 2: through optical centre (violet)
+  // Straight line from (Ox,Oy) through (Ex,0) — for real, continues to (Ix,Iy)
+  if (isReal) {
+    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff');
+    const ext = extendBeyond(Ox, Oy, Ix, Iy, 30);
+    rayLine(g, Ix, Iy, ext.x, ext.y, '#c060ff');
+  } else {
+    // virtual: straight line continues on the right side; backward dashed reaches Ix,Iy
+    const ext = extendBeyond(Ox, Oy, Ex, Ay, 280);
+    rayLine(g, Ox, Oy, ext.x, ext.y, '#c060ff');
+    // dashed back from (Ex,Ay) to (Ix,Iy) — but the through-centre line ALREADY passes through (Ex,Ay)
+    // and extending backward from (Ex,Ay) toward where (Ix,Iy) lies, on the object's side... 
+    // For virtual image of convex lens (object inside F): Ix < Ex, Iy beyond Oy.
+    // The line from (Ox,Oy) through (Ex,Ay): does (Ix,Iy) lie on this line? Let's check:
+    //   slope = (Ay - Oy)/(Ex - Ox). At x=Ix, y = Oy + slope*(Ix-Ox).
+    //   For convex lens, virtual image is on same line through centre — yes by similar triangles.
+    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);
+  }
+
+  // ===== Ray 3: through near F1, emerges parallel (gold)
+  // Line from (Ox,Oy) through (F1x, Ay) to (Ex, y_at_lens), then horizontal at that y
+  // For convex lens, y_at_lens = Iy (so the ray exits horizontally at image height)
+  if (isReal) {
+    rayLine(g, Ox, Oy, Ex, Iy, '#f0c060');           // diagonal through F1
+    rayLine(g, Ex, Iy, Ix + 30, Iy, '#f0c060');      // horizontal after lens
+  } else {
+    // virtual case: object inside F. The line from O through F1 may go in unusual direction
+    // y_at_lens = Oy * f / (f - u). For u < f, denom > 0, so y_at_lens same sign as Oy.
+    const u = state.u, f = state.f;
+    const yLens = Oy * f * SCALE / (f * SCALE - u * SCALE); 
+    // Actually simpler: y_at_lens = Iy by the formula derivation
+    rayLine(g, Ox, Oy, Ex, Iy, '#f0c060');
+    rayLine(g, Ex, Iy, Ex + 280, Iy, '#f0c060');
+    // dashed backward from (Ex,Iy) to (Ix,Iy)
+    rayLine(g, Ex, Iy, Ix, Iy, '#f0c060', true);
+  }
+}
+
+function drawRaysConcaveLens(Ox, Oy, Ix, Iy, result) {
+  const g = document.getElementById('bench-rays');
+  const fpix = state.f * SCALE;
+  const F1x = Ex - fpix, F2x = Ex + fpix; // for concave lens, near F is on object side (left), far F on right
+  // Concave lens is always virtual, erect, diminished
+  // Iy and Oy both same sign; Ix between Ox and Ex.
+
+  // ===== Ray 1: parallel to axis, diverges as if from F1 (near focal point on object side) (cyan)
+  // Solid: (Ox,Oy) → (Ex,Oy), then refracted ray goes such that its backward extension passes through F1
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  // refracted ray from (Ex,Oy) goes in direction from F1 to (Ex,Oy)
+  // direction vector: (Ex - F1x, Oy - 0) = (fpix, Oy)
+  const ext1 = extendBeyond(F1x, Ay, Ex, Oy, 300);
+  rayLine(g, Ex, Oy, ext1.x, ext1.y, '#20d0ff');
+  // dashed backward from (Ex,Oy) toward F1 → reaches (Ix,Iy)
+  rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+
+  // ===== Ray 2: through optical centre, straight through (violet)
+  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
+  const ext2 = extendBeyond(Ox, Oy, Ex, Ay, 280);
+  rayLine(g, Ex, Ay, ext2.x, ext2.y, '#c060ff');
+  rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true); // dashed line that passes through (Ix,Iy)
+
+  // ===== Ray 3: aimed at F2 (far focal point, opposite side), emerges parallel (gold)
+  // Line from (Ox,Oy) toward (F2x, Ay), then at (Ex, y_at_lens) becomes parallel at that y
+  // y at lens: line from (Ox,Oy) toward (F2x,Ay). slope = (Ay-Oy)/(F2x-Ox).
+  // y_at_lens = Oy + slope*(Ex-Ox)
+  const slope3 = (Ay - Oy) / (F2x - Ox);
+  const yLens3 = Oy + slope3 * (Ex - Ox);
+  rayLine(g, Ox, Oy, Ex, yLens3, '#f0c060');
+  // continue parallel to axis at yLens3 to the right
+  rayLine(g, Ex, yLens3, Ex + 280, yLens3, '#f0c060');
+  // dashed backward from (Ex, yLens3) through (Ix, Iy)? 
+  // For concave lens, this ray's backward extension should reach (Ix, Iy) at the virtual image position.
+  // The parallel ray going forward at y=yLens3, extended backward, gives the horizontal line at y=yLens3.
+  // But (Ix, Iy) is generally NOT at y = yLens3. So the dashed line should be from (Ex, yLens3) going LEFT at y=yLens3? No — that's just horizontal.
+  // Actually the "virtual image" is where all three rays' backward extensions meet. For the parallel-emerging ray, the backward extension is just the horizontal line at y=yLens3 going leftward. This horizontal line should pass through (Ix, Iy)? Not necessarily geometrically — it passes through (Ix, yLens3).
+  // Hmm. Let me check: actually for all three principal rays through a thin lens, their backward extensions DO converge at the virtual image. So yLens3 should equal Iy. Let me verify:
+  //   yLens3 = Oy + (Ay-Oy)/(F2x-Ox) * (Ex-Ox) = Oy + (-Oy)/((Ex+fpix)-Ox) * (Ex-Ox)
+  //          = Oy * [1 - (Ex-Ox)/((Ex+fpix)-Ox)]
+  //          = Oy * [(Ex+fpix-Ox - Ex+Ox)/((Ex+fpix)-Ox)]
+  //          = Oy * [fpix / (Ex+fpix-Ox)]
+  //   With Ox = Ex - u*SCALE: yLens3 = Oy * fpix / (fpix + u*SCALE) = Oy * f / (f + u)
+  //   For concave lens, f_signed = -f, so v = u*(-f)/(u-(-f)) = -uf/(u+f); m = -v/u = f/(u+f); Iy_offset = m*Oy = Oy*f/(u+f) ✓
+  // So yLens3 = Iy. 
+  rayLine(g, Ex, yLens3, Ix, Iy, '#f0c060', true);
+}
+
+function drawRaysConcaveMirror(Ox, Oy, Ix, Iy, result) {
+  const g = document.getElementById('bench-rays');
+  const fpix = state.f * SCALE;
+  const Fx = Ex - fpix; // focal point in front (left of mirror)
+  const Cx = Ex - 2*fpix; // centre of curvature
+  const isReal = result.isReal;
+
+  // ===== Ray 1: parallel to axis, reflects through F (cyan)
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff'); // incident parallel
+  if (isReal) {
+    // reflected ray from (Ex, Oy) through (Fx, Ay) and onward to (Ix, Iy)
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
+    const ext = extendBeyond(Ex, Oy, Ix, Iy, 20);
+    rayLine(g, Ix, Iy, ext.x, ext.y, '#20d0ff');
+  } else {
+    // virtual case (object inside F): reflected ray diverges
+    // direction from F to (Ex,Oy): reflected ray goes the OTHER way from (Ex,Oy), i.e., it appears to come from F
+    // Actually: incident parallel hits mirror at (Ex,Oy), reflects through F. So solid line from (Ex,Oy) toward (Fx,Ay) and extended away from mirror.
+    const ext = extendBeyond(Ex, Oy, Fx, Ay, 200);
+    rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
+    // dashed extension backward through the mirror to (Ix,Iy)
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+  }
+
+  // ===== Ray 2: through F, reflects parallel (violet)
+  // Incident ray from (Ox,Oy) through (Fx,Ay) hits mirror at (Ex, y_hit)
+  // y_hit found from line through (Ox,Oy) and (Fx,Ay):
+  const slope2 = (Ay - Oy) / (Fx - Ox);
+  const yHit2 = Oy + slope2 * (Ex - Ox);
+  // For converging mirror real-image case, y_hit2 = Iy (rays converge)
+  rayLine(g, Ox, Oy, Ex, yHit2, '#c060ff');
+  // reflected ray is parallel to axis at y = y_hit2
+  if (isReal) {
+    rayLine(g, Ex, yHit2, Ix, Iy, '#c060ff');
+  } else {
+    // for virtual image, the parallel reflected ray goes leftward (back toward object's side)
+    rayLine(g, Ex, yHit2, Ox - 80, yHit2, '#c060ff');
+    rayLine(g, Ex, yHit2, Ix, Iy, '#c060ff', true);
+  }
+
+  // ===== Ray 3: through C (centre of curvature), reflects back on itself (gold)
+  // Incident from (Ox,Oy) through (Cx, Ay), hits mirror at some point, reflects back on same line
+  // But if C is between O and mirror or beyond — different cases. Just draw the line from O through C to mirror, then back from mirror to image.
+  const slope3 = (Ay - Oy) / (Cx - Ox);
+  const yHit3 = Oy + slope3 * (Ex - Ox);
+  rayLine(g, Ox, Oy, Ex, yHit3, '#f0c060');
+  if (isReal) {
+    // reflects back through C to image — actually reflected ray goes back along the same line
+    rayLine(g, Ex, yHit3, Ix, Iy, '#f0c060');
+  } else {
+    // virtual: reflected ray goes back along same line, away from image
+    const back = extendBeyond(Ex, yHit3, Ox, Oy, 0); // doesn't matter, just retrace
+    rayLine(g, Ex, yHit3, Ox - 60, Oy + (Ox-60-Ex)*((Oy-yHit3)/(Ox-Ex)), '#f0c060');
+    rayLine(g, Ex, yHit3, Ix, Iy, '#f0c060', true);
+  }
+}
+
+function drawRaysConvexMirror(Ox, Oy, Ix, Iy, result) {
+  const g = document.getElementById('bench-rays');
+  const fpix = state.f * SCALE;
+  const Fbx = Ex + fpix;  // F behind mirror
+  const Cbx = Ex + 2*fpix;// C behind mirror
+
+  // ===== Ray 1: parallel to axis, reflects as if from F-behind (cyan)
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff'); // incident parallel
+  // reflected ray goes such that its backward extension passes through (Fbx, Ay)
+  // direction from F-behind to (Ex,Oy): (Ex - Fbx, Oy - 0) = (-fpix, Oy)
+  // reflected ray goes opposite — i.e., from (Ex,Oy) in direction (Ex - Fbx, Oy) means going LEFT and up/down depending on Oy sign? Wait:
+  // The reflected ray must travel into the region in front of mirror (left side). Direction from (Fbx,Ay) through (Ex,Oy) extended → (Ex + (Ex-Fbx)*t, Oy + Oy*t) for t>0. With Fbx > Ex (Fbx = Ex+fpix), (Ex-Fbx) = -fpix < 0. So reflected goes leftward (good, into front region).
+  const ext1b = extendBeyond(Fbx, Ay, Ex, Oy, 240);
+  rayLine(g, Ex, Oy, ext1b.x, ext1b.y, '#20d0ff');
+  // dashed extension through mirror to (Ix,Iy)
+  rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+
+  // ===== Ray 2: aimed at F-behind, reflects parallel (violet)
+  // Line from (Ox,Oy) toward (Fbx,Ay) hits mirror at (Ex, y_hit2)
+  const slope2 = (Ay - Oy) / (Fbx - Ox);
+  const yHit2 = Oy + slope2 * (Ex - Ox);
+  rayLine(g, Ox, Oy, Ex, yHit2, '#c060ff');
+  // reflected parallel to axis at y = yHit2, going leftward (back into front region)
+  rayLine(g, Ex, yHit2, Ex - 240, yHit2, '#c060ff');
+  // dashed through mirror to (Ix,Iy)
+  rayLine(g, Ex, yHit2, Ix, Iy, '#c060ff', true);
+
+  // ===== Ray 3: aimed at C-behind, reflects back on itself (gold)
+  const slope3 = (Ay - Oy) / (Cbx - Ox);
+  const yHit3 = Oy + slope3 * (Ex - Ox);
+  rayLine(g, Ox, Oy, Ex, yHit3, '#f0c060');
+  // reflected back along same line — going back toward object
+  const ext3 = extendBeyond(Ex, yHit3, Ox, Oy, 0);
+  rayLine(g, Ex, yHit3, Ox - 60, Oy + ((Ox - 60 - Ex) * (Oy - yHit3) / (Ox - Ex)), '#f0c060');
+  rayLine(g, Ex, yHit3, Ix, Iy, '#f0c060', true);
+}
+
+function drawRaysPlaneMirror(result) {
+  const g = document.getElementById('bench-rays');
+  const Ox = Ex - state.u * SCALE;
+  const Oy = Ay - state.h * SCALE;
+  const Ix = Ex + state.u * SCALE;
+  const Iy = Oy; // same height
+  if (Ox < 10) return;
+
+  // Ray 1 (horizontal): from O top to mirror, reflects back at same height; dashed extension to virtual image
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  rayLine(g, Ex, Oy, Ox + 20, Oy, '#20d0ff');     // tiny reflected stub
+  rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);    // dashed through mirror
+
+  // Ray 2 (to axis point at mirror foot): from O top to (Ex, Ay), reflects symmetrically
+  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
+  // reflected ray from (Ex, Ay) symmetric: goes from (Ex,Ay) leftward and DOWN (since incident came from above)
+  // angle: incident direction (Ex - Ox, Ay - Oy) = (u*SCALE, h*SCALE). reflected: flip x → (-u*SCALE, h*SCALE)
+  // so reflected ray from (Ex, Ay) goes toward (Ex - u*SCALE, Ay + h*SCALE)
+  const ref2x = Ex - 0.7 * state.u * SCALE;
+  const ref2y = Ay + 0.7 * state.h * SCALE;
+  rayLine(g, Ex, Ay, ref2x, ref2y, '#c060ff');
+  // dashed forward through mirror to virtual image
+  rayLine(g, Ex, Ay, Ix, Iy, '#c060ff', true);
+}
+
+function drawRaysAtInfinity() {
+  const g = document.getElementById('bench-rays');
+  const Ox = Ex - state.u * SCALE;
+  const Oy = Ay - state.h * SCALE;
+  // Show parallel emerging rays
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  rayLine(g, Ex, Oy, W-10, Oy, '#20d0ff');
+  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
+  rayLine(g, Ex, Ay, W-10, Ay, '#c060ff');
+  rayLine(g, Ox, Oy, Ex, Ay+state.h*SCALE*0.5, '#f0c060');
+  rayLine(g, Ex, Ay+state.h*SCALE*0.5, W-10, Ay+state.h*SCALE*0.5, '#f0c060');
+  // label
+  el(g, 'text', { x:W-90, y:Ay-8, 'text-anchor':'end', 'font-family':'monospace', 'font-size':11, fill:'#f0c060', text:'→ IMAGE AT INFINITY' });
+}
+
+// =====================================================================
+// Image label (the inline tag near the image)
+// =====================================================================
+function updateImageLabel(result) {
+  const lbl = document.getElementById('img-label');
+  if (result.atInfinity) {
+    lbl.hidden = true;
+    return;
+  }
+
+  const v = result.v;
+  const Ix = isLens() ? Ex + v * SCALE : Ex - v * SCALE;
+  if (Ix < 10 || Ix > W - 10) { lbl.hidden = true; return; }
+
+  // Pixel position in canvas-wrap from SVG viewBox
+  const svg = document.getElementById('bench');
+  const wrap = svg.parentElement;
+  const rect = svg.getBoundingClientRect();
+  const wrapRect = wrap.getBoundingClientRect();
+  const scaleX = rect.width / W;
+  const scaleY = rect.height / Hgt;
+
+  // Position above the image (or below the axis if image is inverted and extends below)
+  const Ix_px = (Ix * scaleX) + (rect.left - wrapRect.left);
+  let Iy_px;
+  if (result.isInverted) {
+    // image extends below axis; place label below
+    Iy_px = ((Ay + Math.abs(result.m) * state.h * SCALE + 60) * scaleY) + (rect.top - wrapRect.top);
+  } else {
+    // image extends above axis; place label above
+    Iy_px = ((Ay - Math.abs(result.m) * state.h * SCALE - 36) * scaleY) + (rect.top - wrapRect.top);
+  }
+
+  lbl.style.left = Ix_px + 'px';
+  lbl.style.top = Iy_px + 'px';
+  lbl.hidden = false;
+  lbl.className = 'image-label ' + (result.isReal ? 'real' : 'virtual');
+
+  // Build content with tooltips
+  const typeWord = result.isReal
+    ? `<span class="tag t-real">Real<span class="tip">Light actually meets here. You could place a screen at this spot and catch the image — like a camera sensor or your retina.</span></span>`
+    : `<span class="tag t-virtual">Virtual<span class="tip">Light doesn't actually meet here — it only <em>appears</em> to come from this spot. You can see it through the element, but a screen placed here would catch nothing.</span></span>`;
+
+  const orientWord = result.isInverted
+    ? `<span class="tag t-inverted">Inverted<span class="tip">The image is upside down compared with the object. Its top becomes the bottom and vice versa.</span></span>`
+    : `<span class="tag t-erect">Erect<span class="tip">The image is the right way up — the same orientation as the object.</span></span>`;
+
+  const am = Math.abs(result.m);
+  let sizeWord;
+  if (am > 1.05) sizeWord = `<span class="tag t-mag">Magnified ${am.toFixed(2)}×<span class="tip">The image is larger than the object — by this many times.</span></span>`;
+  else if (am < 0.95) sizeWord = `<span class="tag t-dim">Diminished ${am.toFixed(2)}×<span class="tip">The image is smaller than the object — to this fraction of its size.</span></span>`;
+  else sizeWord = `<span class="tag t-same">Same size<span class="tip">The image is the same size as the object.</span></span>`;
+
+  lbl.innerHTML = `${typeWord} <span class="sep">·</span> ${orientWord} <span class="sep">·</span> ${sizeWord}`;
+}
+
+// =====================================================================
+// Readout panel
+// =====================================================================
+function updateReadout(result) {
+  const $ = id => document.getElementById(id);
+
+  // Element-info badge top-right
+  $('badge-info').textContent = isPlane()
+    ? `u = ${state.u.toFixed(1)} cm  ·  plane mirror`
+    : `u = ${state.u.toFixed(1)} cm  ·  |f| = ${state.f.toFixed(1)} cm`;
+
+  if (result.atInfinity) {
+    $('r-type').textContent = '— (image at infinity)';
+    $('r-type').className = 'r-value gold';
+    $('r-orient').textContent = '—';
+    $('r-orient').className = 'r-value';
+    $('r-size').textContent = '—';
+    $('r-size-sub').textContent = '';
+    $('r-v').textContent = '∞';
+    $('r-v-sub').textContent = 'Refracted rays emerge parallel';
+    $('r-m').textContent = '∞';
+    $('r-m-sub').textContent = '';
+    $('eq-numeric').innerHTML = `1/v = 1/${state.f.toFixed(1)} − 1/${state.u.toFixed(1)} = 0  →  v = ∞`;
+    $('eq-explain').innerHTML = `Object is exactly at the focal point — refracted/reflected rays emerge parallel and never converge. The image forms at infinity.`;
+    return;
+  }
+
+  $('r-type').textContent = result.isReal ? 'Real' : 'Virtual';
+  $('r-type').className = 'r-value ' + (result.isReal ? 'green' : 'violet');
+  $('r-orient').textContent = result.isInverted ? 'Inverted' : 'Erect';
+  $('r-orient').className = 'r-value ' + (result.isInverted ? 'gold' : 'cyan');
+
+  const am = Math.abs(result.m);
+  let sizeText;
+  if (am > 1.05) sizeText = 'Magnified';
+  else if (am < 0.95) sizeText = 'Diminished';
+  else sizeText = 'Same size';
+  $('r-size').textContent = sizeText;
+  $('r-size-sub').textContent = `Image height ≈ ${(am * state.h).toFixed(2)} cm`;
+
+  $('r-v').textContent = result.isVirtual ? `−${Math.abs(result.v).toFixed(2)} cm` : `${result.v.toFixed(2)} cm`;
+  $('r-v-sub').textContent = result.isReal
+    ? (isLens() ? 'On opposite side of lens (real)' : 'In front of mirror (real)')
+    : (isLens() ? 'On same side as object (virtual)' : 'Behind mirror (virtual)');
+
+  $('r-m').textContent = result.m.toFixed(3);
+  $('r-m-sub').textContent = result.isInverted ? 'Negative m → image is inverted' : 'Positive m → image is erect';
+
+  // Equation
+  const f = signedF();
+  const fStr = isPlane() ? '∞' : (f < 0 ? `(−${state.f.toFixed(1)})` : state.f.toFixed(1));
+  const v = result.v;
+  if (isPlane()) {
+    $('eq-numeric').innerHTML = `Plane mirror: v = −u = <span class="nm">−${state.u.toFixed(1)} cm</span>`;
+  } else {
+    const invV = 1/v;
+    const invF = 1/f;
+    const invU = 1/state.u;
+    $('eq-numeric').innerHTML = `1/v = 1/${fStr} − 1/${state.u.toFixed(1)} = ${(invF - invU).toFixed(4)}  →  v = <span class="nm">${v.toFixed(2)} cm</span>`;
+  }
+  // Explanation
+  if (isPlane()) {
+    $('eq-explain').textContent = 'Plane mirror: image is virtual, erect, same size, at distance u behind the mirror.';
+  } else {
+    let exp = '';
+    if (state.element === 'convex-lens') {
+      if (state.u > 2*state.f) exp = 'Object beyond 2F: real, inverted, diminished.';
+      else if (Math.abs(state.u - 2*state.f) < 0.5) exp = 'Object at 2F: real, inverted, same size as object.';
+      else if (state.u > state.f) exp = 'Object between F and 2F: real, inverted, magnified.';
+      else exp = 'Object inside F: virtual, erect, magnified (magnifying-glass mode).';
+    } else if (state.element === 'concave-lens') {
+      exp = 'A concave lens always produces a virtual, erect, diminished image on the same side as the object.';
+    } else if (state.element === 'concave-mirror') {
+      if (state.u > 2*state.f) exp = 'Object beyond C (2F): real, inverted, diminished.';
+      else if (Math.abs(state.u - 2*state.f) < 0.5) exp = 'Object at C: real, inverted, same size.';
+      else if (state.u > state.f) exp = 'Object between F and C: real, inverted, magnified.';
+      else exp = 'Object inside F: virtual, erect, magnified (shaving-mirror mode).';
+    } else if (state.element === 'convex-mirror') {
+      exp = 'A convex mirror always produces a virtual, erect, diminished image behind the mirror (wide field of view).';
+    }
+    $('eq-explain').textContent = exp;
+  }
+}
+
+// =====================================================================
+// Case stepper (preset object positions)
+// =====================================================================
+const CASES = {
+  'convex-lens': [
+    { label:'Beyond 2F',         uFactor:3.0 },
+    { label:'At 2F',             uFactor:2.0 },
+    { label:'Between F &amp; 2F',uFactor:1.5 },
+    { label:'At F',              uFactor:1.001 },
+    { label:'Inside F',          uFactor:0.6 }
+  ],
+  'concave-lens': [
+    { label:'Object Close',      uFactor:1.0 },
+    { label:'Object Far',        uFactor:3.0 }
+  ],
+  'concave-mirror': [
+    { label:'Beyond C (2F)',     uFactor:3.0 },
+    { label:'At C (2F)',         uFactor:2.0 },
+    { label:'Between F &amp; C', uFactor:1.5 },
+    { label:'At F',              uFactor:1.001 },
+    { label:'Inside F',          uFactor:0.6 }
+  ],
+  'convex-mirror': [
+    { label:'Object Close',      uFactor:1.0 },
+    { label:'Object Far',        uFactor:3.0 }
+  ],
+  'plane-mirror': [
+    { label:'Place Object',      uFactor:2.0 }
+  ]
+};
+
+function rebuildCases() {
+  const wrap = document.getElementById('case-btns');
+  wrap.innerHTML = '';
+  const cases = CASES[state.element];
+  cases.forEach(c => {
+    const b = document.createElement('button');
+    b.innerHTML = c.label;
+    b.onclick = () => {
+      const newU = Math.max(3, Math.min(60, c.uFactor * state.f));
+      state.u = newU;
+      document.getElementById('sl-u').value = newU;
+      document.getElementById('u-v').textContent = newU.toFixed(1) + ' cm';
+      render();
+    };
+    wrap.appendChild(b);
+  });
+}
+
+// =====================================================================
+// Master render
+// =====================================================================
+function render() {
+  drawGrid();
+  drawAxis();
+  drawFmarkers();
+  drawElement();
+  const result = compute();
+  drawRays(result);
+  drawObject();
+  drawImage(result);
+  updateReadout(result);
+  // delay label position a tick so SVG is laid out
+  requestAnimationFrame(() => updateImageLabel(result));
+}
+
+// =====================================================================
+// Wire-up controls
+// =====================================================================
+function bindControls() {
+  // Element buttons
+  document.querySelectorAll('#element-btns button').forEach(b => {
+    b.onclick = () => {
+      state.element = b.dataset.el;
+      document.querySelectorAll('#element-btns button').forEach(x => x.classList.toggle('active', x === b));
+      // Adjust default u to be sensible
+      if (isPlane()) state.u = 20;
+      else state.u = Math.max(3, Math.min(60, state.u));
+      document.getElementById('sl-u').value = state.u;
+      document.getElementById('u-v').textContent = state.u.toFixed(1) + ' cm';
+      rebuildCases();
+      render();
+    };
+  });
+  // Object buttons
+  document.querySelectorAll('#object-btns button').forEach(b => {
+    b.onclick = () => {
+      state.object = b.dataset.obj;
+      document.querySelectorAll('#object-btns button').forEach(x => x.classList.toggle('active', x === b));
+      render();
+    };
+  });
+  // Sliders
+  document.getElementById('sl-f').oninput = function() {
+    state.f = parseFloat(this.value);
+    document.getElementById('f-v').textContent = state.f.toFixed(1) + ' cm';
+    render();
+  };
+  document.getElementById('sl-u').oninput = function() {
+    state.u = parseFloat(this.value);
+    document.getElementById('u-v').textContent = state.u.toFixed(1) + ' cm';
+    render();
+  };
+  document.getElementById('sl-h').oninput = function() {
+    state.h = parseFloat(this.value);
+    document.getElementById('h-v').textContent = state.h.toFixed(1) + ' cm';
+    render();
+  };
+
+  // Drag object
+  const svg = document.getElementById('bench');
+  const objG = document.getElementById('bench-object');
+  let dragging = false;
+  function getSvgX(e) {
+    const rect = svg.getBoundingClientRect();
+    const cl = e.touches ? e.touches[0] : e;
+    return (cl.clientX - rect.left) * (W / rect.width);
+  }
+  objG.addEventListener('mousedown', e => { dragging = true; e.preventDefault(); });
+  objG.addEventListener('touchstart', e => { dragging = true; e.preventDefault(); }, {passive:false});
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const svgX = getSvgX(e);
+    let newU = (Ex - svgX) / SCALE;
+    newU = Math.max(3, Math.min(60, newU));
+    state.u = newU;
+    document.getElementById('sl-u').value = newU;
+    document.getElementById('u-v').textContent = newU.toFixed(1) + ' cm';
+    render();
+  });
+  window.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    const svgX = getSvgX(e);
+    let newU = (Ex - svgX) / SCALE;
+    newU = Math.max(3, Math.min(60, newU));
+    state.u = newU;
+    document.getElementById('sl-u').value = newU;
+    document.getElementById('u-v').textContent = newU.toFixed(1) + ' cm';
+    render();
+    e.preventDefault();
+  }, {passive:false});
+  window.addEventListener('mouseup', () => { dragging = false; });
+  window.addEventListener('touchend', () => { dragging = false; });
+
+  // Re-position image label on resize
+  window.addEventListener('resize', () => render());
+}
+
+// =====================================================================
+// Init
+// =====================================================================
+bindControls();
+rebuildCases();
+render();
+</script>
+</body>
+</html>
