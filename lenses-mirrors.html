@@ -713,23 +713,19 @@ function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
     rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
   }
 
-  // ===== Ray 2: through optical centre (violet)
-  // Straight line from (Ox,Oy) through (Ex,0) — for real, continues to (Ix,Iy)
+ // ===== Ray 2: through optical centre (violet) — undeviated
   if (isReal) {
-    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff');
-    const ext = extendBeyond(Ox, Oy, Ix, Iy, 30);
+    // Draw two segments so the ray VISIBLY passes through (Ex, Ay)
+    rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');         // object top → lens centre
+    rayLine(g, Ex, Ay, Ix, Iy, '#c060ff');         // lens centre → image top
+    const ext = extendBeyond(Ex, Ay, Ix, Iy, 30);
     rayLine(g, Ix, Iy, ext.x, ext.y, '#c060ff');
   } else {
-    // virtual: straight line continues on the right side; backward dashed reaches Ix,Iy
+    // virtual: line continues straight from object through centre, with dashed extension to virtual image
     const ext = extendBeyond(Ox, Oy, Ex, Ay, 280);
-    rayLine(g, Ox, Oy, ext.x, ext.y, '#c060ff');
-    // dashed back from (Ex,Ay) to (Ix,Iy) — but the through-centre line ALREADY passes through (Ex,Ay)
-    // and extending backward from (Ex,Ay) toward where (Ix,Iy) lies, on the object's side... 
-    // For virtual image of convex lens (object inside F): Ix < Ex, Iy beyond Oy.
-    // The line from (Ox,Oy) through (Ex,Ay): does (Ix,Iy) lie on this line? Let's check:
-    //   slope = (Ay - Oy)/(Ex - Ox). At x=Ix, y = Oy + slope*(Ix-Ox).
-    //   For convex lens, virtual image is on same line through centre — yes by similar triangles.
-    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);
+    rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
+    rayLine(g, Ex, Ay, ext.x, ext.y, '#c060ff');
+    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);   // dashed back to virtual image
   }
 
   // ===== Ray 3: through near F1, emerges parallel (gold)
