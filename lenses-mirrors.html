@@ -696,57 +696,55 @@ function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
   const F1x = Ex - fpix, F2x = Ex + fpix; // F1 = near (left), F2 = far (right)
   const isReal = result.isReal;
 
-  // ===== Ray 1: parallel to axis, refracts through F2 (cyan)
-  // Solid: (Ox,Oy) → (Ex,Oy) → through F2 → continue right
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+
+  function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
+  const g = document.getElementById('bench-rays');
+  const fpix = state.f * SCALE;
+  const F1x = Ex - fpix;   // near focal point (object side)
+  const F2x = Ex + fpix;   // far focal point (image side)
+  const isReal = result.isReal;
+
+  // ===== Ray 1: parallel to axis → refracts through F2 (cyan)
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');           // incident horizontal
   if (isReal) {
-    // From (Ex,Oy), passes through F2 (F2x, Ay), and continues to image (Ix,Iy) — same line
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
-    // extend past image a bit
-    const ext = extendBeyond(Ex, Oy, Ix, Iy, 30);
+    rayLine(g, Ex, Oy, F2x, Ay, '#20d0ff');        // visibly through F2
+    rayLine(g, F2x, Ay, Ix, Iy, '#20d0ff');        // continues to image
+    const ext = extendBeyond(F2x, Ay, Ix, Iy, 30);
     rayLine(g, Ix, Iy, ext.x, ext.y, '#20d0ff');
   } else {
-    // virtual: refracted ray from (Ex,Oy) goes through F2 and continues forward (right)
-    const ext = extendBeyond(Ex, Oy, F2x, Ay, 280);
-    rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
-    // dashed backward from (Ex,Oy) through (Ix,Iy)
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+    rayLine(g, Ex, Oy, F2x, Ay, '#20d0ff');
+    const ext = extendBeyond(Ex, Oy, F2x, Ay, 240);
+    rayLine(g, F2x, Ay, ext.x, ext.y, '#20d0ff');
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);   // dashed to virtual image
   }
 
- // ===== Ray 2: through optical centre (violet) — undeviated
+  // ===== Ray 2: through optical centre → undeviated (violet)
+  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');           // to centre of lens
   if (isReal) {
-    // Draw two segments so the ray VISIBLY passes through (Ex, Ay)
-    rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');         // object top → lens centre
-    rayLine(g, Ex, Ay, Ix, Iy, '#c060ff');         // lens centre → image top
+    rayLine(g, Ex, Ay, Ix, Iy, '#c060ff');         // continues to image
     const ext = extendBeyond(Ex, Ay, Ix, Iy, 30);
     rayLine(g, Ix, Iy, ext.x, ext.y, '#c060ff');
   } else {
-    // virtual: line continues straight from object through centre, with dashed extension to virtual image
-    const ext = extendBeyond(Ox, Oy, Ex, Ay, 280);
-    rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
+    const ext = extendBeyond(Ox, Oy, Ex, Ay, 240);
     rayLine(g, Ex, Ay, ext.x, ext.y, '#c060ff');
-    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);   // dashed back to virtual image
+    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);   // dashed to virtual image
   }
 
-  // ===== Ray 3: through near F1, emerges parallel (gold)
-  // Line from (Ox,Oy) through (F1x, Ay) to (Ex, y_at_lens), then horizontal at that y
-  // For convex lens, y_at_lens = Iy (so the ray exits horizontally at image height)
+  // ===== Ray 3: through F1 → emerges parallel (gold)
   if (isReal) {
-    rayLine(g, Ox, Oy, Ex, Iy, '#f0c060');           // diagonal through F1
-    rayLine(g, Ex, Iy, Ix + 30, Iy, '#f0c060');      // horizontal after lens
+    rayLine(g, Ox, Oy, F1x, Ay, '#f0c060');        // visibly through F1
+    rayLine(g, F1x, Ay, Ex, Iy, '#f0c060');        // continues to lens
+    rayLine(g, Ex, Iy, Ix + 40, Iy, '#f0c060');    // horizontal after lens
   } else {
-    // virtual case: object inside F. The line from O through F1 may go in unusual direction
-    // y_at_lens = Oy * f / (f - u). For u < f, denom > 0, so y_at_lens same sign as Oy.
-    const u = state.u, f = state.f;
-    const yLens = Oy * f * SCALE / (f * SCALE - u * SCALE); 
-    // Actually simpler: y_at_lens = Iy by the formula derivation
-    rayLine(g, Ox, Oy, Ex, Iy, '#f0c060');
-    rayLine(g, Ex, Iy, Ex + 280, Iy, '#f0c060');
-    // dashed backward from (Ex,Iy) to (Ix,Iy)
-    rayLine(g, Ex, Iy, Ix, Iy, '#f0c060', true);
+    // Object inside F: ray appears to come from F1
+    const slope3 = (Oy - Ay) / (Ox - F1x);
+    const yLens3 = Ay + slope3 * (Ex - F1x);
+    rayLine(g, Ox, Oy, Ex, yLens3, '#f0c060');
+    rayLine(g, Ex, yLens3, Ex + 240, yLens3, '#f0c060');
+    rayLine(g, Ex, yLens3, Ix, Iy, '#f0c060', true);
   }
 }
-
+ 
 function drawRaysConcaveLens(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
