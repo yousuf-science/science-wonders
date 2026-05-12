@@ -508,12 +508,11 @@ function drawAxis() {
   // axis label
   el(g, 'text', { x:W-10, y:Ay-6, 'text-anchor':'end', 'font-family':'monospace', 'font-size':9, fill:'#3a5070', 'letter-spacing':1, text:'OPTICAL AXIS' });
 }
-
+  
 function drawFmarkers() {
   const g = clearGroup('bench-fmarkers');
   if (isPlane()) return;
   const fpix = state.f * SCALE;
-  // F markers on both sides of the element
   const fPositions = [
     { x: Ex - fpix, label: 'F' },
     { x: Ex + fpix, label: 'F' },
@@ -522,13 +521,17 @@ function drawFmarkers() {
   ];
   fPositions.forEach(p => {
     if (p.x < 10 || p.x > W-10) return;
-    // small gold dot
-    el(g, 'circle', { cx:p.x, cy:Ay, r:3.5, fill:'#f0c060' });
-    el(g, 'circle', { cx:p.x, cy:Ay, r:6, fill:'none', stroke:'rgba(240,192,96,0.4)', 'stroke-width':1 });
-    el(g, 'text', { x:p.x, y:Ay+18, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', 'font-weight':'bold', text:p.label });
+    el(g, 'circle', { cx:p.x, cy:Ay, r:5.5, fill:'#f0c060' });
+    el(g, 'circle', { cx:p.x, cy:Ay, r:10, fill:'none', stroke:'rgba(240,192,96,0.5)', 'stroke-width':1.5 });
+    el(g, 'text', { x:p.x, y:Ay+22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'#f0c060', 'font-weight':'bold', text:p.label });
   });
-}
 
+  // Optical centre "O"
+  el(g, 'circle', { cx:Ex, cy:Ay, r:4, fill:'#ddeeff' });
+  el(g, 'circle', { cx:Ex, cy:Ay, r:8, fill:'none', stroke:'rgba(221,238,255,0.5)', 'stroke-width':1.5 });
+  el(g, 'text', { x:Ex, y:Ay+22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'#ddeeff', 'font-weight':'bold', text:'O' });
+}
+  
 function drawElement() {
   const g = clearGroup('bench-element');
   const top = Ay - 140, bot = Ay + 140;
@@ -690,178 +693,98 @@ function extendBeyond(x1, y1, x2, y2, dist) {
   return { x: x2 + dx/len * dist, y: y2 + dy/len * dist };
 }
 
-  function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
+function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
-  const F2x = Ex + fpix;   // far focal point (image side)
+  const F2x = Ex + fpix;
   const isReal = result.isReal;
 
-  // ===== Ray 1 (CYAN): from top of object, parallel to axis, then refracts down through F2
-  // Segment A: horizontal from object top to the lens
+  // Ray 1 (CYAN): parallel → through F2
   rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
   if (isReal) {
-    // Segment B: from lens through F2 down to the image tip
     rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
   } else {
-    // Virtual case: refracted ray diverges; dashed back-extension to virtual image
     const ext = extendBeyond(Ex, Oy, F2x, Ay, 200);
     rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
     rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
   }
 
-  // ===== Ray 2 (GOLD): from top of object straight through the optical centre — undeviated
+  // Ray 2 (GOLD): straight through optical centre — undeviated
   if (isReal) {
-    // One straight line from object top → centre of lens → image tip
     rayLine(g, Ox, Oy, Ix, Iy, '#f0c060');
   } else {
-    // Virtual case: line continues straight beyond the lens; dashed back to virtual image
     const ext = extendBeyond(Ox, Oy, Ex, Ay, 200);
     rayLine(g, Ox, Oy, ext.x, ext.y, '#f0c060');
     rayLine(g, Ox, Oy, Ix, Iy, '#f0c060', true);
   }
-} 
+}
+
 function drawRaysConcaveLens(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
-  const F1x = Ex - fpix, F2x = Ex + fpix; // for concave lens, near F is on object side (left), far F on right
-  // Concave lens is always virtual, erect, diminished
-  // Iy and Oy both same sign; Ix between Ox and Ex.
+  const F1x = Ex - fpix;  // F on object side (apparent source of diverging rays)
 
-  // ===== Ray 1: parallel to axis, diverges as if from F1 (near focal point on object side) (cyan)
-  // Solid: (Ox,Oy) → (Ex,Oy), then refracted ray goes such that its backward extension passes through F1
+  // Ray 1 (CYAN): parallel → diverges, appears to come from F1
   rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
-  // refracted ray from (Ex,Oy) goes in direction from F1 to (Ex,Oy)
-  // direction vector: (Ex - F1x, Oy - 0) = (fpix, Oy)
-  const ext1 = extendBeyond(F1x, Ay, Ex, Oy, 300);
+  const ext1 = extendBeyond(F1x, Ay, Ex, Oy, 240);
   rayLine(g, Ex, Oy, ext1.x, ext1.y, '#20d0ff');
-  // dashed backward from (Ex,Oy) toward F1 → reaches (Ix,Iy)
   rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
 
-  // ===== Ray 2: through optical centre, straight through (violet)
-  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
-  const ext2 = extendBeyond(Ox, Oy, Ex, Ay, 280);
-  rayLine(g, Ex, Ay, ext2.x, ext2.y, '#c060ff');
-  rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true); // dashed line that passes through (Ix,Iy)
-
-  // ===== Ray 3: aimed at F2 (far focal point, opposite side), emerges parallel (gold)
-  // Line from (Ox,Oy) toward (F2x, Ay), then at (Ex, y_at_lens) becomes parallel at that y
-  // y at lens: line from (Ox,Oy) toward (F2x,Ay). slope = (Ay-Oy)/(F2x-Ox).
-  // y_at_lens = Oy + slope*(Ex-Ox)
-  const slope3 = (Ay - Oy) / (F2x - Ox);
-  const yLens3 = Oy + slope3 * (Ex - Ox);
-  rayLine(g, Ox, Oy, Ex, yLens3, '#f0c060');
-  // continue parallel to axis at yLens3 to the right
-  rayLine(g, Ex, yLens3, Ex + 280, yLens3, '#f0c060');
-  // dashed backward from (Ex, yLens3) through (Ix, Iy)? 
-  // For concave lens, this ray's backward extension should reach (Ix, Iy) at the virtual image position.
-  // The parallel ray going forward at y=yLens3, extended backward, gives the horizontal line at y=yLens3.
-  // But (Ix, Iy) is generally NOT at y = yLens3. So the dashed line should be from (Ex, yLens3) going LEFT at y=yLens3? No — that's just horizontal.
-  // Actually the "virtual image" is where all three rays' backward extensions meet. For the parallel-emerging ray, the backward extension is just the horizontal line at y=yLens3 going leftward. This horizontal line should pass through (Ix, Iy)? Not necessarily geometrically — it passes through (Ix, yLens3).
-  // Hmm. Let me check: actually for all three principal rays through a thin lens, their backward extensions DO converge at the virtual image. So yLens3 should equal Iy. Let me verify:
-  //   yLens3 = Oy + (Ay-Oy)/(F2x-Ox) * (Ex-Ox) = Oy + (-Oy)/((Ex+fpix)-Ox) * (Ex-Ox)
-  //          = Oy * [1 - (Ex-Ox)/((Ex+fpix)-Ox)]
-  //          = Oy * [(Ex+fpix-Ox - Ex+Ox)/((Ex+fpix)-Ox)]
-  //          = Oy * [fpix / (Ex+fpix-Ox)]
-  //   With Ox = Ex - u*SCALE: yLens3 = Oy * fpix / (fpix + u*SCALE) = Oy * f / (f + u)
-  //   For concave lens, f_signed = -f, so v = u*(-f)/(u-(-f)) = -uf/(u+f); m = -v/u = f/(u+f); Iy_offset = m*Oy = Oy*f/(u+f) ✓
-  // So yLens3 = Iy. 
-  rayLine(g, Ex, yLens3, Ix, Iy, '#f0c060', true);
+  // Ray 2 (GOLD): through optical centre — undeviated
+  const ext2 = extendBeyond(Ox, Oy, Ex, Ay, 240);
+  rayLine(g, Ox, Oy, ext2.x, ext2.y, '#f0c060');
+  rayLine(g, Ox, Oy, Ix, Iy, '#f0c060', true);
 }
 
 function drawRaysConcaveMirror(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
-  const Fx = Ex - fpix; // focal point in front (left of mirror)
-  const Cx = Ex - 2*fpix; // centre of curvature
+  const Fx = Ex - fpix;
   const isReal = result.isReal;
 
-  // ===== Ray 1: parallel to axis, reflects through F (cyan)
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff'); // incident parallel
+  // Ray 1 (CYAN): parallel → reflects through F
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
   if (isReal) {
-    // reflected ray from (Ex, Oy) through (Fx, Ay) and onward to (Ix, Iy)
     rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
-    const ext = extendBeyond(Ex, Oy, Ix, Iy, 20);
-    rayLine(g, Ix, Iy, ext.x, ext.y, '#20d0ff');
   } else {
-    // virtual case (object inside F): reflected ray diverges
-    // direction from F to (Ex,Oy): reflected ray goes the OTHER way from (Ex,Oy), i.e., it appears to come from F
-    // Actually: incident parallel hits mirror at (Ex,Oy), reflects through F. So solid line from (Ex,Oy) toward (Fx,Ay) and extended away from mirror.
     const ext = extendBeyond(Ex, Oy, Fx, Ay, 200);
     rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
-    // dashed extension backward through the mirror to (Ix,Iy)
     rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
   }
 
-  // ===== Ray 2: through F, reflects parallel (violet)
-  // Incident ray from (Ox,Oy) through (Fx,Ay) hits mirror at (Ex, y_hit)
-  // y_hit found from line through (Ox,Oy) and (Fx,Ay):
-  const slope2 = (Ay - Oy) / (Fx - Ox);
-  const yHit2 = Oy + slope2 * (Ex - Ox);
-  // For converging mirror real-image case, y_hit2 = Iy (rays converge)
-  rayLine(g, Ox, Oy, Ex, yHit2, '#c060ff');
-  // reflected ray is parallel to axis at y = y_hit2
+  // Ray 2 (GOLD): hits vertex O, reflects symmetrically about optical axis
+  rayLine(g, Ox, Oy, Ex, Ay, '#f0c060');
   if (isReal) {
-    rayLine(g, Ex, yHit2, Ix, Iy, '#c060ff');
+    rayLine(g, Ex, Ay, Ix, Iy, '#f0c060');
   } else {
-    // for virtual image, the parallel reflected ray goes leftward (back toward object's side)
-    rayLine(g, Ex, yHit2, Ox - 80, yHit2, '#c060ff');
-    rayLine(g, Ex, yHit2, Ix, Iy, '#c060ff', true);
-  }
-
-  // ===== Ray 3: through C (centre of curvature), reflects back on itself (gold)
-  // Incident from (Ox,Oy) through (Cx, Ay), hits mirror at some point, reflects back on same line
-  // But if C is between O and mirror or beyond — different cases. Just draw the line from O through C to mirror, then back from mirror to image.
-  const slope3 = (Ay - Oy) / (Cx - Ox);
-  const yHit3 = Oy + slope3 * (Ex - Ox);
-  rayLine(g, Ox, Oy, Ex, yHit3, '#f0c060');
-  if (isReal) {
-    // reflects back through C to image — actually reflected ray goes back along the same line
-    rayLine(g, Ex, yHit3, Ix, Iy, '#f0c060');
-  } else {
-    // virtual: reflected ray goes back along same line, away from image
-    const back = extendBeyond(Ex, yHit3, Ox, Oy, 0); // doesn't matter, just retrace
-    rayLine(g, Ex, yHit3, Ox - 60, Oy + (Ox-60-Ex)*((Oy-yHit3)/(Ox-Ex)), '#f0c060');
-    rayLine(g, Ex, yHit3, Ix, Iy, '#f0c060', true);
+    // Reflected ray: symmetric about axis (y-flip of incident direction)
+    const refX = Ex - (Ex - Ox) * 0.7;
+    const refY = Ay + (Ay - Oy) * 0.7;
+    rayLine(g, Ex, Ay, refX, refY, '#f0c060');
+    rayLine(g, Ex, Ay, Ix, Iy, '#f0c060', true);
   }
 }
 
 function drawRaysConvexMirror(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
-  const Fbx = Ex + fpix;  // F behind mirror
-  const Cbx = Ex + 2*fpix;// C behind mirror
+  const Fbx = Ex + fpix;
 
-  // ===== Ray 1: parallel to axis, reflects as if from F-behind (cyan)
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff'); // incident parallel
-  // reflected ray goes such that its backward extension passes through (Fbx, Ay)
-  // direction from F-behind to (Ex,Oy): (Ex - Fbx, Oy - 0) = (-fpix, Oy)
-  // reflected ray goes opposite — i.e., from (Ex,Oy) in direction (Ex - Fbx, Oy) means going LEFT and up/down depending on Oy sign? Wait:
-  // The reflected ray must travel into the region in front of mirror (left side). Direction from (Fbx,Ay) through (Ex,Oy) extended → (Ex + (Ex-Fbx)*t, Oy + Oy*t) for t>0. With Fbx > Ex (Fbx = Ex+fpix), (Ex-Fbx) = -fpix < 0. So reflected goes leftward (good, into front region).
-  const ext1b = extendBeyond(Fbx, Ay, Ex, Oy, 240);
-  rayLine(g, Ex, Oy, ext1b.x, ext1b.y, '#20d0ff');
-  // dashed extension through mirror to (Ix,Iy)
+  // Ray 1 (CYAN): parallel → reflects as if from F-behind
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  const ext1 = extendBeyond(Fbx, Ay, Ex, Oy, 240);
+  rayLine(g, Ex, Oy, ext1.x, ext1.y, '#20d0ff');
   rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
 
-  // ===== Ray 2: aimed at F-behind, reflects parallel (violet)
-  // Line from (Ox,Oy) toward (Fbx,Ay) hits mirror at (Ex, y_hit2)
-  const slope2 = (Ay - Oy) / (Fbx - Ox);
-  const yHit2 = Oy + slope2 * (Ex - Ox);
-  rayLine(g, Ox, Oy, Ex, yHit2, '#c060ff');
-  // reflected parallel to axis at y = yHit2, going leftward (back into front region)
-  rayLine(g, Ex, yHit2, Ex - 240, yHit2, '#c060ff');
-  // dashed through mirror to (Ix,Iy)
-  rayLine(g, Ex, yHit2, Ix, Iy, '#c060ff', true);
-
-  // ===== Ray 3: aimed at C-behind, reflects back on itself (gold)
-  const slope3 = (Ay - Oy) / (Cbx - Ox);
-  const yHit3 = Oy + slope3 * (Ex - Ox);
-  rayLine(g, Ox, Oy, Ex, yHit3, '#f0c060');
-  // reflected back along same line — going back toward object
-  const ext3 = extendBeyond(Ex, yHit3, Ox, Oy, 0);
-  rayLine(g, Ex, yHit3, Ox - 60, Oy + ((Ox - 60 - Ex) * (Oy - yHit3) / (Ox - Ex)), '#f0c060');
-  rayLine(g, Ex, yHit3, Ix, Iy, '#f0c060', true);
+  // Ray 2 (GOLD): hits vertex O, reflects symmetrically about optical axis
+  rayLine(g, Ox, Oy, Ex, Ay, '#f0c060');
+  const refX = Ex - (Ex - Ox) * 0.7;
+  const refY = Ay + (Ay - Oy) * 0.7;
+  rayLine(g, Ex, Ay, refX, refY, '#f0c060');
+  rayLine(g, Ex, Ay, Ix, Iy, '#f0c060', true);
 }
-
+  
+  
 function drawRaysPlaneMirror(result) {
   const g = document.getElementById('bench-rays');
   const Ox = Ex - state.u * SCALE;
