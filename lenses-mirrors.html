@@ -690,55 +690,54 @@ function extendBeyond(x1, y1, x2, y2, dist) {
   return { x: x2 + dx/len * dist, y: y2 + dy/len * dist };
 }
 
-
-  function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
+function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
   const F1x = Ex - fpix;   // near focal point (object side)
   const F2x = Ex + fpix;   // far focal point (image side)
   const isReal = result.isReal;
 
-  // ===== Ray 1: parallel to axis → refracts through F2 (cyan)
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');           // incident horizontal
+  // ===== Ray 1 (CYAN): parallel to axis → refracts through F2
+  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');        // incident parallel to lens
   if (isReal) {
-    rayLine(g, Ex, Oy, F2x, Ay, '#20d0ff');        // visibly through F2
-    rayLine(g, F2x, Ay, Ix, Iy, '#20d0ff');        // continues to image
-    const ext = extendBeyond(F2x, Ay, Ix, Iy, 30);
-    rayLine(g, Ix, Iy, ext.x, ext.y, '#20d0ff');
+    // refracted ray: from (Ex, Oy) through F2, continues to image
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
   } else {
-    rayLine(g, Ex, Oy, F2x, Ay, '#20d0ff');
-    const ext = extendBeyond(Ex, Oy, F2x, Ay, 240);
-    rayLine(g, F2x, Ay, ext.x, ext.y, '#20d0ff');
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);   // dashed to virtual image
+    // virtual case: refracted ray diverges, going through F2 forward
+    const ext = extendBeyond(Ex, Oy, F2x, Ay, 200);
+    rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
+    // dashed backward extension to virtual image
+    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
   }
 
-  // ===== Ray 2: through optical centre → undeviated (violet)
-  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');           // to centre of lens
+  // ===== Ray 2 (VIOLET): through optical centre → undeviated straight line
   if (isReal) {
-    rayLine(g, Ex, Ay, Ix, Iy, '#c060ff');         // continues to image
-    const ext = extendBeyond(Ex, Ay, Ix, Iy, 30);
-    rayLine(g, Ix, Iy, ext.x, ext.y, '#c060ff');
+    // Object top → lens centre → image top — drawn as ONE straight line
+    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff');
   } else {
-    const ext = extendBeyond(Ox, Oy, Ex, Ay, 240);
-    rayLine(g, Ex, Ay, ext.x, ext.y, '#c060ff');
-    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);   // dashed to virtual image
+    // virtual: line continues straight beyond the lens centre
+    const ext = extendBeyond(Ox, Oy, Ex, Ay, 200);
+    rayLine(g, Ox, Oy, ext.x, ext.y, '#c060ff');
+    // dashed back to virtual image
+    rayLine(g, Ox, Oy, Ix, Iy, '#c060ff', true);
   }
 
-  // ===== Ray 3: through F1 → emerges parallel (gold)
+  // ===== Ray 3 (GOLD): through F1 → emerges parallel to axis
   if (isReal) {
-    rayLine(g, Ox, Oy, F1x, Ay, '#f0c060');        // visibly through F1
-    rayLine(g, F1x, Ay, Ex, Iy, '#f0c060');        // continues to lens
-    rayLine(g, Ex, Iy, Ix + 40, Iy, '#f0c060');    // horizontal after lens
+    // object → F1 → lens at height Iy → continues horizontally to image
+    rayLine(g, Ox, Oy, Ex, Iy, '#f0c060');     // through F1 to lens (passes through F1 automatically)
+    rayLine(g, Ex, Iy, Ix + 40, Iy, '#f0c060'); // horizontal exit through image
   } else {
-    // Object inside F: ray appears to come from F1
-    const slope3 = (Oy - Ay) / (Ox - F1x);
-    const yLens3 = Ay + slope3 * (Ex - F1x);
-    rayLine(g, Ox, Oy, Ex, yLens3, '#f0c060');
-    rayLine(g, Ex, yLens3, Ex + 240, yLens3, '#f0c060');
-    rayLine(g, Ex, yLens3, Ix, Iy, '#f0c060', true);
+    // virtual case: ray appears to come from F1
+    // hit-y at lens for a ray through F1 from object:
+    const slope = (Oy - Ay) / (Ox - F1x);
+    const yLens = Ay + slope * (Ex - F1x);
+    rayLine(g, Ox, Oy, Ex, yLens, '#f0c060');
+    rayLine(g, Ex, yLens, Ex + 200, yLens, '#f0c060');
+    rayLine(g, Ex, yLens, Ix, Iy, '#f0c060', true);
   }
 }
- 
+  
 function drawRaysConcaveLens(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
   const fpix = state.f * SCALE;
