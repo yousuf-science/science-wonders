@@ -690,12 +690,6 @@ function extendBeyond(x1, y1, x2, y2, dist) {
   return { x: x2 + dx/len * dist, y: y2 + dy/len * dist };
 }
 
-function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
-  const g = document.getElementById('bench-rays');
-  const fpix = state.f * SCALE;
-  const F1x = Ex - fpix, F2x = Ex + fpix; // F1 = near (left), F2 = far (right)
-  const isReal = result.isReal;
-
 
   function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
   const g = document.getElementById('bench-rays');
