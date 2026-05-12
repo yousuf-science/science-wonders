@@ -661,7 +661,7 @@ function drawRays(result) {
 
   const v = result.v;
   const Ix = isLens() ? Ex + v * SCALE : Ex - v * SCALE;
-  const Iy = Ay + (result.m * state.h * SCALE);   // image top y; negative-y if erect, positive-y if inverted (because m<0 in inverted)
+  const Iy = Ay - (result.m * state.h * SCALE);   // image top y; negative-y if erect, positive-y if inverted (because m<0 in inverted)
 
   if (state.element === 'convex-lens') {
     drawRaysConvexLens(Ox, Oy, Ix, Iy, result);
