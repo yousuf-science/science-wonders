@@ -167,8 +167,13 @@ header {
 .featured:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(58, 143, 255, 0.12); }
 .featured-icon {
   position: relative; font-size: 64px; align-self: center;
-  filter: drop-shadow(0 0 24px rgba(58, 143, 255, 0.35));
-  animation: featuredPulse 4s ease-in-out infinite; line-height: 1;
+  display: inline-block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  line-height: 1;
+}
+.featured:hover .featured-icon {
+  transform: scale(1.18) rotate(-4deg);
+  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
 }
 @keyframes featuredPulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.06);} }
 .featured-body { position: relative; }
