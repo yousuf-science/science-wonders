@@ -730,23 +730,23 @@ function updateStatus() {
 }
 
 // Global double click placement module
-svg.addEventListener('dblclick', e => {
-  e.preventDefault();
-  if (state.pendingAddKind === 'select') return;
-  const pt = svgPoint(e);
-  const snapX = Math.round(pt.x / 20) * 20;
-  const snapY = Math.round(pt.y / 20) * 20;
+// svg.addEventListener('dblclick', e => {
+//   e.preventDefault();
+//   if (state.pendingAddKind === 'select') return;
+//   const pt = svgPoint(e);
+//   const snapX = Math.round(pt.x / 20) * 20;
+//   const snapY = Math.round(pt.y / 20) * 20;
   
-  saveHistory();
-  const n1 = getOrCreateConnectionPoint(snapX, snapY);
-  const n2 = getOrCreateConnectionPoint(snapX + 80, snapY);
+//   saveHistory();
+//   const n1 = getOrCreateConnectionPoint(snapX, snapY);
+//   const n2 = getOrCreateConnectionPoint(snapX + 80, snapY);
   
-  const kind = state.pendingAddKind || 'wire';
-  const b = addBranch(n1, n2, kind, defaultValue(kind));
+//   const kind = state.pendingAddKind || 'wire';
+//   const b = addBranch(n1, n2, kind, defaultValue(kind));
   
-  state.selected = b.id;
-  solve(); render(); updateSelectedPanel(); updateStatus();
-});
+//   state.selected = b.id;
+//   solve(); render(); updateSelectedPanel(); updateStatus();
+// });
 
 // Priority Click Delegation Module fixes switch toggling and sticky tool blockages
 svg.addEventListener('click', e => {
@@ -754,11 +754,28 @@ svg.addEventListener('click', e => {
   const branchHit = target.closest('.branch-hit') || target.closest('.comp');
   const bid = branchHit ? parseInt(branchHit.getAttribute('data-branch-id')) : null;
 
-  // Absolute priority: Clicking an existing component selects it immediately
+  // STEP 1: If a tool is active AND we clicked a wire → INSERT into wire
+  if (bid !== null && state.pendingAddKind && state.pendingAddKind !== 'select' && INSERT_KINDS.has(state.pendingAddKind)) {
+    const targetB = state.branches.find(x => x.id === bid);
+    if (targetB && targetB.kind === 'wire') {
+      saveHistory();
+      const extra = state.pendingAddKind === 'switch' ? { open: false } : {};
+      const newB = insertIntoWire(targetB, state.pendingAddKind, defaultValue(state.pendingAddKind), extra);
+      state.selected = newB ? newB.id : null;
+      // Return to select mode after placement
+      state.pendingAddKind = 'select';
+      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('add-select').classList.add('active');
+      document.getElementById('canvas-hint').textContent = 'Component placed. Click elements to inspect/toggle.';
+      solve(); render(); updateSelectedPanel(); updateStatus();
+      return;
+    }
+  }
+
+  // STEP 2: Plain click on a branch → select it (and toggle if it's a switch)
   if (bid !== null) {
     state.selected = bid;
     const clickedB = state.branches.find(x => x.id === bid);
-    // Instant switch toggle logic bypasses selection tools perfectly
     if (clickedB && clickedB.kind === 'switch' && state.pendingAddKind === 'select') {
       saveHistory();
       clickedB.extra.open = !clickedB.extra.open;
@@ -767,26 +784,10 @@ svg.addEventListener('click', e => {
     return;
   }
 
-  // Inline wire splitting logic checks
-  if (state.pendingAddKind && state.pendingAddKind !== 'select' && INSERT_KINDS.has(state.pendingAddKind)) {
-    const wireHit = target.closest('.branch-hit');
-    if (wireHit) {
-      const wId = parseInt(wireHit.getAttribute('data-branch-id'));
-      const targetB = state.branches.find(x => x.id === wId);
-      if (targetB && targetB.kind === 'wire') {
-        saveHistory();
-        const newB = insertIntoWire(targetB, state.pendingAddKind, defaultValue(state.pendingAddKind));
-        state.selected = newB ? newB.id : null;
-        solve(); render(); updateSelectedPanel(); updateStatus();
-        return;
-      }
-    }
-  }
-
+  // STEP 3: Click on empty space → deselect
   state.selected = null;
   render(); updateSelectedPanel();
 });
-
 let dragStart = null;
 svg.addEventListener('mousedown', e => {
   if (SPAN_KINDS.has(state.pendingAddKind)) {
@@ -859,8 +860,13 @@ function setupToolbar() {
       state.pendingAddKind = t;
       document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      let hint = t === 'select' ? "Active Mode: Selection & Inspecting. Click elements to inspect/toggle properties, double-click empty space to deploy items." : `Active Tool: ${t.toUpperCase()}. Double-click empty grid points to generate elements.`;
+
+      let hint;
+      if (t === 'select') hint = "Selection mode: click elements to inspect or toggle.";
+      else if (INSERT_KINDS.has(t)) hint = `Click on any wire to insert a ${t.toUpperCase()}.`;
+      else hint = `Click two points (or click-and-drag) to place a ${t.toUpperCase()}.`;
       document.getElementById('canvas-hint').textContent = hint;
+  
     });
   });
 
