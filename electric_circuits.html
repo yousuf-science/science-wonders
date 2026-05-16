@@ -383,34 +383,8 @@ function deleteBranch(id) {
 }
 
 // Delete a branch AND merge surrounding stub wires so no gap is left.
-function deleteBranchClean(id) {
-  const b = state.branches.find(x => x.id === id);
-  if (!b) return;
-  const n1id = b.n1, n2id = b.n2;
-  deleteBranch(id);
-  // Try to merge each endpoint if it's now an "in-line" junction (exactly 2 wire branches and no other components).
-  [n1id, n2id].forEach(nid => {
-    const conn = state.branches.filter(x => x.n1 === nid || x.n2 === nid);
-    if (conn.length === 2 && conn.every(x => x.kind === 'wire')) {
-      // Merge the two wires into one
-      const w1 = conn[0], w2 = conn[1];
-      const otherEnd1 = (w1.n1 === nid) ? w1.n2 : w1.n1;
-      const otherEnd2 = (w2.n1 === nid) ? w2.n2 : w2.n1;
-      const n_a = nodeById(otherEnd1);
-      const n_b = nodeById(otherEnd2);
-      if (n_a && n_b && otherEnd1 !== otherEnd2) {
-        deleteBranch(w1.id);
-        deleteBranch(w2.id);
-        addBranch(n_a, n_b, 'wire', 0.001);
-        // Remove the now-orphan middle node
-        const ni = state.nodes.findIndex(x => x.id === nid);
-        if (ni >= 0 && !state.branches.some(x => x.n1 === nid || x.n2 === nid)) {
-          state.nodes.splice(ni, 1);
-        }
-      }
-    }
-  });
-}  
+
+
 // Insert a new component into the middle of an existing wire/branch.
 // Splits the branch into: original_n1 → newMid1 → new_component → newMid2 → original_n2
 function insertIntoWire(targetBranch, newKind, newValue, newExtra) {
@@ -571,7 +545,7 @@ function solve() {
     } else if (b.kind === 'ammeter') {
       R = 0.001;
     } else if (b.kind === 'galvanometer') {
-      R = 1; // small but nonzero
+      R = 0.01; // small but nonzero
     } else if (b.kind === 'wire') {
       R = Math.max(0.001, b.value || 0.001);
     } else {
@@ -987,6 +961,14 @@ function updateSelectedPanel() {
   html += `<div class="prop-row"><span>Type</span><span class="val">${kindLabel}</span></div>`;
   html += `<div class="prop-row"><span>Current</span><span class="val">${b.current.toFixed(3)} A</span></div>`;
   html += `<div class="prop-row"><span>Voltage drop</span><span class="val">${b.voltage.toFixed(3)} V</span></div>`;
+  // Show idealised internal resistance for meters
+if (b.kind === 'voltmeter') {
+  html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">10 MΩ</span></div>`;
+} else if (b.kind === 'ammeter') {
+  html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">0.001 Ω</span></div>`;
+} else if (b.kind === 'galvanometer') {
+  html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">0.01 Ω</span></div>`;
+}
   if (b.kind === 'resistor' || b.kind === 'bulb' || b.kind === 'fan') {
     html += `<div class="prop-row"><span>Power</span><span class="val">${(Math.abs(b.current)*Math.abs(b.voltage)).toFixed(3)} W</span></div>`;
     html += `<div class="prop-edit-row"><label>R (Ω)</label><input type="number" step="0.1" min="0.1" id="edit-value" value="${b.value}"></div>`;
