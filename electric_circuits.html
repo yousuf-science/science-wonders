@@ -12,7 +12,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Circuit Sandbox — Build & Understand | Science Wonders</title>
-<meta name="description" content="An interactive circuit simulator. Build any circuit, drop in resistors, bulbs, capacitors, meters — and watch current flow, voltage drop, and components react in real time.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -46,18 +45,7 @@ header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:
 .canvas-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:#020812;}
 svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;}
 .canvas-hint{position:absolute;top:14px;left:18px;font-family:monospace;font-size:11px;color:var(--gold);background:rgba(1,6,16,.92);padding:6px 12px;border-radius:5px;border:1px solid var(--border2);pointer-events:none;letter-spacing:1px;max-width:60%;}
-.canvas-hint.hidden{display:none;}
 .canvas-status{position:absolute;top:14px;right:18px;font-family:monospace;font-size:10px;color:var(--text2);background:rgba(1,6,16,.92);padding:5px 10px;border-radius:5px;border:1px solid var(--border2);letter-spacing:1px;}
-
-/* Banner */
-.banner{margin:12px auto 0;max-width:1400px;padding:0 20px;}
-.banner-inner{padding:10px 16px;border-radius:8px;font-family:monospace;font-size:12px;line-height:1.6;display:flex;align-items:center;gap:12px;}
-.banner.info .banner-inner{background:rgba(58,143,255,.07);border:1px solid rgba(58,143,255,.3);color:#9fc5ff;}
-.banner.warn .banner-inner{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.35);color:#ff9aa6;}
-.banner.success .banner-inner{background:rgba(64,255,170,.05);border:1px solid rgba(64,255,170,.25);color:#8effc8;}
-.banner.hint .banner-inner{background:rgba(240,192,96,.06);border:1px solid rgba(240,192,96,.3);color:#ffd690;}
-.banner .dismiss{margin-left:auto;background:transparent;border:none;color:inherit;cursor:pointer;font-size:14px;opacity:.6;padding:2px 6px;}
-.banner .dismiss:hover{opacity:1;}
 
 /* Panels */
 .panels{max-width:1400px;margin:14px auto 0;display:grid;grid-template-columns:1fr 380px;gap:14px;padding:0 20px;}
@@ -68,7 +56,6 @@ svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;
 
 .selected-panel .empty{color:var(--text3);font-family:monospace;font-size:11px;padding:14px 0;text-align:center;}
 .prop-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-family:monospace;font-size:11px;color:var(--text2);border-bottom:1px dashed var(--border);}
-.prop-row:last-child{border-bottom:none;}
 .prop-row .val{color:var(--text-bright);font-weight:bold;}
 .prop-edit-row{display:flex;gap:8px;margin-top:8px;align-items:center;}
 .prop-edit-row label{font-family:monospace;font-size:10px;color:var(--text2);letter-spacing:1px;width:80px;}
@@ -79,15 +66,12 @@ svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;
 .delete-btn:hover{background:rgba(255,79,96,.1);}
 
 .assumption-box{margin-top:12px;background:rgba(240,192,96,0.04);border:1px solid rgba(240,192,96,0.15);border-radius:6px;padding:10px;font-family:monospace;font-size:10.5px;color:var(--gold-bright);line-height:1.5;}
-
 .status-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .status-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;}
 .status-cell .l{font-family:monospace;font-size:8.5px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
 .status-cell .v{font-family:monospace;font-size:13px;color:var(--gold);}
-
 .legend{margin-top:8px;font-family:monospace;font-size:10px;color:var(--text2);line-height:1.85;}
 .legend .sw{display:inline-block;width:18px;height:6px;vertical-align:middle;margin-right:7px;border-radius:2px;}
-
 footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
 footer a{color:var(--text2);text-decoration:none;}
 footer a:hover{color:var(--accent);}
@@ -102,7 +86,6 @@ footer a:hover{color:var(--accent);}
   <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
-<!-- Toolbar -->
 <div class="toolbar">
   <button class="tool-btn active" id="add-wire"><span class="ico">─</span>Add Wire</button>
   <button class="tool-btn" id="add-resistor"><span class="ico">▭</span>Add Resistor</button>
@@ -122,7 +105,6 @@ footer a:hover{color:var(--accent);}
   <button class="tool-btn" id="reset-btn"><span class="ico">↺</span>Reset</button>
 </div>
 
-<!-- Canvas -->
 <div class="canvas-wrap">
   <div class="canvas-frame">
     <svg id="canvas" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid meet">
@@ -142,41 +124,31 @@ footer a:hover{color:var(--accent);}
       <g id="dots"></g>
       <g id="overlays"></g>
     </svg>
-    <div class="canvas-hint" id="canvas-hint">Active Tool: Wire. Click-drag between points, OR simply double-click anywhere on the grid to drop it instantly!</div>
+    <div class="canvas-hint" id="canvas-hint">Active Tool: Wire. Click-drag between points, or double-click an empty space to drop it immediately!</div>
     <div class="canvas-status" id="canvas-status">Ready</div>
   </div>
 </div>
 
-<div class="banner info" id="banner" style="display:none;">
-  <div class="banner-inner">
-    <span id="banner-text"></span>
-    <button class="dismiss" onclick="dismissBanner()">✕</button>
-  </div>
-</div>
-
-<!-- Panels -->
 <div class="panels">
   <div class="panel selected-panel">
     <div class="panel-title">Selected Component Analytics</div>
     <div id="selected-content">
-      <div class="empty">Click a component on the grid to inspect properties or delete it.<br><br>Double-click empty grid cells to generate components.</div>
+      <div class="empty">Click a component on the grid to inspect properties or edit/delete it.</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="panel-title">Circuit Performance Overview</div>
     <div class="status-row">
-      <div class="status-cell"><div class="l">Total RMS Current</div><div class="v" id="stat-current">— A</div></div>
-      <div class="status-cell"><div class="l">Total Dissipation</div><div class="v" id="stat-power">— W</div></div>
+      <div class="status-cell"><div class="l">Total Peak Current</div><div class="v" id="stat-current">— A</div></div>
+      <div class="status-cell"><div class="l">Total Power Draw</div><div class="v" id="stat-power">— W</div></div>
       <div class="status-cell"><div class="l">Node Count</div><div class="v" id="stat-battery">—</div></div>
       <div class="status-cell"><div class="l">Branches Total</div><div class="v" id="stat-count">—</div></div>
     </div>
-
     <div class="legend">
-      <div><span class="sw" style="background:#5878a0;"></span> Ground reference / No current path</div>
-      <div><span class="sw" style="background:linear-gradient(90deg,#5878a0,#20d0ff);"></span> Energized load flow</div>
-      <div><span class="sw" style="background:linear-gradient(90deg,#20d0ff,#ff4f60);"></span> Short circuit state</div>
-      <div style="margin-top:6px;color:var(--text3);">Moving particles reflect instantaneous phase direction and speed.</div>
+      <div><span class="sw" style="background:#5878a0;"></span> Zero current flow path</div>
+      <div><span class="sw" style="background:linear-gradient(90deg,#5878a0,#20d0ff);"></span> Active energized flow</div>
+      <div><span class="sw" style="background:linear-gradient(90deg,#20d0ff,#ff4f60);"></span> Critical Short Circuit status</div>
     </div>
   </div>
 </div>
@@ -193,8 +165,6 @@ const gComps = document.getElementById('components');
 const gNodes = document.getElementById('nodes');
 const gDots  = document.getElementById('dots');
 const gOver  = document.getElementById('overlays');
-
-const BATTERY_EMF = 6; // Restored crucial global base constant
 
 const state = {
   nodes: [],
@@ -366,7 +336,7 @@ function buildStartingCircuit() {
   addBranch(A, B, 'wire', 0.001);
   addBranch(B, C, 'resistor', 10);
   addBranch(C, D, 'wire', 0.001);
-  addBranch(D, A, 'battery', BATTERY_EMF);
+  addBranch(D, A, 'battery', 6);
 }
 
 function solve() {
@@ -392,6 +362,10 @@ function solve() {
   const size = N + activeSources.length;
   const A_mat = Array.from({length: size}, () => new Float64Array(size));
   const z = new Float64Array(size);
+
+  // CRITICAL SPICE SOLUTION: GMIN floor regularizes isolated nodes to avoid engine calculation singularity freezes
+  const Gmin = 1e-9;
+  for(let i=0; i<N; i++) A_mat[i][i] += Gmin;
 
   for (const b of state.branches) {
     if (b.kind === 'battery' || b.kind === 'acsource' || b.kind === 'capacitor') continue;
@@ -477,13 +451,6 @@ function render() {
   for (const b of state.branches) drawBranch(b);
   for (const n of state.nodes) drawNode(n);
   drawCrossings();
-  
-  if (state.pendingFirstNode) {
-    const n = nodeById(state.pendingFirstNode);
-    if (n) {
-      el(gOver, 'circle', { cx:n.x, cy:n.y, r:14, fill:'none', stroke:'#f0c060', 'stroke-width':2, 'stroke-dasharray':'3 3' });
-    }
-  }
 }
 
 function drawNode(n) {
@@ -551,12 +518,12 @@ function drawBranch(b) {
     const gap = b.kind === 'battery' ? 32 : 26;
     const t1x = mx - ux * gap, t1y = my - uy * gap;
     const t2x = mx + ux * gap, t2y = my + uy * gap;
+    el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:n2.x, y2:n2.y, stroke:'transparent', 'stroke-width':14, class:'branch-hit', 'data-branch-id':b.id, style:'cursor:pointer;' });
     el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:t1x, y2:t1y, stroke:col, 'stroke-width':strokeW, 'stroke-linecap':'round' });
     el(gWires, 'line', { x1:t2x, y1:t2y, x2:n2.x, y2:n2.y, stroke:col, 'stroke-width':strokeW, 'stroke-linecap':'round' });
   }
 
   drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected);
-  el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:n2.x, y2:n2.y, stroke:'transparent', 'stroke-width':18, class:'branch-hit', 'data-branch-id':b.id, style:'cursor:pointer;' });
 }
 
 function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
@@ -569,7 +536,6 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
     if (b.kind === 'fan') return `${b.value.toFixed(1)} Ω`;
     if (b.kind === 'battery') return `${b.value.toFixed(1)} V`;
     if (b.kind === 'acsource') return `${b.value.toFixed(1)} V (${b.extra.freq || 5}Hz)`;
-    if (b.kind === 'wire') return state.realistic ? `${b.value.toFixed(3)} Ω` : '';
     return '';
   };
 
@@ -577,14 +543,14 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
 
   if (b.kind === 'resistor') {
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})` });
-    el(tr, 'rect', { x:-22, y:-6, width:44, height:12, fill:'rgba(255,200,87,0.08)', stroke:'#ffc857', 'stroke-width':1.5, rx:2 });
-    el(cg, 'text', { x:mx+nx*18, y:my+ny*18+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
+    el(tr, 'rect', { x:-22, y:-6, width:44, height:12, fill:'rgba(255,200,87,0.08)', stroke:'#ffc857', 'stroke-width':1.5, rx:2, 'data-branch-id':b.id });
+    el(cg, 'text', { x:mx+nx*18, y:my+ny*18+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), 'style':'pointer-events:none;' });
   }
   else if (b.kind === 'acsource') {
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})` });
-    el(tr, 'circle', { cx:0, cy:0, r:14, fill:'rgba(192,96,255,0.1)', stroke:'#c060ff', 'stroke-width':2 });
-    el(tr, 'path', { d:'M -7,0 Q -3.5,-7 0,0 Q 3.5,7 7,0', fill:'none', stroke:'#c060ff', 'stroke-width':2 });
-    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
+    el(tr, 'circle', { cx:0, cy:0, r:14, fill:'rgba(192,96,255,0.1)', stroke:'#c060ff', 'stroke-width':2, 'data-branch-id':b.id });
+    el(tr, 'path', { d:'M -7,0 Q -3.5,-7 0,0 Q 3.5,7 7,0', fill:'none', stroke:'#c060ff', 'stroke-width':2, 'style':'pointer-events:none;' });
+    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), 'style':'pointer-events:none;' });
   }
   else if (b.kind === 'bulb') {
     const power = Math.abs(b.current) * Math.abs(b.voltage);
@@ -592,55 +558,55 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
     const isBurnt = b.extra.burnt === true;
     
     if (!isBurnt && bright > 0.01) {
-      el(cg, 'circle', { cx:mx, cy:my, r:16 + (bright * 18), fill:'url(#glow-filter)', opacity: bright * 0.45, fill:'#ffe8a0', filter:'blur(8px)' });
-      el(cg, 'circle', { cx:mx, cy:my, r:12 + (bright * 6), fill:'rgba(255, 230, 130, ' + (bright * 0.7) + ')' });
+      el(cg, 'circle', { cx:mx, cy:my, r:16 + (bright * 18), fill:'url(#glow-filter)', opacity: bright * 0.45, fill:'#ffe8a0', filter:'blur(8px)', 'style':'pointer-events:none;' });
+      el(cg, 'circle', { cx:mx, cy:my, r:12 + (bright * 6), fill:'rgba(255, 230, 130, ' + (bright * 0.7) + ')', 'style':'pointer-events:none;' });
     }
-    el(cg, 'circle', { cx:mx, cy:my, r:13, fill: isBurnt ? '#2a1a10' : (bright > 0.01 ? '#fff1bd' : '#3a3a4a'), stroke:'#cdd5e8', 'stroke-width':1.8 });
-    el(cg, 'path', { d:`M ${mx-6} ${my+4} Q ${mx} ${my-6} ${mx+6} ${my+4}`, fill:'none', stroke: bright > 0.01 ? '#ffb040' : '#708090', 'stroke-width':1.5 });
-    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
+    el(cg, 'circle', { cx:mx, cy:my, r:13, fill: isBurnt ? '#2a1a10' : (bright > 0.01 ? '#fff1bd' : '#3a3a4a'), stroke:'#cdd5e8', 'stroke-width':1.8, 'data-branch-id':b.id });
+    el(cg, 'path', { d:`M ${mx-6} ${my+4} Q ${mx} ${my-6} ${mx+6} ${my+4}`, fill:'none', stroke: bright > 0.01 ? '#ffb040' : '#708090', 'stroke-width':1.5, 'style':'pointer-events:none;' });
+    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), 'style':'pointer-events:none;' });
   }
   else if (b.kind === 'capacitor') {
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})` });
-    el(tr, 'line', { x1:-4, y1:-14, x2:-4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5 });
-    el(tr, 'line', { x1:4, y1:-14, x2:4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5 });
-    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
+    el(tr, 'line', { x1:-4, y1:-14, x2:-4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5, 'data-branch-id':b.id });
+    el(tr, 'line', { x1:4, y1:-14, x2:4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5, 'data-branch-id':b.id });
+    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), 'style':'pointer-events:none;' });
   }
   else if (b.kind === 'fan') {
     const speedScale = Math.abs(b.current) * 110; 
     if (!b.extra.angle) b.extra.angle = 0;
     b.extra.angle = (b.extra.angle + speedScale * DT) % 360;
     
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${b.extra.angle})` });
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${b.extra.angle})`, 'data-branch-id':b.id });
     el(tr, 'circle', { cx:0, cy:0, r:16, fill:'none', stroke:'#40ffaa', 'stroke-width':1, 'stroke-dasharray':'2 2' });
     for (let i = 0; i < 3; i++) {
       el(tr, 'path', { d:`M 0 0 C 8 -12, 16 -6, 12 4 C 8 8, 2 4, 0 0`, fill:'rgba(64,255,170,0.4)', stroke:'#40ffaa', 'stroke-width':1.2, transform:`rotate(${i*120})` });
     }
     el(tr, 'circle', { cx:0, cy:0, r:3.5, fill:'#020812', stroke:'#40ffaa', 'stroke-width':1.5 });
-    el(cg, 'text', { x:mx+nx*26, y:my+ny*26+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
+    el(cg, 'text', { x:mx+nx*26, y:my+ny*26+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), 'style':'pointer-events:none;' });
   }
   else if (b.kind === 'switch') {
     const isOpen = b.extra.open === true;
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})` });
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, 'data-branch-id':b.id });
     el(tr, 'circle', { cx:-12, cy:0, r:3, fill:'#5878a0' });
     el(tr, 'circle', { cx:12, cy:0, r:3, fill:'#5878a0' });
     if (isOpen) el(tr, 'line', { x1:-12, y1:0, x2:8, y2:-12, stroke:'#ff4f60', 'stroke-width':2.5 });
     else el(tr, 'line', { x1:-12, y1:0, x2:12, y2:0, stroke:'#40ffaa', 'stroke-width':2.5 });
-    el(cg, 'text', { x:mx+nx*16, y:my+ny*16+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:isOpen ? 'OPEN' : 'CLOSED' });
+    el(cg, 'text', { x:mx+nx*16, y:my+ny*16+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:isOpen ? 'OPEN' : 'CLOSED', 'style':'pointer-events:none;' });
   }
   else if (b.kind === 'battery') {
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})` });
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, 'data-branch-id':b.id });
     el(tr, 'rect', { x:-20, y:-10, width:32, height:20, fill:'#3a5070', stroke:'#1e3050', rx:2 });
     el(tr, 'rect', { x:12, y:-10, width:8, height:20, fill:'#f0c060', stroke:'#1e3050', rx:1 });
     el(tr, 'rect', { x:20, y:-4, width:3, height:8, fill:'#ddeeff', rx:1 });
     el(tr, 'text', { x:-10, y:4, 'font-family':'monospace', 'font-size':11, fill:'#ff4f60', 'font-weight':'bold', text:'-' });
     el(tr, 'text', { x:4, y:4, 'font-family':'monospace', 'font-size':11, fill:'#40ffaa', 'font-weight':'bold', text:'+' });
-    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
+    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), 'style':'pointer-events:none;' });
   }  
   else if (b.kind === 'ammeter' || b.kind === 'voltmeter' || b.kind === 'galvanometer') {
     const symbol = b.kind === 'ammeter' ? 'A' : (b.kind === 'voltmeter' ? 'V' : 'G');
     const bCol = b.kind === 'ammeter' ? '#40ffaa' : (b.kind === 'voltmeter' ? '#c060ff' : '#f0c060');
-    el(cg, 'circle', { cx:mx, cy:my, r:13, fill:'var(--bg2)', stroke:bCol, 'stroke-width':1.5 });
-    el(cg, 'text', { x:mx, y:my+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:bCol, text:symbol });
+    el(cg, 'circle', { cx:mx, cy:my, r:13, fill:'var(--bg2)', stroke:bCol, 'stroke-width':1.5, 'data-branch-id':b.id });
+    el(cg, 'text', { x:mx, y:my+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:bCol, text:symbol, 'style':'pointer-events:none;' });
   }
 }
 
@@ -667,7 +633,7 @@ function renderDots() {
 function updateSelectedPanel() {
   const c = document.getElementById('selected-content');
   if (state.selected === null) {
-    c.innerHTML = '<div class="empty">Click a component on the grid to inspect properties or delete it.<br><br>Double-click empty grid cells to generate components.</div>';
+    c.innerHTML = '<div class="empty">Click a component on the grid to inspect properties or edit/delete it.</div>';
     return;
   }
   const b = state.branches.find(x => x.id === state.selected);
@@ -688,7 +654,6 @@ function updateSelectedPanel() {
     html += `<div class="prop-row"><span>Power Load</span><span class="val">${(Math.abs(b.current)*Math.abs(b.voltage)).toFixed(3)} W</span></div>`;
     html += `<div class="prop-edit-row"><label>Resistance</label><input type="number" step="0.5" min="0.1" id="edit-value" value="${b.value}"></div>`;
   } else if (b.kind === 'capacitor') {
-    const C_F = b.value * 1e-6;
     html += `<div class="prop-row"><span>Internal Charge</span><span class="val">${(b.charge*1000).toFixed(3)} mC</span></div>`;
     html += `<div class="prop-edit-row"><label>Capacity (μF)</label><input type="number" step="10" min="1" id="edit-value" value="${b.value}"></div>`;
   } else if (b.kind === 'battery' || b.kind === 'acsource') {
@@ -698,9 +663,6 @@ function updateSelectedPanel() {
     }
   } else if (b.kind === 'switch') {
     html += `<div class="prop-edit-row"><label>Toggle gate</label><select id="edit-switch"><option value="closed" ${!b.extra.open?'selected':''}>Closed Loop</option><option value="open" ${b.extra.open?'selected':''}>Open Breach</option></select></div>`;
-  } else if (b.kind === 'wire' && state.realistic) {
-    html += `<div class="prop-edit-row"><label>Length (m)</label><input type="number" step="0.1" min="0.01" id="edit-len" value="${b.extra.length || 1}"></div>`;
-    html += `<div class="prop-edit-row"><label>Area (mm²)</label><input type="number" step="0.1" min="0.01" id="edit-area" value="${b.extra.area || 1}"></div>`;
   }
 
   html += `<button class="delete-btn" id="delete-btn">Remove Component</button>`;
@@ -724,14 +686,6 @@ function updateSelectedPanel() {
   });
 }
 
-document.getElementById('selected-content').addEventListener('click', (e) => {
-  if (e.target.id === 'delete-btn' && state.selected !== null) {
-    deleteBranchClean(state.selected);
-    state.selected = null;
-    solve(); render(); updateSelectedPanel(); updateStatus();
-  }
-});
-
 function updateStatus() {
   const bats = state.branches.filter(b => b.kind === 'battery' || b.kind === 'acsource');
   const I = bats.length ? Math.max(...bats.map(b => Math.abs(b.current))) : 0;
@@ -747,11 +701,11 @@ function updateStatus() {
     const sel = state.branches.find(x => x.id === state.selected);
     if (sel) stat.textContent = `Type: ${sel.kind.toUpperCase()} | Current: ${sel.current.toFixed(3)} A | Drop: ${sel.voltage.toFixed(3)} V`;
   } else {
-    stat.textContent = I > 15 ? '⚠ HIGH OVERLOAD LOAD' : `System RMS: ${I.toFixed(2)} A`;
+    stat.textContent = `System Peak Load: ${I.toFixed(2)} A`;
   }
 }
 
-// Global double click placement module
+// Global double click placement mechanics
 svg.addEventListener('dblclick', e => {
   e.preventDefault();
   const pt = svgPoint(e);
@@ -770,7 +724,6 @@ svg.addEventListener('dblclick', e => {
   solve(); render(); updateSelectedPanel(); updateStatus();
 });
 
-// Corrected branch intersection and component click selection mechanics
 svg.addEventListener('click', e => {
   const target = e.target;
 
@@ -819,7 +772,6 @@ svg.addEventListener('click', e => {
     return;
   }
 
-  // FIXED inline addition check line (exclamation mark removed)
   const bid = target.getAttribute('data-branch-id');
   if (state.pendingAddKind && INSERT_KINDS.has(state.pendingAddKind)) {
     if (bid) {
@@ -915,7 +867,7 @@ function setupToolbar() {
       state.pendingAddKind = t;
       document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      document.getElementById('canvas-hint').textContent = `Active Tool: ${t.toUpperCase()}. Double-click grid cells to instantly deploy workspace layers.`;
+      document.getElementById('canvas-hint').textContent = `Active Tool: ${t.toUpperCase()}. Double-click grid cells to drop layout nodes.`;
     });
   });
 
@@ -958,6 +910,15 @@ function gaussianSolve(A, b, n) {
   return x;
 }
 
+// Event listener delegation handles dynamic reconstruction selection values instantly
+document.getElementById('selected-content').addEventListener('click', (e) => {
+  if (e.target.id === 'delete-btn' && state.selected !== null) {
+    deleteBranchClean(state.selected);
+    state.selected = null;
+    solve(); render(); updateSelectedPanel(); updateStatus();
+  }
+});
+
 function tick() {
   state.time += DT;
   solve();
@@ -966,22 +927,11 @@ function tick() {
   if (state._tickCount === undefined) state._tickCount = 0;
   state._tickCount = (state._tickCount + 1) % 3;
   if (state._tickCount === 0) {
-    clearGroup(gComps);
-    for (const b of state.branches) {
-      const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
-      if (n1 && n2) {
-        const mx = (n1.x + n2.x) / 2, my = (n1.y + n2.y) / 2;
-        const dx = n2.x - n1.x, dy = n2.y - n1.y;
-        const len = Math.hypot(dx, dy) || 1;
-        drawComponent(b, n1, n2, mx, my, dx/len, dy/len, -dy/len, dx/len, currentColor(b.current), state.selected === b.id);
-      }
-    }
-    updateStatus();
+    render(); // Synchronous baseline layout redraw guarantees clean visual sweeps
   }
   requestAnimationFrame(tick);
 }
 
-// Order of execution stabilized
 buildStartingCircuit();
 setupToolbar();
 solve();
