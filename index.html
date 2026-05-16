@@ -146,7 +146,8 @@ header {
 
 /* Featured */
 .featured-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
-.featured-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.featured-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 20px; }
+.featured-grid:has(> :only-child) { grid-template-columns: minmax(0, 600px); justify-content: center; }
 .featured-grid .featured { grid-template-columns: 1fr; text-align: left; }
 .featured-grid .featured-icon { font-size: 48px; margin-bottom: 14px; }
 @media (max-width: 760px) { .featured-grid { grid-template-columns: 1fr; } }
