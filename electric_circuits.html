@@ -11,7 +11,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Circuit Sandbox — Build & Understand | Science Wonders</title>
+<title>Electric Circuits — Build & Understand | Science Wonders</title>
 <meta name="description" content="An interactive circuit simulator. Build any circuit, drop in resistors, bulbs, capacitors, meters — and watch current flow, voltage drop, and components react in real time.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -46,7 +46,6 @@ header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:
 .canvas-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:#020812;}
 svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;}
 .canvas-hint{position:absolute;top:14px;left:18px;font-family:monospace;font-size:11px;color:var(--gold);background:rgba(1,6,16,.92);padding:6px 12px;border-radius:5px;border:1px solid var(--border2);pointer-events:none;letter-spacing:1px;max-width:60%;}
-.canvas-hint.hidden{display:none;}
 .canvas-status{position:absolute;top:14px;right:18px;font-family:monospace;font-size:10px;color:var(--text2);background:rgba(1,6,16,.92);padding:5px 10px;border-radius:5px;border:1px solid var(--border2);letter-spacing:1px;}
 
 /* Panels */
@@ -62,9 +61,8 @@ svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;
 .prop-row .val{color:var(--text-bright);font-weight:bold;}
 .prop-edit-row{display:flex;gap:8px;margin-top:8px;align-items:center;}
 .prop-edit-row label{font-family:monospace;font-size:10px;color:var(--text2);letter-spacing:1px;width:80px;}
-.prop-edit-row input{flex:1;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:monospace;font-size:12px;outline:none;}
-.prop-edit-row input:focus{border-color:var(--accent);}
-.prop-edit-row select{flex:1;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:monospace;font-size:12px;outline:none;cursor:pointer;}
+.prop-edit-row input,.prop-edit-row select{flex:1;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:monospace;font-size:12px;outline:none;}
+.prop-edit-row input:focus,.prop-edit-row select:focus{border-color:var(--accent);}
 .delete-btn{margin-top:10px;width:100%;padding:8px;background:transparent;border:1px solid rgba(255,79,96,.4);border-radius:5px;color:var(--red);font-family:monospace;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
 .delete-btn:hover{background:rgba(255,79,96,.1);}
 
@@ -87,14 +85,14 @@ footer a:hover{color:var(--accent);}
 
 <header>
   <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
-  <div class="page-subtitle">Circuit Sandbox — Studio Workbench</div>
+  <div class="page-subtitle">Electric Circuits — Studio Workbench</div>
   <div class="header-spacer"></div>
   <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
 <!-- Toolbar -->
 <div class="toolbar">
-  <button class="tool-btn active" id="add-select"><span class="ico">⬈</span>Select & Toggle</button>
+  <button class="tool-btn active" id="add-select"><span class="ico">⬈</span>Select &amp; Toggle</button>
   <button class="tool-btn" id="add-wire"><span class="ico">─</span>Add Wire</button>
   <button class="tool-btn" id="add-resistor"><span class="ico">▭</span>Add Resistor</button>
   <button class="tool-btn" id="add-bulb"><span class="ico">💡</span>Add Bulb</button>
@@ -121,10 +119,6 @@ footer a:hover{color:var(--accent);}
         <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
           <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30,50,80,.18)" stroke-width="1"/>
         </pattern>
-        <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
       </defs>
       <rect width="100%" height="100%" fill="url(#grid)"/>
       <g id="wires"></g>
@@ -133,7 +127,7 @@ footer a:hover{color:var(--accent);}
       <g id="dots"></g>
       <g id="overlays"></g>
     </svg>
-    <div class="canvas-hint" id="canvas-hint">Active Mode: Selection & Inspecting. Click elements to inspect/toggle properties, double-click empty space to deploy items.</div>
+    <div class="canvas-hint" id="canvas-hint">Selection mode: click elements to inspect or toggle.</div>
     <div class="canvas-status" id="canvas-status">Ready</div>
   </div>
 </div>
@@ -141,26 +135,26 @@ footer a:hover{color:var(--accent);}
 <!-- Panels -->
 <div class="panels">
   <div class="panel selected-panel">
-    <div class="panel-title">Selected Component Analytics</div>
+    <div class="panel-title">Selected Component</div>
     <div id="selected-content">
-      <div class="empty">Click a component on the grid to inspect properties or delete it.<br><br>Double-click empty grid cells to generate components.</div>
+      <div class="empty">Click a component on the canvas to inspect or edit.<br><br>Pick a tool from the toolbar above to add components.</div>
     </div>
   </div>
 
   <div class="panel">
-    <div class="panel-title">Circuit Performance Overview</div>
+    <div class="panel-title">Circuit Status</div>
     <div class="status-row">
-      <div class="status-cell"><div class="l">Max Core Current</div><div class="v" id="stat-current">— A</div></div>
-      <div class="status-cell"><div class="l">Total Power Dissipation</div><div class="v" id="stat-power">— W</div></div>
-      <div class="status-cell"><div class="l">Node Count</div><div class="v" id="stat-battery">—</div></div>
-      <div class="status-cell"><div class="l">Branches Total</div><div class="v" id="stat-count">—</div></div>
+      <div class="status-cell"><div class="l">Total Current</div><div class="v" id="stat-current">— A</div></div>
+      <div class="status-cell"><div class="l">Total Power</div><div class="v" id="stat-power">— W</div></div>
+      <div class="status-cell"><div class="l">Nodes</div><div class="v" id="stat-nodes">—</div></div>
+      <div class="status-cell"><div class="l">Branches</div><div class="v" id="stat-count">—</div></div>
     </div>
 
     <div class="legend">
-      <div><span class="sw" style="background:#5878a0;"></span> Ground reference / Open path</div>
-      <div><span class="sw" style="background:linear-gradient(90deg,#5878a0,#20d0ff);"></span> Energized load flow</div>
-      <div><span class="sw" style="background:linear-gradient(90deg,#20d0ff,#ff4f60);"></span> Short circuit loop safety state</div>
-      <div style="margin-top:6px;color:var(--text3);">Moving particles reflect localized speed profiles.</div>
+      <div><span class="sw" style="background:#5878a0;"></span> No current flow</div>
+      <div><span class="sw" style="background:linear-gradient(90deg,#5878a0,#20d0ff);"></span> Current is flowing</div>
+      <div><span class="sw" style="background:linear-gradient(90deg,#20d0ff,#ff4f60);"></span> Dangerously high (short circuit)</div>
+      <div style="margin-top:6px;color:var(--text3);">Moving dots indicate current direction.</div>
     </div>
   </div>
 </div>
@@ -170,6 +164,14 @@ footer a:hover{color:var(--accent);}
 <script>
 'use strict';
 
+/* ============================================================================
+   ELECTRIC CIRCUIT SANDBOX
+   --------------------------------------------------------------------------
+   - Nodes are connected by branches (each branch is one component).
+   - Solver: Modified Nodal Analysis with Gaussian elimination.
+   - Capacitors integrated with forward Euler each frame (DT = 0.015 s).
+   ============================================================================ */
+
 const W = 1600, H = 600;
 const svg = document.getElementById('canvas');
 const gWires = document.getElementById('wires');
@@ -178,8 +180,30 @@ const gNodes = document.getElementById('nodes');
 const gDots  = document.getElementById('dots');
 const gOver  = document.getElementById('overlays');
 
-const BATTERY_EMF = 6; 
+const BATTERY_EMF = 6;
+const DT = 0.015;
 
+// Categorise components
+const INSERT_KINDS = new Set(['resistor','bulb','capacitor','fan','ac','switch','ammeter','galvanometer','voltmeter']);
+const SPAN_KINDS = new Set(['wire','battery']);
+
+const ASSUMPTIONS = {
+  wire: "An ideal wire is modelled with near-zero resistance (0.001 Ω). Turn on 'Realistic Wires' to give all wires a small material-based resistance.",
+  resistor: "A pure ohmic resistor. Obeys Ohm's Law exactly: V = I × R.",
+  bulb: "A bulb behaves like a resistor that glows. Brightness ∝ power (V × I). Burns out if power exceeds 4× its rated power.",
+  capacitor: "Stores charge. Current flows during charging/discharging. Time constant τ = R × C. Voltage = Q/C.",
+  fan: "A motor modelled as a resistor that spins. Rotation speed ∝ current through it.",
+  ac: "A high-power load representing an air conditioner. Pulls steady current; rotation in its body reflects fan speed.",
+  switch: "Click to toggle open/closed. Open = infinite resistance (no current). Closed = ~0 Ω.",
+  battery: "An ideal DC voltage source. Provides a constant EMF regardless of load (no internal resistance modelled in v1).",
+  ammeter: "Measures current. Connected in series — modelled with ~0.001 Ω resistance (does not affect circuit).",
+  voltmeter: "Measures voltage drop across its terminals. Modelled with 10 MΩ — if placed in series, it will nearly stop the current.",
+  galvanometer: "A sensitive current detector. Modelled with 0.01 Ω resistance. Needle deflects with current direction and magnitude."
+};
+
+// ============================================================================
+// STATE
+// ============================================================================
 const state = {
   nodes: [],
   branches: [],
@@ -187,11 +211,10 @@ const state = {
   nextBranchId: 1,
   selected: null,
   pendingAddKind: 'select',
-  pendingFirstNode: null,
   realistic: false,
   dotPhase: 0,
-  hoverBranch: null,
-  time: 0
+  time: 0,
+  _tickCount: 0
 };
 
 const historyStack = [];
@@ -202,27 +225,12 @@ function saveHistory() {
     nextNodeId: state.nextNodeId,
     nextBranchId: state.nextBranchId
   }));
-  if (historyStack.length > 40) historyStack.shift();
+  if (historyStack.length > 50) historyStack.shift();
 }
 
-const INSERT_KINDS = new Set(['resistor', 'bulb', 'capacitor', 'fan', 'ac', 'switch', 'ammeter', 'galvanometer', 'voltmeter']);
-const SPAN_KINDS = new Set(['wire', 'battery']);
-const DT = 0.015;
-
-const ASSUMPTIONS = {
-  wire: "Ideal wire branch element. System defaults resistance metrics to a minimum calculation layer of 0.001 Ω. Enabling Realistic Wires converts this line into an active inline material resistance.",
-  resistor: "Pure Ohmic discrete resistor. Limits flow in full accordance with basic linear matrix systems.",
-  bulb: "Tungsten filament thermal illumination simulation. Radiates glow brightness based on power model updates.",
-  capacitor: "Electrostatic potential container. Accumulates static charges using discrete forward calculation updates.",
-  fan: "Electromechanical spin blade load loop. Rotates its mechanical fan geometry directly in track with calculated branch current vectors.",
-  ac: "Household Cooling Air Conditioner unit. High-power thermal management load core. Pulls continuous current to fuel virtual heat exchange ventilation grids.",
-  switch: "Isolated branch toggling bridge. Splitting loop vectors clears execution paths cleanly without discarding node coordinate anchors.",
-  battery: "Electromotive rail node source. Feeds direct constant target voltages uniformly throughout connected loops.",
-  ammeter: "Inline measurement device. Intercepts current vectors with a safe baseline monitoring resistance of 0.001 Ω.",
-  voltmeter: "Parallel shunt measurement block. Monitors localized potential drops using high-grade isolate paths (10 MΩ).",
-  galvanometer: "Sensitive magnetic vector coil needle indicator. Evaluates directional micro-current changes."
-};
-
+// ============================================================================
+// SVG HELPERS
+// ============================================================================
 function el(parent, tag, attrs) {
   const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
   for (const k in attrs) {
@@ -235,15 +243,22 @@ function el(parent, tag, attrs) {
 }
 function clearGroup(g) { while (g.firstChild) g.removeChild(g.firstChild); }
 
+function svgPoint(e) {
+  const rect = svg.getBoundingClientRect();
+  return { x: (e.clientX - rect.left) * (W / rect.width), y: (e.clientY - rect.top) * (H / rect.height) };
+}
+
+// ============================================================================
+// NODES & BRANCHES — primitives
+// ============================================================================
 function addNode(x, y) {
   const n = { id: state.nextNodeId++, x, y };
   state.nodes.push(n);
   return n;
 }
+function nodeById(id) { return state.nodes.find(n => n.id === id); }
 function findNodeAt(x, y, tol=18) {
-  for (const n of state.nodes) {
-    if (Math.hypot(n.x - x, n.y - y) <= tol) return n;
-  }
+  for (const n of state.nodes) if (Math.hypot(n.x - x, n.y - y) <= tol) return n;
   return null;
 }
 function addBranch(n1, n2, kind, value, extra={}) {
@@ -257,51 +272,128 @@ function addBranch(n1, n2, kind, value, extra={}) {
   state.branches.push(b);
   return b;
 }
-function nodeById(id) { return state.nodes.find(n => n.id === id); }
-
-function deleteBranch(id) {
+function deleteBranchRaw(id) {
   const idx = state.branches.findIndex(b => b.id === id);
-  if (idx < 0) return;
-  const b = state.branches[idx];
-  state.branches.splice(idx, 1);
-  [b.n1, b.n2].forEach(nid => {
-    if (!state.branches.some(x => x.n1 === nid || x.n2 === nid)) {
-      const ni = state.nodes.findIndex(n => n.id === nid);
-      if (ni >= 0) state.nodes.splice(ni, 1);
-    }
-  });
+  if (idx >= 0) state.branches.splice(idx, 1);
 }
 
+// Merge any two nodes that share the same (x,y) — keeps wires electrically continuous
+// even when inserts/splits accidentally drop a node on top of an existing one.
+function mergeCoincidentNodes() {
+  let merged = true;
+  while (merged) {
+    merged = false;
+    for (let i = 0; i < state.nodes.length; i++) {
+      for (let j = i + 1; j < state.nodes.length; j++) {
+        const a = state.nodes[i], b = state.nodes[j];
+        if (Math.hypot(a.x - b.x, a.y - b.y) < 3) {
+          for (const br of state.branches) {
+            if (br.n1 === b.id) br.n1 = a.id;
+            if (br.n2 === b.id) br.n2 = a.id;
+          }
+          state.branches = state.branches.filter(br => br.n1 !== br.n2);
+          state.nodes.splice(j, 1);
+          merged = true;
+          break;
+        }
+      }
+      if (merged) break;
+    }
+  }
+}
+
+// Aggressive cleanup of orphaned, in-line, and dangling-stub nodes
+function cleanupNodes() {
+  let cleaned = true;
+  while (cleaned) {
+    cleaned = false;
+    for (let i = state.nodes.length - 1; i >= 0; i--) {
+      const n = state.nodes[i];
+      const conn = state.branches.filter(x => x.n1 === n.id || x.n2 === n.id);
+
+      // A: no connections — orphan
+      if (conn.length === 0) {
+        state.nodes.splice(i, 1);
+        cleaned = true;
+        continue;
+      }
+      // B: in-line wire-only junction (exactly 2 wires) — merge into one
+      if (conn.length === 2 && conn.every(x => x.kind === 'wire')) {
+        const w1 = conn[0], w2 = conn[1];
+        const o1 = (w1.n1 === n.id) ? w1.n2 : w1.n1;
+        const o2 = (w2.n1 === n.id) ? w2.n2 : w2.n1;
+        if (o1 !== o2) {
+          const na = nodeById(o1), nb = nodeById(o2);
+          deleteBranchRaw(w1.id);
+          deleteBranchRaw(w2.id);
+          if (na && nb) addBranch(na, nb, 'wire', 0.001);
+          state.nodes.splice(i, 1);
+          cleaned = true;
+        }
+      }
+    }
+  }
+}
+
+// Delete a branch, replace with a wire if it was a component, then clean up
 function deleteBranchClean(id) {
   const b = state.branches.find(x => x.id === id);
   if (!b) return;
   saveHistory();
-  const nid1 = b.n1;
-  const nid2 = b.n2;
+  const nid1 = b.n1, nid2 = b.n2;
   const kind = b.kind;
-  deleteBranch(id);
+  deleteBranchRaw(id);
   if (INSERT_KINDS.has(kind)) {
-    addBranch(nodeById(nid1), nodeById(nid2), 'wire', 0.001);
+    const a = nodeById(nid1), c = nodeById(nid2);
+    if (a && c) addBranch(a, c, 'wire', 0.001);
   }
+  cleanupNodes();
+  mergeCoincidentNodes();
 }
 
-function insertIntoWire(targetBranch, newKind, newValue, newExtra) {
+// ============================================================================
+// INSERTING & SPLITTING WIRES
+// ============================================================================
+
+// Insert a component into a wire near the click point. Splits the wire into
+// (n1 → mid1) wire + (mid1 → mid2) component + (mid2 → n2) wire.
+function insertIntoWire(targetBranch, newKind, newValue, newExtra, clickX, clickY) {
   const n1 = nodeById(targetBranch.n1);
   const n2 = nodeById(targetBranch.n2);
   if (!n1 || !n2) return null;
-  const mid1 = addNode(Math.round((n1.x + (n2.x - n1.x) * 0.35) / 20) * 20, Math.round((n1.y + (n2.y - n1.y) * 0.35) / 20) * 20);
-  const mid2 = addNode(Math.round((n1.x + (n2.x - n1.x) * 0.65) / 20) * 20, Math.round((n1.y + (n2.y - n1.y) * 0.65) / 20) * 20);
-  const origKind = targetBranch.kind;
+  let t = 0.5;
+  if (clickX !== undefined && clickY !== undefined) {
+    const dx = n2.x - n1.x, dy = n2.y - n1.y;
+    const lenSq = dx*dx + dy*dy;
+    if (lenSq >= 1) {
+      t = ((clickX - n1.x) * dx + (clickY - n1.y) * dy) / lenSq;
+      t = Math.max(0.18, Math.min(0.82, t));
+    }
+  }
+  const span = 0.18;
+  const t1 = Math.max(0.06, t - span / 2);
+  const t2 = Math.min(0.94, t + span / 2);
+
+  const mid1 = addNode(
+    Math.round((n1.x + (n2.x - n1.x) * t1) / 20) * 20,
+    Math.round((n1.y + (n2.y - n1.y) * t1) / 20) * 20
+  );
+  const mid2 = addNode(
+    Math.round((n1.x + (n2.x - n1.x) * t2) / 20) * 20,
+    Math.round((n1.y + (n2.y - n1.y) * t2) / 20) * 20
+  );
+
   const origValue = targetBranch.value;
   const origExtra = { ...targetBranch.extra };
-  deleteBranch(targetBranch.id);
-  addBranch(n1, mid1, origKind === 'wire' ? 'wire' : origKind, origKind === 'wire' ? origValue : 0.001, origKind === 'wire' ? origExtra : {});
+  deleteBranchRaw(targetBranch.id);
+  addBranch(n1, mid1, 'wire', origValue, origExtra);
   const newB = addBranch(mid1, mid2, newKind, newValue, newExtra);
-  addBranch(mid2, n2, origKind === 'wire' ? 'wire' : origKind, origKind === 'wire' ? origValue : 0.001, origKind === 'wire' ? origExtra : {});
+  addBranch(mid2, n2, 'wire', origValue, origExtra);
+  mergeCoincidentNodes();
   return newB;
 }
 
-function findWirePoint(x, y, tol = 12) {
+function findWirePoint(x, y, tol = 14) {
   for (const b of state.branches) {
     if (b.kind !== 'wire') continue;
     const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
@@ -313,85 +405,89 @@ function findWirePoint(x, y, tol = 12) {
     t = Math.max(0, Math.min(1, t));
     const px = n1.x + t * dx, py = n1.y + t * dy;
     const d = Math.hypot(x - px, y - py);
-    if (d < tol) return { x: px, y: py, branch: b, t };
+    if (d < tol) return { x: px, y: py, branch: b };
   }
   return null;
 }
 
+// Get or create a node at (x,y). Snaps to existing nodes, splits wires when needed.
 function getOrCreateConnectionPoint(x, y) {
   const n = findNodeAt(x, y, 18);
   if (n) return n;
   const wp = findWirePoint(x, y, 14);
-  if (wp && wp.branch.kind === 'wire') {
+  if (wp) {
     const newNode = addNode(Math.round(wp.x / 20) * 20, Math.round(wp.y / 20) * 20);
     const b = wp.branch;
     const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
-    const origKind = b.kind, origValue = b.value, origExtra = { ...b.extra };
-    deleteBranch(b.id);
-    addBranch(n1, newNode, origKind, origValue, origExtra);
-    addBranch(newNode, n2, origKind, origValue, origExtra);
+    const origValue = b.value, origExtra = { ...b.extra };
+    deleteBranchRaw(b.id);
+    addBranch(n1, newNode, 'wire', origValue, origExtra);
+    addBranch(newNode, n2, 'wire', origValue, origExtra);
     return newNode;
   }
   return addNode(Math.round(x / 20) * 20, Math.round(y / 20) * 20);
 }
 
+// ============================================================================
+// STARTING CIRCUIT — simple closed loop with battery + resistor
+// ============================================================================
 function buildStartingCircuit() {
   state.nodes = [];
   state.branches = [];
   state.nextNodeId = 1;
   state.nextBranchId = 1;
   state.selected = null;
-
   const A = addNode(300, 200);
   const B = addNode(900, 200);
   const C = addNode(900, 400);
   const D = addNode(300, 400);
-
   addBranch(A, B, 'wire', 0.001);
   addBranch(B, C, 'resistor', 10);
   addBranch(C, D, 'wire', 0.001);
   addBranch(D, A, 'battery', BATTERY_EMF);
 }
 
+// ============================================================================
+// SOLVER — Modified Nodal Analysis with Gaussian elimination
+// ============================================================================
 function solve() {
-  const nodes = state.nodes;
-  if (nodes.length === 0) return;
-
-  const groundSources = state.branches.filter(b => b.kind === 'battery');
-  if (groundSources.length === 0) {
+  if (state.nodes.length === 0) return;
+  const batteries = state.branches.filter(b => b.kind === 'battery');
+  if (batteries.length === 0) {
     state.branches.forEach(b => { b.current = 0; b.voltage = 0; });
     return;
   }
-  const groundId = groundSources[0].n1;
+  const groundId = batteries[0].n1;
 
-  const nodeIds = nodes.map(n => n.id).filter(id => id !== groundId);
+  const nodeIds = state.nodes.map(n => n.id).filter(id => id !== groundId);
   const idx = {};
   nodeIds.forEach((id, i) => { idx[id] = i; });
 
   const N = nodeIds.length;
-  const activeSources = state.branches.filter(b => b.kind === 'battery' || b.kind === 'capacitor');
+  const sources = state.branches.filter(b => b.kind === 'battery' || b.kind === 'capacitor');
   const sourceIdx = {};
-  activeSources.forEach((b, i) => { sourceIdx[b.id] = N + i; });
+  sources.forEach((b, i) => { sourceIdx[b.id] = N + i; });
 
-  const size = N + activeSources.length;
+  const size = N + sources.length;
   const A_mat = Array.from({length: size}, () => new Float64Array(size));
   const z = new Float64Array(size);
 
-  // GMIN grid stabilization floor to insulate matrices from singular calculation freezing loops
+  // Stabilising conductance to prevent singularities for floating nodes
   const Gmin = 1e-9;
   for (let i = 0; i < N; i++) A_mat[i][i] += Gmin;
 
+  // Stamp resistive elements
   for (const b of state.branches) {
     if (b.kind === 'battery' || b.kind === 'capacitor') continue;
     let R;
     if (b.kind === 'switch') {
-      if (b.extra.open === true) { b.isOpen = true; continue; } 
-      else { R = 0.001; }
-    } else if (b.kind === 'voltmeter') { R = 1e7; } 
-      else if (b.kind === 'ammeter') { R = 0.001; } 
-      else if (b.kind === 'galvanometer') { R = 0.01; } 
-      else if (b.kind === 'wire') { R = Math.max(0.001, b.value || 0.001); } 
-      else { R = Math.max(0.001, b.value); }
+      if (b.extra.open === true) { b.isOpen = true; continue; }
+      R = 0.001;
+    } else if (b.kind === 'voltmeter') R = 1e7;
+    else if (b.kind === 'ammeter') R = 0.001;
+    else if (b.kind === 'galvanometer') R = 0.01;
+    else if (b.kind === 'wire') R = Math.max(0.001, b.value || 0.001);
+    else R = Math.max(0.001, b.value);
 
     b.isOpen = false;
     const G = 1 / R;
@@ -402,26 +498,21 @@ function solve() {
     if (i1 >= 0 && i2 >= 0) { A_mat[i1][i2] -= G; A_mat[i2][i1] -= G; }
   }
 
-  activeSources.forEach(b => {
+  // Stamp voltage sources (batteries and capacitors-as-sources)
+  sources.forEach(b => {
     const k = sourceIdx[b.id];
     const i1 = (b.n1 === groundId) ? -1 : idx[b.n1];
     const i2 = (b.n2 === groundId) ? -1 : idx[b.n2];
     let v = 0;
-    if (b.kind === 'battery') {
-      v = b.value;
-    } else if (b.kind === 'capacitor') {
-      v = b.charge / Math.max(b.value * 1e-6, 1e-12);
-    }
+    if (b.kind === 'battery') v = b.value;
+    else v = b.charge / Math.max(b.value * 1e-6, 1e-12);
     if (i1 >= 0) { A_mat[i1][k] -= 1; A_mat[k][i1] -= 1; }
     if (i2 >= 0) { A_mat[i2][k] += 1; A_mat[k][i2] += 1; }
     z[k] = v;
   });
 
   const x = gaussianSolve(A_mat, z, size);
-  if (!x) {
-    state.branches.forEach(b => { b.current = 0; b.voltage = 0; });
-    return;
-  }
+  if (!x) { state.branches.forEach(b => { b.current = 0; b.voltage = 0; }); return; }
 
   const V = {};
   V[groundId] = 0;
@@ -446,64 +537,109 @@ function solve() {
     }
   }
 
+  // Integrate capacitors with forward Euler
   for (const b of state.branches) {
-    if (b.kind === 'capacitor') {
-      b.charge += -b.current * DT;
+    if (b.kind === 'capacitor') b.charge += -b.current * DT;
+  }
+}
+
+function gaussianSolve(A, b, n) {
+  const M = A.map(r => Array.from(r));
+  const v = Array.from(b);
+  for (let i = 0; i < n; i++) {
+    let maxRow = i, maxVal = Math.abs(M[i][i]);
+    for (let k = i+1; k < n; k++) if (Math.abs(M[k][i]) > maxVal) { maxVal = Math.abs(M[k][i]); maxRow = k; }
+    if (maxVal < 1e-12) return null;
+    if (maxRow !== i) { [M[i],M[maxRow]] = [M[maxRow],M[i]]; [v[i],v[maxRow]] = [v[maxRow],v[i]]; }
+    for (let k = i+1; k < n; k++) {
+      const f = M[k][i] / M[i][i];
+      for (let j = i; j < n; j++) M[k][j] -= f * M[i][j];
+      v[k] -= f * v[i];
     }
   }
+  const x = new Float64Array(n);
+  for (let i = n-1; i >= 0; i--) {
+    let s = v[i];
+    for (let j = i+1; j < n; j++) s -= M[i][j] * x[j];
+    x[i] = s / M[i][i];
+  }
+  return x;
+}
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+function currentColor(I) {
+  const a = Math.abs(I);
+  if (a < 0.01) return '#5878a0';
+  if (a < 0.5) return '#9fc5ff';
+  if (a < 2) return '#20d0ff';
+  if (a < 5) return '#ffc857';
+  return '#ff4f60';
 }
 
 function render() {
   clearGroup(gWires);
+  clearGroup(gComps);
   clearGroup(gNodes);
   clearGroup(gOver);
-
   for (const b of state.branches) drawBranch(b);
   for (const n of state.nodes) drawNode(n);
   drawCrossings();
-  
-  if (state.pendingFirstNode) {
-    const n = nodeById(state.pendingFirstNode);
-    if (n) {
-      el(gOver, 'circle', { cx:n.x, cy:n.y, r:14, fill:'none', stroke:'#f0c060', 'stroke-width':2, 'stroke-dasharray':'3 3' });
-    }
-  }
 }
 
 function drawNode(n) {
-  el(gNodes, 'circle', { cx:n.x, cy:n.y, r:5, fill:'#5878a0', class:'node-dot', 'data-node-id':n.id });
-  el(gNodes, 'circle', { cx:n.x, cy:n.y, r:9, fill:'rgba(88,120,160,0.15)', stroke:'transparent', class:'node-hit', 'data-node-id':n.id, style:'cursor:pointer;' });
+  el(gNodes, 'circle', { cx:n.x, cy:n.y, r:5, fill:'#5878a0', 'data-node-id':n.id });
+  el(gNodes, 'circle', { cx:n.x, cy:n.y, r:10, fill:'rgba(88,120,160,0.001)', 'data-node-id':n.id, style:'cursor:pointer;' });
 }
 
 function drawCrossings() {
+  // Junction dots at any node with 3+ connections
   for (const n of state.nodes) {
     const count = state.branches.filter(b => b.n1 === n.id || b.n2 === n.id).length;
     if (count >= 3) el(gNodes, 'circle', { cx:n.x, cy:n.y, r:5.5, fill:'#cdd5e8' });
   }
-
+  // Jump-over arcs and clickable joiners where wires cross without a shared node
   const segs = state.branches.map(b => {
     const a = nodeById(b.n1), c = nodeById(b.n2);
     return a && c ? { b, x1:a.x, y1:a.y, x2:c.x, y2:c.y } : null;
   }).filter(Boolean);
-
   for (let i = 0; i < segs.length; i++) {
     for (let j = i+1; j < segs.length; j++) {
       const s1 = segs[i], s2 = segs[j];
       if (s1.b.n1 === s2.b.n1 || s1.b.n1 === s2.b.n2 || s1.b.n2 === s2.b.n1 || s1.b.n2 === s2.b.n2) continue;
       const pt = segmentIntersect(s1.x1, s1.y1, s1.x2, s1.y2, s2.x1, s2.y1, s2.x2, s2.y2);
       if (!pt) continue;
-
       const dx = s1.x2 - s1.x1, dy = s1.y2 - s1.y1;
       const len = Math.hypot(dx, dy) || 1;
       const ux = dx/len, uy = dy/len;
       const arcR = 6;
       const ax1 = pt.x - ux*arcR, ay1 = pt.y - uy*arcR;
       const ax2 = pt.x + ux*arcR, ay2 = pt.y + uy*arcR;
-      
-      el(gNodes, 'path', { d: `M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill: 'none', stroke: '#020812', 'stroke-width': 4 });
-      el(gNodes, 'path', { d: `M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill: 'none', stroke: '#5878a0', 'stroke-width': 1.8 });
+      el(gNodes, 'path', { d:`M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill:'none', stroke:'#020812', 'stroke-width':4 });
+      el(gNodes, 'path', { d:`M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill:'none', stroke:'#5878a0', 'stroke-width':1.8 });
+      // Clickable connector target
+      el(gNodes, 'circle', {
+        cx:pt.x, cy:pt.y, r:11,
+        fill:'rgba(240,192,96,0.001)', stroke:'transparent',
+        class:'crossing-hit',
+        'data-cross-s1': s1.b.id, 'data-cross-s2': s2.b.id,
+        'data-cross-x': pt.x.toFixed(1), 'data-cross-y': pt.y.toFixed(1),
+        style:'cursor:pointer;'
+      });
     }
   }
+}
+
+function segmentIntersect(x1,y1,x2,y2,x3,y3,x4,y4) {
+  const den = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+  if (Math.abs(den) < 1e-9) return null;
+  const t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / den;
+  const u = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2)) / den;
+  if (t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95) {
+    return { x: x1 + t*(x2-x1), y: y1 + t*(y2-y1) };
+  }
+  return null;
 }
 
 function drawBranch(b) {
@@ -522,7 +658,7 @@ function drawBranch(b) {
   if (b.kind === 'wire' || b.kind === 'ammeter' || b.kind === 'galvanometer') {
     el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:n2.x, y2:n2.y, stroke:col, 'stroke-width':strokeW, 'stroke-linecap':'round', class:'branch-hit', 'data-branch-id':b.id, style:'cursor:pointer;' });
   } else {
-    const gap = b.kind === 'battery' ? 32 : 26;
+    const gap = b.kind === 'battery' ? 30 : 26;
     const t1x = mx - ux * gap, t1y = my - uy * gap;
     const t2x = mx + ux * gap, t2y = my + uy * gap;
     el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:t1x, y2:t1y, stroke:col, 'stroke-width':strokeW, 'stroke-linecap':'round' });
@@ -530,16 +666,17 @@ function drawBranch(b) {
   }
 
   drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected);
+  // Invisible thick line for click targeting
   el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:n2.x, y2:n2.y, stroke:'transparent', 'stroke-width':20, class:'branch-hit', 'data-branch-id':b.id, style:'cursor:pointer;' });
 }
 
 function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
   const labelFill = isSelected ? '#ffe8a0' : '#cdd5e8';
-  const t = Math.atan2(uy, ux) * 180 / Math.PI;
+  const tDeg = Math.atan2(uy, ux) * 180 / Math.PI;
 
   const valueLabel = (b) => {
     if (b.kind === 'resistor' || b.kind === 'bulb' || b.kind === 'fan' || b.kind === 'ac') return `${b.value.toFixed(1)} Ω`;
-    if (b.kind === 'capacitor') return `${b.value.toFixed(1)} μF`;
+    if (b.kind === 'capacitor') return `${b.value.toFixed(0)} μF`;
     if (b.kind === 'battery') return `${b.value.toFixed(1)} V`;
     if (b.kind === 'wire') return state.realistic ? `${b.value.toFixed(3)} Ω` : '';
     return '';
@@ -548,147 +685,170 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
   const cg = el(gComps, 'g', { class:'comp', 'data-branch-id':b.id, style:'cursor:pointer;' });
 
   if (b.kind === 'resistor') {
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, style:'pointer-events:none;' });
-    el(tr, 'rect', { x:-22, y:-6, width:44, height:12, fill:'rgba(255,200,87,0.08)', stroke:'#ffc857', 'stroke-width':1.5, rx:2 });
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${tDeg})`, style:'pointer-events:none;' });
+    el(tr, 'rect', { x:-22, y:-6, width:44, height:12, fill:'rgba(255,200,87,0.10)', stroke:'#ffc857', 'stroke-width':1.5, rx:2 });
     el(cg, 'text', { x:mx+nx*18, y:my+ny*18+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
-  }
-  else if (b.kind === 'ac') {
-    // Elegant residential Air Conditioner Unit drawing containing a spinning mini internal blower fan map
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, style:'pointer-events:none;' });
-    el(tr, 'rect', { x:-24, y:-14, width:48, height:28, fill:'rgba(32,208,255,0.06)', stroke:'#20d0ff', 'stroke-width':1.8, rx:3 });
-    el(tr, 'line', { x1:-18, y1:-6, x2:6, y2:-6, stroke:'#20d0ff', 'stroke-width':1, 'stroke-dasharray':'3 2' });
-    el(tr, 'line', { x1:-18, y1:-1, x2:6, y2:-1, stroke:'#20d0ff', 'stroke-width':1, 'stroke-dasharray':'3 2' });
-    el(tr, 'line', { x1:-18, y1:4, x2:6, y2:4, stroke:'#20d0ff', 'stroke-width':1, 'stroke-dasharray':'3 2' });
-    
-    // Mini internal dynamic AC rotor fan blade blueprint
-    if (!b.extra.angle) b.extra.angle = 0;
-    const loadFactor = Math.abs(b.current) * 80;
-    b.extra.angle = (b.extra.angle + loadFactor * DT) % 360;
-    const rc = el(tr, 'g', { transform:`translate(14, 0) rotate(${b.extra.angle})` });
-    el(rc, 'circle', { cx:0, cy:0, r:6, fill:'none', stroke:'#20d0ff', 'stroke-width':0.8 });
-    el(rc, 'line', { x1:-5, y1:0, x2:5, y2:0, stroke:'#20d0ff', 'stroke-width':1 });
-    el(rc, 'line', { x1:0, y1:-5, x2:0, y2:5, stroke:'#20d0ff', 'stroke-width':1 });
-
-    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
   }
   else if (b.kind === 'bulb') {
     const power = Math.abs(b.current) * Math.abs(b.voltage);
-    const bright = Math.min(1, power / 15);
+    const ratedP = (BATTERY_EMF*BATTERY_EMF) / (b.value || 10);
+    const bright = Math.min(1, power / Math.max(ratedP * 0.5, 0.1));
+    const burnt = power > ratedP * 4;
+    if (burnt) b.extra.burnt = true;
     const isBurnt = b.extra.burnt === true;
-    
-    if (!isBurnt && bright > 0.01) {
-      el(cg, 'circle', { cx:mx, cy:my, r:16 + (bright * 18), fill:'url(#glow-filter)', opacity: bright * 0.45, fill:'#ffe8a0', filter:'blur(8px)', style:'pointer-events:none;' });
-      el(cg, 'circle', { cx:mx, cy:my, r:12 + (bright * 6), fill:'rgba(255, 230, 130, ' + (bright * 0.7) + ')', style:'pointer-events:none;' });
+    if (!isBurnt && bright > 0.05) {
+      el(cg, 'circle', { cx:mx, cy:my, r:24+bright*10, fill:'rgba(255,220,140,'+(0.3*bright)+')', filter:'blur(5px)', style:'pointer-events:none;' });
+      el(cg, 'circle', { cx:mx, cy:my, r:18, fill:'rgba(255,235,180,'+(0.55*bright)+')', style:'pointer-events:none;' });
     }
-    el(cg, 'circle', { cx:mx, cy:my, r:13, fill: isBurnt ? '#2a1a10' : (bright > 0.01 ? '#fff1bd' : '#3a3a4a'), stroke:'#cdd5e8', 'stroke-width':1.8, style:'pointer-events:none;' });
-    el(cg, 'path', { d:`M ${mx-6} ${my+4} Q ${mx} ${my-6} ${mx+6} ${my+4}`, fill:'none', stroke: bright > 0.01 ? '#ffb040' : '#708090', 'stroke-width':1.5, style:'pointer-events:none;' });
+    el(cg, 'circle', { cx:mx, cy:my, r:12, fill: isBurnt ? '#2a1a10' : (bright > 0.05 ? '#fff0c8' : '#3a3a4a'), stroke:'#cdd5e8', 'stroke-width':1.5, style:'pointer-events:none;' });
+    el(cg, 'path', { d:`M ${mx-5} ${my+11} Q ${mx} ${my+16} ${mx+5} ${my+11}`, fill:'none', stroke:'#5878a0', 'stroke-width':1.5, style:'pointer-events:none;' });
+    if (isBurnt) el(cg, 'text', { x:mx, y:my+3, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'#ff4f60', text:'✕', style:'pointer-events:none;' });
     el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
   }
   else if (b.kind === 'capacitor') {
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, style:'pointer-events:none;' });
-    el(tr, 'line', { x1:-4, y1:-14, x2:-4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5 });
-    el(tr, 'line', { x1:4, y1:-14, x2:4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5 });
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${tDeg})`, style:'pointer-events:none;' });
+    el(tr, 'line', { x1:-4, y1:-14, x2:-4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5, 'stroke-linecap':'round' });
+    el(tr, 'line', { x1:4, y1:-14, x2:4, y2:14, stroke:'#20d0ff', 'stroke-width':2.5, 'stroke-linecap':'round' });
+    const C_F = b.value * 1e-6;
+    const Vcap = b.charge / Math.max(C_F, 1e-12);
+    const fill = Math.min(1, Math.abs(Vcap) / BATTERY_EMF);
+    el(tr, 'rect', { x:-3, y:14 - fill*28, width:6, height:fill*28, fill:'rgba(32,208,255,0.45)' });
     el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
   }
   else if (b.kind === 'fan') {
-    const speedScale = Math.abs(b.current) * 110; 
+    const speed = Math.abs(b.current) * 110;
     if (!b.extra.angle) b.extra.angle = 0;
-    b.extra.angle = (b.extra.angle + speedScale * DT) % 360;
-    
+    b.extra.angle = (b.extra.angle + speed * DT) % 360;
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${b.extra.angle})`, style:'pointer-events:none;' });
     el(tr, 'circle', { cx:0, cy:0, r:16, fill:'none', stroke:'#40ffaa', 'stroke-width':1, 'stroke-dasharray':'2 2' });
     for (let i = 0; i < 3; i++) {
-      el(tr, 'path', { d:`M 0 0 C 8 -12, 16 -6, 12 4 C 8 8, 2 4, 0 0`, fill:'rgba(64,255,170,0.4)', stroke:'#40ffaa', 'stroke-width':1.2, transform:`rotate(${i*120})` });
+      el(tr, 'path', { d:'M 0 0 C 8 -12, 16 -6, 12 4 C 8 8, 2 4, 0 0', fill:'rgba(64,255,170,0.4)', stroke:'#40ffaa', 'stroke-width':1.2, transform:`rotate(${i*120})` });
     }
     el(tr, 'circle', { cx:0, cy:0, r:3.5, fill:'#020812', stroke:'#40ffaa', 'stroke-width':1.5 });
     el(cg, 'text', { x:mx+nx*26, y:my+ny*26+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
   }
+  else if (b.kind === 'ac') {
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${tDeg})`, style:'pointer-events:none;' });
+    el(tr, 'rect', { x:-24, y:-14, width:48, height:28, fill:'rgba(32,208,255,0.07)', stroke:'#20d0ff', 'stroke-width':1.8, rx:3 });
+    el(tr, 'line', { x1:-18, y1:-7, x2:6, y2:-7, stroke:'#20d0ff', 'stroke-width':1, 'stroke-dasharray':'3 2' });
+    el(tr, 'line', { x1:-18, y1:-1, x2:6, y2:-1, stroke:'#20d0ff', 'stroke-width':1, 'stroke-dasharray':'3 2' });
+    el(tr, 'line', { x1:-18, y1:5, x2:6, y2:5, stroke:'#20d0ff', 'stroke-width':1, 'stroke-dasharray':'3 2' });
+    if (!b.extra.angle) b.extra.angle = 0;
+    b.extra.angle = (b.extra.angle + Math.abs(b.current) * 80 * DT) % 360;
+    const rc = el(tr, 'g', { transform:`translate(14 0) rotate(${b.extra.angle})` });
+    el(rc, 'circle', { cx:0, cy:0, r:7, fill:'none', stroke:'#20d0ff', 'stroke-width':0.8 });
+    el(rc, 'line', { x1:-6, y1:0, x2:6, y2:0, stroke:'#20d0ff', 'stroke-width':1 });
+    el(rc, 'line', { x1:0, y1:-6, x2:0, y2:6, stroke:'#20d0ff', 'stroke-width':1 });
+    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
+  }
   else if (b.kind === 'switch') {
     const isOpen = b.extra.open === true;
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, style:'pointer-events:none;' });
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${tDeg})`, style:'pointer-events:none;' });
     el(tr, 'circle', { cx:-12, cy:0, r:3, fill:'#5878a0' });
     el(tr, 'circle', { cx:12, cy:0, r:3, fill:'#5878a0' });
-    if (isOpen) el(tr, 'line', { x1:-12, y1:0, x2:8, y2:-12, stroke:'#ff4f60', 'stroke-width':2.5 });
-    else el(tr, 'line', { x1:-12, y1:0, x2:12, y2:0, stroke:'#40ffaa', 'stroke-width':2.5 });
+    if (isOpen) el(tr, 'line', { x1:-12, y1:0, x2:8, y2:-12, stroke:'#ff4f60', 'stroke-width':2.5, 'stroke-linecap':'round' });
+    else el(tr, 'line', { x1:-12, y1:0, x2:12, y2:0, stroke:'#40ffaa', 'stroke-width':2.5, 'stroke-linecap':'round' });
     el(cg, 'text', { x:mx+nx*16, y:my+ny*16+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:isOpen ? 'OPEN' : 'CLOSED', style:'pointer-events:none;' });
   }
   else if (b.kind === 'battery') {
-    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})`, style:'pointer-events:none;' });
-    el(tr, 'rect', { x:-20, y:-10, width:32, height:20, fill:'#3a5070', stroke:'#1e3050', rx:2 });
-    el(tr, 'rect', { x:12, y:-10, width:8, height:20, fill:'#f0c060', stroke:'#1e3050', rx:1 });
-    el(tr, 'rect', { x:20, y:-4, width:3, height:8, fill:'#ddeeff', rx:1 });
-    el(tr, 'text', { x:-10, y:4, 'font-family':'monospace', 'font-size':11, fill:'#ff4f60', 'font-weight':'bold', text:'-' });
-    el(tr, 'text', { x:4, y:4, 'font-family':'monospace', 'font-size':11, fill:'#40ffaa', 'font-weight':'bold', text:'+' });
-    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
-  }  
+    const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${tDeg})`, style:'pointer-events:none;' });
+    el(tr, 'rect', { x:-20, y:-12, width:32, height:24, fill:'#3a5070', stroke:'#1e3050', rx:2 });
+    el(tr, 'rect', { x:12, y:-12, width:8, height:24, fill:'#f0c060', stroke:'#1e3050', rx:1 });
+    el(tr, 'rect', { x:20, y:-5, width:3, height:10, fill:'#ddeeff', rx:1 });
+    el(tr, 'text', { x:-9, y:5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':13, fill:'#ff4f60', 'font-weight':'bold', text:'−' });
+    el(tr, 'text', { x:5, y:5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':13, fill:'#40ffaa', 'font-weight':'bold', text:'+' });
+    el(cg, 'text', { x:mx+nx*26, y:my+ny*26+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
+  }
   else if (b.kind === 'ammeter' || b.kind === 'voltmeter' || b.kind === 'galvanometer') {
-    const symbol = b.kind === 'ammeter' ? 'A' : (b.kind === 'voltmeter' ? 'V' : 'G');
+    const sym = b.kind === 'ammeter' ? 'A' : (b.kind === 'voltmeter' ? 'V' : 'G');
     const bCol = b.kind === 'ammeter' ? '#40ffaa' : (b.kind === 'voltmeter' ? '#c060ff' : '#f0c060');
-    
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my})`, style:'pointer-events:none;' });
-    el(tr, 'circle', { cx:0, cy:0, r:13, fill:'var(--bg2)', stroke:bCol, 'stroke-width':1.5 });
-    el(tr, 'text', { x:0, y:4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:bCol, text:symbol });
-    
-    // Live numerical value feedback projections rendered directly adjacent on grid spaces
-    let readingStr = b.kind === 'ammeter' ? `${b.current.toFixed(2)} A` : (b.kind === 'voltmeter' ? `${b.voltage.toFixed(2)} V` : `${(b.current*1000).toFixed(1)} mA`);
-    el(cg, 'text', { x:mx, y:my+26, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10.5, 'font-weight':'bold', fill:'#fff', style:'pointer-events:none;' }).textContent = readingStr;
+    el(tr, 'circle', { cx:0, cy:0, r:13, fill:'#080f1e', stroke:bCol, 'stroke-width':1.5 });
+    el(tr, 'text', { x:0, y:4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:bCol, text:sym });
+    // For galvanometer, draw a deflecting needle
+    if (b.kind === 'galvanometer') {
+      const deflect = Math.max(-1, Math.min(1, b.current / 1)) * 55;
+      el(tr, 'line', { x1:0, y1:7, x2: Math.sin(deflect*Math.PI/180)*9, y2: 7 - Math.cos(deflect*Math.PI/180)*14, stroke:bCol, 'stroke-width':1.8, 'stroke-linecap':'round' });
+    }
+    const reading = b.kind === 'ammeter' ? `${b.current.toFixed(2)} A`
+      : (b.kind === 'voltmeter' ? `${b.voltage.toFixed(2)} V` : `${(b.current*1000).toFixed(1)} mA`);
+    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, 'font-weight':'bold', fill:'#fff', text:reading, style:'pointer-events:none;' });
+  }
+  else if (b.kind === 'wire') {
+    if (state.realistic && b.value > 0.01) {
+      el(cg, 'text', { x:mx+nx*12, y:my+ny*12+3, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'#5878a0', text:`${b.value.toFixed(3)} Ω`, style:'pointer-events:none;' });
+    }
   }
 }
 
 function renderDots() {
   clearGroup(gDots);
-  state.dotPhase = (state.dotPhase + 0.025) % 1;
+  state.dotPhase = (state.dotPhase + 0.018) % 1;
   for (const b of state.branches) {
     if (b.kind === 'voltmeter' || b.isOpen) continue;
     const I = b.current;
     const speed = Math.min(1, Math.abs(I) / 1);
-    if (speed < 0.01) continue;
+    if (speed < 0.02) continue;
     const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
     if (!n1 || !n2) continue;
-    const numDots = 3;
     const dir = (b.kind === 'battery' ? -1 : 1) * (I >= 0 ? 1 : -1);
+    const numDots = 3;
     for (let i = 0; i < numDots; i++) {
-      let t = (state.dotPhase * speed * 2 + i / numDots) % 1;
+      let t = (state.dotPhase * speed * 1.5 + i / numDots) % 1;
       if (dir < 0) t = 1 - t;
       el(gDots, 'circle', { cx: n1.x + (n2.x - n1.x) * t, cy: n1.y + (n2.y - n1.y) * t, r:2.5, fill:'#fff', opacity:0.9 });
     }
   }
 }
 
+// ============================================================================
+// SELECTED COMPONENT PANEL
+// ============================================================================
 function updateSelectedPanel() {
   const c = document.getElementById('selected-content');
   if (state.selected === null) {
-    c.innerHTML = '<div class="empty">Click a component on the grid to inspect properties or delete it.<br><br>Double-click empty grid cells to generate components.</div>';
+    c.innerHTML = '<div class="empty">Click a component on the canvas to inspect or edit.<br><br>Pick a tool from the toolbar above to add components.</div>';
     return;
   }
   const b = state.branches.find(x => x.id === state.selected);
   if (!b) { c.innerHTML = '<div class="empty">Component not found.</div>'; return; }
-  
-  let html = '';
+
   const kindLabel = {
-    resistor:'Resistor', bulb:'Bulb', capacitor:'Capacitor', fan:'Fan / Motor', ac:'Air Conditioner unit',
-    switch:'Switch', wire:'Wire', battery:'DC Battery', ammeter:'Ammeter', voltmeter:'Voltmeter', galvanometer:'Galvanometer'
+    resistor:'Resistor', bulb:'Bulb', capacitor:'Capacitor', fan:'Fan / Motor', ac:'Air Conditioner',
+    switch:'Switch', wire:'Wire', battery:'DC Battery',
+    ammeter:'Ammeter', voltmeter:'Voltmeter', galvanometer:'Galvanometer'
   }[b.kind] || b.kind;
 
-  html += `<div class="prop-row"><span>Element Category</span><span class="val">${kindLabel}</span></div>`;
-  html += `<div class="prop-row"><span>Instantaneous I</span><span class="val">${b.current.toFixed(3)} A</span></div>`;
-  html += `<div class="prop-row"><span>Potential Drop (V)</span><span class="val">${b.voltage.toFixed(3)} V</span></div>`;
-  
+  let html = '';
+  html += `<div class="prop-row"><span>Type</span><span class="val">${kindLabel}</span></div>`;
+  html += `<div class="prop-row"><span>Current</span><span class="val">${b.current.toFixed(3)} A</span></div>`;
+  html += `<div class="prop-row"><span>Voltage drop</span><span class="val">${b.voltage.toFixed(3)} V</span></div>`;
+
+  // Show idealised internal resistance for meters
+  if (b.kind === 'voltmeter') html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">10 MΩ</span></div>`;
+  else if (b.kind === 'ammeter') html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">0.001 Ω</span></div>`;
+  else if (b.kind === 'galvanometer') html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">0.01 Ω</span></div>`;
+
   if (b.kind === 'resistor' || b.kind === 'bulb' || b.kind === 'fan' || b.kind === 'ac') {
-    html += `<div class="prop-row"><span>Power Load</span><span class="val">${(Math.abs(b.current)*Math.abs(b.voltage)).toFixed(3)} W</span></div>`;
-    html += `<div class="prop-edit-row"><label>Resistance</label><input type="number" step="0.5" min="0.1" id="edit-value" value="${b.value}"></div>`;
+    html += `<div class="prop-row"><span>Power</span><span class="val">${(Math.abs(b.current)*Math.abs(b.voltage)).toFixed(3)} W</span></div>`;
+    html += `<div class="prop-edit-row"><label>R (Ω)</label><input type="number" step="0.5" min="0.1" id="edit-value" value="${b.value}"></div>`;
   } else if (b.kind === 'capacitor') {
-    html += `<div class="prop-row"><span>Internal Charge</span><span class="val">${(b.charge*1000).toFixed(3)} mC</span></div>`;
-    html += `<div class="prop-edit-row"><label>Capacity (μF)</label><input type="number" step="10" min="1" id="edit-value" value="${b.value}"></div>`;
+    const C_F = b.value * 1e-6;
+    const Vc = b.charge / Math.max(C_F, 1e-12);
+    html += `<div class="prop-row"><span>Stored V</span><span class="val">${Vc.toFixed(3)} V</span></div>`;
+    html += `<div class="prop-row"><span>Stored charge</span><span class="val">${(b.charge*1000).toFixed(3)} mC</span></div>`;
+    html += `<div class="prop-edit-row"><label>C (μF)</label><input type="number" step="10" min="1" id="edit-value" value="${b.value}"></div>`;
   } else if (b.kind === 'battery') {
-    html += `<div class="prop-edit-row"><label>Voltage (V)</label><input type="number" step="1" min="0.1" id="edit-value" value="${b.value}"></div>`;
+    html += `<div class="prop-edit-row"><label>EMF (V)</label><input type="number" step="0.5" min="0.1" id="edit-value" value="${b.value}"></div>`;
   } else if (b.kind === 'switch') {
-    html += `<div class="prop-edit-row"><label>Toggle gate</label><select id="edit-switch"><option value="closed" ${!b.extra.open?'selected':''}>Closed Loop</option><option value="open" ${b.extra.open?'selected':''}>Open Breach</option></select></div>`;
+    html += `<div class="prop-edit-row"><label>State</label><select id="edit-switch"><option value="closed" ${!b.extra.open?'selected':''}>Closed</option><option value="open" ${b.extra.open?'selected':''}>Open</option></select></div>`;
   }
 
-  html += `<button class="delete-btn" id="delete-btn">Remove Component</button>`;
-  html += `<div class="assumption-box"><strong>Modeling Logic:</strong><br>${ASSUMPTIONS[b.kind] || ''}</div>`;
-  
+  if (b.kind !== 'battery') {
+    html += `<button class="delete-btn" id="delete-btn">Delete Component</button>`;
+  }
+  html += `<div class="assumption-box"><strong>Modelling assumption:</strong><br>${ASSUMPTIONS[b.kind] || ''}</div>`;
+
   c.innerHTML = html;
 
   const ev = document.getElementById('edit-value');
@@ -702,6 +862,7 @@ function updateSelectedPanel() {
   });
 }
 
+// Event delegation for delete button (panel is rebuilt frequently)
 document.getElementById('selected-content').addEventListener('click', (e) => {
   if (e.target.id === 'delete-btn' && state.selected !== null) {
     deleteBranchClean(state.selected);
@@ -710,69 +871,103 @@ document.getElementById('selected-content').addEventListener('click', (e) => {
   }
 });
 
+// ============================================================================
+// STATUS PANEL
+// ============================================================================
 function updateStatus() {
-  const bats = state.branches.filter(b => b.kind === 'battery');
-  const I = bats.length ? Math.max(...bats.map(b => Math.abs(b.current))) : 0;
-  const P = bats.length ? Math.max(...bats.map(b => Math.abs(b.current * b.value))) : 0;
-  
+  const bat = state.branches.find(b => b.kind === 'battery');
+  const I = bat ? Math.abs(bat.current) : 0;
+  const P = bat ? Math.abs(bat.current * bat.value) : 0;
   document.getElementById('stat-current').textContent = I.toFixed(3) + ' A';
   document.getElementById('stat-power').textContent = P.toFixed(3) + ' W';
-  document.getElementById('stat-battery').textContent = state.nodes.length;
+  document.getElementById('stat-nodes').textContent = state.nodes.length;
   document.getElementById('stat-count').textContent = state.branches.length;
 
   const stat = document.getElementById('canvas-status');
   if (state.selected !== null) {
     const sel = state.branches.find(x => x.id === state.selected);
-    if (sel) stat.textContent = `Type: ${sel.kind.toUpperCase()} | Current: ${sel.current.toFixed(3)} A | Drop: ${sel.voltage.toFixed(3)} V`;
+    if (sel) {
+      const k = sel.kind;
+      if (k === 'voltmeter') stat.textContent = `V = ${sel.voltage.toFixed(3)} V`;
+      else if (k === 'ammeter') stat.textContent = `I = ${sel.current.toFixed(3)} A`;
+      else if (k === 'galvanometer') stat.textContent = `I = ${(sel.current*1000).toFixed(1)} mA`;
+      else if (k === 'battery') stat.textContent = `EMF = ${sel.value.toFixed(1)} V · I = ${Math.abs(sel.current).toFixed(2)} A`;
+      else if (k === 'capacitor') {
+        const Vc = sel.charge / Math.max(sel.value*1e-6, 1e-12);
+        stat.textContent = `V_cap = ${Vc.toFixed(2)} V · I = ${sel.current.toFixed(2)} A`;
+      }
+      else stat.textContent = `I = ${sel.current.toFixed(3)} A · V = ${sel.voltage.toFixed(3)} V`;
+    }
   } else {
-    stat.textContent = I > 25 ? '⚠ CRITICAL OVERLOAD DETECTION' : `System Load Vector: ${I.toFixed(2)} A`;
+    if (I > 20) stat.textContent = '⚠ Short circuit';
+    else if (I < 0.001 && state.branches.length > 1) stat.textContent = '○ Open circuit';
+    else stat.textContent = `I = ${I.toFixed(2)} A`;
   }
 }
 
-// Global double click placement module
-// svg.addEventListener('dblclick', e => {
-//   e.preventDefault();
-//   if (state.pendingAddKind === 'select') return;
-//   const pt = svgPoint(e);
-//   const snapX = Math.round(pt.x / 20) * 20;
-//   const snapY = Math.round(pt.y / 20) * 20;
-  
-//   saveHistory();
-//   const n1 = getOrCreateConnectionPoint(snapX, snapY);
-//   const n2 = getOrCreateConnectionPoint(snapX + 80, snapY);
-  
-//   const kind = state.pendingAddKind || 'wire';
-//   const b = addBranch(n1, n2, kind, defaultValue(kind));
-  
-//   state.selected = b.id;
-//   solve(); render(); updateSelectedPanel(); updateStatus();
-// });
+// ============================================================================
+// CLICK / DRAG INTERACTION
+// ============================================================================
+let dragStart = null;
 
-// Priority Click Delegation Module fixes switch toggling and sticky tool blockages
 svg.addEventListener('click', e => {
   const target = e.target;
+
+  // STEP 0: Click on a wire crossing → offer to join the two wires
+  if (target.classList && target.classList.contains('crossing-hit')) {
+    const s1Id = parseInt(target.getAttribute('data-cross-s1'));
+    const s2Id = parseInt(target.getAttribute('data-cross-s2'));
+    const cx = parseFloat(target.getAttribute('data-cross-x'));
+    const cy = parseFloat(target.getAttribute('data-cross-y'));
+    if (confirm('Connect these two wires at this crossing?')) {
+      saveHistory();
+      const b1 = state.branches.find(b => b.id === s1Id);
+      const b2 = state.branches.find(b => b.id === s2Id);
+      if (b1 && b2) {
+        const junction = addNode(Math.round(cx/20)*20, Math.round(cy/20)*20);
+        if (b1.kind === 'wire') {
+          const a1 = nodeById(b1.n1), a2 = nodeById(b1.n2);
+          deleteBranchRaw(b1.id);
+          addBranch(a1, junction, 'wire', 0.001);
+          addBranch(junction, a2, 'wire', 0.001);
+        }
+        if (b2.kind === 'wire') {
+          const c1 = nodeById(b2.n1), c2 = nodeById(b2.n2);
+          deleteBranchRaw(b2.id);
+          addBranch(c1, junction, 'wire', 0.001);
+          addBranch(junction, c2, 'wire', 0.001);
+        }
+        mergeCoincidentNodes();
+      }
+      solve(); render(); updateSelectedPanel(); updateStatus();
+    }
+    return;
+  }
+
   const branchHit = target.closest('.branch-hit') || target.closest('.comp');
   const bid = branchHit ? parseInt(branchHit.getAttribute('data-branch-id')) : null;
 
-  // STEP 1: If a tool is active AND we clicked a wire → INSERT into wire
-  if (bid !== null && state.pendingAddKind && state.pendingAddKind !== 'select' && INSERT_KINDS.has(state.pendingAddKind)) {
+  // STEP 1: Tool active + clicked a wire → insert into the wire
+  if (bid !== null && state.pendingAddKind !== 'select' && INSERT_KINDS.has(state.pendingAddKind)) {
     const targetB = state.branches.find(x => x.id === bid);
     if (targetB && targetB.kind === 'wire') {
       saveHistory();
       const extra = state.pendingAddKind === 'switch' ? { open: false } : {};
-      const newB = insertIntoWire(targetB, state.pendingAddKind, defaultValue(state.pendingAddKind), extra);
+      const pt = svgPoint(e);
+      const newB = insertIntoWire(targetB, state.pendingAddKind, defaultValue(state.pendingAddKind), extra, pt.x, pt.y);
       state.selected = newB ? newB.id : null;
-      // Return to select mode after placement
-      state.pendingAddKind = 'select';
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('add-select').classList.add('active');
-      document.getElementById('canvas-hint').textContent = 'Component placed. Click elements to inspect/toggle.';
+      // Return to select mode after one placement
+      setPendingTool('select');
       solve(); render(); updateSelectedPanel(); updateStatus();
+      return;
+    } else if (targetB) {
+      // Clicked on an existing component, not a wire — show hint
+      document.getElementById('canvas-hint').textContent = 'Components can only be inserted into a wire. Click a plain wire segment.';
       return;
     }
   }
 
-  // STEP 2: Plain click on a branch → select it (and toggle if it's a switch)
+  // STEP 2: Plain click on a branch → select it (and toggle if switch)
   if (bid !== null) {
     state.selected = bid;
     const clickedB = state.branches.find(x => x.id === bid);
@@ -784,61 +979,93 @@ svg.addEventListener('click', e => {
     return;
   }
 
-  // STEP 3: Click on empty space → deselect
+  // STEP 3: Empty space → deselect
   state.selected = null;
-  render(); updateSelectedPanel();
+  render(); updateSelectedPanel(); updateStatus();
 });
-let dragStart = null;
+
 svg.addEventListener('mousedown', e => {
   if (SPAN_KINDS.has(state.pendingAddKind)) {
     const pt = svgPoint(e);
     dragStart = { x: pt.x, y: pt.y };
   }
 });
+
 svg.addEventListener('mousemove', e => {
   if (!dragStart) return;
   const pt = svgPoint(e);
   clearGroup(gOver);
-  el(gOver, 'line', { x1: Math.round(dragStart.x/20)*20, y1: Math.round(dragStart.y/20)*20, x2: pt.x, y2: pt.y, stroke: '#f0c060', 'stroke-width': 1.5, 'stroke-dasharray': '4 4' });
+  const sx = Math.round(dragStart.x/20)*20, sy = Math.round(dragStart.y/20)*20;
+  el(gOver, 'line', { x1:sx, y1:sy, x2:pt.x, y2:pt.y, stroke:'#f0c060', 'stroke-width':1.8, 'stroke-dasharray':'5 3' });
+  el(gOver, 'circle', { cx:sx, cy:sy, r:6, fill:'#f0c060' });
 });
+
 svg.addEventListener('mouseup', e => {
   if (!dragStart) return;
   const pt = svgPoint(e);
-  if (Math.hypot(pt.x - dragStart.x, pt.y - dragStart.y) > 15) {
-    saveHistory();
-    const n1 = getOrCreateConnectionPoint(dragStart.x, dragStart.y);
-    const n2 = getOrCreateConnectionPoint(pt.x, pt.y);
-    if (n1.id !== n2.id) {
-      const b = addBranch(n1, n2, state.pendingAddKind, defaultValue(state.pendingAddKind));
-      state.selected = b.id;
-      solve(); render(); updateSelectedPanel(); updateStatus();
-    }
+  const dist = Math.hypot(pt.x - dragStart.x, pt.y - dragStart.y);
+  if (dist < 15) { dragStart = null; clearGroup(gOver); return; }
+  saveHistory();
+  const kind = state.pendingAddKind;
+  const n1 = getOrCreateConnectionPoint(dragStart.x, dragStart.y);
+  const n2 = getOrCreateConnectionPoint(pt.x, pt.y);
+  if (n1.id !== n2.id) {
+    const b = addBranch(n1, n2, kind, defaultValue(kind));
+    mergeCoincidentNodes();
+    state.selected = b.id;
+    setPendingTool('select');
+    solve(); render(); updateSelectedPanel(); updateStatus();
   }
   dragStart = null; clearGroup(gOver);
 });
 
-function segmentIntersect(x1,y1,x2,y2,x3,y3,x4,y4) {
-  const den = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
-  if (Math.abs(den) < 1e-9) return null;
-  const t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / den;
-  const u = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2)) / den;
-  if (t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95) {
-    return { x: x1 + t*(x2-x1), y: y1 + t*(y2-y1) };
-  }
-  return null;
-}  
-function currentColor(I) {
-  const a = Math.abs(I);
-  if (a < 0.01) return '#5878a0';
-  if (a < 0.5) return '#9fc5ff';
-  if (a < 2) return '#20d0ff';
-  if (a < 5) return '#ffc857';
-  return '#ff4f60';
+// ============================================================================
+// TOOLBAR
+// ============================================================================
+function setPendingTool(k) {
+  state.pendingAddKind = k;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('add-' + k);
+  if (btn) btn.classList.add('active');
+  const hint = document.getElementById('canvas-hint');
+  if (k === 'select') hint.textContent = 'Selection mode: click elements to inspect or toggle.';
+  else if (INSERT_KINDS.has(k)) hint.textContent = `Click on any wire to insert a ${k.toUpperCase()}.`;
+  else hint.textContent = `Click and drag between two points to place a ${k.toUpperCase()}.`;
 }
 
-function svgPoint(e) {
-  const rect = svg.getBoundingClientRect();
-  return { x: (e.clientX - rect.left) * (W / rect.width), y: (e.clientY - rect.top) * (H / rect.height) };
+function setupToolbar() {
+  const tools = ['select','wire','resistor','bulb','capacitor','fan','ac','switch','battery','ammeter','voltmeter','galvanometer'];
+  tools.forEach(k => {
+    const btn = document.getElementById('add-' + k);
+    if (btn) btn.addEventListener('click', () => setPendingTool(k));
+  });
+
+  document.getElementById('realistic-toggle').addEventListener('click', function() {
+    state.realistic = !state.realistic;
+    this.innerHTML = '<span class="ico">⚙</span>Realistic Wires: ' + (state.realistic ? 'ON' : 'OFF');
+    state.branches.forEach(b => {
+      if (b.kind === 'wire') b.value = state.realistic ? 0.25 : 0.001;
+    });
+    solve(); render(); updateSelectedPanel(); updateStatus();
+  });
+
+  document.getElementById('undo-btn').addEventListener('click', () => {
+    if (historyStack.length === 0) return;
+    const snap = JSON.parse(historyStack.pop());
+    state.nodes = snap.nodes;
+    state.branches = snap.branches;
+    state.nextNodeId = snap.nextNodeId;
+    state.nextBranchId = snap.nextBranchId;
+    state.selected = null;
+    solve(); render(); updateSelectedPanel(); updateStatus();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    saveHistory();
+    buildStartingCircuit();
+    setPendingTool('select');
+    solve(); render(); updateSelectedPanel(); updateStatus();
+  });
 }
 
 function defaultValue(kind) {
@@ -847,89 +1074,22 @@ function defaultValue(kind) {
     case 'bulb': return 6;
     case 'capacitor': return 220;
     case 'fan': return 4;
-    case 'ac': return 12; // Base cooling resistance matrix footprint load value
+    case 'ac': return 12;
     case 'battery': return 6;
+    case 'wire': return state.realistic ? 0.25 : 0.001;
     default: return 0.001;
   }
 }
 
-function setupToolbar() {
-  const tools = ['select','resistor','bulb','capacitor','fan','ac','switch','wire','battery','ammeter','voltmeter','galvanometer'];
-  tools.forEach(t => {
-    document.getElementById('add-' + t)?.addEventListener('click', function() {
-      state.pendingAddKind = t;
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-
-      let hint;
-      if (t === 'select') hint = "Selection mode: click elements to inspect or toggle.";
-      else if (INSERT_KINDS.has(t)) hint = `Click on any wire to insert a ${t.toUpperCase()}.`;
-      else hint = `Click two points (or click-and-drag) to place a ${t.toUpperCase()}.`;
-      document.getElementById('canvas-hint').textContent = hint;
-  
-    });
-  });
-
-  // Active Realistic wire resistivity calculations toggle mapping module
-  document.getElementById('realistic-toggle').addEventListener('click', function() {
-    state.realistic = !state.realistic;
-    this.textContent = `⚙ Realistic Wires: ${state.realistic ? 'ON' : 'OFF'}`;
-    state.branches.forEach(b => {
-      if (b.kind === 'wire') {
-        b.value = state.realistic ? 0.25 : 0.001;
-      }
-    });
-    solve(); render(); updateSelectedPanel(); updateStatus();
-  });
-
-  document.getElementById('undo-btn').addEventListener('click', () => {
-    if (historyStack.length > 0) {
-      const snap = JSON.parse(historyStack.pop());
-      state.nodes = snap.nodes; state.branches = snap.branches;
-      state.nextNodeId = snap.nextNodeId; state.nextBranchId = snap.nextBranchId;
-      state.selected = null; solve(); render(); updateSelectedPanel(); updateStatus();
-    }
-  });
-
-  document.getElementById('reset-btn').addEventListener('click', () => {
-    saveHistory(); buildStartingCircuit(); solve(); render(); updateSelectedPanel(); updateStatus();
-  });
-}
-
-function gaussianSolve(A, b, n) {
-  const M = A.map(r => Array.from(r));
-  const v = Array.from(b);
-  for (let i = 0; i < n; i++) {
-    let maxRow = i, maxVal = Math.abs(M[i][i]);
-    for (let k = i+1; k < n; k++) {
-      if (Math.abs(M[k][i]) > maxVal) { maxVal = Math.abs(M[k][i]); maxRow = k; }
-    }
-    if (maxVal < 1e-12) return null;
-    if (maxRow !== i) { [M[i], M[maxRow]] = [M[maxRow], M[i]]; [v[i], v[maxRow]] = [v[maxRow], v[i]]; }
-    for (let k = i+1; k < n; k++) {
-      const factor = M[k][i] / M[i][i];
-      for (let j = i; j < n; j++) M[k][j] -= factor * M[i][j];
-      v[k] -= factor * v[i];
-    }
-  }
-  const x = new Float64Array(n);
-  for (let i = n-1; i >= 0; i--) {
-    let s = v[i];
-    for (let j = i+1; j < n; j++) s -= M[i][j] * x[j];
-    x[i] = s / M[i][i];
-  }
-  return x;
-}
-
+// ============================================================================
+// MAIN LOOP
+// ============================================================================
 function tick() {
-  state.time += DT;
   solve();
   renderDots();
-  
-  if (state._tickCount === undefined) state._tickCount = 0;
   state._tickCount = (state._tickCount + 1) % 10;
   if (state._tickCount === 0) {
-    // Only re-render the component layer (keeps wire hit-areas stable for reliable clicks)
+    // Refresh just the component layer for live readings / animations
     clearGroup(gComps);
     for (const b of state.branches) {
       const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
@@ -940,14 +1100,16 @@ function tick() {
       const ux = dx/len, uy = dy/len;
       const nx = -uy, ny = ux;
       const col = currentColor(b.current);
-      const isSelected = state.selected === b.id;
-      drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected);
+      drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, state.selected === b.id);
     }
     updateStatus();
   }
   requestAnimationFrame(tick);
 }
 
+// ============================================================================
+// INIT
+// ============================================================================
 buildStartingCircuit();
 setupToolbar();
 solve();
