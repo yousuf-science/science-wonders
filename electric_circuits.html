@@ -303,20 +303,25 @@ const gOver  = document.getElementById('overlays');
 
 // State
 const state = {
-  nodes: [],       // { id, x, y }
-  branches: [],    // { id, n1, n2, kind, value, extra, current, voltage, charge, isOpen }
+  nodes: [],
+  branches: [],
   nextNodeId: 1,
   nextBranchId: 1,
-  selected: null,           // branch id
-  pendingAddKind: null,     // when user clicked a toolbar button
-  pendingFirstNode: null,   // first node clicked for placement
+  selected: null,
+  pendingAddKind: null,
+  pendingFirstNode: null,
   realistic: false,
   dotPhase: 0,
   hoverBranch: null,
 };
 
+// Components that insert INTO a wire (one click on wire):
+const INSERT_KINDS = new Set(['resistor', 'bulb', 'capacitor', 'fan', 'switch', 'ammeter', 'galvanometer']);
+// Components that span TWO points (two clicks):
+const SPAN_KINDS = new Set(['wire', 'voltmeter', 'battery']);
+
 // Default battery EMF (the only battery for v1, lives on branch with kind 'battery')
-const BATTERY_EMF = 6;       // volts
+const BATTERY_EMF = 6;
 const BATTERY_INTERNAL_R = 0.1; // ohms
 
 // Time step
@@ -378,6 +383,32 @@ function deleteBranch(id) {
   });
 }
 
+// Insert a new component into the middle of an existing wire/branch.
+// Splits the branch into: original_n1 → newMid1 → new_component → newMid2 → original_n2
+function insertIntoWire(targetBranch, newKind, newValue, newExtra) {
+  const n1 = nodeById(targetBranch.n1);
+  const n2 = nodeById(targetBranch.n2);
+  if (!n1 || !n2) return null;
+  // Compute three points along the wire: at 1/3, 1/2, 2/3 of the way
+  const mid1 = addNode(
+    Math.round((n1.x + (n2.x - n1.x) * 0.35) / 20) * 20,
+    Math.round((n1.y + (n2.y - n1.y) * 0.35) / 20) * 20
+  );
+  const mid2 = addNode(
+    Math.round((n1.x + (n2.x - n1.x) * 0.65) / 20) * 20,
+    Math.round((n1.y + (n2.y - n1.y) * 0.65) / 20) * 20
+  );
+  // Replace original branch with: n1 → mid1 (wire), mid1 → mid2 (component), mid2 → n2 (wire)
+  const origKind = targetBranch.kind;
+  const origValue = targetBranch.value;
+  const origExtra = { ...targetBranch.extra };
+  deleteBranch(targetBranch.id);
+  addBranch(n1, mid1, origKind === 'wire' ? 'wire' : origKind, origKind === 'wire' ? origValue : 0.001, origKind === 'wire' ? origExtra : {});
+  const newB = addBranch(mid1, mid2, newKind, newValue, newExtra);
+  addBranch(mid2, n2, origKind === 'wire' ? 'wire' : origKind, origKind === 'wire' ? origValue : 0.001, origKind === 'wire' ? origExtra : {});
+  return newB;
+}
+  
 // =====================================================================
 // Starting circuit: battery + resistor in a closed loop
 // =====================================================================
@@ -744,16 +775,19 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
     }
     el(cg, 'text', { x:mx+nx*16, y:my+ny*16+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:isOpen ? 'OPEN' : 'CLOSED' });
   }
-  else if (b.kind === 'battery') {
-    // Long & short plate
+
+
+else if (b.kind === 'battery') {
+    // Long & short plate — bigger so dots are visible inside
     const t = Math.atan2(uy, ux);
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t*180/Math.PI})` });
-    el(tr, 'line', { x1:-3, y1:-12, x2:-3, y2:12, stroke:'#ff4f60', 'stroke-width':3 }); // short = negative
-    el(tr, 'line', { x1:3, y1:-18, x2:3, y2:18, stroke:'#40ffaa', 'stroke-width':3 });   // long = positive
-    el(tr, 'text', { x:-10, y:-22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, 'font-weight':'bold', fill:'#ff4f60', text:'−' });
-    el(tr, 'text', { x:10, y:-22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, 'font-weight':'bold', fill:'#40ffaa', text:'+' });
-    el(cg, 'text', { x:mx+nx*24, y:my+ny*24+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b) });
-  }
+    el(tr, 'line', { x1:-5, y1:-18, x2:-5, y2:18, stroke:'#ff4f60', 'stroke-width':4 }); // short plate = negative
+    el(tr, 'line', { x1:5, y1:-26, x2:5, y2:26, stroke:'#40ffaa', 'stroke-width':4 });   // long plate = positive
+    el(tr, 'text', { x:-14, y:-32, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#ff4f60', text:'−' });
+    el(tr, 'text', { x:14, y:-32, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#40ffaa', text:'+' });
+    el(cg, 'text', { x:mx+nx*42, y:my+ny*42+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:labelFill, text:valueLabel(b) });
+  }  
+  
   else if (b.kind === 'ammeter') {
     el(cg, 'circle', { cx:mx, cy:my, r:14, fill:'rgba(64,255,170,0.1)', stroke:'#40ffaa', 'stroke-width':1.5 });
     el(cg, 'text', { x:mx, y:my+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#40ffaa', text:'A' });
@@ -794,7 +828,8 @@ function renderDots() {
     const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
     if (!n1 || !n2) continue;
     const numDots = 3;
-    const dir = I >= 0 ? 1 : -1;
+    // For battery branches, MNA convention flips the sign relative to external current
+    const dir = (b.kind === 'battery' ? -1 : 1) * (I >= 0 ? 1 : -1);
     for (let i = 0; i < numDots; i++) {
       let t = (state.dotPhase * speed * 2 + i / numDots) % 1;
       if (dir < 0) t = 1 - t;
@@ -953,50 +988,66 @@ svg.addEventListener('click', e => {
   const pt = svgPoint(e);
   // Are we in "pending add" mode?
   if (state.pendingAddKind) {
-    // Click on existing node OR empty space (create new node)
-    let n = findNodeAt(pt.x, pt.y, 20);
-    if (!n) {
-      // Snap to grid
-      n = addNode(Math.round(pt.x/20)*20, Math.round(pt.y/20)*20);
-    }
-    if (!state.pendingFirstNode) {
-      state.pendingFirstNode = n.id;
-      document.getElementById('canvas-hint').textContent = 'Now click the SECOND node to place ' + kindLabelFor(state.pendingAddKind);
-      render();
-    } else if (state.pendingFirstNode === n.id) {
-      // Same node — cancel
-      state.pendingFirstNode = null;
-      document.getElementById('canvas-hint').textContent = 'Click a component below to add it. Then click two nodes to place it between them.';
-      render();
-    } else {
-      // Second node — create the branch
-      const n1 = nodeById(state.pendingFirstNode);
-      const kind = state.pendingAddKind;
-      const value = defaultValue(kind);
-      const extra = {};
-      if (kind === 'switch') extra.open = false;
-      if (kind === 'wire' && state.realistic) {
-        extra.length = 1; extra.area = 1; extra.material = 'copper';
+    const kind = state.pendingAddKind;
+    // INSERT mode: one click on a wire
+    if (INSERT_KINDS.has(kind)) {
+      const target = e.target;
+      const bid = target.getAttribute('data-branch-id');
+      if (bid) {
+        const targetB = state.branches.find(x => x.id === parseInt(bid));
+        if (targetB && targetB.kind !== 'battery') {
+          const extra = {};
+          if (kind === 'switch') extra.open = false;
+          const newB = insertIntoWire(targetB, kind, defaultValue(kind), extra);
+          state.pendingAddKind = null;
+          document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+          document.getElementById('canvas-hint').textContent = 'Click a component below to add another.';
+          state.selected = newB ? newB.id : null;
+          solve(); render(); updateSelectedPanel(); updateStatus();
+        } else {
+          showBanner('hint', 'Click on a wire (not on the battery) to insert this component.');
+        }
+      } else {
+        showBanner('hint', 'Click on an existing wire to insert this component into it.');
       }
-      const b = addBranch(n1, n, kind, value, extra);
-      if (kind === 'wire' && state.realistic) recomputeWire(b);
-      state.pendingFirstNode = null;
-      state.pendingAddKind = null;
-      // Clear toolbar active state
-      document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('canvas-hint').classList.remove('hidden');
-      document.getElementById('canvas-hint').textContent = 'Click a component below to add it.';
-      state.selected = b.id;
-      solve(); render(); updateSelectedPanel(); updateStatus();
+      return;
     }
-    return;
+    // SPAN mode: two clicks (or click-drag, handled in mousedown/up)
+    if (SPAN_KINDS.has(kind)) {
+      let n = findNodeAt(pt.x, pt.y, 20);
+      if (!n) n = addNode(Math.round(pt.x/20)*20, Math.round(pt.y/20)*20);
+      if (!state.pendingFirstNode) {
+        state.pendingFirstNode = n.id;
+        document.getElementById('canvas-hint').textContent = 'Now click (or drag to) the SECOND point.';
+        render();
+      } else if (state.pendingFirstNode === n.id) {
+        state.pendingFirstNode = null;
+        document.getElementById('canvas-hint').textContent = 'Click a component to add it.';
+        render();
+      } else {
+        const n1 = nodeById(state.pendingFirstNode);
+        const value = defaultValue(kind);
+        const extra = {};
+        if (kind === 'wire' && state.realistic) {
+          extra.length = 1; extra.area = 1; extra.material = 'copper';
+        }
+        const b = addBranch(n1, n, kind, value, extra);
+        if (kind === 'wire' && state.realistic) recomputeWire(b);
+        state.pendingFirstNode = null;
+        state.pendingAddKind = null;
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('canvas-hint').textContent = 'Click a component below to add another.';
+        state.selected = b.id;
+        solve(); render(); updateSelectedPanel(); updateStatus();
+      }
+      return;
+    }
   }
-  // Else: did we click a branch or component?
+  // Else: did we click a branch?
   const target = e.target;
   const bid = target.getAttribute('data-branch-id');
   if (bid) {
     state.selected = parseInt(bid);
-    // If it's a switch, toggle it
     const b = state.branches.find(x => x.id === state.selected);
     if (b && b.kind === 'switch') {
       b.extra.open = !b.extra.open;
@@ -1007,12 +1058,10 @@ svg.addEventListener('click', e => {
     updateStatus();
     return;
   }
-  // Click empty space → deselect
   state.selected = null;
   render();
   updateSelectedPanel();
 });
-
 svg.addEventListener('mousemove', e => {
   const target = e.target;
   const bid = target.getAttribute('data-branch-id');
@@ -1023,6 +1072,67 @@ svg.addEventListener('mousemove', e => {
   }
 });
 
+// Click-and-drag support for SPAN components (wire, voltmeter)
+let dragStart = null;
+svg.addEventListener('mousedown', e => {
+  if (!state.pendingAddKind || !SPAN_KINDS.has(state.pendingAddKind)) return;
+  if (state.pendingFirstNode) return; // already in click-click mode
+  const pt = svgPoint(e);
+  dragStart = { x: pt.x, y: pt.y, time: Date.now() };
+});
+svg.addEventListener('mousemove', e => {
+  if (!dragStart || !state.pendingAddKind) return;
+  const pt = svgPoint(e);
+  // Show a preview line while dragging
+  clearGroup(gOver);
+  const sx = Math.round(dragStart.x / 20) * 20;
+  const sy = Math.round(dragStart.y / 20) * 20;
+  el(gOver, 'line', {
+    x1: sx, y1: sy, x2: pt.x, y2: pt.y,
+    stroke: '#f0c060', 'stroke-width': 2, 'stroke-dasharray': '4 4', opacity: 0.7
+  });
+  el(gOver, 'circle', { cx: sx, cy: sy, r: 6, fill:'#f0c060' });
+});
+svg.addEventListener('mouseup', e => {
+  if (!dragStart || !state.pendingAddKind || !SPAN_KINDS.has(state.pendingAddKind)) {
+    dragStart = null;
+    return;
+  }
+  const pt = svgPoint(e);
+  const distance = Math.hypot(pt.x - dragStart.x, pt.y - dragStart.y);
+  // Only treat as drag if user moved more than ~15 px; otherwise treat as click (handled by click event)
+  if (distance < 15) {
+    dragStart = null;
+    clearGroup(gOver);
+    return;
+  }
+  // It was a drag — create the component
+  const kind = state.pendingAddKind;
+  let n1 = findNodeAt(dragStart.x, dragStart.y, 20);
+  if (!n1) n1 = addNode(Math.round(dragStart.x / 20) * 20, Math.round(dragStart.y / 20) * 20);
+  let n2 = findNodeAt(pt.x, pt.y, 20);
+  if (!n2) n2 = addNode(Math.round(pt.x / 20) * 20, Math.round(pt.y / 20) * 20);
+  if (n1.id === n2.id) {
+    dragStart = null;
+    clearGroup(gOver);
+    return;
+  }
+  const value = defaultValue(kind);
+  const extra = {};
+  if (kind === 'wire' && state.realistic) {
+    extra.length = 1; extra.area = 1; extra.material = 'copper';
+  }
+  const b = addBranch(n1, n2, kind, value, extra);
+  if (kind === 'wire' && state.realistic) recomputeWire(b);
+  state.pendingFirstNode = null;
+  state.pendingAddKind = null;
+  document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('canvas-hint').textContent = 'Click a component below to add another.';
+  state.selected = b.id;
+  dragStart = null;
+  solve(); render(); updateSelectedPanel(); updateStatus();
+});
+  
 function svgPoint(e) {
   const rect = svg.getBoundingClientRect();
   return {
@@ -1061,7 +1171,11 @@ function setupToolbar() {
       state.pendingFirstNode = null;
       document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('canvas-hint').textContent = `Click the FIRST node to place ${kindLabelFor(k)}.`;
+      if (INSERT_KINDS.has(k)) {
+        document.getElementById('canvas-hint').textContent = `Click on any wire to insert ${kindLabelFor(k)}.`;
+      } else {
+        document.getElementById('canvas-hint').textContent = `Click two points (or click and drag) to place ${kindLabelFor(k)}.`;
+      }
       render();
     });
   });
