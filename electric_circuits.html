@@ -927,13 +927,22 @@ function tick() {
   renderDots();
   
   if (state._tickCount === undefined) state._tickCount = 0;
-  state._tickCount = (state._tickCount + 1) % 3;
+  state._tickCount = (state._tickCount + 1) % 10;
   if (state._tickCount === 0) {
-    clearGroup(gWires);
+    // Only re-render the component layer (keeps wire hit-areas stable for reliable clicks)
     clearGroup(gComps);
-    clearGroup(gOver);
-    for (const b of state.branches) drawBranch(b);
-    drawCrossings();
+    for (const b of state.branches) {
+      const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
+      if (!n1 || !n2) continue;
+      const mx = (n1.x + n2.x) / 2, my = (n1.y + n2.y) / 2;
+      const dx = n2.x - n1.x, dy = n2.y - n1.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx/len, uy = dy/len;
+      const nx = -uy, ny = ux;
+      const col = currentColor(b.current);
+      const isSelected = state.selected === b.id;
+      drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected);
+    }
     updateStatus();
   }
   requestAnimationFrame(tick);
