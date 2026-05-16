@@ -194,6 +194,8 @@ const gNodes = document.getElementById('nodes');
 const gDots  = document.getElementById('dots');
 const gOver  = document.getElementById('overlays');
 
+const BATTERY_EMF = 6; // Restored crucial global base constant
+
 const state = {
   nodes: [],
   branches: [],
@@ -224,17 +226,17 @@ const SPAN_KINDS = new Set(['wire', 'battery', 'acsource']);
 const DT = 0.015;
 
 const ASSUMPTIONS = {
-  wire: "Ideal wire. Structural model treats this line segment as a zero-resistance connector ($0.001\\ \\Omega$). Turning on 'Realistic Wires' introduces material resistivity based on $\\rho L/A$.",
-  resistor: "Pure linear Ohmic device. Obeys $V = IR$. Dissipates electric energy instantly as thermal power output with no phase shift.",
-  bulb: "Resistive filament modeling package. Visual luminescence profile scales exponentially with electrical load power ($P = I^2R$). Burns out if power rating limits are exceeded.",
-  capacitor: "Transient energy storage cell. Computes state variables using dynamic forward Euler integration step. Blocks steady-state DC loops while displaying proportional voltage $V = q/C$.",
+  wire: "Ideal wire. Structural model treats this line segment as a zero-resistance connector (0.001 Ω). Turning on 'Realistic Wires' introduces material resistivity based on ρL/A.",
+  resistor: "Pure linear Ohmic device. Obeys V = IR. Dissipates electric energy instantly as thermal power output with no phase shift.",
+  bulb: "Resistive filament modeling package. Visual luminescence profile scales exponentially with electrical load power (P = I²R). Burns out if power rating limits are exceeded.",
+  capacitor: "Transient energy storage cell. Computes state variables using dynamic forward Euler integration step. Blocks steady-state DC loops while displaying proportional voltage V = q/C.",
   fan: "Electromechanical load model. Internal coil impedance turns linear current draw into mechanical kinetic energy. Rotational motor blade angular speed tracks direct current flow dynamically.",
   switch: "Binary state topological breaker. Disconnecting splits the execution branches cleanly to reflect localized infinite vacuum resistance without dropping component anchors.",
-  battery: "Ideal DC electromotive force (EMF) rail. Stabilized internal source resistance modeled uniformly at $0.1\\ \\Omega$ to safely suppress matrix calculation singularities.",
-  acsource: "Sinusoidal AC macro-generator. Computes wave function voltages dynamically via function $V(t) = V_{peak} \\cdot \\sin(2\\pi f t)$ to test true impedance responses.",
-  ammeter: "Ideal inline current meter. Formed with a parasitic series resistance of just $0.001\\ \\Omega$ to track amperage safely without modifying localized loop drops.",
-  voltmeter: "High-impedance shunt voltage sensor. Implements an ideal internal impedance constraint of $10\\text{ M}\\Omega$ to isolate monitoring loops from load loading conditions.",
-  galvanometer: "Sensitive mechanical core sensor. Captures low-range directional current vectors with a calibrated inner resistance layer of $0.01\\ \\Omega$."
+  battery: "Ideal DC electromotive force (EMF) rail. Stabilized internal source resistance modeled uniformly at 0.1 Ω to safely suppress matrix calculation singularities.",
+  acsource: "Sinusoidal AC macro-generator. Computes wave function voltages dynamically via function V(t) = Vpeak · sin(2πft) to test true impedance responses.",
+  ammeter: "Ideal inline current meter. Formed with a parasitic series resistance of just 0.001 Ω to track amperage safely without modifying localized loop drops.",
+  voltmeter: "High-impedance shunt voltage sensor. Implements an ideal internal impedance constraint of 10 MΩ to isolate monitoring loops from load loading conditions.",
+  galvanometer: "Sensitive mechanical core sensor. Captures low-range directional current vectors with a calibrated inner resistance layer of 0.01 Ω."
 };
 
 function el(parent, tag, attrs) {
@@ -626,7 +628,6 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
     el(cg, 'text', { x:mx+nx*16, y:my+ny*16+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:isOpen ? 'OPEN' : 'CLOSED' });
   }
   else if (b.kind === 'battery') {
-    // Beautiful dynamic image container graphic for the DC Battery
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my}) rotate(${t})` });
     el(tr, 'rect', { x:-20, y:-10, width:32, height:20, fill:'#3a5070', stroke:'#1e3050', rx:2 });
     el(tr, 'rect', { x:12, y:-10, width:8, height:20, fill:'#f0c060', stroke:'#1e3050', rx:1 });
@@ -769,13 +770,16 @@ svg.addEventListener('dblclick', e => {
   solve(); render(); updateSelectedPanel(); updateStatus();
 });
 
+// Corrected branch intersection and component click selection mechanics
 svg.addEventListener('click', e => {
-  if (e.target.classList.contains('crossing-click')) {
+  const target = e.target;
+
+  if (target.classList.contains('crossing-click')) {
     e.stopPropagation(); saveHistory();
-    const b1 = state.branches.find(b => b.id === parseInt(e.target.getAttribute('data-b1')));
-    const b2 = state.branches.find(b => b.id === parseInt(e.target.getAttribute('data-b2')));
-    const cx = parseFloat(e.target.getAttribute('data-x'));
-    const cy = parseFloat(e.target.getAttribute('data-y'));
+    const b1 = state.branches.find(b => b.id === parseInt(target.getAttribute('data-b1')));
+    const b2 = state.branches.find(b => b.id === parseInt(target.getAttribute('data-b2')));
+    const cx = parseFloat(target.getAttribute('data-x'));
+    const cy = parseFloat(target.getAttribute('data-y'));
     if (b1 && b2) {
       const newNode = addNode(cx, cy);
       const b1n1 = nodeById(b1.n1), b1n2 = nodeById(b1.n2);
@@ -788,9 +792,9 @@ svg.addEventListener('click', e => {
     return;
   }
 
-  if (e.target.classList.contains('junction-disconnect-click')) {
+  if (target.classList.contains('junction-disconnect-click')) {
     e.stopPropagation(); saveHistory();
-    const nid = parseInt(e.target.getAttribute('data-node-id'));
+    const nid = parseInt(target.getAttribute('data-node-id'));
     const n = nodeById(nid);
     if (n) {
       const conBranches = state.branches.filter(b => b.n1 === nid || b.n2 === nid);
@@ -815,25 +819,21 @@ svg.addEventListener('click', e => {
     return;
   }
 
-  const pt = svgPoint(e);
-  if (state.pendingAddKind && !e.target.classList.contains('branch-hit')) {
-    const kind = state.pendingAddKind;
-    if (INSERT_KINDS.has(kind)) {
-      const bid = e.target.getAttribute('data-branch-id');
-      if (bid) {
-        const targetB = state.branches.find(x => x.id === parseInt(bid));
-        if (targetB) {
-          saveHistory();
-          const newB = insertIntoWire(targetB, kind, defaultValue(kind));
-          state.selected = newB ? newB.id : null;
-          solve(); render(); updateSelectedPanel(); updateStatus();
-        }
+  // FIXED inline addition check line (exclamation mark removed)
+  const bid = target.getAttribute('data-branch-id');
+  if (state.pendingAddKind && INSERT_KINDS.has(state.pendingAddKind)) {
+    if (bid) {
+      const targetB = state.branches.find(x => x.id === parseInt(bid));
+      if (targetB) {
+        saveHistory();
+        const newB = insertIntoWire(targetB, state.pendingAddKind, defaultValue(state.pendingAddKind));
+        state.selected = newB ? newB.id : null;
+        solve(); render(); updateSelectedPanel(); updateStatus();
+        return;
       }
-      return;
     }
   }
 
-  const bid = e.target.getAttribute('data-branch-id');
   if (bid) {
     state.selected = parseInt(bid);
     updateSelectedPanel(); updateStatus(); render();
@@ -871,6 +871,25 @@ svg.addEventListener('mouseup', e => {
   }
   dragStart = null; clearGroup(gOver);
 });
+
+function segmentIntersect(x1,y1,x2,y2,x3,y3,x4,y4) {
+  const den = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+  if (Math.abs(den) < 1e-9) return null;
+  const t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / den;
+  const u = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2)) / den;
+  if (t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95) {
+    return { x: x1 + t*(x2-x1), y: y1 + t*(y2-y1) };
+  }
+  return null;
+}  
+function currentColor(I) {
+  const a = Math.abs(I);
+  if (a < 0.01) return '#5878a0';
+  if (a < 0.5) return '#9fc5ff';
+  if (a < 2) return '#20d0ff';
+  if (a < 5) return '#ffc857';
+  return '#ff4f60';
+}
 
 function svgPoint(e) {
   const rect = svg.getBoundingClientRect();
@@ -962,6 +981,7 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
+// Order of execution stabilized
 buildStartingCircuit();
 setupToolbar();
 solve();
