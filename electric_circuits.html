@@ -316,10 +316,9 @@ const state = {
 };
 
 // Components that insert INTO a wire (one click on wire):
-const INSERT_KINDS = new Set(['resistor', 'bulb', 'capacitor', 'fan', 'switch', 'ammeter', 'galvanometer']);
-// Components that span TWO points (two clicks):
-const SPAN_KINDS = new Set(['wire', 'voltmeter', 'battery']);
-
+const INSERT_KINDS = new Set(['resistor', 'bulb', 'capacitor', 'fan', 'switch', 'ammeter', 'galvanometer', 'voltmeter']);
+const SPAN_KINDS = new Set(['wire', 'battery']);
+  
 // Default battery EMF (the only battery for v1, lives on branch with kind 'battery')
 const BATTERY_EMF = 6;
 const BATTERY_INTERNAL_R = 0.1; // ohms
@@ -383,6 +382,35 @@ function deleteBranch(id) {
   });
 }
 
+// Delete a branch AND merge surrounding stub wires so no gap is left.
+function deleteBranchClean(id) {
+  const b = state.branches.find(x => x.id === id);
+  if (!b) return;
+  const n1id = b.n1, n2id = b.n2;
+  deleteBranch(id);
+  // Try to merge each endpoint if it's now an "in-line" junction (exactly 2 wire branches and no other components).
+  [n1id, n2id].forEach(nid => {
+    const conn = state.branches.filter(x => x.n1 === nid || x.n2 === nid);
+    if (conn.length === 2 && conn.every(x => x.kind === 'wire')) {
+      // Merge the two wires into one
+      const w1 = conn[0], w2 = conn[1];
+      const otherEnd1 = (w1.n1 === nid) ? w1.n2 : w1.n1;
+      const otherEnd2 = (w2.n1 === nid) ? w2.n2 : w2.n1;
+      const n_a = nodeById(otherEnd1);
+      const n_b = nodeById(otherEnd2);
+      if (n_a && n_b && otherEnd1 !== otherEnd2) {
+        deleteBranch(w1.id);
+        deleteBranch(w2.id);
+        addBranch(n_a, n_b, 'wire', 0.001);
+        // Remove the now-orphan middle node
+        const ni = state.nodes.findIndex(x => x.id === nid);
+        if (ni >= 0 && !state.branches.some(x => x.n1 === nid || x.n2 === nid)) {
+          state.nodes.splice(ni, 1);
+        }
+      }
+    }
+  });
+}  
 // Insert a new component into the middle of an existing wire/branch.
 // Splits the branch into: original_n1 → newMid1 → new_component → newMid2 → original_n2
 function insertIntoWire(targetBranch, newKind, newValue, newExtra) {
@@ -670,6 +698,7 @@ function render() {
   for (const n of state.nodes) {
     drawNode(n);
   }
+  drawCrossings();
   // Pending-add overlay
   if (state.pendingFirstNode) {
     const n = nodeById(state.pendingFirstNode);
@@ -685,6 +714,57 @@ function drawNode(n) {
   el(gNodes, 'circle', { cx:n.x, cy:n.y, r:9, fill:'rgba(88,120,160,0.15)', stroke:'transparent', class:'node-hit', 'data-node-id':n.id, style:'cursor:pointer;' });
 }
 
+// Draw small junction dots where wires meet at a node (3+ branches meeting),
+// and "jump" arcs where two non-connected wires visually cross.
+function drawCrossings() {
+  // Junction dots: any node with 3+ branches gets a visible filled circle
+  for (const n of state.nodes) {
+    const count = state.branches.filter(b => b.n1 === n.id || b.n2 === n.id).length;
+    if (count >= 3) {
+      el(gNodes, 'circle', { cx:n.x, cy:n.y, r:5.5, fill:'#cdd5e8' });
+    }
+  }
+  // Jump-over arcs: detect intersections between non-connected wire segments
+  const segs = state.branches.map(b => {
+    const a = nodeById(b.n1), c = nodeById(b.n2);
+    return a && c ? { b, x1:a.x, y1:a.y, x2:c.x, y2:c.y } : null;
+  }).filter(Boolean);
+  for (let i = 0; i < segs.length; i++) {
+    for (let j = i+1; j < segs.length; j++) {
+      const s1 = segs[i], s2 = segs[j];
+      // Skip if they share a node (proper junction)
+      if (s1.b.n1 === s2.b.n1 || s1.b.n1 === s2.b.n2 || s1.b.n2 === s2.b.n1 || s1.b.n2 === s2.b.n2) continue;
+      const pt = segmentIntersect(s1.x1, s1.y1, s1.x2, s1.y2, s2.x1, s2.y1, s2.x2, s2.y2);
+      if (!pt) continue;
+      // Draw a small arc on s1 to indicate "jump over"
+      const dx = s1.x2 - s1.x1, dy = s1.y2 - s1.y1;
+      const len = Math.hypot(dx, dy) || 1;
+      const ux = dx/len, uy = dy/len;
+      const arcR = 6;
+      const ax1 = pt.x - ux*arcR, ay1 = pt.y - uy*arcR;
+      const ax2 = pt.x + ux*arcR, ay2 = pt.y + uy*arcR;
+      el(gNodes, 'path', {
+        d: `M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`,
+        fill: 'none', stroke: '#020812', 'stroke-width': 4
+      });
+      el(gNodes, 'path', {
+        d: `M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`,
+        fill: 'none', stroke: '#5878a0', 'stroke-width': 1.8
+      });
+    }
+  }
+}
+
+function segmentIntersect(x1,y1,x2,y2,x3,y3,x4,y4) {
+  const den = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+  if (Math.abs(den) < 1e-9) return null;
+  const t = ((x1-x3)*(y3-y4) - (y1-y3)*(x3-x4)) / den;
+  const u = ((x1-x3)*(y1-y2) - (y1-y3)*(x1-x2)) / den;
+  if (t > 0.05 && t < 0.95 && u > 0.05 && u < 0.95) {
+    return { x: x1 + t*(x2-x1), y: y1 + t*(y2-y1) };
+  }
+  return null;
+}  
 function currentColor(I) {
   const a = Math.abs(I);
   if (a < 0.01) return '#5878a0';
@@ -952,15 +1032,24 @@ function updateSelectedPanel() {
     if (e) e.addEventListener('input', () => recomputeWire(b));
     if (e) e.addEventListener('change', () => recomputeWire(b));
   });
-  const db = document.getElementById('delete-btn');
-  if (db) db.addEventListener('click', () => {
-    deleteBranch(b.id);
-    state.selected = null;
-    solve(); render(); updateSelectedPanel(); updateStatus();
-  });
+  // Delete button handled via event delegation below — nothing to bind here.
 }
 
 const RESISTIVITY = { copper:1.68e-8, aluminium:2.65e-8, iron:9.71e-8, nichrome:1.1e-6 };
+
+// Event delegation: the selected-content panel can be rebuilt anytime,
+// so we listen on the parent container instead of the button itself.
+document.getElementById('selected-content').addEventListener('click', (e) => {
+  if (e.target.id === 'delete-btn' && state.selected !== null) {
+    const b = state.branches.find(x => x.id === state.selected);
+    if (b) {
+      deleteBranchClean(b.id);
+      state.selected = null;
+      solve(); render(); updateSelectedPanel(); updateStatus();
+    }
+  }
+});
+  
 function recomputeWire(b) {
   const L = parseFloat(document.getElementById('edit-len').value) || 1;
   const A_mm2 = parseFloat(document.getElementById('edit-area').value) || 1;
@@ -986,11 +1075,28 @@ function updateStatus() {
   document.getElementById('stat-count').textContent = state.branches.length;
 
   // Update canvas status
-  const stat = document.getElementById('canvas-status');
-  if (I > 10) stat.textContent = '⚠ HIGH CURRENT';
-  else if (I < 0.001 && state.branches.length > 1) stat.textContent = '○ OPEN CIRCUIT';
-  else stat.textContent = `I = ${I.toFixed(2)} A`;
-
+const stat = document.getElementById('canvas-status');
+  // If something is selected, show ITS reading. Otherwise show total circuit current.
+  if (state.selected !== null) {
+    const sel = state.branches.find(x => x.id === state.selected);
+    if (sel) {
+      const kind = sel.kind;
+      if (kind === 'voltmeter') stat.textContent = `V = ${sel.voltage.toFixed(3)} V`;
+      else if (kind === 'ammeter') stat.textContent = `I = ${sel.current.toFixed(3)} A`;
+      else if (kind === 'galvanometer') stat.textContent = `I = ${(sel.current*1000).toFixed(1)} mA`;
+      else if (kind === 'battery') stat.textContent = `EMF = ${sel.value.toFixed(1)} V · I = ${Math.abs(sel.current).toFixed(2)} A`;
+      else if (kind === 'capacitor') {
+        const C_F = sel.value * 1e-6;
+        const Vc = sel.charge / Math.max(C_F, 1e-12);
+        stat.textContent = `V_cap = ${Vc.toFixed(2)} V · I = ${sel.current.toFixed(2)} A`;
+      }
+      else stat.textContent = `I = ${sel.current.toFixed(3)} A · V = ${sel.voltage.toFixed(3)} V`;
+    }
+  } else {
+    if (I > 10) stat.textContent = '⚠ HIGH CURRENT';
+    else if (I < 0.001 && state.branches.length > 1) stat.textContent = '○ OPEN CIRCUIT';
+    else stat.textContent = `I = ${I.toFixed(2)} A`;
+  }
   // Smart banners
   detectIssues();
 }
