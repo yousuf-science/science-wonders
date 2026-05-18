@@ -851,12 +851,20 @@ function updateImageLabel(result) {
   // Position above the image (or below the axis if image is inverted and extends below)
   const Ix_px = (Ix * scaleX) + (rect.left - wrapRect.left);
   let Iy_px;
+  // if (result.isInverted) {
+  //   // image extends below axis; place label below
+  //   Iy_px = ((Ay + Math.abs(result.m) * state.h * SCALE + 60) * scaleY) + (rect.top - wrapRect.top);
+  // } else {
+  //   // image extends above axis; place label above
+  //   Iy_px = ((Ay - Math.abs(result.m) * state.h * SCALE - 36) * scaleY) + (rect.top - wrapRect.top);
+  // }
+
   if (result.isInverted) {
-    // image extends below axis; place label below
-    Iy_px = ((Ay + Math.abs(result.m) * state.h * SCALE + 60) * scaleY) + (rect.top - wrapRect.top);
+    // image extends below axis; place label further below
+    Iy_px = ((Ay + Math.abs(result.m) * state.h * SCALE + 90) * scaleY) + (rect.top - wrapRect.top);
   } else {
-    // image extends above axis; place label above
-    Iy_px = ((Ay - Math.abs(result.m) * state.h * SCALE - 36) * scaleY) + (rect.top - wrapRect.top);
+    // image extends above axis; place label further above
+    Iy_px = ((Ay - Math.abs(result.m) * state.h * SCALE - 75) * scaleY) + (rect.top - wrapRect.top);
   }
 
   lbl.style.left = Ix_px + 'px';
