@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar System & Satellite Orbits — Science Wonders</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #010409;
+  --bg2:     #080f1e;
+  --bg3:     #0c1830;
+  --border:  #152035;
+  --border2: #1e3050;
+  --text:    #b8ceec;
+  --text2:   #5878a0;
+  --text3:   #3a5070;
+  --accent:  #3a8fff;
+  --gold:    #f0c060;
+  --gold2:   #ffe8a0;
+  --good:    #60ee90;
+  --warn:    #ffb040;
+  --bad:     #ff6060;
+  --escape:  #c060ff;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Georgia', 'Times New Roman', serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+header {
+  display: flex; align-items: center; gap: 20px;
+  padding: 13px 28px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(1,4,9,0.95);
+  position: sticky; top: 0; z-index: 10;
+}
+.logo { font-family: monospace; font-size: 11px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; }
+.logo span { color: var(--text2); }
+.page-subtitle {
+  font-family: monospace; font-size: 11px; color: var(--text2);
+  border-left: 1px solid var(--border2); padding-left: 20px;
+  letter-spacing: 2px;
+}
+
+/* ─── VIEW TOGGLE (top centre) ─── */
+.view-toggle-wrap {
+  max-width: 960px; margin: 20px auto 0; padding: 0 20px;
+  display: flex; justify-content: center; gap: 8px;
+}
+.vbtn {
+  font-family: monospace; font-size: 11px; padding: 8px 22px;
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: 5px; color: var(--text2); cursor: pointer;
+  transition: all 0.15s; letter-spacing: 1.5px;
+}
+.vbtn:hover { color: var(--text); border-color: var(--accent); }
+.vbtn.active { background: var(--bg3); color: var(--gold); border-color: var(--gold); }
+.vbtn-sub {
+  font-size: 10px; padding: 5px 14px;
+  letter-spacing: 1px;
+}
+
+/* ─── CANVAS ─── */
+.canvas-wrap { position: relative; max-width: 960px; margin: 14px auto 0; padding: 0 20px; }
+canvas {
+  display: block; width: 100%; height: 500px;
+  background: #010610; border-radius: 12px;
+  border: 1px solid var(--border); cursor: crosshair;
+  touch-action: none;
+}
+.canvas-badge {
+  position: absolute; top: 10px; left: 30px;
+  font-family: monospace; font-size: 10px; color: var(--accent);
+  background: rgba(1,6,16,0.9); padding: 4px 10px; border-radius: 4px;
+  pointer-events: none; letter-spacing: 1.5px;
+}
+.canvas-clock {
+  position: absolute; top: 10px; right: 30px;
+  font-family: monospace; font-size: 10px; color: var(--text2);
+  background: rgba(1,6,16,0.9); padding: 4px 10px; border-radius: 4px;
+  pointer-events: none;
+}
+.scale-bar {
+  position: absolute; bottom: 14px; left: 30px;
+  font-family: monospace; font-size: 9px; color: var(--text3);
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+.scale-bar .bar {
+  display: inline-block; width: 60px; height: 1px;
+  background: var(--text3); vertical-align: middle;
+  margin: 0 6px;
+  border-left: 1px solid var(--text3); border-right: 1px solid var(--text3);
+  height: 6px; border-top: none; border-bottom: none;
+}
+.zoom-toggle {
+  position: absolute; bottom: 12px; right: 30px;
+  display: flex; gap: 4px;
+}
+.zoom-toggle button {
+  font-family: monospace; font-size: 9px; padding: 3px 9px;
+  background: rgba(1,6,16,0.9); border: 1px solid var(--border2);
+  border-radius: 3px; color: var(--text2); cursor: pointer; letter-spacing: 1px;
+}
+.zoom-toggle button.active { color: var(--gold); border-color: var(--gold); }
+
+/* ─── PANELS ─── */
+.panels {
+  max-width: 960px; margin: 14px auto 0;
+  display: grid; grid-template-columns: 340px 1fr;
+  gap: 12px; padding: 0 20px;
+}
+@media (max-width: 720px) { .panels { grid-template-columns: 1fr; } }
+
+.panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px;
+}
+.panel-title {
+  font-family: monospace; font-size: 9px; letter-spacing: 4px;
+  color: var(--text2); text-transform: uppercase;
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* buttons */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+button {
+  font-family: monospace; font-size: 11px; padding: 5px 13px;
+  background: transparent; border: 1px solid var(--border2);
+  border-radius: 5px; color: var(--text2); cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.5px;
+}
+button:hover { background: var(--bg3); color: var(--text); border-color: var(--accent); }
+button.lit { border-color: var(--accent); color: var(--accent); }
+
+/* sliders */
+.param { margin-bottom: 16px; }
+.param-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: monospace; font-size: 11px; color: var(--text2); margin-bottom: 5px;
+}
+.param-val { color: var(--gold); font-size: 12px; font-weight: bold; }
+.param-sub { font-family: monospace; font-size: 10px; color: var(--text3); margin-top: 3px; line-height: 1.5; }
+input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+
+/* preset chips */
+.preset-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chip {
+  font-family: monospace; font-size: 10px; padding: 4px 10px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 12px; color: var(--text2); cursor: pointer;
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--accent); color: var(--text); }
+
+/* instructions box */
+.howto {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 14px;
+  font-family: monospace; font-size: 11px; color: var(--text2); line-height: 1.8;
+}
+.howto .kbd {
+  display: inline-block;
+  padding: 1px 6px; border: 1px solid var(--border2); border-radius: 3px;
+  background: var(--bg2); color: var(--gold); font-size: 10px;
+}
+
+/* readout table */
+.readout-table {
+  width: 100%; border-collapse: collapse;
+  font-family: monospace; font-size: 11px;
+}
+.readout-table th {
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text3); font-weight: normal;
+  text-align: left; padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.readout-table td { padding: 5px 8px; color: var(--text); vertical-align: middle; }
+.readout-table tbody tr:hover td { background: rgba(58,143,255,0.04); }
+.readout-table tbody tr td:first-child { color: var(--text2); }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; vertical-align: middle; flex-shrink: 0; }
+.star-sym { color: var(--gold); margin-right: 5px; }
+.tag {
+  display: inline-block; padding: 1px 7px; border-radius: 8px;
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+}
+.tag.circ { background: rgba(96,238,144,0.15); color: var(--good); border: 1px solid rgba(96,238,144,0.4); }
+.tag.elli { background: rgba(255,176,64,0.12); color: var(--warn); border: 1px solid rgba(255,176,64,0.4); }
+.tag.imp  { background: rgba(255,96,96,0.15); color: var(--bad); border: 1px solid rgba(255,96,96,0.4); }
+.tag.esc  { background: rgba(192,96,255,0.15); color: var(--escape); border: 1px solid rgba(192,96,255,0.4); }
+.tag.nat  { background: rgba(240,192,96,0.12); color: var(--gold); border: 1px solid rgba(240,192,96,0.3); }
+
+.readout-note { font-family: monospace; font-size: 10px; color: var(--text3); line-height: 1.7; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+
+/* ─── THEORY ─── */
+.theory-wrap { max-width: 960px; margin: 20px auto 0; padding: 0 20px 60px; }
+.theory {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 30px 36px;
+}
+.theory-header {
+  font-family: monospace; font-size: 9px; letter-spacing: 5px;
+  color: var(--text2); text-transform: uppercase;
+  margin-bottom: 24px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.theory h3 {
+  font-family: monospace; font-size: 11px; font-weight: normal;
+  color: var(--gold); letter-spacing: 1.5px;
+  margin: 26px 0 10px; text-transform: uppercase;
+}
+.theory h3:first-of-type { margin-top: 0; }
+.theory p { font-size: 14px; color: var(--text2); margin-bottom: 10px; line-height: 1.85; }
+.theory .eq {
+  font-family: monospace; font-size: 14px;
+  background: var(--bg3); border-left: 3px solid var(--gold);
+  padding: 12px 20px; margin: 14px 0;
+  border-radius: 0 8px 8px 0; color: var(--gold2);
+}
+.theory .eq .vars { font-size: 11px; color: var(--text3); margin-top: 6px; line-height: 1.7; }
+.unit-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 12px; margin-top: 10px; }
+.unit-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
+.unit-table td:first-child { color: var(--gold2); width: 220px; }
+.unit-table tr:last-child td { border-bottom: none; }
+.sim-note {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 14px 18px; margin-top: 20px;
+  font-family: monospace; font-size: 11px; color: var(--text3); line-height: 2;
+}
+.sim-note strong { color: var(--text2); }
+
+footer {
+  border-top: 1px solid var(--border); padding: 16px 28px;
+  text-align: center; font-family: monospace; font-size: 10px;
+  color: var(--text3); letter-spacing: 3px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="page-subtitle" id="hdr-sub">Solar System &amp; Satellite Orbits</div>
+</header>
+
+<div class="view-toggle-wrap">
+  <button class="vbtn active" id="mode-solar">🌌 Solar System</button>
+  <button class="vbtn" id="mode-earth">🌍 Earth &amp; Satellites</button>
+</div>
+
+<div class="canvas-wrap">
+  <canvas id="c"></canvas>
+  <div class="canvas-badge" id="badge">DRAG TO LAUNCH · CLICK 🌍 EARTH TO ZOOM IN</div>
+  <div class="canvas-clock" id="clock">Elapsed: 0 days</div>
+  <div class="scale-bar" id="scale-bar"></div>
+  <div class="zoom-toggle" id="zoom-toggle" style="display:none;">
+    <button id="zoom-sat" class="active">🛰 SATELLITE VIEW</button>
+    <button id="zoom-moon">🌙 LUNAR DISTANCE</button>
+  </div>
+</div>
+
+<div class="panels">
+  <!-- LEFT PANEL: Controls -->
+  <div class="panel">
+    <div class="panel-title">Controls &amp; Presets</div>
+
+    <div class="btn-row">
+      <button id="btn-pause">⏸ Pause</button>
+      <button id="btn-reset">↺ Reset</button>
+      <button id="btn-trail" class="lit">Trails ON</button>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Simulation Speed</span>
+        <span class="param-val" id="spv">1.0×</span>
+      </div>
+      <input type="range" id="speed" min="0.2" max="4" step="0.1" value="1">
+      <div class="param-sub" id="speed-sub">— per second of animation</div>
+    </div>
+
+    <div class="param">
+      <div class="param-row">
+        <span>Launch body mass</span>
+        <span class="param-val" id="new-v">500 kg</span>
+      </div>
+      <input type="range" id="new-mass" min="0" max="100" step="1" value="30">
+      <div class="param-sub" id="new-sub">≈ small satellite class</div>
+    </div>
+
+    <div class="param" id="quick-presets">
+      <div class="param-row" style="margin-bottom:8px;"><span>Quick launches</span></div>
+      <div class="preset-row" id="preset-row"></div>
+    </div>
+
+    <div class="howto" id="howto">
+      <strong style="color:var(--text);">How to play</strong><br>
+      <span class="kbd">DRAG</span> on the canvas → launches a body.<br>
+      Drag <em>direction</em> = velocity vector.<br>
+      Drag <em>length</em> = speed.<br>
+      A dotted line previews the orbit.<br>
+      <span style="color: var(--good);">●</span> stable &nbsp;
+      <span style="color: var(--warn);">●</span> elliptical &nbsp;
+      <span style="color: var(--bad);">●</span> will crash &nbsp;
+      <span style="color: var(--escape);">●</span> escape
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Live readout -->
+  <div class="panel">
+    <div class="panel-title">Live Physics Readout</div>
+    <table class="readout-table">
+      <thead>
+        <tr>
+          <th>Body</th>
+          <th>Distance</th>
+          <th>Speed</th>
+          <th>Period</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="readout"></tbody>
+    </table>
+    <div class="readout-note" id="readout-note">
+      Live values: distance from central body, instantaneous orbital speed, period from Kepler's third law, orbit classification from total mechanical energy.
+    </div>
+  </div>
+</div>
+
+<!-- THEORY SECTION -->
+<div class="theory-wrap">
+<div class="theory">
+  <div class="theory-header">Theory — Orbits, Satellites &amp; Solar Systems</div>
+
+  <h3>Why Satellites Don't Fall Down (Actually, They Do)</h3>
+  <p>The International Space Station is in <em>free fall</em> — there is nothing holding it up. Astronauts inside float not because there's no gravity (Earth's gravity is still 89% as strong at the ISS as on the ground), but because the station, the astronauts, and everything inside it are all falling together. The trick is that the ISS is moving sideways at <strong>7.66 km/s</strong> — fast enough that as it falls toward Earth, the curved surface of Earth falls away beneath it at exactly the same rate. It never hits the ground.</p>
+  <p>Newton imagined this with a cannonball fired horizontally from a mountain. Fired slowly, it lands nearby. Fired faster, it lands further. Fired fast enough — the cannonball misses Earth entirely and comes round behind you. That is an orbit. Every satellite is just a very fast cannonball.</p>
+
+  <h3>Newton's Law of Universal Gravitation (1687)</h3>
+  <p>Every object with mass pulls on every other object with mass. The force is proportional to the product of the masses and falls off as the square of the distance.</p>
+  <div class="eq">
+    F = G · M · m / r²
+    <div class="vars">
+      G = 6.674 × 10⁻¹¹ N·m²·kg⁻² — Newton's gravitational constant<br>
+      M, m = masses in kilograms · r = distance between centres in metres
+    </div>
+  </div>
+
+  <h3>Circular Orbital Velocity</h3>
+  <p>A body in a circular orbit moves fast enough that gravity exactly supplies the centripetal acceleration needed to curve its straight-line motion into a circle. Setting gravity equal to centripetal force and solving for speed gives:</p>
+  <div class="eq">
+    v = √( G · M / r )
+    <div class="vars">
+      Closer orbit → faster speed. The ISS at 400 km altitude orbits at 7.66 km/s; geostationary satellites at 35,786 km altitude orbit at just 3.07 km/s.
+    </div>
+  </div>
+
+  <h3>Orbital Period — Kepler's Third Law (1619)</h3>
+  <p>The time for one complete orbit comes from dividing the circle's circumference by the orbital speed:</p>
+  <div class="eq">
+    T = 2π · √( r³ / G·M )
+    <div class="vars">
+      Kepler's Third Law: T² ∝ r³. Doubling the orbital radius makes the period 2√2 ≈ 2.83 times longer.<br>
+      ISS at r = 6,771 km → T = 92.7 minutes. GEO at r = 42,164 km → T = 24 hours exactly (that's why GEO satellites stay over one spot).
+    </div>
+  </div>
+
+  <h3>Eccentricity &amp; the Shape of Orbits — Kepler's First Law</h3>
+  <p>Most orbits are not perfect circles. They are <em>ellipses</em>, with the central body at one of the two foci. The eccentricity <em>e</em> tells you how stretched the ellipse is:</p>
+  <p style="margin-left: 18px; font-size: 13px;">
+    <strong>e = 0</strong> — perfect circle (rare in reality)<br>
+    <strong>0 &lt; e &lt; 1</strong> — bound elliptical orbit (most satellites and planets)<br>
+    <strong>e = 1</strong> — parabolic trajectory (exactly escape velocity)<br>
+    <strong>e &gt; 1</strong> — hyperbolic flyby (faster than escape — never returns)
+  </p>
+  <p>For an elliptical orbit, the closest point to the central body is the <em>periapsis</em> (called <em>perigee</em> for Earth orbits, <em>perihelion</em> for solar orbits) and the furthest is the <em>apoapsis</em>. The live readout above computes these for every body you launch.</p>
+
+  <h3>Escape Velocity</h3>
+  <p>If you fire something fast enough, gravity can no longer bring it back. The threshold is escape velocity:</p>
+  <div class="eq">
+    v_esc = √( 2·G·M / r ) = √2 · v_circular
+    <div class="vars">
+      From Earth's surface: 11.2 km/s. From the ISS altitude: 10.84 km/s. From the Sun at 1 AU: 42.1 km/s.
+    </div>
+  </div>
+  <p>The condition for escape can be stated cleanly in terms of total energy: if the body's kinetic energy exceeds its gravitational potential energy (ε = v²/2 − GM/r &gt; 0), it will escape and never return.</p>
+
+  <h3>Why the ISS and Geostationary Satellites Behave So Differently</h3>
+  <p>Both are in stable orbits, but at radically different altitudes — and this changes everything. The ISS at 400 km circles Earth 16 times a day. A geostationary satellite at 35,786 km circles exactly once per day, and because Earth rotates at the same rate, it appears <em>fixed in the sky</em>. This is why every TV satellite dish on the planet points to the same patch of sky: they're all looking at the same ring of geostationary satellites above the equator.</p>
+  <p>To go from LEO to GEO requires a manoeuvre called a <em>Hohmann transfer</em>: fire engines once to enter an elliptical orbit that touches both altitudes, then fire again at the high point to circularise. This is the cheapest fuel route between any two orbits.</p>
+
+  <h3>Natural vs Artificial Satellites</h3>
+  <p>The Moon is a natural satellite — captured (or co-formed with Earth) 4.5 billion years ago. It orbits at 384,400 km with a period of 27.3 days. Compare this with the artificial satellites: there are over <strong>10,000</strong> active satellites in Earth orbit as of 2026, ranging from LEO (300–2,000 km), through MEO (where GPS lives, around 20,200 km), to GEO (35,786 km), and a handful in highly elliptical orbits like Russia's Molniya satellites.</p>
+
+  <h3>Unit Reference</h3>
+  <table class="unit-table">
+    <tr><td>1 M☉ (solar mass)</td><td>= 1.989 × 10³⁰ kg</td></tr>
+    <tr><td>1 M⊕ (Earth mass)</td><td>= 5.972 × 10²⁴ kg</td></tr>
+    <tr><td>Moon mass</td><td>= 7.342 × 10²² kg = 0.0123 M⊕</td></tr>
+    <tr><td>Earth radius</td><td>= 6,371 km</td></tr>
+    <tr><td>1 AU (astronomical unit)</td><td>= 1.496 × 10¹¹ m = 149.6 million km</td></tr>
+    <tr><td>G (gravitational constant)</td><td>= 6.674 × 10⁻¹¹ N·m²·kg⁻²</td></tr>
+  </table>
+
+  <div class="sim-note">
+    <strong>Simulation Notes:</strong><br>
+    All physics runs in real SI units — masses in kg, distances in metres, velocities in m/s. Only the <em>display</em> scale is compressed so orbits fit on screen. The orbit classification, periapsis/apoapsis, period, and escape detection use the body's actual mechanical energy and angular momentum — exactly the same equations used in mission planning at NASA and ESA. The Moon's orbital radius in "Satellite View" is far off-canvas at true scale; switch to "Lunar Distance" to see it.
+  </div>
+</div>
+</div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS SIMULATIONS</footer>
+
+<script>
+"use strict";
+
+// ============================================================================
+// PHYSICAL CONSTANTS
+// ============================================================================
+const G       = 6.674e-11;        // N·m²·kg⁻²
+const M_SUN   = 1.989e30;         // kg
+const M_EARTH = 5.972e24;         // kg
+const M_MOON  = 7.342e22;         // kg
+const R_EARTH = 6.371e6;          // m
+const R_SUN_VIS = 8.0;            // visual radius for Sun in px
+const AU      = 1.496e11;         // m
+const DAY     = 86400;            // s
+const YEAR    = 365.25 * DAY;
+
+// ============================================================================
+// CANVAS
+// ============================================================================
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, CX, CY;
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  W  = canvas.width  = Math.round(r.width);
+  H  = canvas.height = 500;
+  CX = W / 2; CY = H / 2;
+}
+resize();
+window.addEventListener('resize', () => { resize(); spawnCurrent(); });
+
+// ============================================================================
+// VIEW MODES & SCALES
+// ============================================================================
+// mode: 'solar' | 'earth'
+// earthZoom: 'sat' | 'moon'   (only used when mode === 'earth')
+let mode = 'solar';
+let earthZoom = 'sat';
+
+// Scale config — converts between real metres and screen pixels, and
+// between real seconds and one second of animation time.
+const SCALES = {
+  solar: {
+    central_mass: M_SUN,
+    central_label: 'Sun',
+    central_color: '#ffd060',
+    central_radius_vis: 16,
+    central_radius_real: 6.96e8,       // Sun radius (m)
+    px_per_m: 60 / AU,                 // 60 px = 1 AU
+    sec_per_anim: 25 * DAY,            // 1 anim-sec = 25 days
+    scale_text: '60 px = 1 AU = 149.6 Mkm',
+    drag_to_ms: 360,                   // m/s per pixel of drag
+    clock_unit: 'days',
+  },
+  earth_sat: {
+    central_mass: M_EARTH,
+    central_label: 'Earth',
+    central_color: '#4a90e2',
+    central_radius_vis: 30,            // visually larger than real for clarity
+    central_radius_real: R_EARTH,
+    px_per_m: 30 / R_EARTH,            // Earth surface drawn at 30 px
+    sec_per_anim: 4 * 60,              // 1 anim-sec = 4 minutes
+    scale_text: '1 px ≈ 212 km · Earth surface to scale',
+    drag_to_ms: 90,
+    clock_unit: 'auto',
+  },
+  earth_moon: {
+    central_mass: M_EARTH,
+    central_label: 'Earth',
+    central_color: '#4a90e2',
+    central_radius_vis: 8,
+    central_radius_real: R_EARTH,
+    px_per_m: 220 / 3.844e8,           // Moon at ~220 px (1 px ≈ 1747 km)
+    sec_per_anim: 10 * 3600,           // 1 anim-sec = 10 hours
+    scale_text: '1 px ≈ 1,747 km · Moon visible',
+    drag_to_ms: 25,
+    clock_unit: 'auto',
+  },
+};
+
+function currentScale() {
+  if (mode === 'solar') return SCALES.solar;
+  return earthZoom === 'sat' ? SCALES.earth_sat : SCALES.earth_moon;
+}
+function mu() { return G * currentScale().central_mass; }
+
+// ============================================================================
+// STATE
+// ============================================================================
+let bodies   = [];
+let paused   = false;
+let showTrail = true;
+let speedMult = 1.0;
+let newBodyMassKg = 500;        // user-selected launch mass
+let simTime  = 0;               // seconds (real time elapsed in simulation)
+let lastTime = null;
+
+const TRAIL_LEN = 280;
+
+// ============================================================================
+// BODIES — all positions in METRES from central body, velocities in m/s
+// ============================================================================
+function makeBody(opts) {
+  return Object.assign({
+    x: 0, y: 0, vx: 0, vy: 0,
+    mass: 1, color: '#ffffff', label: '',
+    radius_vis: 3,           // visual radius in px
+    trail: [],
+    tag: 'natural',          // 'natural' | 'user'
+    pinned: false,           // central body doesn't move
+    preset_kind: null,       // 'planet' | 'moon' | 'sat' | 'iss' | 'geo' | etc.
+  }, opts);
+}
+
+// Real solar system data (semi-major axis in m, mass in kg)
+const SOLAR_DATA = [
+  { name: 'Mercury', a: 0.387 * AU, mass: 3.301e23, color: '#a08070', r: 3 },
+  { name: 'Venus',   a: 0.723 * AU, mass: 4.867e24, color: '#e8b070', r: 4 },
+  { name: 'Earth',   a: 1.000 * AU, mass: M_EARTH,  color: '#5090e8', r: 4, preset_kind: 'earth' },
+  { name: 'Mars',    a: 1.524 * AU, mass: 6.417e23, color: '#e06040', r: 3 },
+  { name: 'Jupiter', a: 5.203 * AU, mass: 1.898e27, color: '#d8a060', r: 8 },
+  { name: 'Saturn',  a: 9.537 * AU, mass: 5.683e26, color: '#e0c080', r: 7 },
+];
+
+// Real Earth-system data
+const EARTH_DATA_SAT = [
+  { name: 'ISS',           alt: 400e3,    mass: 4.2e5,  color: '#80ffd0', r: 3, preset_kind: 'iss' },
+  { name: 'Hubble',        alt: 540e3,    mass: 1.1e4,  color: '#c0c0ff', r: 3, preset_kind: 'hubble' },
+  { name: 'GPS',           alt: 20200e3,  mass: 2.0e3,  color: '#ffc080', r: 3, preset_kind: 'gps' },
+  { name: 'Geostationary', alt: 35786e3,  mass: 5.0e3,  color: '#ffe060', r: 3, preset_kind: 'geo' },
+];
+const EARTH_DATA_MOON = [
+  { name: 'Moon', alt: 3.844e8 - R_EARTH, mass: M_MOON, color: '#d8d8d8', r: 5, preset_kind: 'moon' },
+  // and the satellites, which will visually collapse onto Earth at this scale
+  { name: 'Geostationary', alt: 35786e3, mass: 5.0e3, color: '#ffe060', r: 2, preset_kind: 'geo' },
+];
+
+function spawnSolar() {
+  bodies = [];
+  simTime = 0;
+  bodies.push(makeBody({
+    label: 'Sun', mass: M_SUN, color: '#ffd060', radius_vis: 12,
+    pinned: true, preset_kind: 'sun', tag: 'natural'
+  }));
+  SOLAR_DATA.forEach(p => {
+    const ang = Math.random() * Math.PI * 2;
+    const r = p.a;
+    const v = Math.sqrt(G * M_SUN / r);     // circular orbital speed at r
+    bodies.push(makeBody({
+      x:  Math.cos(ang) * r, y:  Math.sin(ang) * r,
+      vx: -Math.sin(ang) * v, vy: Math.cos(ang) * v,
+      mass: p.mass, color: p.color, label: p.name,
+      radius_vis: p.r, tag: 'natural', preset_kind: p.preset_kind || 'planet'
+    }));
+  });
+}
+
+function spawnEarthSystem(zoom) {
+  bodies = [];
+  simTime = 0;
+  const sc = (zoom === 'sat') ? SCALES.earth_sat : SCALES.earth_moon;
+  bodies.push(makeBody({
+    label: 'Earth', mass: M_EARTH, color: sc.central_color,
+    radius_vis: sc.central_radius_vis,
+    pinned: true, preset_kind: 'earth', tag: 'natural'
+  }));
+  const data = (zoom === 'sat') ? EARTH_DATA_SAT : EARTH_DATA_MOON;
+  data.forEach(s => {
+    const ang = Math.random() * Math.PI * 2;
+    const r = R_EARTH + s.alt;
+    const v = Math.sqrt(G * M_EARTH / r);
+    bodies.push(makeBody({
+      x:  Math.cos(ang) * r, y:  Math.sin(ang) * r,
+      vx: -Math.sin(ang) * v, vy: Math.cos(ang) * v,
+      mass: s.mass, color: s.color, label: s.name,
+      radius_vis: s.r, tag: 'natural', preset_kind: s.preset_kind
+    }));
+  });
+}
+
+function spawnCurrent() {
+  if (mode === 'solar') spawnSolar();
+  else spawnEarthSystem(earthZoom);
+  updatePresetChips();
+  updateHowto();
+  updateScaleBar();
+  updateBadge();
+}
+
+// ============================================================================
+// COORDINATE CONVERSIONS
+// ============================================================================
+// Real coordinates (m, origin at central body) ↔ screen pixels
+function r2px(x, y) {
+  const k = currentScale().px_per_m;
+  return { x: CX + x * k, y: CY + y * k };
+}
+function px2r(px, py) {
+  const k = currentScale().px_per_m;
+  return { x: (px - CX) / k, y: (py - CY) / k };
+}
+
+// ============================================================================
+// PHYSICS — Newtonian, all in SI
+// ============================================================================
+function physicsStep(dt_real) {
+  const n = bodies.length;
+  // accelerations
+  const ax = new Float64Array(n), ay = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue;
+      const dx = bodies[j].x - bodies[i].x;
+      const dy = bodies[j].y - bodies[i].y;
+      const d2 = dx*dx + dy*dy;
+      const d  = Math.sqrt(d2);
+      if (d < 1) continue;
+      const a = G * bodies[j].mass / d2;
+      ax[i] += a * dx / d;
+      ay[i] += a * dy / d;
+    }
+  }
+  // integrate
+  for (let i = 0; i < n; i++) {
+    const b = bodies[i];
+    if (b.pinned) continue;
+    b.vx += ax[i] * dt_real;
+    b.vy += ay[i] * dt_real;
+    b.x  += b.vx * dt_real;
+    b.y  += b.vy * dt_real;
+    b.trail.push([b.x, b.y]);
+    if (b.trail.length > TRAIL_LEN) b.trail.shift();
+  }
+  // collision with central body (impact)
+  const central = bodies[0];
+  const R_surf = (mode === 'earth' && currentScale().central_radius_real) ? currentScale().central_radius_real : 0;
+  bodies = bodies.filter((b, i) => {
+    if (i === 0) return true;
+    const d = Math.hypot(b.x - central.x, b.y - central.y);
+    if (R_surf > 0 && d < R_surf) {
+      // impact — remove unless we want a flash
+      return false;
+    }
+    // remove if absurdly far
+    const k = currentScale().px_per_m;
+    const dpx = d * k;
+    if (dpx > 4000) return false;
+    return true;
+  });
+}
+
+// ============================================================================
+// ORBIT CLASSIFICATION (around central body, using real SI values)
+// ============================================================================
+function classifyOrbit(b) {
+  const central = bodies[0];
+  const rx = b.x - central.x, ry = b.y - central.y;
+  const vx = b.vx - (central.vx || 0), vy = b.vy - (central.vy || 0);
+  const r = Math.hypot(rx, ry);
+  const v = Math.hypot(vx, vy);
+  const MU = mu();
+  const eps = v*v/2 - MU/r;                 // specific orbital energy J/kg
+  const h = rx * vy - ry * vx;              // specific angular momentum
+  const R_surf = currentScale().central_radius_real || 0;
+
+  if (eps >= 0) {
+    const v_esc = Math.sqrt(2 * MU / r);
+    return { type: 'escape', r, v, v_esc, period: null };
+  }
+  // bound
+  const a = -MU / (2 * eps);
+  const e = Math.sqrt(Math.max(0, 1 + 2 * eps * h * h / (MU * MU)));
+  const periapsis = a * (1 - e);
+  const apoapsis  = a * (1 + e);
+  const T = 2 * Math.PI * Math.sqrt(a*a*a / MU);
+
+  if (R_surf > 0 && periapsis < R_surf) {
+    return { type: 'impact', r, v, periapsis, apoapsis, period: T, e };
+  }
+  if (e < 0.03) {
+    return { type: 'circular', r, v, a, period: T };
+  }
+  return { type: 'elliptical', r, v, periapsis, apoapsis, period: T, e };
+}
+
+// ============================================================================
+// PREDICTED ORBIT — analytical (Kepler) ellipse for stable orbits,
+//                    numerical for impact/escape
+// ============================================================================
+function predictPath(x, y, vx, vy) {
+  // returns { points: [[px,py],...], color: '#...' }
+  const central = bodies[0];
+  const rx = x - central.x, ry = y - central.y;
+  const r = Math.hypot(rx, ry);
+  const v = Math.hypot(vx, vy);
+  const MU = mu();
+  const eps = v*v/2 - MU/r;
+  const h = rx * vy - ry * vx;
+  const R_surf = currentScale().central_radius_real || 0;
+
+  // Compute eccentricity vector for analytical orbit
+  // e_vec = ((v² − μ/r)·r_vec − (r·v)·v_vec) / μ
+  const rdotv = rx * vx + ry * vy;
+  const factor = v*v - MU/r;
+  const ex = (factor * rx - rdotv * vx) / MU;
+  const ey = (factor * ry - rdotv * vy) / MU;
+  const ecc = Math.hypot(ex, ey);
+
+  if (eps < 0 && ecc < 0.999) {
+    // Bound orbit — draw analytical ellipse
+    const a = -MU / (2 * eps);                  // semi-major axis
+    const periapsis = a * (1 - ecc);
+    const apoapsis  = a * (1 + ecc);
+    // orientation angle of periapsis (from +x axis)
+    const omega = Math.atan2(ey, ex);
+    // direction of motion (CCW or CW): from h sign
+    const ccw = (h > 0);
+
+    const pts = [];
+    const STEPS = 180;
+    for (let i = 0; i <= STEPS; i++) {
+      // True anomaly θ from 0 → 2π
+      const theta = (i / STEPS) * Math.PI * 2;
+      const rT = a * (1 - ecc * ecc) / (1 + ecc * Math.cos(theta));
+      // Position in orbit plane (periapsis along +x of rotated frame)
+      const xOrb = rT * Math.cos(theta);
+      const yOrb = rT * Math.sin(theta) * (ccw ? 1 : -1);
+      // Rotate by omega and translate to central body's position
+      const xWorld = central.x + xOrb * Math.cos(omega) - yOrb * Math.sin(omega);
+      const yWorld = central.y + xOrb * Math.sin(omega) + yOrb * Math.cos(omega);
+      pts.push(r2px(xWorld, yWorld));
+    }
+
+    // Color based on classification
+    let color;
+    if (R_surf > 0 && periapsis < R_surf) color = '#ff6060';   // will crash
+    else if (ecc < 0.03) color = '#60ee90';                   // ~circular
+    else color = '#ffb040';                                    // elliptical
+    return { points: pts, color, closed: true };
+  }
+
+  // Escape / impact — numerical integration forward
+  let sx = x, sy = y, svx = vx, svy = vy;
+  const pts = [r2px(sx, sy)];
+  const dt = currentScale().sec_per_anim * 0.05; // small step
+  const STEPS = 600;
+  let impacted = false;
+  for (let i = 0; i < STEPS; i++) {
+    const dx = central.x - sx, dy = central.y - sy;
+    const d2 = dx*dx + dy*dy;
+    const d  = Math.sqrt(d2);
+    if (R_surf > 0 && d < R_surf) { impacted = true; break; }
+    const a = MU / d2;
+    svx += a * dx / d * dt;
+    svy += a * dy / d * dt;
+    sx  += svx * dt;
+    sy  += svy * dt;
+    pts.push(r2px(sx, sy));
+    // stop if going way off screen
+    const screenPt = r2px(sx, sy);
+    if (screenPt.x < -W || screenPt.x > 2*W || screenPt.y < -H || screenPt.y > 2*H) break;
+  }
+  const color = impacted ? '#ff6060' : '#c060ff';
+  return { points: pts, color, closed: false };
+}
+
+// ============================================================================
+// BACKGROUND STAR FIELD
+// ============================================================================
+const bgStars = Array.from({length: 220}, () => ({
+  x: Math.random(), y: Math.random(),
+  b: Math.random(), s: 0.4 + Math.random() * 0.9
+}));
+
+// ============================================================================
+// RENDER
+// ============================================================================
+function render(ts) {
+  // trail-fade background
+  ctx.fillStyle = showTrail ? 'rgba(1,6,16,0.18)' : '#010610';
+  ctx.fillRect(0, 0, W, H);
+
+  // background stars
+  bgStars.forEach(s => {
+    const a = 0.1 + 0.25 * Math.sin(ts * 0.0006 + s.b * 7);
+    ctx.fillStyle = 'rgba(190,215,255,' + a.toFixed(2) + ')';
+    ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.s, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // trails
+  if (showTrail) {
+    bodies.forEach((b, i) => {
+      if (b.trail.length < 2 || b.pinned) return;
+      for (let k = 1; k < b.trail.length; k++) {
+        const a = k / b.trail.length;
+        const p0 = r2px(b.trail[k-1][0], b.trail[k-1][1]);
+        const p1 = r2px(b.trail[k][0],   b.trail[k][1]);
+        ctx.beginPath();
+        ctx.strokeStyle = b.color + Math.floor(a * 0.55 * 255).toString(16).padStart(2, '0');
+        ctx.lineWidth = 0.5 + a * 1.2;
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+    });
+  }
+
+  // predicted orbit during drag
+  if (drag.active && drag.preview) {
+    const p = drag.preview;
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    p.points.forEach((pt, i) => {
+      if (i === 0) ctx.moveTo(pt.x, pt.y);
+      else ctx.lineTo(pt.x, pt.y);
+    });
+    if (p.closed) ctx.closePath();
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // drag arrow
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(drag.startPx.x, drag.startPx.y);
+    ctx.lineTo(drag.endPx.x, drag.endPx.y);
+    ctx.stroke();
+    // arrowhead
+    const dx = drag.endPx.x - drag.startPx.x;
+    const dy = drag.endPx.y - drag.startPx.y;
+    const ang = Math.atan2(dy, dx);
+    const ah = 8;
+    ctx.beginPath();
+    ctx.moveTo(drag.endPx.x, drag.endPx.y);
+    ctx.lineTo(drag.endPx.x - ah * Math.cos(ang - 0.4), drag.endPx.y - ah * Math.sin(ang - 0.4));
+    ctx.moveTo(drag.endPx.x, drag.endPx.y);
+    ctx.lineTo(drag.endPx.x - ah * Math.cos(ang + 0.4), drag.endPx.y - ah * Math.sin(ang + 0.4));
+    ctx.stroke();
+  }
+
+  // bodies
+  bodies.forEach((b, i) => {
+    const p = r2px(b.x, b.y);
+    if (p.x < -50 || p.x > W + 50 || p.y < -50 || p.y > H + 50) return;
+    // glow
+    for (let g = 5; g > 0; g--) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, b.radius_vis + g * 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = b.color + ['1a','12','0c','06','03'][g - 1];
+      ctx.fill();
+    }
+    // body
+    ctx.beginPath(); ctx.arc(p.x, p.y, b.radius_vis, 0, Math.PI * 2);
+    ctx.fillStyle = b.color; ctx.fill();
+    // highlight
+    ctx.beginPath();
+    ctx.arc(p.x - b.radius_vis * 0.3, p.y - b.radius_vis * 0.32,
+            b.radius_vis * 0.36, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
+
+    // label for special bodies
+    if (b.label && (b.preset_kind === 'earth' || b.preset_kind === 'iss' ||
+        b.preset_kind === 'geo' || b.preset_kind === 'moon' ||
+        b.preset_kind === 'hubble' || b.preset_kind === 'gps' ||
+        i === 0 || b.preset_kind === 'planet' ||
+        ['Mercury','Venus','Mars','Jupiter','Saturn'].includes(b.label))) {
+      ctx.fillStyle = 'rgba(184,206,236,0.55)';
+      ctx.font = '10px monospace';
+      ctx.fillText(b.label, p.x + b.radius_vis + 5, p.y + 3);
+    }
+  });
+}
+
+// ============================================================================
+// MAIN LOOP
+// ============================================================================
+function loop(ts) {
+  if (lastTime === null) lastTime = ts;
+  const dt_anim = Math.min((ts - lastTime) / 1000, 0.05) * speedMult;
+  lastTime = ts;
+  if (!paused) {
+    const sub = 4;        // substeps for stability
+    const dt_real = dt_anim * currentScale().sec_per_anim / sub;
+    for (let i = 0; i < sub; i++) physicsStep(dt_real);
+    simTime += dt_anim * currentScale().sec_per_anim;
+  }
+  render(ts);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ============================================================================
+// FORMATTING HELPERS
+// ============================================================================
+function fmtDist(m) {
+  if (mode === 'solar') return (m / AU).toFixed(2) + ' AU';
+  if (m < 1e7) return (m / 1000).toFixed(0) + ' km';
+  return (m / 1000).toLocaleString(undefined, {maximumFractionDigits: 0}) + ' km';
+}
+function fmtSpeed(ms) {
+  return (ms / 1000).toFixed(2) + ' km/s';
+}
+function fmtPeriod(s) {
+  if (s === null || !isFinite(s)) return '—';
+  if (s < 3600) return (s / 60).toFixed(1) + ' min';
+  if (s < 86400) return (s / 3600).toFixed(1) + ' hrs';
+  if (s < 365.25 * 86400) return (s / 86400).toFixed(1) + ' days';
+  return (s / (365.25 * 86400)).toFixed(2) + ' yrs';
+}
+function fmtMass(kg) {
+  if (kg >= 1e29) return (kg / M_SUN).toFixed(2) + ' M☉';
+  if (kg >= 1e23) return (kg / M_EARTH).toFixed(3) + ' M⊕';
+  if (kg >= 1e6) return (kg / 1000).toFixed(0) + ' tonnes';
+  if (kg >= 1) return kg.toFixed(0) + ' kg';
+  return kg.toExponential(2) + ' kg';
+}
+function fmtAltitude(b) {
+  if (mode !== 'earth') return null;
+  const r = Math.hypot(b.x, b.y);
+  const alt = r - R_EARTH;
+  if (alt < 0) return 'below surface';
+  return fmtDist(alt) + ' alt';
+}
+
+// ============================================================================
+// READOUT
+// ============================================================================
+function updateReadout() {
+  if (!bodies.length) return;
+  const central = bodies[0];
+  const rows = bodies.map((b, i) => {
+    if (i === 0) {
+      const txt = mode === 'solar'
+        ? 'Central body — provides gravitational field'
+        : 'Central body — Earth (mass: 5.97 × 10²⁴ kg)';
+      return '<tr>' +
+        '<td><span class="star-sym">★</span>' + b.label + '</td>' +
+        '<td colspan="4" style="color:var(--text3); font-size:10px;">' + txt + '</td>' +
+      '</tr>';
+    }
+    const orb = classifyOrbit(b);
+    const distM = orb.r;
+    let distStr;
+    if (mode === 'earth') {
+      const alt = distM - R_EARTH;
+      distStr = (alt > 0 ? '+' : '') + fmtDist(alt);
+    } else {
+      distStr = fmtDist(distM);
+    }
+    let tag, periodStr;
+    if (orb.type === 'circular') {
+      tag = '<span class="tag circ">circular</span>';
+      periodStr = fmtPeriod(orb.period);
+    } else if (orb.type === 'elliptical') {
+      tag = '<span class="tag elli">e=' + orb.e.toFixed(2) + '</span>';
+      periodStr = fmtPeriod(orb.period);
+    } else if (orb.type === 'impact') {
+      tag = '<span class="tag imp">will crash</span>';
+      periodStr = fmtPeriod(orb.period) + ' *';
+    } else { // escape
+      tag = '<span class="tag esc">escape</span>';
+      periodStr = '∞';
+    }
+    if (b.tag === 'natural' && (orb.type === 'circular' || orb.type === 'elliptical')) {
+      tag = '<span class="tag nat">' + (b.preset_kind || 'natural') + '</span>';
+    }
+    return '<tr>' +
+      '<td><span class="dot" style="background:' + b.color + '"></span>' + b.label + '</td>' +
+      '<td>' + distStr + '</td>' +
+      '<td>' + fmtSpeed(orb.v) + '</td>' +
+      '<td>' + periodStr + '</td>' +
+      '<td>' + tag + '</td>' +
+    '</tr>';
+  });
+  document.getElementById('readout').innerHTML = rows.join('');
+
+  // clock
+  let str;
+  const sc = currentScale();
+  if (sc.clock_unit === 'days') {
+    const d = simTime / DAY;
+    str = d < 365 ? d.toFixed(0) + ' days' : (d / 365.25).toFixed(2) + ' yrs';
+  } else {
+    if (simTime < 3600) str = (simTime / 60).toFixed(0) + ' min';
+    else if (simTime < 86400) str = (simTime / 3600).toFixed(1) + ' hrs';
+    else if (simTime < 365 * 86400) str = (simTime / 86400).toFixed(1) + ' days';
+    else str = (simTime / (365.25 * 86400)).toFixed(2) + ' yrs';
+  }
+  document.getElementById('clock').textContent = 'Elapsed: ' + str;
+}
+setInterval(updateReadout, 300);
+
+// ============================================================================
+// DRAG-TO-LAUNCH
+// ============================================================================
+const drag = { active: false, startPx: null, endPx: null, preview: null, startedAt: 0, moved: false };
+
+function getMousePx(e) {
+  const rect = canvas.getBoundingClientRect();
+  const cx = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
+  const cy = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+  return {
+    x: (cx - rect.left) * (W / rect.width),
+    y: (cy - rect.top)  * (H / rect.height),
+  };
+}
+
+function dragVelocity(startPx, endPx) {
+  const dx = endPx.x - startPx.x;
+  const dy = endPx.y - startPx.y;
+  const factor = currentScale().drag_to_ms;
+  return { vx: dx * factor, vy: dy * factor };
+}
+
+canvas.addEventListener('mousedown', e => {
+  drag.active = true;
+  drag.startPx = getMousePx(e);
+  drag.endPx = { x: drag.startPx.x, y: drag.startPx.y };
+  drag.preview = null;
+  drag.moved = false;
+  drag.startedAt = performance.now();
+});
+canvas.addEventListener('mousemove', e => {
+  if (!drag.active) return;
+  drag.endPx = getMousePx(e);
+  const dx = drag.endPx.x - drag.startPx.x;
+  const dy = drag.endPx.y - drag.startPx.y;
+  if (Math.hypot(dx, dy) > 4) drag.moved = true;
+  // compute preview
+  const r = px2r(drag.startPx.x, drag.startPx.y);
+  const v = dragVelocity(drag.startPx, drag.endPx);
+  if (drag.moved) drag.preview = predictPath(r.x, r.y, v.vx, v.vy);
+});
+function endDrag(e) {
+  if (!drag.active) return;
+  drag.active = false;
+
+  // Was it a click (no significant drag)?
+  if (!drag.moved) {
+    // Check for click on Earth in solar mode → switch to earth mode
+    if (mode === 'solar') {
+      const earth = bodies.find(b => b.preset_kind === 'earth');
+      if (earth) {
+        const pe = r2px(earth.x, earth.y);
+        const d = Math.hypot(pe.x - drag.startPx.x, pe.y - drag.startPx.y);
+        if (d < earth.radius_vis + 14) {
+          switchMode('earth');
+          return;
+        }
+      }
+    }
+    // Otherwise: treat as small click — launch a body in nearly-circular orbit
+    const r = px2r(drag.startPx.x, drag.startPx.y);
+    const rmag = Math.hypot(r.x, r.y);
+    if (rmag < (currentScale().central_radius_real || 0)) return;  // inside surface
+    const vcirc = Math.sqrt(mu() / rmag);
+    // CCW velocity
+    const vx = -r.y / rmag * vcirc;
+    const vy =  r.x / rmag * vcirc;
+    launchBody(r.x, r.y, vx, vy);
+    return;
+  }
+
+  // Real drag → launch with velocity vector
+  const r = px2r(drag.startPx.x, drag.startPx.y);
+  if (Math.hypot(r.x, r.y) < (currentScale().central_radius_real || 0)) {
+    drag.preview = null;
+    return;
+  }
+  const v = dragVelocity(drag.startPx, drag.endPx);
+  launchBody(r.x, r.y, v.vx, v.vy);
+  drag.preview = null;
+}
+canvas.addEventListener('mouseup', endDrag);
+canvas.addEventListener('mouseleave', endDrag);
+
+// touch
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  drag.active = true;
+  drag.startPx = getMousePx(e);
+  drag.endPx = { x: drag.startPx.x, y: drag.startPx.y };
+  drag.preview = null;
+  drag.moved = false;
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (!drag.active) return;
+  drag.endPx = getMousePx(e);
+  const dx = drag.endPx.x - drag.startPx.x;
+  const dy = drag.endPx.y - drag.startPx.y;
+  if (Math.hypot(dx, dy) > 4) drag.moved = true;
+  const r = px2r(drag.startPx.x, drag.startPx.y);
+  const v = dragVelocity(drag.startPx, drag.endPx);
+  if (drag.moved) drag.preview = predictPath(r.x, r.y, v.vx, v.vy);
+}, { passive: false });
+canvas.addEventListener('touchend', e => { e.preventDefault(); endDrag(e); }, { passive: false });
+
+const USER_COLORS = ['#80ffd0','#c0c0ff','#ff80c0','#ffe080','#80c0ff','#ff8060'];
+let userBodyCount = 0;
+
+function launchBody(x, y, vx, vy) {
+  userBodyCount++;
+  const col = USER_COLORS[userBodyCount % USER_COLORS.length];
+  bodies.push(makeBody({
+    x, y, vx, vy,
+    mass: newBodyMassKg,
+    color: col,
+    label: 'Probe ' + userBodyCount,
+    radius_vis: 3,
+    tag: 'user',
+    preset_kind: 'user'
+  }));
+}
+
+// ============================================================================
+// PRESET QUICK-LAUNCH CHIPS
+// ============================================================================
+const PRESETS_SOLAR = [
+  { label: 'Asteroid @ 2.7 AU', r_au: 2.7, mass: 1e20, circ: true },
+  { label: 'Comet (elliptical)', r_au: 1.0, mass: 1e13, ecc: 0.6 },
+  { label: 'Trans-Neptune object', r_au: 8.0, mass: 1e22, circ: true },
+];
+const PRESETS_EARTH_SAT = [
+  { label: 'Add at LEO 400 km',  alt_km: 400,   circ: true },
+  { label: 'Add at GEO 35,786 km', alt_km: 35786, circ: true },
+  { label: 'Polar orbit 800 km',  alt_km: 800,  circ: true, polar: true },
+  { label: 'Sub-orbital toss',    alt_km: 6000, circ: false, vfrac: 0.55 },
+];
+const PRESETS_EARTH_MOON = [
+  { label: 'Lunar transfer orbit', alt_km: 200, circ: false, vfrac: 1.41 },
+  { label: 'Circular @ Moon dist',  alt_km: 384400 - 6371, circ: true },
+];
+
+function currentPresets() {
+  if (mode === 'solar') return PRESETS_SOLAR;
+  return earthZoom === 'sat' ? PRESETS_EARTH_SAT : PRESETS_EARTH_MOON;
+}
+
+function updatePresetChips() {
+  const row = document.getElementById('preset-row');
+  row.innerHTML = '';
+  currentPresets().forEach(p => {
+    const c = document.createElement('button');
+    c.className = 'chip';
+    c.textContent = p.label;
+    c.onclick = () => applyPreset(p);
+    row.appendChild(c);
+  });
+}
+function applyPreset(p) {
+  let r;
+  if (mode === 'solar') r = p.r_au * AU;
+  else                  r = R_EARTH + p.alt_km * 1000;
+  const ang = Math.random() * Math.PI * 2;
+  const x = Math.cos(ang) * r, y = Math.sin(ang) * r;
+  const vcirc = Math.sqrt(mu() / r);
+  let vx, vy;
+  if (p.circ) {
+    vx = -Math.sin(ang) * vcirc;
+    vy =  Math.cos(ang) * vcirc;
+    if (p.polar) {
+      // Already 2D; rotate 'polar' visually by just inverting (still planar)
+      vx = -vx; vy = -vy;
+    }
+  } else if (p.ecc !== undefined) {
+    // elliptical: speed at periapsis
+    const a = r / (1 - p.ecc);   // treat r as periapsis
+    const vP = Math.sqrt(mu() * (2/r - 1/a));
+    vx = -Math.sin(ang) * vP;
+    vy =  Math.cos(ang) * vP;
+  } else if (p.vfrac !== undefined) {
+    vx = -Math.sin(ang) * vcirc * p.vfrac;
+    vy =  Math.cos(ang) * vcirc * p.vfrac;
+  }
+  launchBody(x, y, vx, vy);
+}
+
+// ============================================================================
+// MODE SWITCHING
+// ============================================================================
+function switchMode(m, z) {
+  mode = m;
+  if (z) earthZoom = z;
+  document.getElementById('mode-solar').classList.toggle('active', mode === 'solar');
+  document.getElementById('mode-earth').classList.toggle('active', mode === 'earth');
+  document.getElementById('zoom-toggle').style.display = (mode === 'earth') ? 'flex' : 'none';
+  document.getElementById('zoom-sat').classList.toggle('active', earthZoom === 'sat');
+  document.getElementById('zoom-moon').classList.toggle('active', earthZoom === 'moon');
+  document.getElementById('hdr-sub').textContent =
+    mode === 'solar' ? 'Solar System — Sun & planets' :
+    (earthZoom === 'sat' ? 'Earth & artificial satellites' : 'Earth–Moon system');
+  spawnCurrent();
+}
+
+document.getElementById('mode-solar').onclick = () => switchMode('solar');
+document.getElementById('mode-earth').onclick = () => switchMode('earth', earthZoom);
+document.getElementById('zoom-sat').onclick   = () => switchMode('earth', 'sat');
+document.getElementById('zoom-moon').onclick  = () => switchMode('earth', 'moon');
+
+function updateScaleBar() {
+  document.getElementById('scale-bar').textContent = currentScale().scale_text;
+}
+function updateBadge() {
+  const b = document.getElementById('badge');
+  if (mode === 'solar') {
+    b.textContent = 'DRAG TO LAUNCH · CLICK 🌍 EARTH TO ZOOM IN';
+  } else if (earthZoom === 'sat') {
+    b.textContent = 'DRAG TO LAUNCH A SATELLITE';
+  } else {
+    b.textContent = 'DRAG TO LAUNCH · MOON VISIBLE';
+  }
+}
+function updateHowto() {
+  // could vary by mode if desired
+}
+
+// ============================================================================
+// CONTROL HANDLERS
+// ============================================================================
+document.getElementById('btn-pause').onclick = function () {
+  paused = !paused; lastTime = null;
+  this.textContent = paused ? '▶ Play' : '⏸ Pause';
+  this.classList.toggle('lit', paused);
+};
+document.getElementById('btn-reset').onclick = () => spawnCurrent();
+document.getElementById('btn-trail').onclick = function () {
+  showTrail = !showTrail;
+  this.textContent = showTrail ? 'Trails ON' : 'Trails OFF';
+  this.classList.toggle('lit', showTrail);
+};
+document.getElementById('speed').oninput = function () {
+  speedMult = parseFloat(this.value);
+  document.getElementById('spv').textContent = speedMult.toFixed(1) + '×';
+  const sc = currentScale();
+  let unit;
+  if (sc.sec_per_anim >= DAY) unit = (sc.sec_per_anim * speedMult / DAY).toFixed(1) + ' days per second';
+  else if (sc.sec_per_anim >= 3600) unit = (sc.sec_per_anim * speedMult / 3600).toFixed(1) + ' hours per second';
+  else unit = (sc.sec_per_anim * speedMult / 60).toFixed(1) + ' minutes per second';
+  document.getElementById('speed-sub').textContent = '= ' + unit + ' of real time';
+};
+document.getElementById('speed').oninput.call(document.getElementById('speed'));
+
+document.getElementById('new-mass').oninput = function () {
+  const v = parseInt(this.value, 10);
+  // Map 0..100 logarithmically to 100 kg .. 1e7 kg (small probe to large spacecraft)
+  const kg = Math.round(Math.pow(10, 2 + v * 0.05));     // 1e2 .. 1e7
+  newBodyMassKg = kg;
+  let label, sub;
+  if (kg < 1000) { label = kg + ' kg'; sub = '≈ CubeSat / small probe'; }
+  else if (kg < 1e5) { label = (kg/1000).toFixed(1) + ' tonnes'; sub = '≈ small satellite'; }
+  else if (kg < 1e6) { label = (kg/1000).toFixed(0) + ' tonnes'; sub = '≈ Hubble-class telescope'; }
+  else { label = (kg/1000).toLocaleString() + ' tonnes'; sub = '≈ ISS-class station'; }
+  document.getElementById('new-v').textContent = label;
+  document.getElementById('new-sub').textContent = sub;
+};
+document.getElementById('new-mass').oninput.call(document.getElementById('new-mass'));
+
+// ============================================================================
+// INIT
+// ============================================================================
+spawnCurrent();
+</script>
+</body>
+</html>
