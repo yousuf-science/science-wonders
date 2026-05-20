@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -41,6 +40,27 @@
   --success: #6bffa3;
   --ff-display: 'Unbounded', sans-serif;
   --ff-body: 'DM Sans', sans-serif;
+  --scene-bg: #010812;
+}
+
+/* HIGH-CONTRAST LIGHT OBSERVATORY THEME SCHEME MAP */
+body.light-theme {
+  --bg-deep: #f4f6fa;
+  --bg-mid: #e1e6f0;
+  --bg-panel: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(230, 236, 245, 0.7);
+  --border: rgba(9, 105, 218, 0.15);
+  --border-strong: rgba(9, 105, 218, 0.3);
+  --text: #0a122c;
+  --text-dim: #444e6e;
+  --text-mute: #6a7596;
+  --cyan: #0066cc;
+  --cyan-glow: rgba(0, 102, 204, 0.15);
+  --violet: #6f42c1;
+  --violet-glow: rgba(111, 66, 193, 0.15);
+  --amber: #b07d00;
+  --amber-glow: rgba(176, 125, 0, 0.15);
+  --scene-bg: #fafbfc;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -55,6 +75,7 @@ body {
   position: relative;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* Cosmic gradient background */
@@ -69,8 +90,11 @@ body::before {
     var(--bg-deep);
   z-index: -3;
 }
+body.light-theme::before {
+  background: var(--bg-deep);
+}
 
-/* Starfield */
+/* Starfield visibility safety wrap */
 .starfield {
   position: fixed;
   inset: 0;
@@ -78,6 +102,7 @@ body::before {
   overflow: hidden;
   pointer-events: none;
 }
+body.light-theme .starfield { display: none; }
 .star {
   position: absolute;
   background: white;
@@ -126,6 +151,11 @@ header h1 {
   -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
 }
+body.light-theme header h1 {
+  background: linear-gradient(120deg, var(--text) 0%, var(--cyan) 40%, var(--violet) 70%, var(--amber) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
 header .tagline {
   font-size: 15px;
   color: var(--text-dim);
@@ -142,7 +172,9 @@ header .tagline {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
+body.light-theme .panel { box-shadow: 0 4px 20px rgba(9,105,218,0.05); }
 
 /* Scene panel */
 .scene-panel {
@@ -151,6 +183,7 @@ header .tagline {
   position: relative;
   overflow: hidden;
   padding: 0;
+  background: var(--scene-bg);
 }
 .scene-svg {
   width: 100%;
@@ -196,6 +229,7 @@ header .tagline {
   border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--bg-panel);
+  transition: background 0.2s, border-color 0.2s;
 }
 .twin-panel .twin-label {
   position: absolute;
@@ -214,6 +248,7 @@ header .tagline {
   border: 1px solid var(--border);
   backdrop-filter: blur(8px);
 }
+body.light-theme .twin-panel .twin-label { background: rgba(255,255,255,0.85); }
 .earth-twin .twin-label { color: var(--cyan); border-color: var(--cyan-glow); }
 .traveler-twin .twin-label { color: var(--violet); border-color: var(--violet-glow); }
 
@@ -235,6 +270,7 @@ header .tagline {
   text-align: center;
   line-height: 1;
 }
+body.light-theme .twin-panel .age-readout { background: rgba(255,255,255,0.9); }
 .earth-twin .age-readout { color: var(--cyan); }
 .traveler-twin .age-readout { color: var(--violet); }
 .twin-panel .age-readout small {
@@ -292,6 +328,7 @@ header .tagline {
   border: 1px solid var(--border);
   border-radius: 14px;
   text-align: center;
+  transition: background 0.2s, border-color 0.2s;
 }
 .stat-card .stat-label {
   font-size: 10px;
@@ -370,6 +407,7 @@ header .tagline {
   color: var(--cyan);
   box-shadow: 0 0 16px var(--cyan-glow);
 }
+body.light-theme .dest-chip.active { background: var(--bg-mid); box-shadow: none; }
 .dest-chip .icon { font-size: 16px; line-height: 1; }
 
 /* Custom distance input */
@@ -436,6 +474,7 @@ header .tagline {
   border-color: var(--violet);
   color: var(--violet);
 }
+body.light-theme .speed-preset.active { background: var(--bg-mid); }
 
 /* Slider */
 .slider-row {
@@ -456,15 +495,6 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 22px;
-  height: 22px;
-  background: var(--text);
-  border: 3px solid var(--bg-deep);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 14px var(--cyan-glow);
-}
-input[type="range"]::-moz-range-thumb {
   width: 22px;
   height: 22px;
   background: var(--text);
@@ -536,6 +566,7 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   transition: transform 0.2s;
 }
+body.light-theme .save-btn { color: #fff; background: #1a7f37; }
 .save-btn:hover { transform: scale(1.04); }
 
 /* Action buttons */
@@ -545,7 +576,7 @@ input[type="range"]::-moz-range-thumb {
   margin-top: 20px;
 }
 .btn {
-  flex: 1;
+  box-sizing: border-box;
   padding: 14px 20px;
   border: none;
   border-radius: 12px;
@@ -558,14 +589,17 @@ input[type="range"]::-moz-range-thumb {
   transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 .btn-launch {
+  flex: 1;
   background: linear-gradient(135deg, var(--cyan), var(--violet));
-  color: var(--bg-deep);
+  color: #03050d;
   box-shadow: 0 6px 24px rgba(79, 209, 255, 0.35);
 }
+body.light-theme .btn-launch { color: #fff; box-shadow: none; }
 .btn-launch:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 8px 30px rgba(79, 209, 255, 0.5);
 }
+body.light-theme .btn-launch:hover:not(:disabled) { box-shadow: none; }
 .btn-launch:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-reset {
   background: transparent;
@@ -604,6 +638,7 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--cyan-glow);
   animation: rise 0.6s cubic-bezier(.2,.8,.2,1);
 }
+body.light-theme .result-card { background: var(--bg-panel); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
 .result-close-x {
   position: absolute;
   top: 14px;
@@ -630,7 +665,6 @@ input[type="range"]::-moz-range-thumb {
   border-color: var(--cyan);
   transform: rotate(90deg);
 }
-@keyframes rise { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 .result-card .result-eyebrow {
   font-size: 11px;
@@ -651,6 +685,10 @@ input[type="range"]::-moz-range-thumb {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+body.light-theme .result-card .result-headline {
+  background: linear-gradient(120deg, var(--cyan), var(--violet), var(--amber));
+  -webkit-background-clip: text;
 }
 .result-grid {
   display: grid;
@@ -716,6 +754,7 @@ input[type="range"]::-moz-range-thumb {
   display: none;
   backdrop-filter: blur(8px);
 }
+body.light-theme .skip-btn { background: rgba(255,255,255,0.95); }
 .skip-btn.visible { display: block; }
 .skip-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
@@ -743,6 +782,7 @@ footer a:hover { text-decoration: underline; }
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  transition: background 0.2s, border-color 0.2s;
 }
 .theory-hdr {
   font-family: var(--ff-display);
@@ -764,7 +804,6 @@ footer a:hover { text-decoration: underline; }
   text-transform: uppercase;
   margin: 28px 0 12px;
 }
-.theory h3:first-of-type { margin-top: 0; }
 .theory p {
   font-size: 15px;
   color: var(--text-dim);
@@ -784,7 +823,9 @@ footer a:hover { text-decoration: underline; }
   color: #ffe2a0;
   line-height: 1.85;
   word-wrap: break-word;
+  transition: background 0.2s;
 }
+body.light-theme .theory .eq { background: var(--bg-glass); color: var(--amber); }
 .theory .eq .vars {
   font-size: 12px;
   color: var(--text-mute);
@@ -798,11 +839,15 @@ footer a:hover { text-decoration: underline; }
   margin: 16px 0;
   font-size: 13.5px;
   line-height: 1.75;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 .hbox strong { color: inherit; filter: brightness(1.15); }
 .hbox-cyan   { background: rgba(79, 209, 255, 0.06); border: 1px solid rgba(79, 209, 255, 0.22); color: #b3e5ff; }
+body.light-theme .hbox-cyan { color: var(--cyan); background: rgba(9,105,218,0.05); }
 .hbox-violet { background: rgba(177, 140, 255, 0.06); border: 1px solid rgba(177, 140, 255, 0.22); color: #d4bfff; }
+body.light-theme .hbox-violet { color: var(--violet); background: rgba(111,66,193,0.05); }
 .hbox-amber  { background: rgba(255, 200, 87, 0.06); border: 1px solid rgba(255, 200, 87, 0.22); color: #ffe2a0; }
+body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0.05); }
 .utab {
   width: 100%;
   border-collapse: collapse;
@@ -814,6 +859,7 @@ footer a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--border);
   color: var(--text-dim);
   vertical-align: top;
+  transition: border-color 0.2s;
 }
 .utab td:first-child { color: var(--amber); width: 38%; font-weight: 500; }
 .utab tr:last-child td { border-bottom: none; }
@@ -853,7 +899,6 @@ footer a:hover { text-decoration: underline; }
     <p class="tagline">Pick a destination. Pick a speed. Watch your twin grow old while you barely age — special relativity, made personal.</p>
   </header>
 
-  <!-- Scene -->
   <div class="panel scene-panel" id="scenePanel">
     <svg class="scene-svg" viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <defs>
@@ -873,7 +918,6 @@ footer a:hover { text-decoration: underline; }
         </linearGradient>
       </defs>
 
-      <!-- Earth -->
       <g transform="translate(80, 90)">
         <circle r="40" fill="url(#earthGrad)" />
         <circle r="40" fill="none" stroke="rgba(79,209,255,0.25)" stroke-width="1"/>
@@ -881,17 +925,14 @@ footer a:hover { text-decoration: underline; }
         <text x="0" y="65" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8a96b8" letter-spacing="2">EARTH</text>
       </g>
 
-      <!-- Destination -->
       <g id="destGroup" transform="translate(1100, 90)">
         <circle id="destCircle" r="34" fill="#ffc857" opacity="0.9"/>
         <circle r="34" fill="none" stroke="rgba(255,200,87,0.3)" stroke-width="1"/>
         <text id="destText" x="0" y="65" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8a96b8" letter-spacing="2">MOON</text>
       </g>
 
-      <!-- Travel path -->
       <line x1="135" y1="90" x2="1055" y2="90" stroke="rgba(177,140,255,0.18)" stroke-width="1" stroke-dasharray="4 6"/>
 
-      <!-- Rocket -->
       <g id="rocket" transform="translate(135, 90)">
         <ellipse cx="-22" cy="0" rx="20" ry="6" fill="url(#rocketFlame)" id="rocketFlame"/>
         <path d="M -8 -8 L 14 0 L -8 8 Z" fill="url(#rocketBody)"/>
@@ -901,9 +942,7 @@ footer a:hover { text-decoration: underline; }
     <div class="scene-warp-overlay"></div>
   </div>
 
-  <!-- Twins -->
   <div class="twins-row">
-    <!-- Earth twin -->
     <div class="twin-panel earth-twin">
       <div class="twin-label">Earth Twin</div>
       <div class="age-readout">
@@ -911,10 +950,7 @@ footer a:hover { text-decoration: underline; }
         <small>years</small>
       </div>
 
-      <!-- Civilization background -->
       <svg class="civ-bg" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-        <!-- Sky gradient (set per stage in JS by toggling group) -->
-        <!-- Stage 0: Modern city (present) -->
         <g class="civ-stage active" data-stage="0">
           <rect x="0" y="0" width="400" height="360" fill="url(#sky-modern)"/>
           <defs>
@@ -923,7 +959,6 @@ footer a:hover { text-decoration: underline; }
               <stop offset="100%" stop-color="#1a2a55"/>
             </linearGradient>
           </defs>
-          <!-- Skyscrapers -->
           <g fill="#0e1a38" opacity="0.95">
             <rect x="0" y="220" width="40" height="140"/>
             <rect x="40" y="200" width="50" height="160"/>
@@ -935,7 +970,6 @@ footer a:hover { text-decoration: underline; }
             <rect x="305" y="160" width="55" height="200"/>
             <rect x="360" y="210" width="40" height="150"/>
           </g>
-          <!-- Lit windows -->
           <g fill="#ffc857" opacity="0.85">
             <rect x="10" y="240" width="4" height="6"/><rect x="22" y="260" width="4" height="6"/><rect x="58" y="220" width="4" height="6"/>
             <rect x="72" y="250" width="4" height="6"/><rect x="100" y="200" width="4" height="6"/><rect x="135" y="170" width="4" height="6"/>
@@ -944,7 +978,6 @@ footer a:hover { text-decoration: underline; }
           </g>
         </g>
 
-        <!-- Stage 1: Near-future -->
         <g class="civ-stage" data-stage="1">
           <rect x="0" y="0" width="400" height="360" fill="#0d1838"/>
           <g fill="#0c1a3b">
@@ -954,7 +987,6 @@ footer a:hover { text-decoration: underline; }
             <polygon points="230,360 230,130 280,110 280,360"/>
             <polygon points="290,360 290,80 360,50 380,360"/>
           </g>
-          <!-- Glowing accents on towers -->
           <g stroke="#4fd1ff" stroke-width="1.2" opacity="0.7" fill="none">
             <line x1="25" y1="160" x2="25" y2="360"/>
             <line x1="95" y1="100" x2="115" y2="360"/>
@@ -962,7 +994,6 @@ footer a:hover { text-decoration: underline; }
             <line x1="255" y1="130" x2="255" y2="360"/>
             <line x1="325" y1="80" x2="345" y2="360"/>
           </g>
-          <!-- Flying vehicles -->
           <g fill="#b18cff">
             <ellipse cx="80" cy="50" rx="6" ry="2"/>
             <ellipse cx="200" cy="35" rx="7" ry="2"/>
@@ -970,13 +1001,10 @@ footer a:hover { text-decoration: underline; }
           </g>
         </g>
 
-        <!-- Stage 2: Far-future utopia -->
         <g class="civ-stage" data-stage="2">
           <rect x="0" y="0" width="400" height="360" fill="#100d28"/>
-          <!-- Orbital ring arc -->
           <path d="M -60 80 Q 200 -20 460 80" fill="none" stroke="#b18cff" stroke-width="2" opacity="0.7"/>
           <path d="M -60 80 Q 200 -20 460 80" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.4"/>
-          <!-- Mega-towers -->
           <g fill="#1a1240">
             <polygon points="0,360 0,40 40,30 60,360"/>
             <polygon points="80,360 80,20 120,10 140,360"/>
@@ -984,7 +1012,6 @@ footer a:hover { text-decoration: underline; }
             <polygon points="260,360 260,30 310,15 330,360"/>
             <polygon points="350,360 350,40 400,30 400,360"/>
           </g>
-          <!-- Glow on towers -->
           <g stroke="#ffc857" stroke-width="1" opacity="0.6" fill="none">
             <line x1="20" y1="40" x2="50" y2="360"/>
             <line x1="100" y1="20" x2="130" y2="360"/>
@@ -992,7 +1019,6 @@ footer a:hover { text-decoration: underline; }
             <line x1="285" y1="30" x2="320" y2="360"/>
             <line x1="375" y1="40" x2="400" y2="360"/>
           </g>
-          <!-- Floating lights -->
           <g fill="#fff">
             <circle cx="60" cy="100" r="1.5"/>
             <circle cx="170" cy="80" r="1.5"/>
@@ -1001,12 +1027,9 @@ footer a:hover { text-decoration: underline; }
           </g>
         </g>
 
-        <!-- Stage 3: Post-human ruins (overgrown) -->
         <g class="civ-stage" data-stage="3">
           <rect x="0" y="0" width="400" height="360" fill="#0a1a18"/>
-          <!-- Sky -->
           <ellipse cx="320" cy="60" rx="40" ry="12" fill="rgba(255,200,87,0.12)"/>
-          <!-- Crumbling buildings -->
           <g fill="#1a2418">
             <polygon points="0,360 0,180 30,170 38,200 50,190 60,360"/>
             <polygon points="70,360 70,140 100,130 105,200 130,190 130,360"/>
@@ -1014,7 +1037,6 @@ footer a:hover { text-decoration: underline; }
             <polygon points="260,360 260,180 290,170 295,360"/>
             <polygon points="320,360 320,200 360,190 360,360"/>
           </g>
-          <!-- Vines/vegetation -->
           <g fill="#2d4a2e" opacity="0.85">
             <ellipse cx="20" cy="240" rx="30" ry="20"/>
             <ellipse cx="85" cy="220" rx="40" ry="25"/>
@@ -1022,7 +1044,6 @@ footer a:hover { text-decoration: underline; }
             <ellipse cx="280" cy="240" rx="35" ry="22"/>
             <ellipse cx="350" cy="270" rx="40" ry="25"/>
           </g>
-          <!-- Trees -->
           <g fill="#3a5a3a">
             <circle cx="40" cy="280" r="22"/>
             <circle cx="135" cy="290" r="25"/>
@@ -1031,18 +1052,14 @@ footer a:hover { text-decoration: underline; }
           </g>
         </g>
 
-        <!-- Stage 4: Ancient pyramid-style ruins, desert -->
         <g class="civ-stage" data-stage="4">
           <rect x="0" y="0" width="400" height="360" fill="#251a10"/>
-          <!-- Hazy sky -->
           <ellipse cx="200" cy="40" rx="200" ry="40" fill="rgba(255,200,87,0.15)"/>
-          <!-- Distant pyramids -->
           <g fill="#3a2a18" opacity="0.85">
             <polygon points="40,260 100,180 160,260"/>
             <polygon points="140,270 220,160 300,270"/>
             <polygon points="270,260 330,190 390,260"/>
           </g>
-          <!-- Broken columns -->
           <g fill="#5a4530">
             <rect x="20" y="240" width="8" height="50"/>
             <rect x="45" y="250" width="8" height="40"/>
@@ -1050,7 +1067,6 @@ footer a:hover { text-decoration: underline; }
             <rect x="200" y="245" width="8" height="35"/>
             <rect x="320" y="245" width="8" height="45"/>
           </g>
-          <!-- Sand dunes -->
           <g fill="#3d2c18">
             <path d="M 0 360 L 0 290 Q 100 270 200 295 Q 300 310 400 280 L 400 360 Z"/>
           </g>
@@ -1059,10 +1075,8 @@ footer a:hover { text-decoration: underline; }
           </g>
         </g>
 
-        <!-- Stage 5: Geological change -->
         <g class="civ-stage" data-stage="5">
           <rect x="0" y="0" width="400" height="360" fill="#0a1628"/>
-          <!-- Pale sky -->
           <rect x="0" y="0" width="400" height="160" fill="url(#sky-glacial)"/>
           <defs>
             <linearGradient id="sky-glacial" x1="0" x2="0" y1="0" y2="1">
@@ -1070,17 +1084,14 @@ footer a:hover { text-decoration: underline; }
               <stop offset="100%" stop-color="#3a5570"/>
             </linearGradient>
           </defs>
-          <!-- New mountain ranges (jagged) -->
           <g fill="#2a3a55">
             <polygon points="0,260 60,140 90,180 130,120 180,180 220,150 270,200 320,140 370,200 400,180 400,260"/>
           </g>
-          <!-- Glacier/ice caps -->
           <g fill="#dae8f5" opacity="0.9">
             <polygon points="60,140 70,160 90,180 50,180"/>
             <polygon points="130,120 140,150 180,180 100,180"/>
             <polygon points="270,200 290,170 320,140 340,180 290,200"/>
           </g>
-          <!-- Frozen plain -->
           <g fill="#5a7090">
             <path d="M 0 260 Q 200 240 400 260 L 400 360 L 0 360 Z"/>
           </g>
@@ -1091,10 +1102,8 @@ footer a:hover { text-decoration: underline; }
           </g>
         </g>
 
-        <!-- Stage 6: Red giant Earth -->
         <g class="civ-stage" data-stage="6">
           <rect x="0" y="0" width="400" height="360" fill="#1a0608"/>
-          <!-- Huge red sun -->
           <radialGradient id="redGiant" cx="0.5" cy="0.5">
             <stop offset="0%" stop-color="#ffe0a0"/>
             <stop offset="40%" stop-color="#ff7a3a"/>
@@ -1102,14 +1111,12 @@ footer a:hover { text-decoration: underline; }
             <stop offset="100%" stop-color="rgba(160,32,16,0)"/>
           </radialGradient>
           <circle cx="200" cy="120" r="180" fill="url(#redGiant)" opacity="0.9"/>
-          <!-- Scorched ground -->
           <g fill="#3a1408">
             <path d="M 0 360 L 0 240 Q 100 220 200 250 Q 300 280 400 240 L 400 360 Z"/>
           </g>
           <g fill="#1a0808">
             <path d="M 0 360 L 0 290 Q 100 280 200 305 Q 300 320 400 295 L 400 360 Z"/>
           </g>
-          <!-- Cracks (lava) -->
           <g stroke="#ff6b3b" stroke-width="1.5" fill="none" opacity="0.8">
             <path d="M 30 320 Q 60 310 80 330 Q 100 350 120 340"/>
             <path d="M 200 310 Q 230 320 260 305"/>
@@ -1118,10 +1125,8 @@ footer a:hover { text-decoration: underline; }
         </g>
       </svg>
 
-      <!-- Earth twin character -->
       <div class="twin-figure-wrap">
         <svg class="twin-figure" id="figEarth" viewBox="0 0 200 280" aria-hidden="true">
-          <!-- All stages drawn; we toggle visibility -->
           <g id="figEarth-stage-0" class="char-stage"></g>
           <g id="figEarth-stage-1" class="char-stage"></g>
           <g id="figEarth-stage-2" class="char-stage"></g>
@@ -1133,7 +1138,6 @@ footer a:hover { text-decoration: underline; }
       </div>
     </div>
 
-    <!-- Traveler twin -->
     <div class="twin-panel traveler-twin">
       <div class="twin-label">Traveler Twin</div>
       <div class="age-readout">
@@ -1141,7 +1145,6 @@ footer a:hover { text-decoration: underline; }
         <small>years</small>
       </div>
 
-      <!-- Cosmic background -->
       <svg class="traveler-bg" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
           <radialGradient id="cosmicBg" cx="0.5" cy="0.5">
@@ -1161,7 +1164,6 @@ footer a:hover { text-decoration: underline; }
         <rect x="0" y="0" width="400" height="360" fill="url(#cosmicBg)"/>
         <ellipse cx="120" cy="140" rx="160" ry="100" fill="url(#nebula1)"/>
         <ellipse cx="280" cy="220" rx="140" ry="90" fill="url(#nebula2)"/>
-        <!-- Stars -->
         <g fill="#fff">
           <circle cx="50" cy="60" r="1.2"/><circle cx="120" cy="40" r="0.8"/><circle cx="200" cy="80" r="1.4"/>
           <circle cx="280" cy="50" r="0.9"/><circle cx="350" cy="100" r="1.1"/><circle cx="80" cy="180" r="1.0"/>
@@ -1185,7 +1187,6 @@ footer a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card earth">
       <div class="stat-label">Earth Time Elapsed</div>
@@ -1201,10 +1202,8 @@ footer a:hover { text-decoration: underline; }
     </div>
   </div>
 
-  <!-- Controls -->
   <div class="panel controls-panel">
 
-    <!-- Destination -->
     <div class="control-group">
       <div class="control-label">
         <span>Destination</span>
@@ -1224,7 +1223,6 @@ footer a:hover { text-decoration: underline; }
       </div>
     </div>
 
-    <!-- Speed -->
     <div class="control-group">
       <div class="control-label">
         <span>Speed</span>
@@ -1236,7 +1234,6 @@ footer a:hover { text-decoration: underline; }
       </div>
     </div>
 
-    <!-- Starting age -->
     <div class="control-group">
       <div class="control-label">
         <span>Starting Age (Both Twins)</span>
@@ -1248,7 +1245,6 @@ footer a:hover { text-decoration: underline; }
       </div>
     </div>
 
-    <!-- Survival warning -->
     <div class="survival-card" id="survivalCard">
       <div class="warn-icon">⚠️</div>
       <div class="warn-content">
@@ -1273,27 +1269,27 @@ footer a:hover { text-decoration: underline; }
 
     <h3>The Equations Used by This Simulation</h3>
     <p>Special relativity tells us that the rate at which a moving clock ticks, as seen by a stationary observer, slows down by a factor γ (gamma), the <strong>Lorentz factor</strong>:</p>
-    <div class="eq">γ = 1 / √(1 − β²),  where β = v/c
-      <div class="vars">v is the rocket's speed; c is the speed of light. As v → c, β → 1 and γ → ∞: time on the rocket essentially stops.</div>
+    <div class="eq">gamma = 1 / sqrt(1 − beta²),  where beta = v/c
+      <div class="vars">v is the rocket's speed; c is the speed of light. As v → c, beta → 1 and gamma → ∞: time on the rocket essentially stops.</div>
     </div>
 
     <p>For an idealized round-trip at constant speed v over a one-way distance d, the time elapsed on Earth is simply distance over speed (out and back):</p>
     <div class="eq">t<sub>E</sub> = 2d / v
-      <div class="vars">Earth-frame elapsed time. Independent of γ — Earth doesn't care how fast the rocket is going.</div>
+      <div class="vars">Earth-frame elapsed time. Independent of gamma — Earth doesn't care how fast the rocket is going.</div>
     </div>
 
-    <p>The traveler's clock, however, runs slow by a factor of γ. So the time the traveler experiences is:</p>
-    <div class="eq">t<sub>T</sub> = t<sub>E</sub> / γ = (2d/v) · √(1 − v²/c²)
+    <p>The traveler's clock, however, runs slow by a factor of gamma. So the time the traveler experiences is:</p>
+    <div class="eq">t<sub>T</sub> = t<sub>E</sub> / gamma = (2d/v) · sqrt(1 − v²/c²)
       <div class="vars">Traveler-frame elapsed time. This is what the traveler ages during the round trip.</div>
     </div>
 
     <p>The age gap when they reunite is the difference between the two clocks:</p>
-    <div class="eq">Δt = t<sub>E</sub> − t<sub>T</sub> = t<sub>E</sub> · (1 − 1/γ)
-      <div class="vars">How many more years the Earth twin aged than the traveler. At v = 0.99c, γ ≈ 7.09, so the traveler ages only ~14% as much as Earth.</div>
+    <div class="eq">Deltat = t<sub>E</sub> − t<sub>T</sub> = t<sub>E</sub> · (1 − 1/gamma)
+      <div class="vars">How many more years the Earth twin aged than the traveler. At v = 0.99c, gamma ≈ 7.09, so the traveler ages only ~14% as much as Earth.</div>
     </div>
 
     <p>The "Yes, save me" button solves the inverse problem — given the destination and a maximum allowed traveler-time t<sub>max</sub> = (lifespan − starting age − 5), it finds the minimum velocity that keeps the traveler alive:</p>
-    <div class="eq">v<sub>min</sub> = 2d / √(t<sub>max</sub>² + 4d²)
+    <div class="eq">v<sub>min</sub> = 2d / sqrt(t<sub>max</sub>² + 4d²)
       <div class="vars">Derived by solving t<sub>T</sub> ≤ t<sub>max</sub> for v. The 5-year buffer is for safety; we add a tiny margin of 1.0001× to ensure the traveler doesn't land on their deathbed.</div>
     </div>
 
@@ -1311,22 +1307,22 @@ footer a:hover { text-decoration: underline; }
     </div>
 
     <h3>What This Simulation Idealizes</h3>
-    <p>To stay simple and intuitive, the simulation makes four physical idealizations. They keep the headline result (traveler ages less by factor γ) exactly correct, but smooth over engineering realities:</p>
+    <p>To stay simple and intuitive, the simulation makes four physical idealizations. They keep the headline result (traveler ages less by factor gamma) exactly correct, but smooth over engineering realities:</p>
     <table class="utab">
-      <tr><td>Instant turnaround</td><td>Real rockets accelerate gradually. We assume the cruise speed is reached immediately and reversed instantly. For interplanetary trips this is a tiny correction; for interstellar trips a realistic 1g acceleration profile gives a similar γ but distributed over the journey.</td></tr>
+      <tr><td>Instant turnaround</td><td>Real rockets accelerate gradually. We assume the cruise speed is reached immediately and reversed instantly. For interplanetary trips this is a tiny correction; for interstellar trips a realistic 1g acceleration profile gives a similar gamma but distributed over the journey.</td></tr>
       <tr><td>No gravity wells</td><td>We ignore general-relativistic effects from planets and stars. They're small for free-flight trajectories far from massive bodies.</td></tr>
       <tr><td>Constant velocity cruise</td><td>The rocket reaches v instantly, holds it, and reverses instantly at the destination. Real mission profiles use continuous acceleration.</td></tr>
       <tr><td>Lifespan cap (~95 yrs)</td><td>Used by the "save me" suggestion. Real human lifespan varies; this is a simulation default, not a prediction.</td></tr>
     </table>
 
-    <h3>Quick γ Reference — Build Your Intuition</h3>
+    <h3>Quick gamma Reference — Build Your Intuition</h3>
     <div class="hbox hbox-amber">
-      <strong>v = 0.5 c</strong> → γ ≈ 1.155 — barely noticeable<br>
-      <strong>v = 0.9 c</strong> → γ ≈ 2.294 — traveler ages less than half<br>
-      <strong>v = 0.99 c</strong> → γ ≈ 7.089 — Earth ages 7× the traveler<br>
-      <strong>v = 0.999 c</strong> → γ ≈ 22.37 — Earth ages 22× the traveler<br>
-      <strong>v = 0.9999 c</strong> → γ ≈ 70.71 — interstellar destinations now reachable in a lifetime<br>
-      <strong>v = 0.99999999 c</strong> → γ ≈ 7,071 — Andromeda in a few centuries of traveler time
+      <strong>v = 0.5 c</strong> → gamma ≈ 1.155 — barely noticeable<br>
+      <strong>v = 0.9 c</strong> → gamma ≈ 2.294 — traveler ages less than half<br>
+      <strong>v = 0.99 c</strong> → gamma ≈ 7.089 — Earth ages 7× the traveler<br>
+      <strong>v = 0.999 c</strong> → gamma ≈ 22.37 — Earth ages 22× the traveler<br>
+      <strong>v = 0.9999 c</strong> → gamma ≈ 70.71 — interstellar destinations now reachable in a lifetime<br>
+      <strong>v = 0.99999999 c</strong> → gamma ≈ 7,071 — Andromeda in a few centuries of traveler time
     </div>
 
     <h3>Why It Matters</h3>
@@ -1340,7 +1336,6 @@ footer a:hover { text-decoration: underline; }
 
 <button class="skip-btn" id="skipBtn">Skip to result →</button>
 
-<!-- Result modal -->
 <div class="result-overlay" id="resultOverlay">
   <div class="result-card">
     <button class="result-close-x" id="resultCloseX" aria-label="Close result popup">×</button>
@@ -1364,11 +1359,6 @@ footer a:hover { text-decoration: underline; }
 </div>
 
 <script>
-/* =============================================================
-   TWIN PARADOX SIMULATOR
-   Single-file, self-contained. Pure HTML/CSS/JS.
-   ============================================================= */
-
 (function(){
   'use strict';
 
@@ -1378,26 +1368,24 @@ footer a:hover { text-decoration: underline; }
   const KM_PER_LY = C_KM_S * SEC_PER_YEAR;
   const KM_PER_AU = 149597870.7;
 
-  const LIFESPAN = 95;       // years; lifespan cap for survival check
-  const SAFETY_BUFFER = 5;   // years of headroom for "save me" suggestion
-  const ANIM_DURATION = 11;  // seconds for the launch animation
+  const LIFESPAN = 95;       
+  const SAFETY_BUFFER = 5;   
+  const ANIM_DURATION = 11;  
 
-  // Destinations: distance is ONE-WAY in light-years
   const DESTINATIONS = [
-    { id: 'moon',    name: 'Moon',             icon: '🌙', distLy: 1.3 / SEC_PER_YEAR,                                blurb: 'Just a hop.' },
-    { id: 'mars',    name: 'Mars',             icon: '🔴', distLy: 12.5 * 60 / SEC_PER_YEAR,                          blurb: 'Closest planetary neighbour.' },
-    { id: 'jupiter', name: 'Jupiter',          icon: '🪐', distLy: 43 * 60 / SEC_PER_YEAR,                            blurb: 'King of the planets.' },
-    { id: 'pluto',   name: 'Pluto',            icon: '❄️', distLy: 5.5 * 3600 / SEC_PER_YEAR,                         blurb: 'Edge of the solar system.' },
-    { id: 'proxima', name: 'Proxima Centauri', icon: '⭐', distLy: 4.246,                                              blurb: 'Nearest star.' },
-    { id: 'sirius',  name: 'Sirius',           icon: '✨', distLy: 8.6,                                                blurb: 'Brightest in the night sky.' },
-    { id: 'vega',    name: 'Vega',             icon: '💫', distLy: 25.04,                                              blurb: 'A cosmic landmark.' },
-    { id: 'pleiades',name: 'Pleiades',         icon: '🌟', distLy: 444,                                                blurb: 'The Seven Sisters.' },
-    { id: 'gcenter', name: 'Galactic Center',  icon: '🌀', distLy: 26000,                                              blurb: 'Heart of the Milky Way.' },
-    { id: 'andromeda',name:'Andromeda Galaxy', icon: '🌌', distLy: 2.5e6,                                              blurb: 'Our nearest neighbour galaxy.' },
-    { id: 'custom',  name: 'Custom',           icon: '✏️', distLy: 100,                                                blurb: 'Pick your own distance.' }
+    { id: 'moon',    name: 'Moon',             icon: '🌙', distLy: 1.3 / SEC_PER_YEAR,         blurb: 'Just a hop.' },
+    { id: 'mars',    name: 'Mars',             icon: '🔴', distLy: 12.5 * 60 / SEC_PER_YEAR,   blurb: 'Closest planetary neighbour.' },
+    { id: 'jupiter', name: 'Jupiter',          icon: '🪐', distLy: 43 * 60 / SEC_PER_YEAR,     blurb: 'King of the planets.' },
+    { id: 'pluto',    name: 'Pluto',            icon: '❄️', distLy: 5.5 * 3600 / SEC_PER_YEAR,  blurb: 'Edge of the solar system.' },
+    { id: 'proxima', name: 'Proxima Centauri', icon: '⭐', distLy: 4.246,                      blurb: 'Nearest star.' },
+    { id: 'sirius',  name: 'Sirius',           icon: '✨', distLy: 8.6,                        blurb: 'Brightest in the night sky.' },
+    { id: 'vega',    name: 'Vega',             icon: '💫', distLy: 25.04,                      blurb: 'A cosmic landmark.' },
+    { id: 'pleiades',name: 'Pleiades',         icon: '🌟', distLy: 444,                        blurb: 'The Seven Sisters.' },
+    { id: 'gcenter', name: 'Galactic Center',  icon: '🌀', distLy: 26000,                      blurb: 'Heart of the Milky Way.' },
+    { id: 'andromeda',name:'Andromeda Galaxy', icon: '🌌', distLy: 2.5e6,                      blurb: 'Our nearest neighbour galaxy.' },
+    { id: 'custom',  name: 'Custom',           icon: '✏️', distLy: 100,                        blurb: 'Pick your own distance.' }
   ];
 
-  // Speed presets (fraction of c)
   const SPEED_PRESETS = [
     { label: '50%',     v: 0.5 },
     { label: '90%',     v: 0.9 },
@@ -1462,7 +1450,6 @@ footer a:hover { text-decoration: underline; }
   /* ----------------- Helpers ----------------- */
   function gammaOf(v) { return 1 / Math.sqrt(Math.max(1e-30, 1 - v*v)); }
 
-  // Format a duration in years into human-readable string
   function formatDuration(years) {
     if (years < 1e-9) return '< 1 second';
     const seconds = years * SEC_PER_YEAR;
@@ -1492,28 +1479,20 @@ footer a:hover { text-decoration: underline; }
     return Math.floor(age);
   }
 
-  // Round-trip Earth time, given d (one-way in ly) and v (in c)
   function earthTimeRT(d, v) { return 2 * d / v; }
 
-  // Round-trip traveler time
   function travelerTimeRT(d, v) {
     const tE = earthTimeRT(d, v);
     return tE / gammaOf(v);
   }
 
-  // Min v needed so traveler time <= maxT
   function minVelocityForSurvival(d, maxT) {
-    // From t_T = 2d * sqrt(1-v²) / v <= maxT
-    // => v² >= 4d² / (maxT² + 4d²)
     const v2 = (4 * d * d) / (maxT * maxT + 4 * d * d);
     return Math.sqrt(v2);
   }
 
-  // Map slider [0..1000] -> v [0.001..0.99999999]
-  // Use exponential mapping in (1 - v) space so high γ is reachable
   function sliderToV(s) {
     const t = s / 1000;
-    // (1 - v) goes from 1 down to 1e-12 logarithmically
     const oneMinusV = Math.pow(10, -12 * t);
     return Math.min(0.999999999999, 1 - oneMinusV);
   }
@@ -1523,18 +1502,16 @@ footer a:hover { text-decoration: underline; }
     return Math.round(Math.max(0, Math.min(1, t)) * 1000);
   }
 
-  // Determine character age stage (0..6)
   function ageStage(age) {
-    if (age < 13) return 0;       // child
-    if (age < 25) return 1;       // teen / young adult
-    if (age < 45) return 2;       // adult
-    if (age < 65) return 3;       // middle-aged
-    if (age < 85) return 4;       // elderly
-    if (age <= LIFESPAN + 15) return 5; // very elderly
-    return 6;                     // memorial
+    if (age < 13) return 0;       
+    if (age < 25) return 1;       
+    if (age < 45) return 2;       
+    if (age < 65) return 3;       
+    if (age < 85) return 4;       
+    if (age <= LIFESPAN + 15) return 5; 
+    return 6;                     
   }
 
-  // Determine civilization stage (0..6) from Earth-time elapsed
   function civStage(yearsElapsed) {
     if (yearsElapsed < 30) return 0;
     if (yearsElapsed < 200) return 1;
@@ -1546,8 +1523,6 @@ footer a:hover { text-decoration: underline; }
   }
 
   /* ----------------- SVG character drawing ----------------- */
-  // Draw all 7 stages of a character into a target SVG (figEarth or figTrav)
-  // Each stage is identified by a group id; we toggle visibility.
   function drawCharacter(prefix, color) {
     const stages = [
       drawChild(color),
@@ -1567,61 +1542,42 @@ footer a:hover { text-decoration: underline; }
 
   function drawChild(c) {
     return `
-      <!-- Body (overalls) -->
       <ellipse cx="100" cy="200" rx="36" ry="46" fill="#3a5a8a"/>
       <rect x="78" y="160" width="44" height="50" fill="#3a5a8a"/>
-      <!-- Legs -->
       <rect x="82" y="240" width="14" height="35" rx="6" fill="#3a5a8a"/>
       <rect x="104" y="240" width="14" height="35" rx="6" fill="#3a5a8a"/>
-      <!-- Shoes -->
       <ellipse cx="89" cy="275" rx="10" ry="4" fill="#1a1a2a"/>
       <ellipse cx="111" cy="275" rx="10" ry="4" fill="#1a1a2a"/>
-      <!-- Arms -->
       <ellipse cx="68" cy="180" rx="8" ry="22" fill="#f0c8a0"/>
       <ellipse cx="132" cy="180" rx="8" ry="22" fill="#f0c8a0"/>
-      <!-- Neck -->
       <rect x="92" y="148" width="16" height="14" fill="#f0c8a0"/>
-      <!-- Head (slightly oversized for child) -->
       <circle cx="100" cy="115" r="38" fill="#f0c8a0"/>
-      <!-- Hair -->
       <path d="M 65 110 Q 70 75 100 72 Q 130 75 135 110 Q 130 95 100 92 Q 75 95 65 110 Z" fill="#5a3a20"/>
-      <!-- Eyes (big) -->
       <circle cx="88" cy="115" r="4" fill="#1a1a2a"/>
       <circle cx="112" cy="115" r="4" fill="#1a1a2a"/>
       <circle cx="89" cy="114" r="1.2" fill="#fff"/>
       <circle cx="113" cy="114" r="1.2" fill="#fff"/>
-      <!-- Cheeks -->
       <circle cx="78" cy="128" r="4" fill="#ffb0a0" opacity="0.6"/>
       <circle cx="122" cy="128" r="4" fill="#ffb0a0" opacity="0.6"/>
-      <!-- Smile -->
       <path d="M 88 134 Q 100 142 112 134" stroke="#1a1a2a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <!-- Glow accent -->
       <circle cx="100" cy="115" r="44" fill="${c}" opacity="0.08"/>
     `;
   }
 
   function drawTeen(c) {
     return `
-      <!-- Body -->
       <path d="M 70 160 L 130 160 L 138 250 L 62 250 Z" fill="#5d3a8a"/>
-      <!-- Legs -->
       <rect x="76" y="245" width="16" height="35" rx="4" fill="#2a3550"/>
       <rect x="108" y="245" width="16" height="35" rx="4" fill="#2a3550"/>
       <ellipse cx="84" cy="280" rx="11" ry="4" fill="#1a1a2a"/>
       <ellipse cx="116" cy="280" rx="11" ry="4" fill="#1a1a2a"/>
-      <!-- Arms -->
       <ellipse cx="62" cy="195" rx="8" ry="32" fill="#f0c8a0"/>
       <ellipse cx="138" cy="195" rx="8" ry="32" fill="#f0c8a0"/>
-      <!-- Neck -->
       <rect x="93" y="135" width="14" height="18" fill="#f0c8a0"/>
-      <!-- Head -->
       <ellipse cx="100" cy="105" rx="32" ry="36" fill="#f0c8a0"/>
-      <!-- Hair (longer) -->
       <path d="M 68 100 Q 65 60 100 55 Q 138 58 134 105 Q 130 80 100 78 Q 75 82 68 100 Z" fill="#3a2010"/>
-      <!-- Eyes -->
       <ellipse cx="89" cy="105" rx="3" ry="3.5" fill="#1a1a2a"/>
       <ellipse cx="111" cy="105" rx="3" ry="3.5" fill="#1a1a2a"/>
-      <!-- Smile -->
       <path d="M 90 124 Q 100 132 110 124" stroke="#1a1a2a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
       <circle cx="100" cy="105" r="42" fill="${c}" opacity="0.08"/>
     `;
@@ -1629,31 +1585,21 @@ footer a:hover { text-decoration: underline; }
 
   function drawAdult(c) {
     return `
-      <!-- Body (jacket) -->
       <path d="M 65 158 L 135 158 L 145 255 L 55 255 Z" fill="#2a3a5a"/>
-      <!-- Shirt collar -->
       <path d="M 90 160 L 100 175 L 110 160" stroke="#fff" stroke-width="2" fill="none"/>
-      <!-- Legs -->
       <rect x="74" y="248" width="18" height="36" rx="4" fill="#1a2030"/>
       <rect x="108" y="248" width="18" height="36" rx="4" fill="#1a2030"/>
       <ellipse cx="83" cy="282" rx="12" ry="4" fill="#0a0a18"/>
       <ellipse cx="117" cy="282" rx="12" ry="4" fill="#0a0a18"/>
-      <!-- Arms -->
       <ellipse cx="60" cy="200" rx="10" ry="34" fill="#2a3a5a"/>
       <ellipse cx="140" cy="200" rx="10" ry="34" fill="#2a3a5a"/>
-      <!-- Hands -->
       <circle cx="60" cy="234" r="8" fill="#e8b890"/>
       <circle cx="140" cy="234" r="8" fill="#e8b890"/>
-      <!-- Neck -->
       <rect x="93" y="133" width="14" height="20" fill="#e8b890"/>
-      <!-- Head -->
       <ellipse cx="100" cy="100" rx="30" ry="34" fill="#e8b890"/>
-      <!-- Hair (medium) -->
       <path d="M 70 95 Q 70 60 100 55 Q 130 60 130 95 Q 128 80 100 78 Q 75 82 70 95 Z" fill="#3a1f0a"/>
-      <!-- Eyes -->
       <circle cx="90" cy="100" r="2.5" fill="#1a1a2a"/>
       <circle cx="110" cy="100" r="2.5" fill="#1a1a2a"/>
-      <!-- Slight smile -->
       <path d="M 91 122 Q 100 128 109 122" stroke="#1a1a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
       <circle cx="100" cy="100" r="42" fill="${c}" opacity="0.07"/>
     `;
@@ -1661,35 +1607,26 @@ footer a:hover { text-decoration: underline; }
 
   function drawMiddleAged(c) {
     return `
-      <!-- Body -->
       <path d="M 62 158 L 138 158 L 150 256 L 50 256 Z" fill="#3a3a4a"/>
       <path d="M 88 160 L 100 175 L 112 160" stroke="#bbb" stroke-width="2" fill="none"/>
-      <!-- Legs -->
       <rect x="72" y="250" width="20" height="36" rx="4" fill="#1a2030"/>
       <rect x="108" y="250" width="20" height="36" rx="4" fill="#1a2030"/>
       <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
       <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <!-- Arms -->
       <ellipse cx="56" cy="202" rx="10" ry="36" fill="#3a3a4a"/>
       <ellipse cx="144" cy="202" rx="10" ry="36" fill="#3a3a4a"/>
       <circle cx="56" cy="238" r="9" fill="#d8a888"/>
       <circle cx="144" cy="238" r="9" fill="#d8a888"/>
-      <!-- Neck -->
       <rect x="92" y="133" width="16" height="20" fill="#d8a888"/>
-      <!-- Head -->
       <ellipse cx="100" cy="100" rx="30" ry="34" fill="#d8a888"/>
-      <!-- Hair (gray streaks) -->
       <path d="M 70 95 Q 72 62 100 58 Q 128 62 130 95 Q 128 82 100 80 Q 75 84 70 95 Z" fill="#4a3525"/>
       <path d="M 75 78 Q 80 70 88 72" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round"/>
       <path d="M 113 72 Q 121 70 126 78" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <!-- Eyes with slight bags -->
       <circle cx="90" cy="100" r="2.5" fill="#1a1a2a"/>
       <circle cx="110" cy="100" r="2.5" fill="#1a1a2a"/>
       <path d="M 86 105 Q 90 108 94 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <path d="M 106 105 Q 110 108 114 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <!-- Mouth (neutral) -->
+      <path d="M 106 105 Q 110 118 114 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
       <path d="M 92 122 Q 100 124 108 122" stroke="#1a1a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <!-- Forehead lines -->
       <path d="M 84 82 Q 100 80 116 82" stroke="#a08070" stroke-width="0.8" fill="none" opacity="0.6"/>
       <circle cx="100" cy="100" r="42" fill="${c}" opacity="0.06"/>
     `;
@@ -1697,40 +1634,29 @@ footer a:hover { text-decoration: underline; }
 
   function drawElderly(c) {
     return `
-      <!-- Body (slightly stooped — head shifted forward) -->
       <path d="M 62 162 L 138 162 L 150 258 L 50 258 Z" fill="#4a4a55"/>
       <path d="M 88 163 L 100 178 L 112 163" stroke="#999" stroke-width="2" fill="none"/>
-      <!-- Legs -->
       <rect x="72" y="252" width="20" height="34" rx="4" fill="#2a2a35"/>
       <rect x="108" y="252" width="20" height="34" rx="4" fill="#2a2a35"/>
       <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
       <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <!-- Arms -->
       <ellipse cx="56" cy="204" rx="10" ry="36" fill="#4a4a55"/>
       <ellipse cx="144" cy="204" rx="10" ry="36" fill="#4a4a55"/>
       <circle cx="56" cy="240" r="9" fill="#c89878"/>
       <circle cx="144" cy="240" r="9" fill="#c89878"/>
-      <!-- Cane -->
       <line x1="148" y1="245" x2="156" y2="285" stroke="#5a3a20" stroke-width="3" stroke-linecap="round"/>
-      <!-- Neck -->
       <rect x="92" y="135" width="16" height="20" fill="#c89878"/>
-      <!-- Head (tilted slightly) -->
       <ellipse cx="100" cy="102" rx="30" ry="34" fill="#c89878"/>
-      <!-- Hair (mostly gray) -->
       <path d="M 70 96 Q 72 64 100 60 Q 128 64 130 96 Q 128 84 100 82 Q 75 86 70 96 Z" fill="#aaa"/>
-      <!-- Glasses -->
       <circle cx="90" cy="100" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
       <circle cx="110" cy="100" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
       <line x1="96" y1="100" x2="104" y2="100" stroke="#1a1a2a" stroke-width="1.5"/>
-      <!-- Eyes -->
       <circle cx="90" cy="100" r="1.8" fill="#1a1a2a"/>
       <circle cx="110" cy="100" r="1.8" fill="#1a1a2a"/>
-      <!-- Wrinkles -->
       <path d="M 80 84 Q 100 82 120 84" stroke="#a08070" stroke-width="0.8" fill="none"/>
       <path d="M 80 88 Q 100 86 120 88" stroke="#a08070" stroke-width="0.6" fill="none"/>
       <path d="M 86 110 Q 90 113 94 110" stroke="#a08070" stroke-width="0.8" fill="none"/>
       <path d="M 106 110 Q 110 113 114 110" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <!-- Mouth (small) -->
       <path d="M 94 122 Q 100 124 106 122" stroke="#1a1a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
       <circle cx="100" cy="102" r="42" fill="${c}" opacity="0.05"/>
     `;
@@ -1738,36 +1664,26 @@ footer a:hover { text-decoration: underline; }
 
   function drawVeryElderly(c) {
     return `
-      <!-- Body (more stooped) -->
       <path d="M 60 168 L 140 168 L 152 260 L 48 260 Z" fill="#5a5560"/>
       <path d="M 88 170 L 100 184 L 112 170" stroke="#888" stroke-width="2" fill="none"/>
-      <!-- Legs -->
       <rect x="72" y="254" width="20" height="32" rx="4" fill="#3a3540"/>
       <rect x="108" y="254" width="20" height="32" rx="4" fill="#3a3540"/>
       <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
       <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <!-- Arms (one on cane) -->
       <ellipse cx="55" cy="206" rx="10" ry="36" fill="#5a5560"/>
       <ellipse cx="145" cy="206" rx="10" ry="34" fill="#5a5560"/>
       <circle cx="55" cy="242" r="8" fill="#b88868"/>
       <circle cx="145" cy="240" r="8" fill="#b88868"/>
-      <!-- Cane -->
       <line x1="149" y1="244" x2="158" y2="285" stroke="#5a3a20" stroke-width="3.5" stroke-linecap="round"/>
       <circle cx="149" cy="244" r="3" fill="#3a2510"/>
-      <!-- Neck -->
       <rect x="92" y="138" width="16" height="22" fill="#b88868"/>
-      <!-- Head (more forward) -->
       <ellipse cx="100" cy="105" rx="30" ry="34" fill="#b88868"/>
-      <!-- Hair (white, thinning) -->
       <path d="M 75 100 Q 78 72 100 68 Q 122 72 125 100 Q 122 90 100 88 Q 78 92 75 100 Z" fill="#eee"/>
-      <!-- Glasses -->
       <circle cx="90" cy="103" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
       <circle cx="110" cy="103" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
       <line x1="96" y1="103" x2="104" y2="103" stroke="#1a1a2a" stroke-width="1.5"/>
-      <!-- Eyes -->
       <circle cx="90" cy="103" r="1.5" fill="#1a1a2a"/>
       <circle cx="110" cy="103" r="1.5" fill="#1a1a2a"/>
-      <!-- Heavy wrinkles -->
       <path d="M 78 86 Q 100 84 122 86" stroke="#806858" stroke-width="0.8" fill="none"/>
       <path d="M 78 91 Q 100 89 122 91" stroke="#806858" stroke-width="0.7" fill="none"/>
       <path d="M 78 96 Q 100 94 122 96" stroke="#806858" stroke-width="0.5" fill="none"/>
@@ -1775,7 +1691,6 @@ footer a:hover { text-decoration: underline; }
       <path d="M 104 116 Q 110 119 116 116" stroke="#806858" stroke-width="0.8" fill="none"/>
       <path d="M 80 130 L 76 138" stroke="#806858" stroke-width="0.5"/>
       <path d="M 120 130 L 124 138" stroke="#806858" stroke-width="0.5"/>
-      <!-- Small mouth -->
       <path d="M 95 126 Q 100 127 105 126" stroke="#1a1a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
       <circle cx="100" cy="105" r="42" fill="${c}" opacity="0.04"/>
     `;
@@ -1783,20 +1698,14 @@ footer a:hover { text-decoration: underline; }
 
   function drawMemorial(c) {
     return `
-      <!-- Ground -->
       <ellipse cx="100" cy="270" rx="70" ry="8" fill="#1a1a2a" opacity="0.6"/>
-      <!-- Gravestone -->
       <path d="M 60 260 L 60 150 Q 60 110 100 110 Q 140 110 140 150 L 140 260 Z" fill="#3a3a48"/>
       <path d="M 60 260 L 60 150 Q 60 110 100 110 Q 140 110 140 150 L 140 260 Z" fill="none" stroke="#5a5a70" stroke-width="2"/>
-      <!-- Cross/symbol -->
       <line x1="100" y1="135" x2="100" y2="170" stroke="#9aa0b0" stroke-width="3" stroke-linecap="round"/>
       <line x1="86" y1="148" x2="114" y2="148" stroke="#9aa0b0" stroke-width="3" stroke-linecap="round"/>
-      <!-- Inscription -->
-      <text x="100" y="200" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="600" fill="#cdd5e8" letter-spacing="2">REMEMBERED</text>
+      <text x="100" y="200" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="600" fill="var(--text)" letter-spacing="2">REMEMBERED</text>
       <text x="100" y="222" text-anchor="middle" font-family="DM Sans" font-size="9" fill="#9aa0b0" letter-spacing="1">A LIFE WELL LIVED</text>
-      <!-- Glow -->
       <circle cx="100" cy="180" r="60" fill="${c}" opacity="0.06"/>
-      <!-- Flowers -->
       <circle cx="78" cy="265" r="3" fill="#ff6b8b"/>
       <circle cx="84" cy="266" r="2.5" fill="#ffc857"/>
       <circle cx="90" cy="265" r="3" fill="#b18cff"/>
@@ -1857,11 +1766,9 @@ footer a:hover { text-decoration: underline; }
       els.customRow.classList.remove('visible');
       state.distLy = dest.distLy;
     }
-    // Update chips
     els.destChips.querySelectorAll('.dest-chip').forEach(c => {
       c.classList.toggle('active', c.dataset.id === id);
     });
-    // Update destination icon in scene
     updateSceneDestination(dest);
     updateReadouts();
   }
@@ -1895,7 +1802,6 @@ footer a:hover { text-decoration: underline; }
 
   function updateSceneDestination(dest) {
     if (!dest) return;
-    // Pick a representative color/size for the destination icon
     let fill = '#ffc857', r = 28;
     if (dest.id === 'moon') { fill = '#cdd5e8'; r = 18; }
     else if (dest.id === 'mars') { fill = '#d6633a'; r = 24; }
@@ -1919,10 +1825,8 @@ footer a:hover { text-decoration: underline; }
     const d = state.distLy;
     const g = gammaOf(v);
 
-    // Distance label
     els.destDistanceLabel.textContent = formatDistance(d);
 
-    // Speed label
     let vStr;
     if (v < 0.99) vStr = v.toFixed(3);
     else if (v < 0.99999) vStr = v.toFixed(5);
@@ -1931,14 +1835,12 @@ footer a:hover { text-decoration: underline; }
     let gStr = g < 100 ? g.toFixed(2) : g < 10000 ? g.toFixed(0) : g.toExponential(2);
     els.speedLabel.textContent = `${vStr} c · γ = ${gStr}`;
 
-    // Stats (initial — when not running)
     if (!state.isAnimating) {
       els.statEarthTime.textContent = formatDuration(0);
       els.statTravTime.textContent = formatDuration(0);
       els.statGamma.textContent = gStr;
     }
 
-    // Survival check
     checkSurvival();
   }
 
@@ -1959,12 +1861,8 @@ footer a:hover { text-decoration: underline; }
   }
 
   function applySaveMe() {
-    // Compute minimum velocity for survival with safety buffer
     const maxT = LIFESPAN - state.startAge - SAFETY_BUFFER;
-    if (maxT <= 1) {
-      // Already too old to save
-      return;
-    }
+    if (maxT <= 1) return;
     const vMin = minVelocityForSurvival(state.distLy, maxT);
     setVelocity(Math.min(0.999999999999, vMin * 1.0001));
   }
@@ -1983,7 +1881,6 @@ footer a:hover { text-decoration: underline; }
     els.skipBtn.classList.add('visible');
     els.scenePanel.classList.add('warping');
 
-    // Track GA event if available
     try {
       if (typeof gtag === 'function') {
         gtag('event', 'twin_paradox_launch', {
@@ -2010,30 +1907,25 @@ footer a:hover { text-decoration: underline; }
     const tE = p * tE_total;
     const tT = p * tT_total;
 
-    // Update ages
     const earthAge = state.startAge + tE;
     const travAge = state.startAge + tT;
     els.ageEarth.textContent = formatAge(earthAge);
     els.ageTrav.textContent = formatAge(travAge);
 
-    // Update stats
     els.statEarthTime.textContent = formatDuration(tE);
     els.statTravTime.textContent = formatDuration(tT);
 
-    // Update character stages
     setCharStage('figEarth', ageStage(earthAge));
     setCharStage('figTrav', ageStage(travAge));
 
-    // Update civilization stage
     setCivStage(civStage(tE));
 
-    // Move rocket
     let pos;
     if (p < 0.5) {
-      pos = p * 2; // 0 -> 1 (going right)
+      pos = p * 2; 
       els.rocket.setAttribute('transform', `translate(${135 + pos * 920}, 90)`);
     } else {
-      pos = (1 - p) * 2; // 1 -> 0 (coming back)
+      pos = (1 - p) * 2; 
       els.rocket.setAttribute('transform', `translate(${135 + pos * 920}, 90) scale(-1, 1)`);
     }
 
@@ -2068,7 +1960,6 @@ footer a:hover { text-decoration: underline; }
   function skipAnimation() {
     if (!state.isAnimating) return;
     cancelAnimationFrame(state.rafId);
-    // Force final frame
     state.animStart = performance.now() - ANIM_DURATION * 1000;
     animate(performance.now());
   }
@@ -2098,7 +1989,6 @@ footer a:hover { text-decoration: underline; }
     const earthAge = state.startAge + tE;
     const travAge = state.startAge + tT;
 
-    // Headline
     let headline;
     if (gap < 1/365) {
       headline = `You both aged about the same.`;
@@ -2134,9 +2024,7 @@ footer a:hover { text-decoration: underline; }
       els.launchBtn.disabled = false;
     }
     closeResult();
-    // Reset rocket
     els.rocket.setAttribute('transform', 'translate(135, 90)');
-    // Reset ages and stats
     const sa = parseInt(els.startAge.value) || 8;
     state.startAge = Math.max(3, Math.min(80, sa));
     els.ageEarth.textContent = state.startAge;
@@ -2153,22 +2041,18 @@ footer a:hover { text-decoration: underline; }
     buildDestinationChips();
     buildSpeedPresets();
 
-    // Draw both characters
     drawCharacter('figEarth', '#4fd1ff');
     drawCharacter('figTrav', '#b18cff');
 
-    // Set initial selection
     selectDestination('moon');
     setVelocity(0.5);
 
-    // Show initial age
     els.ageEarth.textContent = state.startAge;
     els.ageTrav.textContent = state.startAge;
     setCharStage('figEarth', ageStage(state.startAge));
     setCharStage('figTrav', ageStage(state.startAge));
     setCivStage(0);
 
-    // Wire events
     els.speedSlider.addEventListener('input', (e) => {
       const v = sliderToV(parseInt(e.target.value));
       state.velocityC = v;
@@ -2202,16 +2086,24 @@ footer a:hover { text-decoration: underline; }
     els.skipBtn.addEventListener('click', skipAnimation);
     els.resultClose.addEventListener('click', closeResult);
     document.getElementById('resultCloseX').addEventListener('click', closeResult);
-    // Click outside the card closes the popup
     els.resultOverlay.addEventListener('click', (ev) => {
       if (ev.target === els.resultOverlay) closeResult();
     });
-    // ESC key closes the popup
     document.addEventListener('keydown', (ev) => {
       if (ev.key === 'Escape' && els.resultOverlay.classList.contains('visible')) closeResult();
     });
 
-    // Rebuild starfield on resize (for density)
+    // Theme selector initialization loop
+    const themeSwitcher = document.getElementById('theme-switcher');
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-theme');
+    }
+    themeSwitcher.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+      updateReadouts();
+    });
+
     let resizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
