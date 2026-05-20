@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -30,13 +29,32 @@
   --warn:    #ffb040;
   --bad:     #ff6060;
   --escape:  #c060ff;
+  --canvas-bg: #010610;
 }
+
+/* HIGH-CONTRAST LIGHT OBSERVATORY THEME SCHEME MAP */
+body.light-theme {
+  --bg:      #f4f6fa;
+  --bg2:     #ffffff;
+  --bg3:     #e6ecf5;
+  --border:  #ced7e1;
+  --border2: #b0c2de;
+  --text:    #0a1530;
+  --text2:   #405578;
+  --text3:   #60789d;
+  --accent:  #005ecc;
+  --gold:    #a07000;
+  --gold2:   #735000;
+  --canvas-bg: #fafbfc;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Georgia', 'Times New Roman', serif;
   line-height: 1.6;
   min-height: 100vh;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* ─── HEADER ─── */
@@ -44,8 +62,9 @@ header {
   display: flex; align-items: center; gap: 20px;
   padding: 13px 28px;
   border-bottom: 1px solid var(--border);
-  background: rgba(1,4,9,0.95);
+  background: var(--bg);
   position: sticky; top: 0; z-index: 10;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 .logo { font-family: monospace; font-size: 11px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; }
 .logo span { color: var(--text2); }
@@ -77,20 +96,23 @@ header {
 .canvas-wrap { position: relative; max-width: 960px; margin: 14px auto 0; padding: 0 20px; }
 canvas {
   display: block; width: 100%; height: 500px;
-  background: #010610; border-radius: 12px;
+  background: var(--canvas-bg); border-radius: 12px;
   border: 1px solid var(--border); cursor: crosshair;
   touch-action: none;
+  transition: background 0.2s, border-color 0.2s;
 }
 .canvas-badge {
   position: absolute; top: 10px; left: 30px;
   font-family: monospace; font-size: 10px; color: var(--accent);
-  background: rgba(1,6,16,0.9); padding: 4px 10px; border-radius: 4px;
+  background: var(--bg2); padding: 4px 10px; border-radius: 4px;
+  border: 1px solid var(--border);
   pointer-events: none; letter-spacing: 1.5px;
 }
 .canvas-clock {
   position: absolute; top: 10px; right: 30px;
   font-family: monospace; font-size: 10px; color: var(--text2);
-  background: rgba(1,6,16,0.9); padding: 4px 10px; border-radius: 4px;
+  background: var(--bg2); padding: 4px 10px; border-radius: 4px;
+  border: 1px solid var(--border);
   pointer-events: none;
 }
 .scale-bar {
@@ -112,10 +134,10 @@ canvas {
 }
 .zoom-toggle button {
   font-family: monospace; font-size: 9px; padding: 3px 9px;
-  background: rgba(1,6,16,0.9); border: 1px solid var(--border2);
+  background: var(--bg2); border: 1px solid var(--border2);
   border-radius: 3px; color: var(--text2); cursor: pointer; letter-spacing: 1px;
 }
-.zoom-toggle button.active { color: var(--gold); border-color: var(--gold); }
+.zoom-toggle button.active { color: var(--gold); border-color: var(--gold); background: var(--bg3); }
 
 /* ─── PANELS ─── */
 .panels {
@@ -128,6 +150,7 @@ canvas {
 .panel {
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: 10px; padding: 18px;
+  transition: background 0.2s, border-color 0.2s;
 }
 .panel-title {
   font-family: monospace; font-size: 9px; letter-spacing: 4px;
@@ -145,7 +168,7 @@ button {
   transition: all 0.15s; letter-spacing: 0.5px;
 }
 button:hover { background: var(--bg3); color: var(--text); border-color: var(--accent); }
-button.lit { border-color: var(--accent); color: var(--accent); }
+button.lit { border-color: var(--accent); color: var(--accent); background: var(--bg3); }
 
 /* sliders */
 .param { margin-bottom: 16px; }
@@ -173,6 +196,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
   border-left: 3px solid var(--accent);
   border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 14px;
   font-family: monospace; font-size: 11px; color: var(--text2); line-height: 1.8;
+  transition: background 0.2s, border-color 0.2s;
 }
 .howto .kbd {
   display: inline-block;
@@ -213,6 +237,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
 .theory {
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: 10px; padding: 30px 36px;
+  transition: background 0.2s, border-color 0.2s;
 }
 .theory-header {
   font-family: monospace; font-size: 9px; letter-spacing: 5px;
@@ -232,16 +257,18 @@ input[type=range] { width: 100%; accent-color: var(--accent); cursor: pointer; }
   background: var(--bg3); border-left: 3px solid var(--gold);
   padding: 12px 20px; margin: 14px 0;
   border-radius: 0 8px 8px 0; color: var(--gold2);
+  transition: background 0.2s;
 }
 .theory .eq .vars { font-size: 11px; color: var(--text3); margin-top: 6px; line-height: 1.7; }
 .unit-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 12px; margin-top: 10px; }
-.unit-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
+.unit-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); color: var(--text2); transition: border-color 0.2s; }
 .unit-table td:first-child { color: var(--gold2); width: 220px; }
 .unit-table tr:last-child td { border-bottom: none; }
 .sim-note {
   background: var(--bg3); border: 1px solid var(--border2);
   border-radius: 8px; padding: 14px 18px; margin-top: 20px;
   font-family: monospace; font-size: 11px; color: var(--text3); line-height: 2;
+  transition: background 0.2s, border-color 0.2s;
 }
 .sim-note strong { color: var(--text2); }
 
@@ -249,6 +276,7 @@ footer {
   border-top: 1px solid var(--border); padding: 16px 28px;
   text-align: center; font-family: monospace; font-size: 10px;
   color: var(--text3); letter-spacing: 3px;
+  transition: border-color 0.2s;
 }
 </style>
 </head>
@@ -276,7 +304,6 @@ footer {
 </div>
 
 <div class="panels">
-  <!-- LEFT PANEL: Controls -->
   <div class="panel">
     <div class="panel-title">Controls &amp; Presets</div>
 
@@ -322,7 +349,6 @@ footer {
     </div>
   </div>
 
-  <!-- RIGHT PANEL: Live readout -->
   <div class="panel">
     <div class="panel-title">Live Physics Readout</div>
     <table class="readout-table">
@@ -343,7 +369,6 @@ footer {
   </div>
 </div>
 
-<!-- THEORY SECTION -->
 <div class="theory-wrap">
 <div class="theory">
   <div class="theory-header">Theory — Orbits, Satellites &amp; Solar Systems</div>
@@ -351,6 +376,8 @@ footer {
   <h3>Why Satellites Don't Fall Down (Actually, They Do)</h3>
   <p>The International Space Station is in <em>free fall</em> — there is nothing holding it up. Astronauts inside float not because there's no gravity (Earth's gravity is still 89% as strong at the ISS as on the ground), but because the station, the astronauts, and everything inside it are all falling together. The trick is that the ISS is moving sideways at <strong>7.66 km/s</strong> — fast enough that as it falls toward Earth, the curved surface of Earth falls away beneath it at exactly the same rate. It never hits the ground.</p>
   <p>Newton imagined this with a cannonball fired horizontally from a mountain. Fired slowly, it lands nearby. Fired faster, it lands further. Fired fast enough — the cannonball misses Earth entirely and comes round behind you. That is an orbit. Every satellite is just a very fast cannonball.</p>
+
+  
 
   <h3>Newton's Law of Universal Gravitation (1687)</h3>
   <p>Every object with mass pulls on every other object with mass. The force is proportional to the product of the masses and falls off as the square of the distance.</p>
@@ -430,22 +457,16 @@ footer {
 <script>
 "use strict";
 
-// ============================================================================
-// PHYSICAL CONSTANTS
-// ============================================================================
-const G       = 6.674e-11;        // N·m²·kg⁻²
-const M_SUN   = 1.989e30;         // kg
-const M_EARTH = 5.972e24;         // kg
-const M_MOON  = 7.342e22;         // kg
-const R_EARTH = 6.371e6;          // m
-const R_SUN_VIS = 8.0;            // visual radius for Sun in px
-const AU      = 1.496e11;         // m
-const DAY     = 86400;            // s
+const G       = 6.674e-11;        
+const M_SUN   = 1.989e30;         
+const M_EARTH = 5.972e24;         
+const M_MOON  = 7.342e22;         
+const R_EARTH = 6.371e6;          
+const R_SUN_VIS = 8.0;            
+const AU      = 1.496e11;         
+const DAY     = 86400;            
 const YEAR    = 365.25 * DAY;
 
-// ============================================================================
-// CANVAS
-// ============================================================================
 const canvas = document.getElementById('c');
 const ctx    = canvas.getContext('2d');
 let W, H, CX, CY;
@@ -458,37 +479,30 @@ function resize() {
 resize();
 window.addEventListener('resize', () => { resize(); spawnCurrent(); });
 
-// ============================================================================
-// VIEW MODES & SCALES
-// ============================================================================
-// mode: 'solar' | 'earth'
-// earthZoom: 'sat' | 'moon'   (only used when mode === 'earth')
 let mode = 'solar';
 let earthZoom = 'sat';
 
-// Scale config — converts between real metres and screen pixels, and
-// between real seconds and one second of animation time.
 const SCALES = {
   solar: {
     central_mass: M_SUN,
     central_label: 'Sun',
     central_color: '#ffd060',
     central_radius_vis: 16,
-    central_radius_real: 6.96e8,       // Sun radius (m)
-    px_per_m: 60 / AU,                 // 60 px = 1 AU
-    sec_per_anim: 25 * DAY,            // 1 anim-sec = 25 days
+    central_radius_real: 6.96e8,       
+    px_per_m: 60 / AU,                 
+    sec_per_anim: 25 * DAY,            
     scale_text: '60 px = 1 AU = 149.6 Mkm',
-    drag_to_ms: 360,                   // m/s per pixel of drag
+    drag_to_ms: 360,                    
     clock_unit: 'days',
   },
   earth_sat: {
     central_mass: M_EARTH,
     central_label: 'Earth',
     central_color: '#4a90e2',
-    central_radius_vis: 30,            // visually larger than real for clarity
+    central_radius_vis: 30,            
     central_radius_real: R_EARTH,
-    px_per_m: 30 / R_EARTH,            // Earth surface drawn at 30 px
-    sec_per_anim: 4 * 60,              // 1 anim-sec = 4 minutes
+    px_per_m: 30 / R_EARTH,            
+    sec_per_anim: 4 * 60,              
     scale_text: '1 px ≈ 212 km · Earth surface to scale',
     drag_to_ms: 90,
     clock_unit: 'auto',
@@ -499,8 +513,8 @@ const SCALES = {
     central_color: '#4a90e2',
     central_radius_vis: 8,
     central_radius_real: R_EARTH,
-    px_per_m: 220 / 3.844e8,           // Moon at ~220 px (1 px ≈ 1747 km)
-    sec_per_anim: 10 * 3600,           // 1 anim-sec = 10 hours
+    px_per_m: 220 / 3.844e8,           
+    sec_per_anim: 10 * 3600,           
     scale_text: '1 px ≈ 1,747 km · Moon visible',
     drag_to_ms: 25,
     clock_unit: 'auto',
@@ -513,35 +527,28 @@ function currentScale() {
 }
 function mu() { return G * currentScale().central_mass; }
 
-// ============================================================================
-// STATE
-// ============================================================================
 let bodies   = [];
 let paused   = false;
 let showTrail = true;
 let speedMult = 1.0;
-let newBodyMassKg = 500;        // user-selected launch mass
-let simTime  = 0;               // seconds (real time elapsed in simulation)
+let newBodyMassKg = 500;        
+let simTime  = 0;               
 let lastTime = null;
 
 const TRAIL_LEN = 280;
 
-// ============================================================================
-// BODIES — all positions in METRES from central body, velocities in m/s
-// ============================================================================
 function makeBody(opts) {
   return Object.assign({
     x: 0, y: 0, vx: 0, vy: 0,
     mass: 1, color: '#ffffff', label: '',
-    radius_vis: 3,           // visual radius in px
+    radius_vis: 3,           
     trail: [],
-    tag: 'natural',          // 'natural' | 'user'
-    pinned: false,           // central body doesn't move
-    preset_kind: null,       // 'planet' | 'moon' | 'sat' | 'iss' | 'geo' | etc.
+    tag: 'natural',          
+    pinned: false,           
+    preset_kind: null,       
   }, opts);
 }
 
-// Real solar system data (semi-major axis in m, mass in kg)
 const SOLAR_DATA = [
   { name: 'Mercury', a: 0.387 * AU, mass: 3.301e23, color: '#a08070', r: 3 },
   { name: 'Venus',   a: 0.723 * AU, mass: 4.867e24, color: '#e8b070', r: 4 },
@@ -551,7 +558,6 @@ const SOLAR_DATA = [
   { name: 'Saturn',  a: 9.537 * AU, mass: 5.683e26, color: '#e0c080', r: 7 },
 ];
 
-// Real Earth-system data
 const EARTH_DATA_SAT = [
   { name: 'ISS',           alt: 400e3,    mass: 4.2e5,  color: '#80ffd0', r: 3, preset_kind: 'iss' },
   { name: 'Hubble',        alt: 540e3,    mass: 1.1e4,  color: '#c0c0ff', r: 3, preset_kind: 'hubble' },
@@ -560,7 +566,6 @@ const EARTH_DATA_SAT = [
 ];
 const EARTH_DATA_MOON = [
   { name: 'Moon', alt: 3.844e8 - R_EARTH, mass: M_MOON, color: '#d8d8d8', r: 5, preset_kind: 'moon' },
-  // and the satellites, which will visually collapse onto Earth at this scale
   { name: 'Geostationary', alt: 35786e3, mass: 5.0e3, color: '#ffe060', r: 2, preset_kind: 'geo' },
 ];
 
@@ -574,7 +579,7 @@ function spawnSolar() {
   SOLAR_DATA.forEach(p => {
     const ang = Math.random() * Math.PI * 2;
     const r = p.a;
-    const v = Math.sqrt(G * M_SUN / r);     // circular orbital speed at r
+    const v = Math.sqrt(G * M_SUN / r);     
     bodies.push(makeBody({
       x:  Math.cos(ang) * r, y:  Math.sin(ang) * r,
       vx: -Math.sin(ang) * v, vy: Math.cos(ang) * v,
@@ -616,10 +621,6 @@ function spawnCurrent() {
   updateBadge();
 }
 
-// ============================================================================
-// COORDINATE CONVERSIONS
-// ============================================================================
-// Real coordinates (m, origin at central body) ↔ screen pixels
 function r2px(x, y) {
   const k = currentScale().px_per_m;
   return { x: CX + x * k, y: CY + y * k };
@@ -629,12 +630,8 @@ function px2r(px, py) {
   return { x: (px - CX) / k, y: (py - CY) / k };
 }
 
-// ============================================================================
-// PHYSICS — Newtonian, all in SI
-// ============================================================================
 function physicsStep(dt_real) {
   const n = bodies.length;
-  // accelerations
   const ax = new Float64Array(n), ay = new Float64Array(n);
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
@@ -649,7 +646,6 @@ function physicsStep(dt_real) {
       ay[i] += a * dy / d;
     }
   }
-  // integrate
   for (let i = 0; i < n; i++) {
     const b = bodies[i];
     if (b.pinned) continue;
@@ -660,17 +656,14 @@ function physicsStep(dt_real) {
     b.trail.push([b.x, b.y]);
     if (b.trail.length > TRAIL_LEN) b.trail.shift();
   }
-  // collision with central body (impact)
   const central = bodies[0];
   const R_surf = (mode === 'earth' && currentScale().central_radius_real) ? currentScale().central_radius_real : 0;
   bodies = bodies.filter((b, i) => {
     if (i === 0) return true;
     const d = Math.hypot(b.x - central.x, b.y - central.y);
     if (R_surf > 0 && d < R_surf) {
-      // impact — remove unless we want a flash
       return false;
     }
-    // remove if absurdly far
     const k = currentScale().px_per_m;
     const dpx = d * k;
     if (dpx > 4000) return false;
@@ -678,9 +671,6 @@ function physicsStep(dt_real) {
   });
 }
 
-// ============================================================================
-// ORBIT CLASSIFICATION (around central body, using real SI values)
-// ============================================================================
 function classifyOrbit(b) {
   const central = bodies[0];
   const rx = b.x - central.x, ry = b.y - central.y;
@@ -688,15 +678,14 @@ function classifyOrbit(b) {
   const r = Math.hypot(rx, ry);
   const v = Math.hypot(vx, vy);
   const MU = mu();
-  const eps = v*v/2 - MU/r;                 // specific orbital energy J/kg
-  const h = rx * vy - ry * vx;              // specific angular momentum
+  const eps = v*v/2 - MU/r;                 
+  const h = rx * vy - ry * vx;              
   const R_surf = currentScale().central_radius_real || 0;
 
   if (eps >= 0) {
     const v_esc = Math.sqrt(2 * MU / r);
     return { type: 'escape', r, v, v_esc, period: null };
   }
-  // bound
   const a = -MU / (2 * eps);
   const e = Math.sqrt(Math.max(0, 1 + 2 * eps * h * h / (MU * MU)));
   const periapsis = a * (1 - e);
@@ -712,12 +701,7 @@ function classifyOrbit(b) {
   return { type: 'elliptical', r, v, periapsis, apoapsis, period: T, e };
 }
 
-// ============================================================================
-// PREDICTED ORBIT — analytical (Kepler) ellipse for stable orbits,
-//                    numerical for impact/escape
-// ============================================================================
 function predictPath(x, y, vx, vy) {
-  // returns { points: [[px,py],...], color: '#...' }
   const central = bodies[0];
   const rx = x - central.x, ry = y - central.y;
   const r = Math.hypot(rx, ry);
@@ -727,8 +711,6 @@ function predictPath(x, y, vx, vy) {
   const h = rx * vy - ry * vx;
   const R_surf = currentScale().central_radius_real || 0;
 
-  // Compute eccentricity vector for analytical orbit
-  // e_vec = ((v² − μ/r)·r_vec − (r·v)·v_vec) / μ
   const rdotv = rx * vx + ry * vy;
   const factor = v*v - MU/r;
   const ex = (factor * rx - rdotv * vx) / MU;
@@ -736,42 +718,34 @@ function predictPath(x, y, vx, vy) {
   const ecc = Math.hypot(ex, ey);
 
   if (eps < 0 && ecc < 0.999) {
-    // Bound orbit — draw analytical ellipse
-    const a = -MU / (2 * eps);                  // semi-major axis
+    const a = -MU / (2 * eps);                  
     const periapsis = a * (1 - ecc);
     const apoapsis  = a * (1 + ecc);
-    // orientation angle of periapsis (from +x axis)
     const omega = Math.atan2(ey, ex);
-    // direction of motion (CCW or CW): from h sign
     const ccw = (h > 0);
 
     const pts = [];
     const STEPS = 180;
     for (let i = 0; i <= STEPS; i++) {
-      // True anomaly θ from 0 → 2π
       const theta = (i / STEPS) * Math.PI * 2;
       const rT = a * (1 - ecc * ecc) / (1 + ecc * Math.cos(theta));
-      // Position in orbit plane (periapsis along +x of rotated frame)
       const xOrb = rT * Math.cos(theta);
       const yOrb = rT * Math.sin(theta) * (ccw ? 1 : -1);
-      // Rotate by omega and translate to central body's position
       const xWorld = central.x + xOrb * Math.cos(omega) - yOrb * Math.sin(omega);
       const yWorld = central.y + xOrb * Math.sin(omega) + yOrb * Math.cos(omega);
       pts.push(r2px(xWorld, yWorld));
     }
 
-    // Color based on classification
     let color;
-    if (R_surf > 0 && periapsis < R_surf) color = '#ff6060';   // will crash
-    else if (ecc < 0.03) color = '#60ee90';                   // ~circular
-    else color = '#ffb040';                                    // elliptical
+    if (R_surf > 0 && periapsis < R_surf) color = '#ff6060';   
+    else if (ecc < 0.03) color = '#60ee90';                    
+    else color = '#ffb040';                                    
     return { points: pts, color, closed: true };
   }
 
-  // Escape / impact — numerical integration forward
   let sx = x, sy = y, svx = vx, svy = vy;
   const pts = [r2px(sx, sy)];
-  const dt = currentScale().sec_per_anim * 0.05; // small step
+  const dt = currentScale().sec_per_anim * 0.05; 
   const STEPS = 600;
   let impacted = false;
   for (let i = 0; i < STEPS; i++) {
@@ -785,7 +759,6 @@ function predictPath(x, y, vx, vy) {
     sx  += svx * dt;
     sy  += svy * dt;
     pts.push(r2px(sx, sy));
-    // stop if going way off screen
     const screenPt = r2px(sx, sy);
     if (screenPt.x < -W || screenPt.x > 2*W || screenPt.y < -H || screenPt.y > 2*H) break;
   }
@@ -793,30 +766,25 @@ function predictPath(x, y, vx, vy) {
   return { points: pts, color, closed: false };
 }
 
-// ============================================================================
-// BACKGROUND STAR FIELD
-// ============================================================================
 const bgStars = Array.from({length: 220}, () => ({
   x: Math.random(), y: Math.random(),
   b: Math.random(), s: 0.4 + Math.random() * 0.9
 }));
 
-// ============================================================================
-// RENDER
-// ============================================================================
 function render(ts) {
-  // trail-fade background
-  ctx.fillStyle = showTrail ? 'rgba(1,6,16,0.18)' : '#010610';
+  const isLight = document.body.classList.contains('light-theme');
+  ctx.fillStyle = showTrail ? (isLight ? 'rgba(244,246,2fa,0.18)' : 'rgba(1,6,16,0.18)') : (isLight ? '#fafbfc' : '#010610');
   ctx.fillRect(0, 0, W, H);
 
-  // background stars
-  bgStars.forEach(s => {
-    const a = 0.1 + 0.25 * Math.sin(ts * 0.0006 + s.b * 7);
-    ctx.fillStyle = 'rgba(190,215,255,' + a.toFixed(2) + ')';
-    ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.s, 0, Math.PI * 2); ctx.fill();
-  });
+  // Background environment condition sync
+  if (!isLight) {
+    bgStars.forEach(s => {
+      const a = 0.1 + 0.25 * Math.sin(ts * 0.0006 + s.b * 7);
+      ctx.fillStyle = 'rgba(190,215,255,' + a.toFixed(2) + ')';
+      ctx.beginPath(); ctx.arc(s.x * W, s.y * H, s.s, 0, Math.PI * 2); ctx.fill();
+    });
+  }
 
-  // trails
   if (showTrail) {
     bodies.forEach((b, i) => {
       if (b.trail.length < 2 || b.pinned) return;
@@ -834,7 +802,6 @@ function render(ts) {
     });
   }
 
-  // predicted orbit during drag
   if (drag.active && drag.preview) {
     const p = drag.preview;
     ctx.strokeStyle = p.color;
@@ -848,14 +815,12 @@ function render(ts) {
     if (p.closed) ctx.closePath();
     ctx.stroke();
     ctx.setLineDash([]);
-    // drag arrow
     ctx.strokeStyle = p.color;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(drag.startPx.x, drag.startPx.y);
     ctx.lineTo(drag.endPx.x, drag.endPx.y);
     ctx.stroke();
-    // arrowhead
     const dx = drag.endPx.x - drag.startPx.x;
     const dy = drag.endPx.y - drag.startPx.y;
     const ang = Math.atan2(dy, dx);
@@ -868,48 +833,42 @@ function render(ts) {
     ctx.stroke();
   }
 
-  // bodies
   bodies.forEach((b, i) => {
     const p = r2px(b.x, b.y);
     if (p.x < -50 || p.x > W + 50 || p.y < -50 || p.y > H + 50) return;
-    // glow
-    for (let g = 5; g > 0; g--) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, b.radius_vis + g * 2.4, 0, Math.PI * 2);
-      ctx.fillStyle = b.color + ['1a','12','0c','06','03'][g - 1];
-      ctx.fill();
+    if (!isLight) {
+      for (let g = 5; g > 0; g--) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, b.radius_vis + g * 2.4, 0, Math.PI * 2);
+        ctx.fillStyle = b.color + ['1a','12','0c','06','03'][g - 1];
+        ctx.fill();
+      }
     }
-    // body
     ctx.beginPath(); ctx.arc(p.x, p.y, b.radius_vis, 0, Math.PI * 2);
     ctx.fillStyle = b.color; ctx.fill();
-    // highlight
     ctx.beginPath();
     ctx.arc(p.x - b.radius_vis * 0.3, p.y - b.radius_vis * 0.32,
             b.radius_vis * 0.36, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
 
-    // label for special bodies
     if (b.label && (b.preset_kind === 'earth' || b.preset_kind === 'iss' ||
         b.preset_kind === 'geo' || b.preset_kind === 'moon' ||
         b.preset_kind === 'hubble' || b.preset_kind === 'gps' ||
         i === 0 || b.preset_kind === 'planet' ||
         ['Mercury','Venus','Mars','Jupiter','Saturn'].includes(b.label))) {
-      ctx.fillStyle = 'rgba(184,206,236,0.55)';
+      ctx.fillStyle = isLight ? 'var(--text2)' : 'rgba(184,206,236,0.55)';
       ctx.font = '10px monospace';
       ctx.fillText(b.label, p.x + b.radius_vis + 5, p.y + 3);
     }
   });
 }
 
-// ============================================================================
-// MAIN LOOP
-// ============================================================================
 function loop(ts) {
   if (lastTime === null) lastTime = ts;
   const dt_anim = Math.min((ts - lastTime) / 1000, 0.05) * speedMult;
   lastTime = ts;
   if (!paused) {
-    const sub = 4;        // substeps for stability
+    const sub = 4;        
     const dt_real = dt_anim * currentScale().sec_per_anim / sub;
     for (let i = 0; i < sub; i++) physicsStep(dt_real);
     simTime += dt_anim * currentScale().sec_per_anim;
@@ -919,9 +878,6 @@ function loop(ts) {
 }
 requestAnimationFrame(loop);
 
-// ============================================================================
-// FORMATTING HELPERS
-// ============================================================================
 function fmtDist(m) {
   if (mode === 'solar') return (m / AU).toFixed(2) + ' AU';
   if (m < 1e7) return (m / 1000).toFixed(0) + ' km';
@@ -952,9 +908,6 @@ function fmtAltitude(b) {
   return fmtDist(alt) + ' alt';
 }
 
-// ============================================================================
-// READOUT
-// ============================================================================
 function updateReadout() {
   if (!bodies.length) return;
   const central = bodies[0];
@@ -987,7 +940,7 @@ function updateReadout() {
     } else if (orb.type === 'impact') {
       tag = '<span class="tag imp">will crash</span>';
       periodStr = fmtPeriod(orb.period) + ' *';
-    } else { // escape
+    } else { 
       tag = '<span class="tag esc">escape</span>';
       periodStr = '∞';
     }
@@ -1004,7 +957,6 @@ function updateReadout() {
   });
   document.getElementById('readout').innerHTML = rows.join('');
 
-  // clock
   let str;
   const sc = currentScale();
   if (sc.clock_unit === 'days') {
@@ -1020,9 +972,6 @@ function updateReadout() {
 }
 setInterval(updateReadout, 300);
 
-// ============================================================================
-// DRAG-TO-LAUNCH
-// ============================================================================
 const drag = { active: false, startPx: null, endPx: null, preview: null, startedAt: 0, moved: false };
 
 function getMousePx(e) {
@@ -1056,7 +1005,6 @@ canvas.addEventListener('mousemove', e => {
   const dx = drag.endPx.x - drag.startPx.x;
   const dy = drag.endPx.y - drag.startPx.y;
   if (Math.hypot(dx, dy) > 4) drag.moved = true;
-  // compute preview
   const r = px2r(drag.startPx.x, drag.startPx.y);
   const v = dragVelocity(drag.startPx, drag.endPx);
   if (drag.moved) drag.preview = predictPath(r.x, r.y, v.vx, v.vy);
@@ -1065,9 +1013,7 @@ function endDrag(e) {
   if (!drag.active) return;
   drag.active = false;
 
-  // Was it a click (no significant drag)?
   if (!drag.moved) {
-    // Check for click on Earth in solar mode → switch to earth mode
     if (mode === 'solar') {
       const earth = bodies.find(b => b.preset_kind === 'earth');
       if (earth) {
@@ -1079,19 +1025,16 @@ function endDrag(e) {
         }
       }
     }
-    // Otherwise: treat as small click — launch a body in nearly-circular orbit
     const r = px2r(drag.startPx.x, drag.startPx.y);
     const rmag = Math.hypot(r.x, r.y);
-    if (rmag < (currentScale().central_radius_real || 0)) return;  // inside surface
+    if (rmag < (currentScale().central_radius_real || 0)) return;  
     const vcirc = Math.sqrt(mu() / rmag);
-    // CCW velocity
     const vx = -r.y / rmag * vcirc;
     const vy =  r.x / rmag * vcirc;
     launchBody(r.x, r.y, vx, vy);
     return;
   }
 
-  // Real drag → launch with velocity vector
   const r = px2r(drag.startPx.x, drag.startPx.y);
   if (Math.hypot(r.x, r.y) < (currentScale().central_radius_real || 0)) {
     drag.preview = null;
@@ -1104,7 +1047,6 @@ function endDrag(e) {
 canvas.addEventListener('mouseup', endDrag);
 canvas.addEventListener('mouseleave', endDrag);
 
-// touch
 canvas.addEventListener('touchstart', e => {
   e.preventDefault();
   drag.active = true;
@@ -1143,16 +1085,13 @@ function launchBody(x, y, vx, vy) {
   }));
 }
 
-// ============================================================================
-// PRESET QUICK-LAUNCH CHIPS
-// ============================================================================
 const PRESETS_SOLAR = [
   { label: 'Asteroid @ 2.7 AU', r_au: 2.7, mass: 1e20, circ: true },
   { label: 'Comet (elliptical)', r_au: 1.0, mass: 1e13, ecc: 0.6 },
   { label: 'Trans-Neptune object', r_au: 8.0, mass: 1e22, circ: true },
 ];
 const PRESETS_EARTH_SAT = [
-  { label: 'Add at LEO 400 km',  alt_km: 400,   circ: true },
+  { label: 'Add at LEO 400 km',   alt_km: 400,   circ: true },
   { label: 'Add at GEO 35,786 km', alt_km: 35786, circ: true },
   { label: 'Polar orbit 800 km',  alt_km: 800,  circ: true, polar: true },
   { label: 'Sub-orbital toss',    alt_km: 6000, circ: false, vfrac: 0.55 },
@@ -1190,12 +1129,10 @@ function applyPreset(p) {
     vx = -Math.sin(ang) * vcirc;
     vy =  Math.cos(ang) * vcirc;
     if (p.polar) {
-      // Already 2D; rotate 'polar' visually by just inverting (still planar)
       vx = -vx; vy = -vy;
     }
   } else if (p.ecc !== undefined) {
-    // elliptical: speed at periapsis
-    const a = r / (1 - p.ecc);   // treat r as periapsis
+    const a = r / (1 - p.ecc);   
     const vP = Math.sqrt(mu() * (2/r - 1/a));
     vx = -Math.sin(ang) * vP;
     vy =  Math.cos(ang) * vP;
@@ -1206,9 +1143,6 @@ function applyPreset(p) {
   launchBody(x, y, vx, vy);
 }
 
-// ============================================================================
-// MODE SWITCHING
-// ============================================================================
 function switchMode(m, z) {
   mode = m;
   if (z) earthZoom = z;
@@ -1241,13 +1175,8 @@ function updateBadge() {
     b.textContent = 'DRAG TO LAUNCH · MOON VISIBLE';
   }
 }
-function updateHowto() {
-  // could vary by mode if desired
-}
+function updateHowto() {}
 
-// ============================================================================
-// CONTROL HANDLERS
-// ============================================================================
 document.getElementById('btn-pause').onclick = function () {
   paused = !paused; lastTime = null;
   this.textContent = paused ? '▶ Play' : '⏸ Pause';
@@ -1273,8 +1202,7 @@ document.getElementById('speed').oninput.call(document.getElementById('speed'));
 
 document.getElementById('new-mass').oninput = function () {
   const v = parseInt(this.value, 10);
-  // Map 0..100 logarithmically to 100 kg .. 1e7 kg (small probe to large spacecraft)
-  const kg = Math.round(Math.pow(10, 2 + v * 0.05));     // 1e2 .. 1e7
+  const kg = Math.round(Math.pow(10, 2 + v * 0.05));     
   newBodyMassKg = kg;
   let label, sub;
   if (kg < 1000) { label = kg + ' kg'; sub = '≈ CubeSat / small probe'; }
@@ -1286,9 +1214,11 @@ document.getElementById('new-mass').oninput = function () {
 };
 document.getElementById('new-mass').oninput.call(document.getElementById('new-mass'));
 
-// ============================================================================
-// INIT
-// ============================================================================
+// Core Shared Theme Selector Initialization Loop
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light-theme');
+}
+
 spawnCurrent();
 </script>
 </body>
