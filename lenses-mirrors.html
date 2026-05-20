@@ -599,21 +599,21 @@ function drawElement() {
     el(g, 'polygon', { points:`${Ex+14},${bot-4} ${Ex+18},${bot+2} ${Ex+10},${bot+2}`, fill:'#20d0ff', opacity:0.6 });
   }
   else if (state.element === 'concave-mirror') {
-    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex-26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: mirrorStroke, 'stroke-width':3 });
-    for (let y = top; y < bot; y += 8) {
-      const t = (y - top) / (bot - top);
-      const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex-26) + t*t*Ex;
-      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
-    }
+  el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex+26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: mirrorStroke, 'stroke-width':3 });
+  for (let y = top; y < bot; y += 8) {
+    const t = (y - top) / (bot - top);
+    const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex+26) + t*t*Ex;
+    el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
   }
-  else if (state.element === 'convex-mirror') {
-    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex+26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: mirrorStroke, 'stroke-width':3 });
-    for (let y = top; y < bot; y += 8) {
-      const t = (y - top) / (bot - top);
-      const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex+26) + t*t*Ex;
-      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
-    }
+}
+else if (state.element === 'convex-mirror') {
+  el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex-26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: mirrorStroke, 'stroke-width':3 });
+  for (let y = top; y < bot; y += 8) {
+    const t = (y - top) / (bot - top);
+    const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex-26) + t*t*Ex;
+    el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
   }
+}
   else if (state.element === 'plane-mirror') {
     el(g, 'line', { x1:Ex, y1:top, x2:Ex, y2:bot, stroke: mirrorStroke, 'stroke-width':3 });
     for (let y = top; y < bot; y += 8) {
