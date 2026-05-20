@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -21,38 +20,59 @@
   --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
   --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
   --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
+  --canvas-bg:#020812;
+  --grid-stroke:rgba(30,50,80,.18);
 }
-body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;}
 
-header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;}
+/* HIGH-CONTRAST LIGHT THEME DESIGN PARADIGM MAP */
+body.light-theme {
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#ebf2fa;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#b07d00;--gold-bright:#8a6200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;
+  --canvas-bg:#f8fa9b; /* Classic blueprint cream layout tint */
+  --canvas-bg:#f0f4f8;
+  --grid-stroke:rgba(9,105,218,0.08);
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background 0.2s ease, color 0.2s ease;}
+
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;transition:background 0.2s ease, border-color 0.2s ease;}
+body.light-theme header{background:rgba(255,255,255,0.96);}
+
 .logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
 .logo span{color:var(--text2);}
 .logo a{color:inherit;text-decoration:none;}
 .page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
 .header-spacer{flex:1;}
-.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;transition:all .2s;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
 .header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn { font-weight: bold; color: var(--gold); }
 
 /* Toolbar */
 .toolbar{max-width:1400px;margin:18px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .tool-btn{font-family:monospace;font-size:11px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;letter-spacing:.5px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
 .tool-btn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
 .tool-btn.active{background:rgba(58,143,255,.12);color:var(--accent);border-color:var(--accent);}
+body.light-theme .tool-btn.active{background:var(--bg3);}
 .tool-btn .ico{font-size:14px;line-height:1;}
 .tool-sep{width:1px;height:24px;background:var(--border);}
 
 /* Canvas */
 .canvas-wrap{max-width:1400px;margin:14px auto 0;padding:0 20px;}
-.canvas-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:#020812;}
+.canvas-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--canvas-bg);transition:background 0.2s ease, border-color 0.2s ease;}
 svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;}
 .canvas-hint{position:absolute;top:14px;left:18px;font-family:monospace;font-size:11px;color:var(--gold);background:rgba(1,6,16,.92);padding:6px 12px;border-radius:5px;border:1px solid var(--border2);pointer-events:none;letter-spacing:1px;max-width:60%;}
+body.light-theme .canvas-hint{background:rgba(255,255,255,0.95);color:var(--gold-bright);}
 .canvas-status{position:absolute;top:14px;right:18px;font-family:monospace;font-size:10px;color:var(--text2);background:rgba(1,6,16,.92);padding:5px 10px;border-radius:5px;border:1px solid var(--border2);letter-spacing:1px;}
+body.light-theme .canvas-status{background:rgba(255,255,255,0.95);}
 
 /* Panels */
 .panels{max-width:1400px;margin:14px auto 0;display:grid;grid-template-columns:1fr 380px;gap:14px;padding:0 20px;}
 @media(max-width:820px){.panels{grid-template-columns:1fr;}}
 
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;transition:background 0.2s ease, border-color 0.2s ease;}
 .panel-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
 
 .selected-panel .empty{color:var(--text3);font-family:monospace;font-size:11px;padding:14px 0;text-align:center;}
@@ -61,7 +81,7 @@ svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;
 .prop-row .val{color:var(--text-bright);font-weight:bold;}
 .prop-edit-row{display:flex;gap:8px;margin-top:8px;align-items:center;}
 .prop-edit-row label{font-family:monospace;font-size:10px;color:var(--text2);letter-spacing:1px;width:80px;}
-.prop-edit-row input,.prop-edit-row select{flex:1;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:monospace;font-size:12px;outline:none;}
+.prop-edit-row input,.prop-edit-row select{flex:1;padding:6px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:monospace;font-size:12px;outline:none;transition:background 0.2s, border-color 0.2s, color 0.2s;}
 .prop-edit-row input:focus,.prop-edit-row select:focus{border-color:var(--accent);}
 .delete-btn{margin-top:10px;width:100%;padding:8px;background:transparent;border:1px solid rgba(255,79,96,.4);border-radius:5px;color:var(--red);font-family:monospace;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
 .delete-btn:hover{background:rgba(255,79,96,.1);}
@@ -69,14 +89,14 @@ svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;
 .assumption-box{margin-top:12px;background:rgba(240,192,96,0.04);border:1px solid rgba(240,192,96,0.15);border-radius:6px;padding:10px;font-family:monospace;font-size:10.5px;color:var(--gold-bright);line-height:1.5;}
 
 .status-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.status-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;}
+.status-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;transition:background 0.2s, border-color 0.2s;}
 .status-cell .l{font-family:monospace;font-size:8.5px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
 .status-cell .v{font-family:monospace;font-size:13px;color:var(--gold);}
 
 .legend{margin-top:8px;font-family:monospace;font-size:10px;color:var(--text2);line-height:1.85;}
 .legend .sw{display:inline-block;width:18px;height:6px;vertical-align:middle;margin-right:7px;border-radius:2px;}
 
-footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;transition:border-color 0.2s, color 0.2s;}
 footer a{color:var(--text2);text-decoration:none;}
 footer a:hover{color:var(--accent);}
 </style>
@@ -87,10 +107,10 @@ footer a:hover{color:var(--accent);}
   <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
   <div class="page-subtitle">Electric Circuits — Studio Workbench</div>
   <div class="header-spacer"></div>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
   <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
-<!-- Toolbar -->
 <div class="toolbar">
   <button class="tool-btn active" id="add-select"><span class="ico">⬈</span>Select &amp; Toggle</button>
   <button class="tool-btn" id="add-wire"><span class="ico">─</span>Add Wire</button>
@@ -111,13 +131,12 @@ footer a:hover{color:var(--accent);}
   <button class="tool-btn" id="reset-btn"><span class="ico">↺</span>Reset</button>
 </div>
 
-<!-- Canvas -->
 <div class="canvas-wrap">
   <div class="canvas-frame">
     <svg id="canvas" viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid meet">
       <defs>
         <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(30,50,80,.18)" stroke-width="1"/>
+          <path id="grid-path" d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--grid-stroke)" stroke-width="1"/>
         </pattern>
       </defs>
       <rect width="100%" height="100%" fill="url(#grid)"/>
@@ -132,7 +151,6 @@ footer a:hover{color:var(--accent);}
   </div>
 </div>
 
-<!-- Panels -->
 <div class="panels">
   <div class="panel selected-panel">
     <div class="panel-title">Selected Component</div>
@@ -168,7 +186,7 @@ footer a:hover{color:var(--accent);}
    ELECTRIC CIRCUIT SANDBOX
    --------------------------------------------------------------------------
    - Nodes are connected by branches (each branch is one component).
-   - Solver: Modified Nodal Analysis with Gaussian elimination.
+   - Solver: Modified Nonal Analysis with Gaussian elimination.
    - Capacitors integrated with forward Euler each frame (DT = 0.015 s).
    ============================================================================ */
 
@@ -277,8 +295,6 @@ function deleteBranchRaw(id) {
   if (idx >= 0) state.branches.splice(idx, 1);
 }
 
-// Merge any two nodes that share the same (x,y) — keeps wires electrically continuous
-// even when inserts/splits accidentally drop a node on top of an existing one.
 function mergeCoincidentNodes() {
   let merged = true;
   while (merged) {
@@ -302,7 +318,6 @@ function mergeCoincidentNodes() {
   }
 }
 
-// Aggressive cleanup of orphaned, in-line, and dangling-stub nodes
 function cleanupNodes() {
   let cleaned = true;
   while (cleaned) {
@@ -311,13 +326,11 @@ function cleanupNodes() {
       const n = state.nodes[i];
       const conn = state.branches.filter(x => x.n1 === n.id || x.n2 === n.id);
 
-      // A: no connections — orphan
       if (conn.length === 0) {
         state.nodes.splice(i, 1);
         cleaned = true;
         continue;
       }
-      // B: in-line wire-only junction (exactly 2 wires) — merge into one
       if (conn.length === 2 && conn.every(x => x.kind === 'wire')) {
         const w1 = conn[0], w2 = conn[1];
         const o1 = (w1.n1 === n.id) ? w1.n2 : w1.n1;
@@ -335,7 +348,6 @@ function cleanupNodes() {
   }
 }
 
-// Delete a branch, replace with a wire if it was a component, then clean up
 function deleteBranchClean(id) {
   const b = state.branches.find(x => x.id === id);
   if (!b) return;
@@ -354,9 +366,6 @@ function deleteBranchClean(id) {
 // ============================================================================
 // INSERTING & SPLITTING WIRES
 // ============================================================================
-
-// Insert a component into a wire near the click point. Splits the wire into
-// (n1 → mid1) wire + (mid1 → mid2) component + (mid2 → n2) wire.
 function insertIntoWire(targetBranch, newKind, newValue, newExtra, clickX, clickY) {
   const n1 = nodeById(targetBranch.n1);
   const n2 = nodeById(targetBranch.n2);
@@ -410,7 +419,6 @@ function findWirePoint(x, y, tol = 14) {
   return null;
 }
 
-// Get or create a node at (x,y). Snaps to existing nodes, splits wires when needed.
 function getOrCreateConnectionPoint(x, y) {
   const n = findNodeAt(x, y, 18);
   if (n) return n;
@@ -429,7 +437,7 @@ function getOrCreateConnectionPoint(x, y) {
 }
 
 // ============================================================================
-// STARTING CIRCUIT — simple closed loop with battery + resistor
+// STARTING CIRCUIT
 // ============================================================================
 function buildStartingCircuit() {
   state.nodes = [];
@@ -448,7 +456,7 @@ function buildStartingCircuit() {
 }
 
 // ============================================================================
-// SOLVER — Modified Nodal Analysis with Gaussian elimination
+// SOLVER — Modified Nodal Analysis
 // ============================================================================
 function solve() {
   if (state.nodes.length === 0) return;
@@ -472,11 +480,9 @@ function solve() {
   const A_mat = Array.from({length: size}, () => new Float64Array(size));
   const z = new Float64Array(size);
 
-  // Stabilising conductance to prevent singularities for floating nodes
   const Gmin = 1e-9;
   for (let i = 0; i < N; i++) A_mat[i][i] += Gmin;
 
-  // Stamp resistive elements
   for (const b of state.branches) {
     if (b.kind === 'battery' || b.kind === 'capacitor') continue;
     let R;
@@ -498,7 +504,6 @@ function solve() {
     if (i1 >= 0 && i2 >= 0) { A_mat[i1][i2] -= G; A_mat[i2][i1] -= G; }
   }
 
-  // Stamp voltage sources (batteries and capacitors-as-sources)
   sources.forEach(b => {
     const k = sourceIdx[b.id];
     const i1 = (b.n1 === groundId) ? -1 : idx[b.n1];
@@ -537,7 +542,6 @@ function solve() {
     }
   }
 
-  // Integrate capacitors with forward Euler
   for (const b of state.branches) {
     if (b.kind === 'capacitor') b.charge += -b.current * DT;
   }
@@ -594,12 +598,10 @@ function drawNode(n) {
 }
 
 function drawCrossings() {
-  // Junction dots at any node with 3+ connections
   for (const n of state.nodes) {
     const count = state.branches.filter(b => b.n1 === n.id || b.n2 === n.id).length;
     if (count >= 3) el(gNodes, 'circle', { cx:n.x, cy:n.y, r:5.5, fill:'#cdd5e8' });
   }
-  // Jump-over arcs and clickable joiners where wires cross without a shared node
   const segs = state.branches.map(b => {
     const a = nodeById(b.n1), c = nodeById(b.n2);
     return a && c ? { b, x1:a.x, y1:a.y, x2:c.x, y2:c.y } : null;
@@ -616,9 +618,8 @@ function drawCrossings() {
       const arcR = 6;
       const ax1 = pt.x - ux*arcR, ay1 = pt.y - uy*arcR;
       const ax2 = pt.x + ux*arcR, ay2 = pt.y + uy*arcR;
-      el(gNodes, 'path', { d:`M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill:'none', stroke:'#020812', 'stroke-width':4 });
+      el(gNodes, 'path', { d:`M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill:'none', stroke: 'var(--bg)', 'stroke-width':4 });
       el(gNodes, 'path', { d:`M ${ax1} ${ay1} A ${arcR} ${arcR} 0 0 1 ${ax2} ${ay2}`, fill:'none', stroke:'#5878a0', 'stroke-width':1.8 });
-      // Clickable connector target
       el(gNodes, 'circle', {
         cx:pt.x, cy:pt.y, r:11,
         fill:'rgba(240,192,96,0.001)', stroke:'transparent',
@@ -666,7 +667,6 @@ function drawBranch(b) {
   }
 
   drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected);
-  // Invisible thick line for click targeting
   el(gWires, 'line', { x1:n1.x, y1:n1.y, x2:n2.x, y2:n2.y, stroke:'transparent', 'stroke-width':20, class:'branch-hit', 'data-branch-id':b.id, style:'cursor:pointer;' });
 }
 
@@ -724,7 +724,7 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
     for (let i = 0; i < 3; i++) {
       el(tr, 'path', { d:'M 0 0 C 8 -12, 16 -6, 12 4 C 8 8, 2 4, 0 0', fill:'rgba(64,255,170,0.4)', stroke:'#40ffaa', 'stroke-width':1.2, transform:`rotate(${i*120})` });
     }
-    el(tr, 'circle', { cx:0, cy:0, r:3.5, fill:'#020812', stroke:'#40ffaa', 'stroke-width':1.5 });
+    el(tr, 'circle', { cx:0, cy:0, r:3.5, fill:'var(--canvas-bg)', stroke:'#40ffaa', 'stroke-width':1.5 });
     el(cg, 'text', { x:mx+nx*26, y:my+ny*26+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:labelFill, text:valueLabel(b), style:'pointer-events:none;' });
   }
   else if (b.kind === 'ac') {
@@ -763,16 +763,15 @@ function drawComponent(b, n1, n2, mx, my, ux, uy, nx, ny, col, isSelected) {
     const sym = b.kind === 'ammeter' ? 'A' : (b.kind === 'voltmeter' ? 'V' : 'G');
     const bCol = b.kind === 'ammeter' ? '#40ffaa' : (b.kind === 'voltmeter' ? '#c060ff' : '#f0c060');
     const tr = el(cg, 'g', { transform:`translate(${mx} ${my})`, style:'pointer-events:none;' });
-    el(tr, 'circle', { cx:0, cy:0, r:13, fill:'#080f1e', stroke:bCol, 'stroke-width':1.5 });
+    el(tr, 'circle', { cx:0, cy:0, r:13, fill:'var(--bg2)', stroke:bCol, 'stroke-width':1.5 });
     el(tr, 'text', { x:0, y:4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:bCol, text:sym });
-    // For galvanometer, draw a deflecting needle
     if (b.kind === 'galvanometer') {
       const deflect = Math.max(-1, Math.min(1, b.current / 1)) * 55;
       el(tr, 'line', { x1:0, y1:7, x2: Math.sin(deflect*Math.PI/180)*9, y2: 7 - Math.cos(deflect*Math.PI/180)*14, stroke:bCol, 'stroke-width':1.8, 'stroke-linecap':'round' });
     }
     const reading = b.kind === 'ammeter' ? `${b.current.toFixed(2)} A`
       : (b.kind === 'voltmeter' ? `${b.voltage.toFixed(2)} V` : `${(b.current*1000).toFixed(1)} mA`);
-    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, 'font-weight':'bold', fill:'#fff', text:reading, style:'pointer-events:none;' });
+    el(cg, 'text', { x:mx+nx*22, y:my+ny*22+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, 'font-weight':'bold', fill: 'var(--text-bright)', text:reading, style:'pointer-events:none;' });
   }
   else if (b.kind === 'wire') {
     if (state.realistic && b.value > 0.01) {
@@ -824,7 +823,6 @@ function updateSelectedPanel() {
   html += `<div class="prop-row"><span>Current</span><span class="val">${b.current.toFixed(3)} A</span></div>`;
   html += `<div class="prop-row"><span>Voltage drop</span><span class="val">${b.voltage.toFixed(3)} V</span></div>`;
 
-  // Show idealised internal resistance for meters
   if (b.kind === 'voltmeter') html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">10 MΩ</span></div>`;
   else if (b.kind === 'ammeter') html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">0.001 Ω</span></div>`;
   else if (b.kind === 'galvanometer') html += `<div class="prop-row"><span>Internal R (assumed)</span><span class="val">0.01 Ω</span></div>`;
@@ -862,7 +860,6 @@ function updateSelectedPanel() {
   });
 }
 
-// Event delegation for delete button (panel is rebuilt frequently)
 document.getElementById('selected-content').addEventListener('click', (e) => {
   if (e.target.id === 'delete-btn' && state.selected !== null) {
     deleteBranchClean(state.selected);
@@ -913,7 +910,6 @@ let dragStart = null;
 svg.addEventListener('click', e => {
   const target = e.target;
 
-  // STEP 0: Click on a wire crossing → offer to join the two wires
   if (target.classList && target.classList.contains('crossing-hit')) {
     const s1Id = parseInt(target.getAttribute('data-cross-s1'));
     const s2Id = parseInt(target.getAttribute('data-cross-s2'));
@@ -947,7 +943,6 @@ svg.addEventListener('click', e => {
   const branchHit = target.closest('.branch-hit') || target.closest('.comp');
   const bid = branchHit ? parseInt(branchHit.getAttribute('data-branch-id')) : null;
 
-  // STEP 1: Tool active + clicked a wire → insert into the wire
   if (bid !== null && state.pendingAddKind !== 'select' && INSERT_KINDS.has(state.pendingAddKind)) {
     const targetB = state.branches.find(x => x.id === bid);
     if (targetB && targetB.kind === 'wire') {
@@ -956,18 +951,15 @@ svg.addEventListener('click', e => {
       const pt = svgPoint(e);
       const newB = insertIntoWire(targetB, state.pendingAddKind, defaultValue(state.pendingAddKind), extra, pt.x, pt.y);
       state.selected = newB ? newB.id : null;
-      // Return to select mode after one placement
       setPendingTool('select');
       solve(); render(); updateSelectedPanel(); updateStatus();
       return;
     } else if (targetB) {
-      // Clicked on an existing component, not a wire — show hint
       document.getElementById('canvas-hint').textContent = 'Components can only be inserted into a wire. Click a plain wire segment.';
       return;
     }
   }
 
-  // STEP 2: Plain click on a branch → select it (and toggle if switch)
   if (bid !== null) {
     state.selected = bid;
     const clickedB = state.branches.find(x => x.id === bid);
@@ -979,7 +971,6 @@ svg.addEventListener('click', e => {
     return;
   }
 
-  // STEP 3: Empty space → deselect
   state.selected = null;
   render(); updateSelectedPanel(); updateStatus();
 });
@@ -1066,6 +1057,17 @@ function setupToolbar() {
     setPendingTool('select');
     solve(); render(); updateSelectedPanel(); updateStatus();
   });
+
+  // Local Storage persistent Theme state initialization loop
+  const themeSwitcher = document.getElementById('theme-switcher');
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-theme');
+  }
+  themeSwitcher.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+    render();
+  });
 }
 
 function defaultValue(kind) {
@@ -1089,7 +1091,6 @@ function tick() {
   renderDots();
   state._tickCount = (state._tickCount + 1) % 10;
   if (state._tickCount === 0) {
-    // Refresh just the component layer for live readings / animations
     clearGroup(gComps);
     for (const b of state.branches) {
       const n1 = nodeById(b.n1), n2 = nodeById(b.n2);
