@@ -377,8 +377,6 @@ footer {
   <p>The International Space Station is in <em>free fall</em> — there is nothing holding it up. Astronauts inside float not because there's no gravity (Earth's gravity is still 89% as strong at the ISS as on the ground), but because the station, the astronauts, and everything inside it are all falling together. The trick is that the ISS is moving sideways at <strong>7.66 km/s</strong> — fast enough that as it falls toward Earth, the curved surface of Earth falls away beneath it at exactly the same rate. It never hits the ground.</p>
   <p>Newton imagined this with a cannonball fired horizontally from a mountain. Fired slowly, it lands nearby. Fired faster, it lands further. Fired fast enough — the cannonball misses Earth entirely and comes round behind you. That is an orbit. Every satellite is just a very fast cannonball.</p>
 
-  
-
   <h3>Newton's Law of Universal Gravitation (1687)</h3>
   <p>Every object with mass pulls on every other object with mass. The force is proportional to the product of the masses and falls off as the square of the distance.</p>
   <div class="eq">
@@ -773,10 +771,9 @@ const bgStars = Array.from({length: 220}, () => ({
 
 function render(ts) {
   const isLight = document.body.classList.contains('light-theme');
-  ctx.fillStyle = showTrail ? (isLight ? 'rgba(244,246,2fa,0.18)' : 'rgba(1,6,16,0.18)') : (isLight ? '#fafbfc' : '#010610');
+  ctx.fillStyle = showTrail ? (isLight ? 'rgba(244,246,250,0.18)' : 'rgba(1,6,16,0.18)') : (isLight ? '#fafbfc' : '#010610');
   ctx.fillRect(0, 0, W, H);
 
-  // Background environment condition sync
   if (!isLight) {
     bgStars.forEach(s => {
       const a = 0.1 + 0.25 * Math.sin(ts * 0.0006 + s.b * 7);
@@ -851,14 +848,26 @@ function render(ts) {
             b.radius_vis * 0.36, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
 
+    /* HIGH CONTRAST OBJECT LABEL TRACKER CONTEXT SYNCHRONIZER */
     if (b.label && (b.preset_kind === 'earth' || b.preset_kind === 'iss' ||
         b.preset_kind === 'geo' || b.preset_kind === 'moon' ||
         b.preset_kind === 'hubble' || b.preset_kind === 'gps' ||
         i === 0 || b.preset_kind === 'planet' ||
         ['Mercury','Venus','Mars','Jupiter','Saturn'].includes(b.label))) {
-      ctx.fillStyle = isLight ? 'var(--text2)' : 'rgba(184,206,236,0.55)';
+      
+      // Pivot font colors dynamically to maintain absolute cross-theme readability
+      if (isLight) {
+        ctx.fillStyle = '#0f172a'; // Crispy charcoal obsidian black text
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.95)'; // Anti-collision halo text backdrop mask
+        ctx.shadowBlur = 4;
+      } else {
+        ctx.fillStyle = '#b8ceec'; // Luminescent stellar sky blue
+        ctx.shadowBlur = 0;
+      }
+      
       ctx.font = '10px monospace';
       ctx.fillText(b.label, p.x + b.radius_vis + 5, p.y + 3);
+      ctx.shadowBlur = 0; // Clear state mapping properties safely
     }
   });
 }
