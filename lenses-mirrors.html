@@ -100,7 +100,7 @@ body.light-theme .tag.t-same{color:var(--text);}
 .element-btns button,.object-btns button,.case-btns button{font-family:monospace;font-size:10.5px;padding:8px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.5px;text-align:center;line-height:1.3;}
 .element-btns button:hover,.object-btns button:hover,.case-btns button:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
 .element-btns button.active,.object-btns button.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
-body.light-theme .element-btns button.active, body.light-theme .object-btns button.active { background:var(--bg3); color:var(--gold-bright); }
+body.light-theme .element-btns button.active, body.light-theme .object-btns button.active { background:var(--bg3); color:var(--gold); }
 .case-btns button{font-size:10px;padding:7px 4px;}
 .object-btns button{font-size:14px;padding:9px 6px;}
 .object-btns button .obj-name{display:block;font-size:9px;letter-spacing:1.5px;color:inherit;opacity:.75;margin-top:3px;}
@@ -126,7 +126,7 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .fbox{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:14px;font-family:monospace;line-height:2;transition:background 0.2s, border-color 0.2s;}
 .fbox .fl{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
 .fbox .fe{font-size:12px;color:var(--gold-bright);}
-body.light-theme .fbox .fe{color:var(--gold-bright);}
+body.light-theme .fbox .fe{color:var(--gold);}
 .fbox .fe .nm{color:var(--cyan);}
 .fbox .gc{font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.7;}
 
@@ -147,7 +147,7 @@ body.light-theme .fbox .fe{color:var(--gold-bright);}
 body.light-theme .theory em{color:var(--gold);}
 .theory strong{color:var(--text);}
 .theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;transition:background 0.2s;}
-body.light-theme .theory .eq{color:var(--gold-bright);}
+body.light-theme .theory .eq{color:var(--gold);}
 .theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
 .theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;transition:background 0.2s, border-color 0.2s, color 0.2s;}
 .hb-green{background:rgba(64,255,170,.04);border:1px solid rgba(64,255,170,.2);color:#8effc8;}
@@ -157,13 +157,13 @@ body.light-theme .hb-violet{color:var(--violet);background:rgba(192,96,255,0.06)
 .hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
 body.light-theme .hb-cyan{color:var(--cyan);background:rgba(32,208,255,0.06);}
 .hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
-body.light-theme .hb-gold{color:var(--gold-bright);background:rgba(240,192,96,0.06);}
+body.light-theme .hb-gold{color:var(--gold);background:rgba(240,192,96,0.06);}
 
 .ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:10px;}
 .ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);transition:border-color 0.2s;}
 .ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);font-size:11.5px;transition:border-color 0.2s, color 0.2s;}
 .ctable td:first-child{color:var(--gold-bright);width:24%;}
-body.light-theme .ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
 .ctable tr:last-child td{border-bottom:none;}
 .ctable td.real{color:var(--green);}
 .ctable td.virtual{color:var(--violet);}
@@ -376,7 +376,7 @@ footer a:hover{color:var(--accent);}
     <tr><td>🔎 Magnifying glass</td><td>Convex lens (object inside F)</td><td class="virtual">Virtual, erect, magnified.</td></tr>
     <tr><td>👓 Reading glasses</td><td>Convex lens (mild)</td><td>Shifts apparent object distance.</td></tr>
     <tr><td>👓 Glasses for short-sight</td><td>Concave lens</td><td class="virtual">Virtual, erect, diminished — moves the image inside the eye's range.</td></tr>
-    <tr><td>🔦 Car headlight reflector</td><td>Concave mirror (object at F)</td><td>Reflected rays emerge parallel — concentrated beam.</td></tr>
+    <tr><td>Reflector</td><td>Concave mirror (object at F)</td><td>Reflected rays emerge parallel — concentrated beam.</td></tr>
     <tr><td>🪞 Shaving / makeup mirror</td><td>Concave mirror (object inside F)</td><td class="virtual">Virtual, erect, magnified.</td></tr>
     <tr><td>🚗 Car wing mirror / shop security mirror</td><td>Convex mirror</td><td class="virtual">Virtual, erect, diminished — wide field of view.</td></tr>
     <tr><td>🪟 Bathroom mirror</td><td>Plane mirror</td><td class="virtual">Virtual, erect, same size.</td></tr>
@@ -420,6 +420,28 @@ const W = 800, Hgt = 360;
 const Ex = 400;          // element x-position
 const Ay = 200;          // optical axis y-position
 const SCALE = 6.0;       // pixels per cm
+
+// =====================================================================
+// MISSING SVG UTILITY ENGINE FUNCTIONS (RE-INJECTED)
+// =====================================================================
+function clearGroup(id) {
+  const g = document.getElementById(id);
+  while (g.firstChild) g.removeChild(g.firstChild);
+  return g;
+}
+
+function el(group, type, attrs) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", type);
+  for (const key in attrs) {
+    if (key === 'text') {
+      node.textContent = attrs[key];
+    } else {
+      node.setAttribute(key, attrs[key]);
+    }
+  }
+  group.appendChild(node);
+  return node;
+}
 
 // Element types
 function isLens() { return state.element.includes('lens'); }
@@ -540,11 +562,13 @@ function drawFmarkers() {
 function drawElement() {
   const g = clearGroup('bench-element');
   const top = Ay - 140, bot = Ay + 140;
+  const isLight = document.body.classList.contains('light-theme');
+  const mirrorStroke = isLight ? '#24292f' : '#cdd5e8';
 
   if (state.element === 'convex-lens') {
     el(g, 'path', {
       d: `M ${Ex} ${top} Q ${Ex+12} ${Ay} ${Ex} ${bot} Q ${Ex-12} ${Ay} ${Ex} ${top} Z`,
-      fill: 'rgba(32,208,255,0.10)', stroke: '#20d0ff', 'stroke-width': 1.5
+      fill: 'rgba(32,208,255,0.15)', stroke: '#20d0ff', 'stroke-width': 2
     });
     el(g, 'polygon', { points:`${Ex-14},${top-4} ${Ex-18},${top+2} ${Ex-10},${top+2}`, fill:'#20d0ff', opacity:0.6 });
     el(g, 'polygon', { points:`${Ex+14},${bot+4} ${Ex+18},${bot-2} ${Ex+10},${bot-2}`, fill:'#20d0ff', opacity:0.6 });
@@ -552,31 +576,31 @@ function drawElement() {
   else if (state.element === 'concave-lens') {
     el(g, 'path', {
       d: `M ${Ex-8} ${top} Q ${Ex+4} ${Ay} ${Ex-8} ${bot} L ${Ex+8} ${bot} Q ${Ex-4} ${Ay} ${Ex+8} ${top} Z`,
-      fill: 'rgba(32,208,255,0.10)', stroke: '#20d0ff', 'stroke-width': 1.5
+      fill: 'rgba(32,208,255,0.15)', stroke: '#20d0ff', 'stroke-width': 2
     });
     el(g, 'polygon', { points:`${Ex-14},${top+4} ${Ex-18},${top-2} ${Ex-10},${top-2}`, fill:'#20d0ff', opacity:0.6 });
     el(g, 'polygon', { points:`${Ex+14},${bot-4} ${Ex+18},${bot+2} ${Ex+10},${bot+2}`, fill:'#20d0ff', opacity:0.6 });
   }
   else if (state.element === 'concave-mirror') {
-    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex-26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: document.body.classList.contains('light-theme')? '#57606a':'#cdd5e8', 'stroke-width':2.5 });
+    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex-26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: mirrorStroke, 'stroke-width':3 });
     for (let y = top; y < bot; y += 8) {
       const t = (y - top) / (bot - top);
       const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex-26) + t*t*Ex;
-      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1 });
+      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
     }
   }
   else if (state.element === 'convex-mirror') {
-    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex+26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: document.body.classList.contains('light-theme')? '#57606a':'#cdd5e8', 'stroke-width':2.5 });
+    el(g, 'path', { d:`M ${Ex} ${top} Q ${Ex+26} ${Ay} ${Ex} ${bot}`, fill:'none', stroke: mirrorStroke, 'stroke-width':3 });
     for (let y = top; y < bot; y += 8) {
       const t = (y - top) / (bot - top);
       const xCurve = (1-t)*(1-t)*Ex + 2*(1-t)*t*(Ex+26) + t*t*Ex;
-      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1 });
+      el(g, 'line', { x1:xCurve, y1:y, x2:xCurve+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
     }
   }
   else if (state.element === 'plane-mirror') {
-    el(g, 'line', { x1:Ex, y1:top, x2:Ex, y2:bot, stroke: document.body.classList.contains('light-theme')? '#57606a':'#cdd5e8', 'stroke-width':2.5 });
+    el(g, 'line', { x1:Ex, y1:top, x2:Ex, y2:bot, stroke: mirrorStroke, 'stroke-width':3 });
     for (let y = top; y < bot; y += 8) {
-      el(g, 'line', { x1:Ex, y1:y, x2:Ex+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1 });
+      el(g, 'line', { x1:Ex, y1:y, x2:Ex+8, y2:y-6, stroke:'#5878a0', 'stroke-width':1.5 });
     }
   }
 
@@ -616,7 +640,7 @@ function drawImage(result) {
     transform: `translate(${Ix} ${Ay}) scale(${imgSizeX} ${imgSizeY})`,
     opacity: result.isVirtual ? 0.65 : 0.95
   });
-  const color = result.isVirtual ? '#c060ff' : '#1a7f37';
+  const color = result.isVirtual ? 'var(--violet)' : 'var(--green)';
   ig.innerHTML = objectPath(state.object, '', color);
 
   el(g, 'circle', { cx:Ix, cy:Ay, r:3, fill: color });
@@ -671,21 +695,21 @@ function drawRaysConvexLens(Ox, Oy, Ix, Iy, result) {
   const F2x = Ex + fpix;
   const isReal = result.isReal;
 
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  rayLine(g, Ox, Oy, Ex, Oy, 'var(--cyan)');
   if (isReal) {
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
+    rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)');
   } else {
     const ext = extendBeyond(Ex, Oy, F2x, Ay, 200);
-    rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+    rayLine(g, Ex, Oy, ext.x, ext.y, 'var(--cyan)');
+    rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)', true);
   }
 
   if (isReal) {
-    rayLine(g, Ox, Oy, Ix, Iy, '#f0c060');
+    rayLine(g, Ox, Oy, Ix, Iy, 'var(--gold)');
   } else {
     const ext = extendBeyond(Ox, Oy, Ex, Ay, 200);
-    rayLine(g, Ox, Oy, ext.x, ext.y, '#f0c060');
-    rayLine(g, Ox, Oy, Ix, Iy, '#f0c060', true);
+    rayLine(g, Ox, Oy, ext.x, ext.y, 'var(--gold)');
+    rayLine(g, Ox, Oy, Ix, Iy, 'var(--gold)', true);
   }
 }
 
@@ -694,14 +718,14 @@ function drawRaysConcaveLens(Ox, Oy, Ix, Iy, result) {
   const fpix = state.f * SCALE;
   const F1x = Ex - fpix;
 
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  rayLine(g, Ox, Oy, Ex, Oy, 'var(--cyan)');
   const ext1 = extendBeyond(F1x, Ay, Ex, Oy, 240);
-  rayLine(g, Ex, Oy, ext1.x, ext1.y, '#20d0ff');
-  rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+  rayLine(g, Ex, Oy, ext1.x, ext1.y, 'var(--cyan)');
+  rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)', true);
 
   const ext2 = extendBeyond(Ox, Oy, Ex, Ay, 240);
-  rayLine(g, Ox, Oy, ext2.x, ext2.y, '#f0c060');
-  rayLine(g, Ox, Oy, Ix, Iy, '#f0c060', true);
+  rayLine(g, Ox, Oy, ext2.x, ext2.y, 'var(--gold)');
+  rayLine(g, Ox, Oy, Ix, Iy, 'var(--gold)', true);
 }
 
 function drawRaysConcaveMirror(Ox, Oy, Ix, Iy, result) {
@@ -710,23 +734,23 @@ function drawRaysConcaveMirror(Ox, Oy, Ix, Iy, result) {
   const Fx = Ex - fpix;
   const isReal = result.isReal;
 
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  rayLine(g, Ox, Oy, Ex, Oy, 'var(--cyan)');
   if (isReal) {
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff');
+    rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)');
   } else {
     const ext = extendBeyond(Ex, Oy, Fx, Ay, 200);
-    rayLine(g, Ex, Oy, ext.x, ext.y, '#20d0ff');
-    rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+    rayLine(g, Ex, Oy, ext.x, ext.y, 'var(--cyan)');
+    rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)', true);
   }
 
-  rayLine(g, Ox, Oy, Ex, Ay, '#f0c060');
+  rayLine(g, Ox, Oy, Ex, Ay, 'var(--gold)');
   if (isReal) {
-    rayLine(g, Ex, Ay, Ix, Iy, '#f0c060');
+    rayLine(g, Ex, Ay, Ix, Iy, 'var(--gold)');
   } else {
     const refX = Ex - (Ex - Ox) * 0.7;
     const refY = Ay + (Ay - Oy) * 0.7;
-    rayLine(g, Ex, Ay, refX, refY, '#f0c060');
-    rayLine(g, Ex, Ay, Ix, Iy, '#f0c060', true);
+    rayLine(g, Ex, Ay, refX, refY, 'var(--gold)');
+    rayLine(g, Ex, Ay, Ix, Iy, 'var(--gold)', true);
   }
 }
 
@@ -735,16 +759,16 @@ function drawRaysConvexMirror(Ox, Oy, Ix, Iy, result) {
   const fpix = state.f * SCALE;
   const Fbx = Ex + fpix;
 
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
+  rayLine(g, Ox, Oy, Ex, Oy, 'var(--cyan)');
   const ext1 = extendBeyond(Fbx, Ay, Ex, Oy, 240);
-  rayLine(g, Ex, Oy, ext1.x, ext1.y, '#20d0ff');
-  rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);
+  rayLine(g, Ex, Oy, ext1.x, ext1.y, 'var(--cyan)');
+  rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)', true);
 
-  rayLine(g, Ox, Oy, Ex, Ay, '#f0c060');
+  rayLine(g, Ox, Oy, Ex, Ay, 'var(--gold)');
   const refX = Ex - (Ex - Ox) * 0.7;
   const refY = Ay + (Ay - Oy) * 0.7;
-  rayLine(g, Ex, Ay, refX, refY, '#f0c060');
-  rayLine(g, Ex, Ay, Ix, Iy, '#f0c060', true);
+  rayLine(g, Ex, Ay, refX, refY, 'var(--gold)');
+  rayLine(g, Ex, Ay, Ix, Iy, 'var(--gold)', true);
 }
   
 function drawRaysPlaneMirror(result) {
@@ -755,28 +779,28 @@ function drawRaysPlaneMirror(result) {
   const Iy = Oy;
   if (Ox < 10) return;
 
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
-  rayLine(g, Ex, Oy, Ox + 20, Oy, '#20d0ff');     
-  rayLine(g, Ex, Oy, Ix, Iy, '#20d0ff', true);    
+  rayLine(g, Ox, Oy, Ex, Oy, 'var(--cyan)');
+  rayLine(g, Ex, Oy, Ox + 20, Oy, 'var(--cyan)');     
+  rayLine(g, Ex, Oy, Ix, Iy, 'var(--cyan)', true);    
 
-  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
+  rayLine(g, Ox, Oy, Ex, Ay, 'var(--violet)');
   const ref2x = Ex - 0.7 * state.u * SCALE;
   const ref2y = Ay + 0.7 * state.h * SCALE;
-  rayLine(g, Ex, Ay, ref2x, ref2y, '#c060ff');
-  rayLine(g, Ex, Ay, Ix, Iy, '#c060ff', true);
+  rayLine(g, Ex, Ay, ref2x, ref2y, 'var(--violet)');
+  rayLine(g, Ex, Ay, Ix, Iy, 'var(--violet)', true);
 }
 
 function drawRaysAtInfinity() {
   const g = document.getElementById('bench-rays');
   const Ox = Ex - state.u * SCALE;
   const Oy = Ay - state.h * SCALE;
-  rayLine(g, Ox, Oy, Ex, Oy, '#20d0ff');
-  rayLine(g, Ex, Oy, W-10, Oy, '#20d0ff');
-  rayLine(g, Ox, Oy, Ex, Ay, '#c060ff');
-  rayLine(g, Ex, Ay, W-10, Ay, '#c060ff');
-  rayLine(g, Ox, Oy, Ex, Ay+state.h*SCALE*0.5, '#f0c060');
-  rayLine(g, Ex, Ay+state.h*SCALE*0.5, W-10, Ay+state.h*SCALE*0.5, '#f0c060');
-  el(g, 'text', { x:W-90, y:Ay-8, 'text-anchor':'end', 'font-family':'monospace', 'font-size':11, fill:'#f0c060', text:'→ IMAGE AT INFINITY' });
+  rayLine(g, Ox, Oy, Ex, Oy, 'var(--cyan)');
+  rayLine(g, Ex, Oy, W-10, Oy, 'var(--cyan)');
+  rayLine(g, Ox, Oy, Ex, Ay, 'var(--violet)');
+  rayLine(g, Ex, Ay, W-10, Ay, 'var(--violet)');
+  rayLine(g, Ox, Oy, Ex, Ay+state.h*SCALE*0.5, 'var(--gold)');
+  rayLine(g, Ex, Ay+state.h*SCALE*0.5, W-10, Ay+state.h*SCALE*0.5, 'var(--gold)');
+  el(g, 'text', { x:W-90, y:Ay-8, 'text-anchor':'end', 'font-family':'monospace', 'font-size':11, fill:'var(--gold)', text:'→ IMAGE AT INFINITY' });
 }
 
 function updateImageLabel(result) {
@@ -903,7 +927,7 @@ function updateReadout(result) {
 const CASES = {
   'convex-lens': [
     { label:'Beyond 2F',      uFactor:3.0 },
-    { label:'At 2F',             uFactor:2.0 },
+    { label:'At 2F',               uFactor:2.0 },
     { label:'Between F &amp; 2F',uFactor:1.5 },
     { label:'At F',              uFactor:1.001 },
     { label:'Inside F',          uFactor:0.6 }
@@ -914,7 +938,7 @@ const CASES = {
   ],
   'concave-mirror': [
     { label:'Beyond C (2F)',     uFactor:3.0 },
-    { label:'At C (2F)',             uFactor:2.0 },
+    { label:'At C (2F)',               uFactor:2.0 },
     { label:'Between F &amp; C', uFactor:1.5 },
     { label:'At F',              uFactor:1.001 },
     { label:'Inside F',          uFactor:0.6 }
