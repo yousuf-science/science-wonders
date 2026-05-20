@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -10,7 +9,6 @@
   gtag('config', 'G-32ZMW31TWT');
 </script>
 
-<!-- Open Graph tags for Facebook -->
 <meta property="og:title" content="Science Wonders — Interactive Physics Simulations">
 <meta property="og:description" content="The universe, made playable. Real physics equations brought to life — push the sliders, drag the masses, see what reality really does.">
 <meta property="og:image" content="https://yousuf-science.github.io/science-wonders/preview.png">
@@ -38,6 +36,27 @@
   --gold-bright: #ffe8a0;
   --cyan: #20d0ff;
   --pink: #ff6090;
+  --featured-gradient: linear-gradient(135deg, #0e1a3a 0%, #080f1e 60%, #080f1e 100%);
+  --star-opacity: 0.7;
+}
+
+/* HIGH CONTRAST LIGHT THEME DESIGN PARADIGM MAP */
+body.light-theme {
+  --bg: #f6f8fa;
+  --bg2: #ffffff;
+  --bg3: #ebf2fa;
+  --border: #d0d7de;
+  --border2: #b6c2d1;
+  --text: #24292f;
+  --text2: #57606a;
+  --text3: #6e7781;
+  --text-bright: #091e36;
+  --accent: #0969da;
+  --gold: #b07d00;
+  --gold-bright: #8a6200;
+  --cyan: #0550ae;
+  --featured-gradient: linear-gradient(135deg, #f0f5fc 0%, #ffffff 60%, #ffffff 100%);
+  --star-opacity: 0.12;
 }
 
 body {
@@ -47,6 +66,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 /* Starfield */
@@ -70,7 +90,8 @@ body {
     radial-gradient(1.5px 1.5px at 5% 40%, rgba(184, 206, 236, 0.35), transparent);
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  opacity: 0.7;
+  opacity: var(--star-opacity);
+  transition: opacity 0.25s ease;
 }
 
 header {
@@ -79,6 +100,10 @@ header {
   background: rgba(1, 4, 9, 0.92);
   position: sticky; top: 0; z-index: 10;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+body.light-theme header {
+  background: rgba(255, 255, 255, 0.92);
 }
 .logo { font-family: monospace; font-size: 12px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; }
 .logo .logo-star { display: inline-block; animation: starPulse 4s ease-in-out infinite; }
@@ -94,9 +119,16 @@ header {
   font-family: monospace; font-size: 10px; letter-spacing: 2px;
   color: var(--text2); text-decoration: none;
   padding: 6px 12px; border-radius: 5px; border: 1px solid transparent;
+  cursor: pointer; user-select: none;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 .header-link:hover { color: var(--accent); border-color: var(--border2); background: var(--bg3); }
+
+/* Theme switch explicit style overrides */
+.theme-toggle-btn {
+  font-weight: bold;
+  color: var(--gold);
+}
 
 .hero { text-align: center; padding: 90px 24px 50px; position: relative; }
 .hero-eyebrow {
@@ -120,8 +152,9 @@ header {
   margin: 40px auto 0; max-width: 720px;
   border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
   padding: 18px 0; flex-wrap: wrap;
+  transition: border-color 0.25s ease;
 }
-.stat { flex: 1; min-width: 140px; text-align: center; padding: 4px 16px; border-right: 1px solid var(--border); }
+.stat { flex: 1; min-width: 140px; text-align: center; padding: 4px 16px; border-right: 1px solid var(--border); transition: border-color 0.25s ease; }
 .stat:last-child { border-right: none; }
 .stat-num { font-family: monospace; font-size: 20px; color: var(--gold); letter-spacing: 1px; margin-bottom: 4px; }
 .stat-lbl { font-family: monospace; font-size: 9px; letter-spacing: 3px; color: var(--text3); text-transform: uppercase; }
@@ -150,18 +183,19 @@ header {
 @media (max-width: 760px) { .featured-grid { grid-template-columns: 1fr; } }
 .featured {
   position: relative; display: grid; grid-template-columns: auto 1fr; gap: 28px;
-  background: linear-gradient(135deg, #0e1a3a 0%, #080f1e 60%, #080f1e 100%);
+  background: var(--featured-gradient);
   border: 1px solid var(--border2); border-radius: 14px;
   padding: 32px clamp(24px, 4vw, 40px);
   text-decoration: none; color: inherit; overflow: hidden;
-  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
 }
 .featured::before {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(circle at 90% 50%, rgba(58, 143, 255, 0.12), transparent 55%),
-    radial-gradient(circle at 5% 100%, rgba(240, 192, 96, 0.05), transparent 55%);
+    radial-gradient(circle at 90% 50%, rgba(58, 143, 255, 0.08), transparent 55%),
+    radial-gradient(circle at 5% 100%, rgba(240, 192, 96, 0.04), transparent 55%);
 }
+body.light-theme .featured::before { display: none; }
 .featured:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(58, 143, 255, 0.12); }
 .featured-icon {
   position: relative; font-size: 64px; align-self: center;
@@ -173,7 +207,6 @@ header {
   transform: scale(1.18) rotate(-4deg);
   filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
 }
-@keyframes featuredPulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.06);} }
 .featured-body { position: relative; }
 
 /* GOLD "NEW · JUST LAUNCHED" BADGE */
@@ -197,7 +230,7 @@ header {
 .featured-title { font-family: monospace; font-size: 20px; color: var(--text-bright); letter-spacing: 1.5px; margin-bottom: 10px; }
 .featured-desc { font-size: 14px; color: var(--text); line-height: 1.85; margin-bottom: 18px; max-width: 580px; }
 .featured-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.featured-meta .cat { font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); }
+.featured-meta .cat { font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); transition: background 0.25s, border-color 0.25s; }
 .featured-link { font-family: monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; }
 .featured-link .arrow { display: inline-block; transition: transform 0.25s; }
 .featured:hover .featured-link .arrow { transform: translateX(5px); }
@@ -212,7 +245,7 @@ header {
   position: relative; background: var(--bg2);
   border: 1px solid var(--border); border-radius: 12px;
   padding: 28px; cursor: pointer;
-  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
   text-decoration: none; display: flex; flex-direction: column;
   color: inherit; overflow: hidden;
 }
@@ -227,31 +260,33 @@ header {
 .card-icon { font-size: 48px; margin-bottom: 16px; display: inline-block; transition: transform 0.3s ease, filter 0.3s ease; line-height: 1; }
 .card-title { font-family: monospace; font-size: 15px; color: var(--text-bright); letter-spacing: 1px; margin-bottom: 10px; }
 .card-desc { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 18px; flex: 1; }
-.card-tag { display: inline-block; font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 3px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); align-self: flex-start; }
+.card-tag { display: inline-block; font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 3px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); align-self: flex-start; transition: background 0.25s, border-color 0.25s; }
 .card-link { margin-top: 16px; font-family: monospace; font-size: 11px; color: var(--accent); letter-spacing: 1px; }
 .card-link .arrow { display: inline-block; transition: transform 0.25s; }
 .card:hover .card-link .arrow { transform: translateX(5px); }
 
 /* About */
 .about-wrap { max-width: 720px; margin: 30px auto 60px; padding: 0 24px; }
-.about { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 40px clamp(24px, 5vw, 50px); text-align: center; position: relative; overflow: hidden; }
+.about { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 40px clamp(24px, 5vw, 50px); text-align: center; position: relative; overflow: hidden; transition: background 0.25s, border-color 0.25s; }
 .about::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(240, 192, 96, 0.06), transparent 70%); pointer-events: none; }
+body.light-theme .about::before { display: none; }
 .about > * { position: relative; }
 .about-label { font-family: monospace; font-size: 10px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 18px; }
 .about h2 { font-size: 24px; font-weight: normal; color: var(--text-bright); letter-spacing: 1px; margin-bottom: 14px; }
 .about-role { font-family: monospace; font-size: 12px; color: var(--text2); letter-spacing: 1.5px; margin-bottom: 22px; }
 .about p { font-size: 14px; color: var(--text); line-height: 1.95; max-width: 560px; margin: 0 auto; }
-.about-links { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.about-links { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; transition: border-color 0.25s; }
 .about-links a { font-family: monospace; font-size: 11px; letter-spacing: 1.5px; color: var(--accent); text-decoration: none; padding: 8px 16px; border: 1px solid var(--border2); border-radius: 6px; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
 .about-links a:hover { border-color: var(--accent); background: var(--bg3); transform: translateY(-1px); }
 
 /* Footer */
-footer { text-align: center; padding: 30px 24px; font-family: monospace; font-size: 10px; color: var(--text3); border-top: 1px solid var(--border); letter-spacing: 3px; }
+footer { text-align: center; padding: 30px 24px; font-family: monospace; font-size: 10px; color: var(--text3); border-top: 1px solid var(--border); letter-spacing: 3px; transition: border-color 0.25s, color 0.25s; }
 .footer-links { margin-bottom: 16px; display: flex; justify-content: center; gap: 22px; flex-wrap: wrap; }
 .footer-links a { color: var(--text2); text-decoration: none; letter-spacing: 2px; transition: color 0.2s; }
 .footer-links a:hover { color: var(--accent); }
 .footer-tag { letter-spacing: 3px; margin-bottom: 12px; }
 .footer-fine { font-size: 9px; color: #2a3a55; letter-spacing: 1.5px; margin-top: 12px; line-height: 1.7; }
+body.light-theme .footer-fine { color: var(--text3); }
 
 @media (max-width: 700px) {
   header { padding: 12px 16px; }
@@ -270,6 +305,7 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
   <div class="tagline">Interactive Physics Simulations</div>
   <div class="header-spacer"></div>
   <div class="header-links">
+    <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
     <a class="header-link" href="#about">About</a>
     <a class="header-link" href="https://github.com/yousuf-science/science-wonders" target="_blank" rel="noopener">GitHub ↗</a>
   </div>
@@ -296,7 +332,6 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
   </div>
 </div>
 
-<!-- Featured / Latest -->
 <div class="section-divider">
   <span class="line"></span>
   <span class="label"><span class="star">✦</span> Latest Releases <span class="star">✦</span></span>
@@ -344,9 +379,7 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
     </div>
   </a>
 
-
-  
-<a class="featured" href="Earth and SolarSystem.html">
+  <a class="featured" href="Earth and SolarSystem.html">
     <div class="featured-icon">🌍</div>
     <div class="featured-body">
       <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
@@ -360,9 +393,6 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
   </a>
 </div>
 
-
-  
-<!-- All simulations -->
 <div class="section-divider">
   <span class="line"></span>
   <span class="label"><span class="star">✦</span> All Simulations <span class="star">✦</span></span>
@@ -372,6 +402,7 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
 <div class="grid">
 
   <a class="card" href="gravity.html">
+    <div class="grid-glow-bar"></div>
     <div class="card-icon">🌌</div>
     <div class="card-title">N-Body Gravitational Simulation</div>
     <div class="card-desc">Watch planets orbit a star under real Newtonian gravity. Add bodies, adjust star mass, and see live orbital velocities and periods computed in SI units.</div>
@@ -437,7 +468,6 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
 
 </div>
 
-<!-- ABOUT SECTION -->
 <div class="about-wrap" id="about">
   <div class="about">
     <div class="about-label">⭐ About the Creator</div>
@@ -465,8 +495,27 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    // Dynamic asset discovery metric calculation counter
     const totalSimulations = document.querySelectorAll('a.featured, a.card').length;
     document.getElementById('sim-count').textContent = totalSimulations;
+
+    // Local Storage persistent Theme state initialization loop
+    const themeBtn = document.getElementById('theme-switcher');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'light') {
+      document.body.classList.add('light-theme');
+    }
+
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light-theme');
+      
+      let theme = 'dark';
+      if (document.body.classList.contains('light-theme')) {
+        theme = 'light';
+      }
+      localStorage.setItem('theme', theme);
+    });
   });
 </script>
 
