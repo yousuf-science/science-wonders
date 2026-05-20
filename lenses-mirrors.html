@@ -171,7 +171,24 @@ body.light-theme .ctable td:first-child{color:var(--gold);}
 footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;transition:border-color 0.2s, color 0.2s;}
 footer a{color:var(--text2);text-decoration:none;}
 footer a:hover{color:var(--accent);}
-
+@media(max-width:720px){
+  .image-label {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    margin: 10px 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    font-size: 10px;
+    width: auto;
+    max-width: calc(100% - 28px);
+    white-space: normal;
+  }
+  .image-label .sep { display: none; }
+}
+  
 @media(max-width:600px){
   header{padding:12px 16px;gap:10px;}
   .page-subtitle{display:none;}
