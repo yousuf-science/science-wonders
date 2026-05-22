@@ -183,6 +183,7 @@ footer a:hover{color:var(--accent);}
   <button class="tab" data-scene="stack"><span class="ico">🧱</span>Stacked Blocks</button>
   <button class="tab" data-scene="atwood"><span class="ico">⚙️</span>Pulley &amp; Hanging Mass</button>
   <button class="tab" data-scene="incpulley"><span class="ico">🏔️</span>Inclined Pulley</button>
+  <button class="tab" data-scene="rolling"><span class="ico">🚗</span>Rolling Friction</button>
   <button class="tab" data-scene="orbit"><span class="ico">🛰️</span>Free Fall &amp; Satellite</button>
 </div>
 
@@ -200,19 +201,19 @@ footer a:hover{color:var(--accent);}
         <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
           <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--grid-line)" stroke-width="1"/>
         </pattern>
-        <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+        <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--cyan)"/>
         </marker>
-        <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+        <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--gold)"/>
         </marker>
-        <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+        <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--red)"/>
         </marker>
-        <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--green)"/>
         </marker>
-        <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+        <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--violet)"/>
         </marker>
       </defs>
@@ -438,6 +439,20 @@ function arrow(parent, x1, y1, x2, y2, color, marker, label, labelOffset) {
 function drawBlock(parent, cx, cy, w, h, fill, stroke, label) {
   el(parent, 'rect', { x: cx - w/2, y: cy - h/2, width: w, height: h, fill, stroke, 'stroke-width':1.5, rx:2 });
   if (label) el(parent, 'text', { x: cx, y: cy + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#fff', text: label });
+}
+
+// Draw a force arrow from outside the block, pointing in direction (dx, dy).
+// magnitude is in newtons; length is logarithmic-ish so big forces don't dominate.
+function forceArrow(parent, cx, cy, dx, dy, magnitude, color, marker, label, blockHalf) {
+  if (magnitude < 0.3) return;
+  const norm = Math.hypot(dx, dy) || 1;
+  const ux = dx/norm, uy = dy/norm;
+  // logarithmic scaling: gives long-but-not-huge arrows
+  const len = 22 + Math.min(55, Math.log10(1 + magnitude) * 28);
+  const startOff = (blockHalf || 30) + 3;
+  const sx = cx + ux*startOff, sy = cy + uy*startOff;
+  const ex = sx + ux*len, ey = sy + uy*len;
+  arrow(parent, sx, sy, ex, ey, color, marker, label, ux !== 0 || uy < 0 ? 12 : -12);
 }
 
 // =====================================================================
@@ -673,8 +688,11 @@ SCENES.repose = {
   draw() {
     clearAll();
     const th = this.params.angleDeg * Math.PI / 180;
-    // Triangle base
-    const baseY = 380, pivotX = 220, baseLen = 700;
+    // Triangle base — auto-fit
+    const baseY = 400, pivotX = 220;
+    const maxRise = baseY - 70;
+    let baseLen = 700;
+    if (baseLen * Math.tan(th) > maxRise) baseLen = maxRise / Math.max(0.05, Math.tan(th));
     const peakX = pivotX + baseLen;
     const peakY = baseY - baseLen * Math.tan(th);
     // Floor
@@ -686,17 +704,15 @@ SCENES.repose = {
     el(gBg, 'path', { d:`M ${pivotX+50} ${baseY} A 50 50 0 0 0 ${pivotX + 50*Math.cos(th)} ${baseY - 50*Math.sin(th)}`, fill:'none', stroke:'var(--gold)', 'stroke-width':1.5 });
     el(gBg, 'text', { x: pivotX+60, y: baseY-12, 'font-family':'monospace', 'font-size':12, fill:'var(--gold)', text:`θ = ${this.params.angleDeg.toFixed(1)}°` });
     // Block position on slope
-    const startDist = 600; // distance from peak along slope (in slope units)
     const slopeLen = baseLen / Math.cos(th);
-    const sPx = Math.min(this.st.s * PX_PER_M, slopeLen - 250);
-    const along = 250 + sPx;  // distance from peak along slope
+    const startAlong = Math.min(250, slopeLen * 0.45);
+    const sPx = Math.min(this.st.s * PX_PER_M, slopeLen - startAlong - 30);
+    const along = startAlong + sPx;
     const bx = peakX - along * Math.cos(th);
     const by = peakY + along * Math.sin(th);
-    // Block normal & along axes
-    const ux = -Math.cos(th), uy = Math.sin(th);   // along slope (down)
-    const nx = -uy, ny = ux;                       // perpendicular (away from slope)
-    // Draw block aligned with slope
-    const bw = 70, bh = 50;
+    const ux = -Math.cos(th), uy = Math.sin(th);
+    const nx = -uy, ny = ux;
+    const bw = 65, bh = 45;
     const corners = [
       [bx + ux*(-bw/2) + nx*(-bh/2), by + uy*(-bw/2) + ny*(-bh/2)],
       [bx + ux*( bw/2) + nx*(-bh/2), by + uy*( bw/2) + ny*(-bh/2)],
@@ -705,23 +721,21 @@ SCENES.repose = {
     ];
     el(gMain, 'polygon', { points: corners.map(c => c.join(',')).join(' '), fill:'rgba(58,143,255,0.18)', stroke:'var(--accent)', 'stroke-width':1.5 });
     el(gMain, 'text', { x: bx, y: by+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:'#fff', text:`${this.params.m.toFixed(0)}kg` });
-    // Forces on block
+    // Forces
     const Wt = this.params.m * G;
     const N = Wt * Math.cos(th);
     const driving = Wt * Math.sin(th);
     const f_limit = this.params.mu_s * N;
     const f = this.st.slipping ? this.params.mu_k * N : Math.min(driving, f_limit);
+    const halfDim = Math.max(bw, bh)/2;
     // mg straight down
-    const scale = 0.45;
-    arrow(gFg, bx, by, bx, by + Wt*scale, 'var(--red)', 'red', `mg=${Wt.toFixed(0)}N`, 16);
-    // N perpendicular to slope (away from slope)
-    arrow(gFg, bx, by, bx + nx*N*scale, by + ny*N*scale, 'var(--green)', 'green', `N=${N.toFixed(0)}`, -14);
-    // f along slope (up-slope, opposing motion attempt)
-    arrow(gFg, bx, by, bx - ux*f*scale, by - uy*f*scale, 'var(--gold)', 'gold', `f=${f.toFixed(0)}`, 14);
-    // Indicator
+    forceArrow(gFg, bx, by, 0, 1, Wt, 'var(--red)', 'red', `mg=${Wt.toFixed(0)}`, halfDim);
+    // N perpendicular to slope
+    forceArrow(gFg, bx, by, nx, ny, N, 'var(--green)', 'green', `N=${N.toFixed(0)}`, halfDim);
+    // f along slope (up-slope; opposes motion attempt down)
+    forceArrow(gFg, bx, by, -ux, -uy, f, 'var(--gold)', 'gold', `f=${f.toFixed(0)}`, halfDim);
     const tan = Math.tan(th);
-    const slipped = this.st.slipping;
-    document.getElementById('canvas-hint').textContent = slipped ? '⚡ SLIPPING — kinetic friction now' : (tan > 0.97 * this.params.mu_s ? 'On the verge!' : 'Block holds — static friction balances gravity');
+    document.getElementById('canvas-hint').textContent = this.st.slipping ? '⚡ SLIPPING — kinetic friction now' : (tan > 0.97 * this.params.mu_s ? 'On the verge!' : 'Block holds — static friction balances gravity');
     document.getElementById('canvas-status').textContent = `tan(θ) = ${tan.toFixed(3)} · μₛ = ${this.params.mu_s.toFixed(2)}`;
   },
   readout() {
@@ -773,13 +787,10 @@ SCENES.repose = {
     const driving = Wt * Math.sin(th);
     const f_lim = mu_s * N;
     const f = this.st.slipping ? mu_k * N : Math.min(driving, f_lim);
-    const sc = 0.7;
-    // mg straight down
-    arrow(fbdSvg, cx, cy, cx, cy + Wt*sc, 'var(--red)', 'red', 'W=mg', 14);
-    // N perpendicular to slope
-    arrow(fbdSvg, cx, cy, cx + nx*N*sc, cy + ny*N*sc, 'var(--green)', 'green', 'N', -12);
-    // friction along slope, up
-    arrow(fbdSvg, cx, cy, cx - ux*f*sc, cy - uy*f*sc, 'var(--gold)', 'gold', 'f', 12);
+    const halfDim = Math.max(bw, bh)/2;
+    forceArrow(fbdSvg, cx, cy, 0, 1, Wt, 'var(--red)', 'red', 'W=mg', halfDim);
+    forceArrow(fbdSvg, cx, cy, nx, ny, N, 'var(--green)', 'green', 'N', halfDim);
+    forceArrow(fbdSvg, cx, cy, -ux, -uy, f, 'var(--gold)', 'gold', 'f', halfDim);
   }
 };
 
@@ -1030,132 +1041,184 @@ SCENES.walk = {
 SCENES.stack = {
   title: 'Stacked Blocks',
   sub: 'Will the top block slip off?',
-  params: { M: 8, m: 3, F: 20, mu_12: 0.4, mu_g: 0.1 },
-  st: { x_M: 400, x_m: 400, v_M: 0, v_m: 0 },
-  reset() { this.st = { x_M: 400, x_m: 400, v_M: 0, v_m: 0 }; },
+  params: { M: 8, m: 3, m3: 1.5, F: 20, mu_12: 0.4, mu_g: 0.1, useThird: false },
+  st: { x_M: 400, x_m: 400, x_m3: 400, v_M: 0, v_m: 0, v_m3: 0 },
+  reset() { this.st = { x_M: 400, x_m: 400, x_m3: 400, v_M: 0, v_m: 0, v_m3: 0 }; },
   controls() {
     const html = `
       <div class="ctrl-row">
+        <div class="ctrl-label"><span>Stack configuration</span></div>
+        <div class="ctrl-toggle">
+          <button class="${!this.params.useThird ? 'on' : ''}" id="b-two">2 blocks</button>
+          <button class="${this.params.useThird ? 'on' : ''}" id="b-three">3 blocks</button>
+        </div>
+      </div>
+      <div class="ctrl-row">
         <div class="ctrl-label"><span>Force on lower block F</span><span class="ctrl-val" id="v-F">20 N</span></div>
-        <input type="range" id="sl-F" min="0" max="100" step="1" value="20">
+        <input type="range" id="sl-F" min="0" max="100" step="1" value="${this.params.F}">
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>Lower mass M</span><span class="ctrl-val" id="v-M">8 kg</span></div>
-        <input type="range" id="sl-M" min="2" max="20" step="0.5" value="8">
+        <div class="ctrl-label"><span>Lower mass M</span><span class="ctrl-val" id="v-M">${this.params.M.toFixed(1)} kg</span></div>
+        <input type="range" id="sl-M" min="2" max="20" step="0.5" value="${this.params.M}">
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>Upper mass m</span><span class="ctrl-val" id="v-m">3 kg</span></div>
-        <input type="range" id="sl-m" min="0.5" max="10" step="0.5" value="3">
+        <div class="ctrl-label"><span>Middle mass m</span><span class="ctrl-val" id="v-m">${this.params.m.toFixed(1)} kg</span></div>
+        <input type="range" id="sl-m" min="0.5" max="10" step="0.5" value="${this.params.m}">
+      </div>
+      ${this.params.useThird ? `
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Top mass m₃</span><span class="ctrl-val" id="v-m3">${this.params.m3.toFixed(1)} kg</span></div>
+        <input type="range" id="sl-m3" min="0.2" max="6" step="0.1" value="${this.params.m3}">
+      </div>` : ''}
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>μ between blocks</span><span class="ctrl-val" id="v-mu12">${this.params.mu_12.toFixed(2)}</span></div>
+        <input type="range" id="sl-mu12" min="0.05" max="1.0" step="0.01" value="${this.params.mu_12}">
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>μ between blocks</span><span class="ctrl-val" id="v-mu12">0.40</span></div>
-        <input type="range" id="sl-mu12" min="0.05" max="1.0" step="0.01" value="0.4">
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>μ ground</span><span class="ctrl-val" id="v-mug">0.10</span></div>
-        <input type="range" id="sl-mug" min="0" max="0.7" step="0.01" value="0.1">
+        <div class="ctrl-label"><span>μ ground</span><span class="ctrl-val" id="v-mug">${this.params.mu_g.toFixed(2)}</span></div>
+        <input type="range" id="sl-mug" min="0" max="0.7" step="0.01" value="${this.params.mu_g}">
       </div>
     `;
     document.getElementById('controls-content').innerHTML = html;
+    document.getElementById('b-two').onclick = () => { this.params.useThird = false; this.reset(); this.controls(); };
+    document.getElementById('b-three').onclick = () => { this.params.useThird = true; this.reset(); this.controls(); };
     document.getElementById('sl-F').oninput = e => { this.params.F = +e.target.value; document.getElementById('v-F').textContent = this.params.F.toFixed(1) + ' N'; };
     document.getElementById('sl-M').oninput = e => { this.params.M = +e.target.value; document.getElementById('v-M').textContent = this.params.M.toFixed(1) + ' kg'; };
     document.getElementById('sl-m').oninput = e => { this.params.m = +e.target.value; document.getElementById('v-m').textContent = this.params.m.toFixed(1) + ' kg'; };
+    if (this.params.useThird) document.getElementById('sl-m3').oninput = e => { this.params.m3 = +e.target.value; document.getElementById('v-m3').textContent = this.params.m3.toFixed(1) + ' kg'; };
     document.getElementById('sl-mu12').oninput = e => { this.params.mu_12 = +e.target.value; document.getElementById('v-mu12').textContent = this.params.mu_12.toFixed(2); };
     document.getElementById('sl-mug').oninput = e => { this.params.mu_g = +e.target.value; document.getElementById('v-mug').textContent = this.params.mu_g.toFixed(2); };
   },
   analyze() {
-    const { M, m, F, mu_12, mu_g } = this.params;
-    // Try: both move together with acceleration a
-    // Friction needed on upper block to accelerate it at a is m*a
-    // Ground friction on system: mu_g * (M+m)*g, opposing motion
-    const Ftot = F;
-    const f_g = mu_g * (M + m) * G;
-    const a_together = Math.max(0, (Ftot - f_g) / (M + m));
-    const f_needed_on_m = m * a_together;
-    const f_max_12 = mu_12 * m * G;
-    if (f_needed_on_m <= f_max_12) {
-      // Move together
-      return { mode: 'together', a_M: a_together, a_m: a_together, f_12: f_needed_on_m, f_g, f_max_12 };
-    } else {
-      // Top slips. Compute separately.
-      const f_k_12 = mu_12 * m * G;
-      const a_m = f_k_12 / m;
-      const a_M = (F - f_k_12 - f_g) / M;
-      return { mode: 'slipping', a_M: Math.max(0, a_M), a_m, f_12: f_k_12, f_g, f_max_12 };
+    const { M, m, m3, F, mu_12, mu_g, useThird } = this.params;
+    const top = useThird ? m3 : 0;
+    const totalMass = M + m + top;
+    const f_g = mu_g * totalMass * G;
+    const a_together = Math.max(0, (F - f_g) / totalMass);
+    // Threshold for top stack to keep up: a ≤ μ_12·g (because friction = μm·g must equal m·a)
+    const a_max_carry = mu_12 * G;
+    if (a_together <= a_max_carry) {
+      // All move together
+      const f_12 = (m + top) * a_together;   // friction M provides to (m + top)
+      const f_23 = top * a_together;          // friction m provides to top
+      return { mode: 'together', a_M: a_together, a_m: a_together, a_m3: a_together, f_12, f_23, f_g, a_max_carry };
     }
+    // Upper stack slips. Top block (if present) and middle block accelerate at μ_12·g via kinetic friction.
+    const a_upper = mu_12 * G;
+    // Lower block: kinetic friction from middle (μ_12·(m+top)·g) pulls back, plus ground friction
+    const f_12_k = mu_12 * (m + top) * G;
+    const f_23_k = top > 0 ? mu_12 * top * G : 0;
+    const a_M = Math.max(0, (F - f_12_k - f_g) / M);
+    return { mode: 'slipping', a_M, a_m: a_upper, a_m3: a_upper, f_12: f_12_k, f_23: f_23_k, f_g, a_max_carry };
   },
   step(dt) {
     const r = this.analyze();
     this.st.v_M += r.a_M * dt;
     this.st.v_m += r.a_m * dt;
+    this.st.v_m3 += r.a_m3 * dt;
     this.st.x_M += this.st.v_M * PX_PER_M * dt;
     this.st.x_m += this.st.v_m * PX_PER_M * dt;
-    if (this.st.x_M > 900) { this.st.x_M = 400; this.st.x_m = 400; this.st.v_M = 0; this.st.v_m = 0; }
+    this.st.x_m3 += this.st.v_m3 * PX_PER_M * dt;
+    if (this.st.x_M > 900) this.reset();
   },
   draw() {
     clearAll();
-    const floorY = 360;
+    const floorY = 380;
     el(gBg, 'line', { x1:0, y1:floorY, x2:W, y2:floorY, stroke:'var(--text2)', 'stroke-width':2 });
     for (let x=10;x<W;x+=22) el(gBg, 'line', { x1:x, y1:floorY, x2:x-10, y2:floorY+14, stroke:'var(--text3)', 'stroke-width':1 });
     const r = this.analyze();
     // Lower block M
-    const Mw = 140, Mh = 70;
+    const Mw = 150, Mh = 65;
     const Mx = this.st.x_M, My = floorY - Mh/2;
     drawBlock(gMain, Mx, My, Mw, Mh, 'rgba(58,143,255,0.18)', 'var(--accent)', `M=${this.params.M.toFixed(0)} kg`);
-    // Upper block m
-    const mw = 90, mh = 50;
+    // Middle block m
+    const mw = 95, mh = 48;
     const mx = this.st.x_m, my = floorY - Mh - mh/2;
     drawBlock(gMain, mx, my, mw, mh, 'rgba(192,96,255,0.18)', 'var(--violet)', `m=${this.params.m.toFixed(0)} kg`);
-    // Force F on lower
-    if (this.params.F > 0.2) arrow(gFg, Mx - Mw/2 - 80, My, Mx - Mw/2, My, 'var(--cyan)', 'cyan', `F=${this.params.F.toFixed(0)}`, -14);
-    // Friction at interface (on M from m, backward)
-    if (r.f_12 > 0.2) {
-      arrow(gFg, Mx, floorY - Mh + 6, Mx - 60, floorY - Mh + 6, 'var(--gold)', 'gold', `f₁₂=${r.f_12.toFixed(1)}`, 14);
-      arrow(gFg, mx, floorY - Mh - 6, mx + 60, floorY - Mh - 6, 'var(--gold)', 'gold', '', 0);
+    // Optional top block m3
+    if (this.params.useThird) {
+      const m3w = 62, m3h = 38;
+      const m3x = this.st.x_m3, m3y = floorY - Mh - mh - m3h/2;
+      drawBlock(gMain, m3x, m3y, m3w, m3h, 'rgba(240,192,96,0.20)', 'var(--gold)', `m₃=${this.params.m3.toFixed(1)}`);
+      if (r.f_23 > 0.2) {
+        // Friction on m3 from m (pulls m3 forward)
+        forceArrow(gFg, m3x, m3y, -1, 0, r.f_23, 'var(--gold)', 'gold', `f₂₃=${r.f_23.toFixed(1)}`, m3w/2);
+      }
     }
-    // Ground friction
-    if (r.f_g > 0.2) arrow(gFg, Mx + Mw/2 + 70, floorY - 10, Mx + Mw/2, floorY - 10, 'var(--gold)', 'gold', `f_g=${r.f_g.toFixed(1)}`, 14);
-    document.getElementById('canvas-hint').textContent = r.mode === 'together' ? 'Blocks moving together' : '⚡ TOP BLOCK SLIPS — friction limit exceeded';
-    document.getElementById('canvas-status').textContent = `f_12 = ${r.f_12.toFixed(1)} N · limit = ${r.f_max_12.toFixed(1)} N`;
+    // Force F on lower (cyan arrow, OUTSIDE block)
+    if (this.params.F > 0.2) {
+      const F = this.params.F;
+      const len = 25 + Math.min(60, Math.log10(1+F)*30);
+      arrow(gFg, Mx - Mw/2 - len, My, Mx - Mw/2 - 5, My, 'var(--cyan)', 'cyan', `F=${F.toFixed(0)}`, -12);
+    }
+    // Friction at lower interface (M experiences backward, m experiences forward)
+    if (r.f_12 > 0.2) {
+      const len = 25 + Math.min(50, Math.log10(1+r.f_12)*25);
+      // On M (rightward edge of contact area, pulling M leftward — show inside the top of M)
+      arrow(gFg, Mx + 30, floorY - Mh + 12, Mx + 30 - len, floorY - Mh + 12, 'var(--gold)', 'gold', `f₁₂=${r.f_12.toFixed(1)}`, 14);
+    }
+    // Ground friction (on M, backward)
+    if (r.f_g > 0.2) {
+      forceArrow(gFg, Mx + Mw/2 - 5, floorY - 8, 1, 0, r.f_g, 'var(--gold)', 'gold', `f_g=${r.f_g.toFixed(1)}`, 5);
+    }
+    document.getElementById('canvas-hint').textContent = r.mode === 'together' ? `${this.params.useThird ? 'All three' : 'Both'} blocks moving together` : '⚡ UPPER STACK SLIPS — μ limit exceeded';
+    document.getElementById('canvas-status').textContent = `a_max for staying together = μg = ${r.a_max_carry.toFixed(2)} m/s²`;
   },
   readout() {
     const r = this.analyze();
     const html = `
       <div class="readout-cell"><div class="l">Mode</div><div class="v ${r.mode === 'slipping' ? 'red' : 'green'}">${r.mode.toUpperCase()}</div></div>
-      <div class="readout-cell"><div class="l">a (lower)</div><div class="v">${r.a_M.toFixed(3)} m/s²</div></div>
-      <div class="readout-cell"><div class="l">a (upper)</div><div class="v">${r.a_m.toFixed(3)} m/s²</div></div>
-      <div class="readout-cell"><div class="l">f between</div><div class="v">${r.f_12.toFixed(2)} N</div></div>
-      <div class="readout-cell"><div class="l">f ground</div><div class="v">${r.f_g.toFixed(2)} N</div></div>
-      <div class="readout-cell"><div class="l">f_max between</div><div class="v">${r.f_max_12.toFixed(2)} N</div></div>
+      <div class="readout-cell"><div class="l">a (lower M)</div><div class="v">${r.a_M.toFixed(3)} m/s²</div></div>
+      <div class="readout-cell"><div class="l">a (middle m)</div><div class="v">${r.a_m.toFixed(3)} m/s²</div></div>
+      ${this.params.useThird ? `<div class="readout-cell"><div class="l">a (top m₃)</div><div class="v">${r.a_m3.toFixed(3)} m/s²</div></div>` : ''}
+      <div class="readout-cell"><div class="l">f₁₂</div><div class="v">${r.f_12.toFixed(2)} N</div></div>
+      ${this.params.useThird ? `<div class="readout-cell"><div class="l">f₂₃</div><div class="v">${r.f_23.toFixed(2)} N</div></div>` : ''}
+      <div class="readout-cell full"><div class="l">f ground</div><div class="v">${r.f_g.toFixed(2)} N</div></div>
     `;
     document.getElementById('readout-content').innerHTML = html;
-    document.getElementById('equation-content').innerHTML = r.mode === 'together'
-      ? `Together: a = (F − μ<sub>g</sub>(M+m)g) / (M+m) = <b>${r.a_M.toFixed(3)} m/s²</b><br>Required f on top = m·a = ${r.f_12.toFixed(2)} N (within limit ${r.f_max_12.toFixed(2)} N)`
-      : `Slipping! On top block: f<sub>k</sub> = μ<sub>12</sub>·mg = ${r.f_12.toFixed(2)} N → a_top = <b>${r.a_m.toFixed(3)} m/s²</b><br>On bottom: a_bottom = (F − f<sub>12</sub> − f<sub>g</sub>)/M = <b>${r.a_M.toFixed(3)} m/s²</b>`;
+    if (r.mode === 'together') {
+      document.getElementById('equation-content').innerHTML = this.params.useThird
+        ? `All three move together. Treat as one body of mass (M+m+m₃):<br>a = (F − μ<sub>g</sub>(M+m+m₃)g) / (M+m+m₃) = <b>${r.a_M.toFixed(3)} m/s²</b><br>This requires a ≤ μ<sub>12</sub>g = ${r.a_max_carry.toFixed(2)} — ✓ within limit.`
+        : `Both move together. a = (F − μ<sub>g</sub>(M+m)g) / (M+m) = <b>${r.a_M.toFixed(3)} m/s²</b><br>Friction on top = ma = ${r.f_12.toFixed(2)} N (within limit μ<sub>12</sub>mg)`;
+    } else {
+      document.getElementById('equation-content').innerHTML = `Required a exceeds μ<sub>12</sub>g = ${r.a_max_carry.toFixed(2)}. Upper blocks slip.<br>Top: a = μ<sub>12</sub>g = <b>${r.a_m.toFixed(3)} m/s²</b><br>Bottom: a = (F − μ<sub>12</sub>(m+top)g − f_g)/M = <b>${r.a_M.toFixed(3)} m/s²</b>`;
+    }
     const banner = document.getElementById('banner');
     if (r.mode === 'slipping') {
       banner.className = 'banner show warn';
-      document.getElementById('banner-text').innerHTML = 'The static friction between the blocks reached its maximum — the upper block cannot keep up. It now lags behind.';
+      document.getElementById('banner-text').innerHTML = 'Static friction between blocks reached its limit — the upper stack cannot keep up. Each upper block now accelerates at μ<sub>12</sub>g via kinetic friction.';
     } else banner.className = 'banner';
   },
   fbd() {
     clearGroup(fbdSvg);
     const r = this.analyze();
-    el(fbdSvg, 'text', { x: 180, y: 22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--text2)', text:'TWO FREE BODY DIAGRAMS' });
-    // Upper block
-    el(fbdSvg, 'rect', { x: 30, y: 60, width: 120, height: 60, fill:'rgba(192,96,255,0.15)', stroke:'var(--violet)', 'stroke-width':1.5 });
-    el(fbdSvg, 'text', { x: 90, y: 95, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#fff', text:'m' });
-    arrow(fbdSvg, 90, 120, 90, 175, 'var(--red)', 'red', 'mg', 10);
-    arrow(fbdSvg, 90, 60, 90, 20, 'var(--green)', 'green', 'N₁=mg', -10);
-    if (r.f_12 > 0.2) arrow(fbdSvg, 150, 90, 200, 90, 'var(--gold)', 'gold', `f₁₂`, 10);
-    // Lower block
-    el(fbdSvg, 'rect', { x: 210, y: 200, width: 130, height: 60, fill:'rgba(58,143,255,0.15)', stroke:'var(--accent)', 'stroke-width':1.5 });
-    el(fbdSvg, 'text', { x: 275, y: 235, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#fff', text:'M' });
-    arrow(fbdSvg, 275, 260, 275, 295, 'var(--red)', 'red', 'Mg', 10);
-    arrow(fbdSvg, 275, 200, 275, 170, 'var(--green)', 'green', 'N₂=(M+m)g', -10);
-    if (this.params.F > 0.2) arrow(fbdSvg, 210, 230, 165, 230, 'var(--cyan)', 'cyan', 'F', -10);
-    if (r.f_12 > 0.2) arrow(fbdSvg, 275, 200, 215, 200, 'var(--gold)', 'gold', 'f₁₂', 10);
-    if (r.f_g > 0.2) arrow(fbdSvg, 340, 250, 355, 250, 'var(--gold)', 'gold', 'f_g', 10);
+    el(fbdSvg, 'text', { x: 180, y: 18, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--text2)', text: this.params.useThird ? 'THREE FREE BODY DIAGRAMS' : 'TWO FREE BODY DIAGRAMS' });
+    // Top block (only in 3-block mode)
+    if (this.params.useThird) {
+      el(fbdSvg, 'rect', { x: 40, y: 40, width: 80, height: 38, fill:'rgba(240,192,96,0.20)', stroke:'var(--gold)', 'stroke-width':1.5 });
+      el(fbdSvg, 'text', { x: 80, y: 64, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#fff', text:'m₃' });
+      forceArrow(fbdSvg, 80, 60, 0, 1, this.params.m3*G, 'var(--red)', 'red', 'm₃g', 19);
+      forceArrow(fbdSvg, 80, 60, 0, -1, this.params.m3*G, 'var(--green)', 'green', 'N₂₃', 19);
+      if (r.f_23 > 0.2) forceArrow(fbdSvg, 80, 60, -1, 0, r.f_23, 'var(--gold)', 'gold', 'f₂₃', 40);
+    }
+    // Middle block m
+    const my = this.params.useThird ? 130 : 90;
+    el(fbdSvg, 'rect', { x: 30, y: my, width: 100, height: 50, fill:'rgba(192,96,255,0.15)', stroke:'var(--violet)', 'stroke-width':1.5 });
+    el(fbdSvg, 'text', { x: 80, y: my+30, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#fff', text:'m' });
+    forceArrow(fbdSvg, 80, my+25, 0, 1, this.params.m*G, 'var(--red)', 'red', 'mg', 25);
+    forceArrow(fbdSvg, 80, my+25, 0, -1, (this.params.m + (this.params.useThird ? this.params.m3 : 0))*G, 'var(--green)', 'green', 'N₁₂', 25);
+    if (r.f_12 > 0.2) forceArrow(fbdSvg, 80, my+25, -1, 0, r.f_12, 'var(--gold)', 'gold', 'f₁₂', 50);
+    if (r.f_23 > 0.2 && this.params.useThird) forceArrow(fbdSvg, 80, my+25, 1, 0, r.f_23, 'var(--gold)', 'gold', 'f₂₃(reaction)', 50);
+    // Lower block M
+    const My = this.params.useThird ? 215 : 195;
+    el(fbdSvg, 'rect', { x: 220, y: My, width: 120, height: 55, fill:'rgba(58,143,255,0.15)', stroke:'var(--accent)', 'stroke-width':1.5 });
+    el(fbdSvg, 'text', { x: 280, y: My+32, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#fff', text:'M' });
+    forceArrow(fbdSvg, 280, My+27, 0, 1, this.params.M*G, 'var(--red)', 'red', 'Mg', 28);
+    const totalN = (this.params.M + this.params.m + (this.params.useThird ? this.params.m3 : 0))*G;
+    forceArrow(fbdSvg, 280, My+27, 0, -1, totalN, 'var(--green)', 'green', 'N_g', 28);
+    if (this.params.F > 0.2) forceArrow(fbdSvg, 280, My+27, -1, 0, this.params.F, 'var(--cyan)', 'cyan', 'F', 60);
+    if (r.f_12 > 0.2) forceArrow(fbdSvg, 280, My+27, 1, 0, r.f_12, 'var(--gold)', 'gold', 'f₁₂(react)', 60);
+    if (r.f_g > 0.2) forceArrow(fbdSvg, 280, My+27, 1, 0, r.f_g, 'var(--gold)', 'gold', 'f_g', 60);
   }
 };
 
@@ -1352,9 +1415,12 @@ SCENES.incpulley = {
   },
   draw() {
     clearAll();
-    const baseY = 380, pivotX = 100;
+    const baseY = 400, pivotX = 100;
     const th = this.params.theta * Math.PI / 180;
-    const baseLen = 600;
+    // Auto-fit incline so the peak stays on screen
+    const maxRise = baseY - 70;
+    let baseLen = 600;
+    if (baseLen * Math.tan(th) > maxRise) baseLen = maxRise / Math.max(0.05, Math.tan(th));
     const peakX = pivotX + baseLen;
     const peakY = baseY - baseLen * Math.tan(th);
     // Floor
@@ -1366,14 +1432,15 @@ SCENES.incpulley = {
     const pX = peakX + 15, pY = peakY - 15;
     el(gBg, 'circle', { cx: pX, cy: pY, r: 16, fill:'rgba(240,192,96,0.20)', stroke:'var(--gold)', 'stroke-width':2 });
     el(gBg, 'circle', { cx: pX, cy: pY, r: 3, fill:'var(--gold)' });
-    // Block on slope
-    const ux = -Math.cos(th), uy = Math.sin(th);  // down the slope
-    const nx = -uy, ny = ux;                       // outward normal
+    // Block on slope — position depends on s (positive = climbed up)
     const slopeLen = baseLen / Math.cos(th);
-    const distFromPeak = 200 - this.st.s * PX_PER_M;
-    const bx = peakX - Math.max(50, distFromPeak) * Math.cos(th);
-    const by = peakY + Math.max(50, distFromPeak) * Math.sin(th);
-    const bw = 60, bh = 45;
+    const startDistFromPeak = Math.min(220, slopeLen * 0.55);
+    const distFromPeak = Math.max(60, startDistFromPeak - this.st.s * PX_PER_M);
+    const bx = peakX - distFromPeak * Math.cos(th);
+    const by = peakY + distFromPeak * Math.sin(th);
+    const ux = -Math.cos(th), uy = Math.sin(th);   // along slope (downhill)
+    const nx = -uy, ny = ux;                        // outward normal
+    const bw = 60, bh = 42;
     const corners = [
       [bx + ux*(-bw/2) + nx*(-bh/2), by + uy*(-bw/2) + ny*(-bh/2)],
       [bx + ux*( bw/2) + nx*(-bh/2), by + uy*( bw/2) + ny*(-bh/2)],
@@ -1382,40 +1449,35 @@ SCENES.incpulley = {
     ];
     el(gMain, 'polygon', { points: corners.map(c => c.join(',')).join(' '), fill:'rgba(58,143,255,0.20)', stroke:'var(--accent)', 'stroke-width':1.5 });
     el(gMain, 'text', { x: bx, y: by+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, 'font-weight':'bold', fill:'#fff', text:`m₁=${this.params.m1.toFixed(0)}` });
-    // String from block (top) to pulley
+    // String from block (top edge) to pulley
     const stringStartX = bx + nx * (bh/2);
     const stringStartY = by + ny * (bh/2);
     el(gMain, 'line', { x1: stringStartX, y1: stringStartY, x2: pX - 16, y2: pY, stroke:'var(--text-bright)', 'stroke-width':1.5 });
-    // String from pulley down to hanging m2
-    const hangY = pY + 100 - this.st.s * PX_PER_M;
+    // FIX: hanging mass m₂ FALLS (down) when m₁ climbs the slope (s > 0)
+    const hangY = Math.min(baseY - 50, pY + 100 + this.st.s * PX_PER_M);
     el(gMain, 'line', { x1: pX + 16, y1: pY, x2: pX + 16, y2: hangY, stroke:'var(--text-bright)', 'stroke-width':1.5 });
     // Hanging m2
     const m2_x = pX + 16, m2_y = hangY + 25;
-    drawBlock(gMain, m2_x, m2_y, 55, 50, 'rgba(192,96,255,0.22)', 'var(--violet)', `m₂=${this.params.m2.toFixed(0)}`);
+    drawBlock(gMain, m2_x, m2_y, 55, 45, 'rgba(192,96,255,0.22)', 'var(--violet)', `m₂=${this.params.m2.toFixed(0)}`);
     // Forces
     const r = this.analyze();
-    const sc = 0.4;
-    // mg on m1 (straight down)
-    const w1full = this.params.m1 * G;
-    arrow(gFg, bx, by, bx, by + w1full * sc, 'var(--red)', 'red', `m₁g`, 14);
-    // T along string up the slope on m1
-    if (r.T > 0.2) {
-      const tx = -ux, ty = -uy;
-      arrow(gFg, bx, by, bx + tx * r.T * sc, by + ty * r.T * sc, 'var(--violet)', 'violet', `T=${r.T.toFixed(1)}`, -10);
-    }
-    // Friction along slope (depends on direction)
+    const halfM1 = Math.max(bw, bh)/2;
+    // m1: weight straight down, normal along slope-perp, tension up the slope, friction along slope
+    forceArrow(gFg, bx, by, 0, 1, this.params.m1 * G, 'var(--red)', 'red', 'm₁g', halfM1);
+    forceArrow(gFg, bx, by, nx, ny, r.N, 'var(--green)', 'green', 'N', halfM1);
+    forceArrow(gFg, bx, by, -ux, -uy, r.T, 'var(--violet)', 'violet', `T=${r.T.toFixed(0)}`, halfM1);
     if (r.f > 0.2) {
       let fx, fy;
-      if (r.dir === 'up') { fx = ux; fy = uy; }     // opposes upslope motion → down the slope
+      if (r.dir === 'up') { fx = ux; fy = uy; }      // opposes m₁ climbing
       else if (r.dir === 'down') { fx = -ux; fy = -uy; }
-      else { fx = ux; fy = uy; } // static (any direction; show downward for clarity)
-      arrow(gFg, bx, by, bx + fx * r.f * sc, by + fy * r.f * sc, 'var(--gold)', 'gold', `f=${r.f.toFixed(1)}`, 12);
+      else { fx = (this.params.m2*G > this.params.m1*G*Math.sin(th)) ? ux : -ux; fy = (this.params.m2*G > this.params.m1*G*Math.sin(th)) ? uy : -uy; }
+      forceArrow(gFg, bx, by, fx, fy, r.f, 'var(--gold)', 'gold', `f=${r.f.toFixed(0)}`, halfM1);
     }
-    // m2 weight + T
-    arrow(gFg, m2_x + 25, m2_y, m2_x + 25, m2_y + (this.params.m2 * G) * sc, 'var(--red)', 'red', `m₂g`, 14);
-    if (r.T > 0.2) arrow(gFg, m2_x + 25, m2_y - 25, m2_x + 25, m2_y - 25 - r.T * sc, 'var(--violet)', 'violet', `T`, -14);
+    // m2: weight down, tension up
+    forceArrow(gFg, m2_x, m2_y, 0, 1, this.params.m2 * G, 'var(--red)', 'red', 'm₂g', 30);
+    forceArrow(gFg, m2_x, m2_y, 0, -1, r.T, 'var(--violet)', 'violet', `T`, 30);
     // Status
-    document.getElementById('canvas-hint').textContent = r.dir === 'up' ? 'm₂ falls, block climbs slope' : (r.dir === 'down' ? 'block slides down, m₂ rises' : 'Static — friction holds');
+    document.getElementById('canvas-hint').textContent = r.dir === 'up' ? 'm₂ falls → block climbs slope' : (r.dir === 'down' ? 'block slides down → m₂ rises' : 'Static — friction holds the system');
     document.getElementById('canvas-status').textContent = `a = ${Math.abs(r.a).toFixed(3)} m/s² · T = ${r.T.toFixed(2)} N`;
   },
   readout() {
@@ -1459,26 +1521,22 @@ SCENES.incpulley = {
     ];
     el(fbdSvg, 'polygon', { points: corners.map(c => c.join(',')).join(' '), fill:'rgba(58,143,255,0.15)', stroke:'var(--accent)', 'stroke-width':1.5 });
     el(fbdSvg, 'text', { x: cx1, y: cy1+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#fff', text:'m₁' });
-    const sc = 0.6;
-    // mg down
-    arrow(fbdSvg, cx1, cy1, cx1, cy1 + this.params.m1*G*sc, 'var(--red)', 'red', 'm₁g', 10);
-    // N out perpendicular
-    arrow(fbdSvg, cx1, cy1, cx1 + nx*r.N*sc, cy1 + ny*r.N*sc, 'var(--green)', 'green', 'N', -10);
-    // T up the slope (along -ux)
-    if (r.T > 0.2) arrow(fbdSvg, cx1, cy1, cx1 + (-ux)*r.T*sc, cy1 + (-uy)*r.T*sc, 'var(--violet)', 'violet', 'T', -10);
-    // f along slope
+    const halfM1 = Math.max(bw,bh)/2;
+    forceArrow(fbdSvg, cx1, cy1, 0, 1, this.params.m1*G, 'var(--red)', 'red', 'm₁g', halfM1);
+    forceArrow(fbdSvg, cx1, cy1, nx, ny, r.N, 'var(--green)', 'green', 'N', halfM1);
+    forceArrow(fbdSvg, cx1, cy1, -ux, -uy, r.T, 'var(--violet)', 'violet', 'T', halfM1);
     if (r.f > 0.2) {
       let fx, fy;
       if (r.dir === 'up') { fx = ux; fy = uy; }
       else if (r.dir === 'down') { fx = -ux; fy = -uy; }
-      else { fx = ux; fy = uy; }
-      arrow(fbdSvg, cx1, cy1, cx1 + fx*r.f*sc, cy1 + fy*r.f*sc, 'var(--gold)', 'gold', 'f', 10);
+      else { fx = (this.params.m2*G > this.params.m1*G*Math.sin(th)) ? ux : -ux; fy = (this.params.m2*G > this.params.m1*G*Math.sin(th)) ? uy : -uy; }
+      forceArrow(fbdSvg, cx1, cy1, fx, fy, r.f, 'var(--gold)', 'gold', 'f', halfM1);
     }
     // m2 box on right
     el(fbdSvg, 'rect', { x: 260, y: 140, width: 60, height: 60, fill:'rgba(192,96,255,0.15)', stroke:'var(--violet)', 'stroke-width':1.5 });
     el(fbdSvg, 'text', { x: 290, y: 175, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#fff', text:'m₂' });
-    arrow(fbdSvg, 290, 200, 290, 280, 'var(--red)', 'red', 'm₂g', 10);
-    if (r.T > 0.2) arrow(fbdSvg, 290, 140, 290, 70, 'var(--violet)', 'violet', 'T', -10);
+    forceArrow(fbdSvg, 290, 170, 0, 1, this.params.m2*G, 'var(--red)', 'red', 'm₂g', 30);
+    forceArrow(fbdSvg, 290, 170, 0, -1, r.T, 'var(--violet)', 'violet', 'T', 30);
   }
 };
 
@@ -1486,184 +1544,487 @@ SCENES.incpulley = {
 // SCENE 8 — FREE FALL & SATELLITE
 // =====================================================================
 SCENES.orbit = {
-  title: 'Free Fall & Satellite Motion',
-  sub: 'Gravity-only motion · Why astronauts feel weightless',
-  params: { mode: 'fall', mass: 70, height: 100, orbitAlt: 400 },  // mode: 'fall' or 'satellite'
-  st: { t: 0, y: 0, v: 0, theta: 0, omega: 0 },
-  reset() { this.st = { t: 0, y: 0, v: 0, theta: 0, omega: 0 }; },
+  title: "Free Fall, Cannonball & Orbits",
+  sub: "Why astronauts in orbit feel weightless — they ARE falling, all the time",
+  params: { mode: 'fall', height: 100, v_launch: 7.5 },
+  st: {
+    // Free fall mode
+    t: 0, fy: 0, fv: 0,
+    // Cannonball mode (positions in metres relative to Earth's centre)
+    x: 0, y: 0, vx: 0, vy: 0, trail: [], status: 'ready', simTime: 0
+  },
+  GM: 3.986e14,  // m^3/s^2 — Earth's GM
+  Re: 6.371e6,   // m — Earth's radius
+  cannonAlt: 400e3,  // m — height of "mountain" above surface
+  reset() {
+    this.st.t = 0; this.st.fy = 0; this.st.fv = 0;
+    // Position cannon at the TOP of the Earth, with launch direction tangential (rightward)
+    this.st.x = 0;
+    this.st.y = this.Re + this.cannonAlt;
+    this.st.vx = this.params.v_launch * 1000;
+    this.st.vy = 0;
+    this.st.trail = [{ x: this.st.x, y: this.st.y }];
+    this.st.status = 'ready';
+    this.st.simTime = 0;
+  },
   controls() {
+    const v_circ = Math.sqrt(this.GM / (this.Re + this.cannonAlt)) / 1000;
+    const v_esc = Math.sqrt(2 * this.GM / (this.Re + this.cannonAlt)) / 1000;
     const html = `
       <div class="ctrl-row">
         <div class="ctrl-label"><span>Mode</span></div>
         <div class="ctrl-toggle">
           <button class="${this.params.mode === 'fall' ? 'on' : ''}" id="b-fall">Free Fall</button>
-          <button class="${this.params.mode === 'satellite' ? 'on' : ''}" id="b-orbit">Satellite</button>
+          <button class="${this.params.mode === 'cannon' ? 'on' : ''}" id="b-cannon">Newton's Cannonball</button>
         </div>
       </div>
       ${this.params.mode === 'fall' ? `
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>Initial height</span><span class="ctrl-val" id="v-h">100 m</span></div>
-        <input type="range" id="sl-h" min="10" max="500" step="5" value="100">
+        <div class="ctrl-label"><span>Initial height</span><span class="ctrl-val" id="v-h">${this.params.height} m</span></div>
+        <input type="range" id="sl-h" min="10" max="500" step="5" value="${this.params.height}">
         <div class="ctrl-sub">Object falls from rest. Apparent weight = 0.</div>
-      </div>
-      <div class="ctrl-row">
-        <div class="ctrl-label"><span>Mass</span><span class="ctrl-val" id="v-mass">70 kg</span></div>
-        <input type="range" id="sl-mass" min="1" max="200" step="1" value="70">
       </div>
       ` : `
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>Orbit altitude</span><span class="ctrl-val" id="v-alt">400 km</span></div>
-        <input type="range" id="sl-alt" min="200" max="36000" step="50" value="400">
-        <div class="ctrl-sub">ISS orbits at ~408 km. Geostationary is at 35,786 km.</div>
+        <div class="ctrl-label"><span>Launch speed</span><span class="ctrl-val" id="v-vl">${this.params.v_launch.toFixed(2)} km/s</span></div>
+        <input type="range" id="sl-vl" min="4" max="12" step="0.05" value="${this.params.v_launch}">
+        <div class="ctrl-sub">Try ${v_circ.toFixed(2)} km/s for a circular orbit. Above ${v_esc.toFixed(2)} km/s the ball escapes.</div>
       </div>
       <div class="ctrl-row">
-        <div class="ctrl-label"><span>Satellite mass</span><span class="ctrl-val" id="v-mass">70 kg</span></div>
-        <input type="range" id="sl-mass" min="1" max="5000" step="10" value="70">
+        <div class="ctrl-toggle">
+          <button id="b-orbit-speed">Set to orbital speed (${v_circ.toFixed(2)} km/s)</button>
+          <button id="b-escape-speed">Set to escape speed (${v_esc.toFixed(2)} km/s)</button>
+        </div>
       </div>
       `}
     `;
     document.getElementById('controls-content').innerHTML = html;
     document.getElementById('b-fall').onclick = () => { this.params.mode = 'fall'; this.reset(); this.controls(); };
-    document.getElementById('b-orbit').onclick = () => { this.params.mode = 'satellite'; this.reset(); this.controls(); };
+    document.getElementById('b-cannon').onclick = () => { this.params.mode = 'cannon'; this.reset(); this.controls(); };
     if (this.params.mode === 'fall') {
       document.getElementById('sl-h').oninput = e => { this.params.height = +e.target.value; document.getElementById('v-h').textContent = this.params.height + ' m'; this.reset(); };
-      document.getElementById('sl-mass').oninput = e => { this.params.mass = +e.target.value; document.getElementById('v-mass').textContent = this.params.mass + ' kg'; };
     } else {
-      document.getElementById('sl-alt').oninput = e => { this.params.orbitAlt = +e.target.value; document.getElementById('v-alt').textContent = this.params.orbitAlt + ' km'; this.reset(); };
-      document.getElementById('sl-mass').oninput = e => { this.params.mass = +e.target.value; document.getElementById('v-mass').textContent = this.params.mass + ' kg'; };
+      document.getElementById('sl-vl').oninput = e => { this.params.v_launch = +e.target.value; document.getElementById('v-vl').textContent = this.params.v_launch.toFixed(2) + ' km/s'; this.reset(); };
+      document.getElementById('b-orbit-speed').onclick = () => { this.params.v_launch = v_circ; this.reset(); this.controls(); };
+      document.getElementById('b-escape-speed').onclick = () => { this.params.v_launch = v_esc; this.reset(); this.controls(); };
     }
   },
   step(dt) {
     if (this.params.mode === 'fall') {
       this.st.t += dt;
-      this.st.v = G * this.st.t;
-      this.st.y = 0.5 * G * this.st.t * this.st.t;
-      if (this.st.y >= this.params.height) { this.st.y = this.params.height; this.st.v = Math.sqrt(2 * G * this.params.height); }
+      this.st.fv = G * this.st.t;
+      this.st.fy = 0.5 * G * this.st.t * this.st.t;
+      if (this.st.fy >= this.params.height) { this.st.fy = this.params.height; this.st.fv = Math.sqrt(2 * G * this.params.height); }
     } else {
-      // Orbital motion
-      const Re = 6371e3;
-      const M = 5.972e24;
-      const GG = 6.674e-11;
-      const r = Re + this.params.orbitAlt * 1000;
-      const v = Math.sqrt(GG * M / r);
-      const omega = v / r;
-      this.st.theta = (this.st.theta + omega * 80 * dt) % (2 * Math.PI);
+      if (this.st.status === 'crashed' || this.st.status === 'escaped') return;
+      this.st.status = 'flying';
+      // Symplectic Euler integration; sim dt scaled so a full orbit shows in ~8-15 real seconds
+      const simStep = 35;  // sim-seconds per real frame
+      const sub = 25;
+      const h = simStep / sub;
+      for (let i = 0; i < sub; i++) {
+        const r2 = this.st.x*this.st.x + this.st.y*this.st.y;
+        const r = Math.sqrt(r2);
+        if (r < this.Re) {
+          // Project ball onto Earth's surface for clean visual
+          const f = this.Re / r;
+          this.st.x *= f; this.st.y *= f;
+          this.st.status = 'crashed';
+          break;
+        }
+        if (r > this.Re * 15) { this.st.status = 'escaped'; break; }
+        const k = -this.GM / (r2 * r);
+        this.st.vx += k * this.st.x * h;
+        this.st.vy += k * this.st.y * h;
+        this.st.x += this.st.vx * h;
+        this.st.y += this.st.vy * h;
+      }
+      this.st.simTime += simStep;
+      // Append to trail (downsampled)
+      const tr = this.st.trail;
+      const last = tr[tr.length - 1];
+      const dist = Math.hypot(this.st.x - last.x, this.st.y - last.y);
+      if (dist > this.Re * 0.008) tr.push({ x: this.st.x, y: this.st.y });
+      if (tr.length > 800) tr.shift();
     }
   },
   draw() {
     clearAll();
     if (this.params.mode === 'fall') {
-      // Ground
       const groundY = 430;
       el(gBg, 'line', { x1: 0, y1: groundY, x2: W, y2: groundY, stroke: 'var(--text2)', 'stroke-width': 2 });
       for (let x=10;x<W;x+=22) el(gBg, 'line', { x1:x, y1:groundY, x2:x-10, y2:groundY+14, stroke:'var(--text3)', 'stroke-width':1 });
-      // Height scale on left
       const topY = 60;
       const pxPerM = (groundY - topY) / Math.max(this.params.height, 1);
-      el(gBg, 'line', { x1: 80, y1: topY, x2: 80, y2: groundY, stroke: 'var(--text3)', 'stroke-width': 1, 'stroke-dasharray':'4 4' });
-      // Ticks
-      for (let h = 0; h <= this.params.height; h += Math.ceil(this.params.height / 8 / 10) * 10) {
+      el(gBg, 'line', { x1: 80, y1: topY, x2: 80, y2: groundY, stroke: 'var(--text3)', 'stroke-width': 1, 'stroke-dasharray': '4 4' });
+      const stepH = Math.ceil(this.params.height / 8 / 10) * 10;
+      for (let h = 0; h <= this.params.height; h += stepH) {
         const y = groundY - h * pxPerM;
         el(gBg, 'line', { x1: 76, y1: y, x2: 84, y2: y, stroke: 'var(--text3)', 'stroke-width': 1 });
-        el(gBg, 'text', { x: 70, y: y + 4, 'text-anchor':'end', 'font-family':'monospace', 'font-size':10, fill: 'var(--text3)', text: `${h}m` });
+        el(gBg, 'text', { x: 70, y: y + 4, 'text-anchor': 'end', 'font-family': 'monospace', 'font-size': 10, fill: 'var(--text3)', text: `${h}m` });
       }
-      // Falling object
-      const objY = topY + this.st.y * pxPerM;
+      const objY = topY + this.st.fy * pxPerM;
       const ox = W/2;
       el(gMain, 'circle', { cx: ox, cy: Math.min(objY, groundY - 20), r: 16, fill: 'rgba(58,143,255,0.30)', stroke: 'var(--accent)', 'stroke-width': 2 });
-      el(gMain, 'text', { x: ox, y: Math.min(objY, groundY - 20) + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill: '#fff', 'font-weight':'bold', text: `${this.params.mass}` });
-      // Velocity arrow
-      if (this.st.v > 0.5) arrow(gFg, ox + 25, objY, ox + 25, objY + Math.min(this.st.v * 3, 80), 'var(--green)', 'green', `v=${this.st.v.toFixed(1)}`, 14);
-      // Weight arrow (constant g acceleration)
-      arrow(gFg, ox - 25, objY, ox - 25, objY + 50, 'var(--red)', 'red', `mg`, -14);
-      // Apparent weight = 0 banner
+      el(gMain, 'text', { x: ox, y: Math.min(objY, groundY - 20) + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#fff', 'font-weight':'bold', text: 'm' });
+      forceArrow(gFg, ox, Math.min(objY, groundY-20), 0, 1, 100, 'var(--red)', 'red', 'mg', 18);
+      if (this.st.fv > 0.5) {
+        el(gFg, 'text', { x: ox + 45, y: Math.min(objY, groundY-20) + 4, 'font-family':'monospace', 'font-size':11, fill:'var(--green)', 'font-weight':'bold', text: `v=${this.st.fv.toFixed(1)} m/s` });
+      }
       el(gFg, 'text', { x: ox, y: 30, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'var(--gold)', 'font-weight':'bold', text:'Apparent weight = 0 (free fall)' });
       document.getElementById('canvas-hint').textContent = `Falling — v=gt, y=½gt²`;
-      document.getElementById('canvas-status').textContent = `t = ${this.st.t.toFixed(2)} s · v = ${this.st.v.toFixed(2)} m/s`;
+      document.getElementById('canvas-status').textContent = `t = ${this.st.t.toFixed(2)} s · v = ${this.st.fv.toFixed(2)} m/s`;
     } else {
-      // Satellite around Earth
-      const cx = W/2, cy = H/2;
-      // Earth
-      el(gBg, 'circle', { cx, cy, r: 80, fill: 'rgba(58,143,255,0.18)', stroke: 'var(--accent)', 'stroke-width': 2 });
-      el(gBg, 'text', { x: cx, y: cy + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'var(--accent)', 'font-weight':'bold', text:'Earth' });
-      // Orbit ring
-      const Re_km = 6371;
-      const r_km = Re_km + this.params.orbitAlt;
-      const r_px = 80 + Math.min(140, this.params.orbitAlt / 250);
-      el(gBg, 'circle', { cx, cy, r: r_px, fill: 'none', stroke: 'var(--gold)', 'stroke-width': 1, 'stroke-dasharray':'4 4' });
-      // Satellite
-      const sx = cx + r_px * Math.cos(this.st.theta);
-      const sy = cy + r_px * Math.sin(this.st.theta);
-      el(gMain, 'circle', { cx: sx, cy: sy, r: 9, fill: 'var(--gold)' });
-      el(gMain, 'text', { x: sx, y: sy - 18, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill: 'var(--gold)', text:'satellite' });
-      // Velocity arrow (tangent)
-      const tx = -Math.sin(this.st.theta), ty = Math.cos(this.st.theta);
-      arrow(gFg, sx, sy, sx + tx * 40, sy + ty * 40, 'var(--green)', 'green', 'v', 12);
-      // Gravity arrow (toward Earth)
-      const gx = (cx - sx), gy = (cy - sy);
-      const gnorm = Math.hypot(gx, gy);
-      arrow(gFg, sx, sy, sx + gx/gnorm * 30, sy + gy/gnorm * 30, 'var(--red)', 'red', 'F_g', -14);
-      el(gFg, 'text', { x: cx, y: 30, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'var(--gold)', 'font-weight':'bold', text:'Astronaut feels weightless — continuous free fall' });
-      // Computed orbital values
-      const Re = 6371e3, MM = 5.972e24, GG = 6.674e-11;
-      const r = Re + this.params.orbitAlt * 1000;
-      const v = Math.sqrt(GG * MM / r);
-      const T = 2 * Math.PI * r / v;
-      document.getElementById('canvas-hint').textContent = `r = ${(r/1000).toFixed(0)} km · v = ${(v/1000).toFixed(2)} km/s`;
-      document.getElementById('canvas-status').textContent = `T = ${(T/60).toFixed(1)} min`;
+      // Newton's Cannonball
+      const cx = W/2, cy = 250;
+      const Re = this.Re;
+      const cannonAlt = this.cannonAlt;
+      const scale = 100 / Re;  // 100 px per Earth radius
+      // Earth (slight gradient feel)
+      el(gBg, 'circle', { cx, cy, r: 100, fill: 'rgba(58,143,255,0.18)', stroke: 'var(--accent)', 'stroke-width': 2 });
+      el(gBg, 'text', { x: cx, y: cy+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'var(--accent)', 'font-weight':'bold', text:'Earth' });
+      // Mountain peak (where cannon sits)
+      const mountainTopY = cy - (Re + cannonAlt) * scale;
+      el(gBg, 'polygon', {
+        points: `${cx-10},${cy-100} ${cx+10},${cy-100} ${cx+4},${mountainTopY+3} ${cx-4},${mountainTopY+3}`,
+        fill: 'var(--text3)', stroke: 'var(--text2)', 'stroke-width': 1
+      });
+      // Cannon
+      el(gBg, 'rect', { x: cx, y: mountainTopY - 6, width: 18, height: 7, fill: 'var(--gold)', stroke: 'var(--gold-bright)', 'stroke-width': 1, rx: 1 });
+      // Reference circular orbit at this altitude (dashed)
+      const r_circ = Re + cannonAlt;
+      el(gBg, 'circle', { cx, cy, r: r_circ * scale, fill: 'none', stroke: 'var(--gold)', 'stroke-width': 1, 'stroke-dasharray': '3 4', opacity: 0.35 });
+      // Trail
+      if (this.st.trail.length > 1) {
+        const pts = this.st.trail.map(p => `${cx + p.x*scale},${cy - p.y*scale}`).join(' ');
+        const tcolor = this.st.status === 'crashed' ? 'var(--red)' : (this.st.status === 'escaped' ? 'var(--cyan)' : 'var(--gold-bright)');
+        el(gMain, 'polyline', { points: pts, fill: 'none', stroke: tcolor, 'stroke-width': 2, opacity: 0.85 });
+      }
+      // Ball
+      const bx = cx + this.st.x * scale;
+      const by = cy - this.st.y * scale;
+      el(gMain, 'circle', { cx: bx, cy: by, r: 7, fill: 'var(--gold-bright)', stroke: 'var(--gold)', 'stroke-width': 1.5 });
+      // Forces on ball: gravity points toward Earth's centre, velocity is tangent
+      const r = Math.hypot(this.st.x, this.st.y);
+      if (r > 1) {
+        const gx_n = -this.st.x / r, gy_n = -this.st.y / r;   // unit vector toward centre
+        // In screen coords, "down" toward Earth: dx = gx_n, dy = -gy_n (flip y)
+        forceArrow(gFg, bx, by, gx_n, -gy_n, 100, 'var(--red)', 'red', 'F_g', 7);
+      }
+      const v = Math.hypot(this.st.vx, this.st.vy);
+      if (v > 10) {
+        const vx_n = this.st.vx / v, vy_n = this.st.vy / v;
+        forceArrow(gFg, bx, by, vx_n, -vy_n, 100, 'var(--green)', 'green', 'v', 7);
+      }
+      // Top label
+      const v_circ = Math.sqrt(this.GM / r_circ) / 1000;
+      el(gFg, 'text', { x: cx, y: 25, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'var(--gold-bright)', 'font-weight':'bold', text: `Launch: ${this.params.v_launch.toFixed(2)} km/s   ·   orbital: ${v_circ.toFixed(2)} km/s` });
+      // Status line
+      let hint;
+      if (this.st.status === 'ready') hint = 'Press ▶ Play to launch the cannonball';
+      else if (this.st.status === 'crashed') hint = '💥 Too slow — gravity pulls the ball back to Earth';
+      else if (this.st.status === 'escaped') hint = '✨ Too fast — ball escapes Earth\'s gravity forever';
+      else hint = '🚀 Falling — and moving sideways — that\'s ORBIT';
+      document.getElementById('canvas-hint').textContent = hint;
+      document.getElementById('canvas-status').textContent = `r = ${(r/1000).toFixed(0)} km · v = ${(v/1000).toFixed(2)} km/s · t = ${this.st.simTime.toFixed(0)} s`;
     }
   },
   readout() {
     if (this.params.mode === 'fall') {
       const html = `
         <div class="readout-cell"><div class="l">Time</div><div class="v">${this.st.t.toFixed(2)} s</div></div>
-        <div class="readout-cell"><div class="l">Velocity</div><div class="v green">${this.st.v.toFixed(2)} m/s</div></div>
-        <div class="readout-cell"><div class="l">Distance fallen</div><div class="v">${this.st.y.toFixed(2)} m</div></div>
+        <div class="readout-cell"><div class="l">Velocity</div><div class="v green">${this.st.fv.toFixed(2)} m/s</div></div>
+        <div class="readout-cell"><div class="l">Distance fallen</div><div class="v">${this.st.fy.toFixed(2)} m</div></div>
         <div class="readout-cell"><div class="l">Acceleration</div><div class="v cyan">${G.toFixed(2)} m/s²</div></div>
         <div class="readout-cell full"><div class="l">Apparent weight</div><div class="v red">0 N</div></div>
       `;
       document.getElementById('readout-content').innerHTML = html;
-      document.getElementById('equation-content').innerHTML = `v = g·t = ${G.toFixed(2)} × ${this.st.t.toFixed(2)} = <b>${this.st.v.toFixed(2)} m/s</b><br>y = ½ g t² = <b>${this.st.y.toFixed(2)} m</b><br>In free fall, the object and any scale beneath it both accelerate at g — no normal force is needed.`;
+      document.getElementById('equation-content').innerHTML = `v = g·t = ${G.toFixed(2)} × ${this.st.t.toFixed(2)} = <b>${this.st.fv.toFixed(2)} m/s</b><br>y = ½ g t² = <b>${this.st.fy.toFixed(2)} m</b><br>Nothing pushes back — no normal force — so apparent weight is zero.`;
       const b = document.getElementById('banner');
       b.className = 'banner show gold';
-      document.getElementById('banner-text').innerHTML = '💡 Free fall = no normal force = "weightless". Gravity is still acting — but with nothing to push back, you feel nothing.';
+      document.getElementById('banner-text').innerHTML = '💡 In free fall, gravity is still pulling — but there is no normal force, so you feel weightless. Now switch to "Newton\'s Cannonball" — you\'ll see that orbit is exactly the same thing, just with sideways speed.';
     } else {
-      const Re = 6371e3, MM = 5.972e24, GG = 6.674e-11;
-      const r = Re + this.params.orbitAlt * 1000;
-      const v = Math.sqrt(GG * MM / r);
-      const T = 2 * Math.PI * r / v;
-      const g_at = GG * MM / (r * r);
+      const r = Math.hypot(this.st.x, this.st.y) || this.Re + this.cannonAlt;
+      const v = Math.hypot(this.st.vx, this.st.vy);
+      const v_circ = Math.sqrt(this.GM / r);
+      const T = 2 * Math.PI * r / v_circ;
+      const g_at = this.GM / (r * r);
       const html = `
-        <div class="readout-cell"><div class="l">Orbital radius r</div><div class="v">${(r/1000).toFixed(0)} km</div></div>
-        <div class="readout-cell"><div class="l">Orbital speed v</div><div class="v green">${(v/1000).toFixed(3)} km/s</div></div>
-        <div class="readout-cell"><div class="l">Period T</div><div class="v cyan">${(T/60).toFixed(1)} min</div></div>
-        <div class="readout-cell"><div class="l">g at altitude</div><div class="v">${g_at.toFixed(3)} m/s²</div></div>
-        <div class="readout-cell full"><div class="l">Centripetal acceleration</div><div class="v gold">${(v*v/r).toFixed(3)} m/s² (= g)</div></div>
+        <div class="readout-cell"><div class="l">Distance from centre</div><div class="v">${(r/1000).toFixed(0)} km</div></div>
+        <div class="readout-cell"><div class="l">Altitude</div><div class="v">${((r-this.Re)/1000).toFixed(0)} km</div></div>
+        <div class="readout-cell"><div class="l">Speed</div><div class="v green">${(v/1000).toFixed(3)} km/s</div></div>
+        <div class="readout-cell"><div class="l">v_circular here</div><div class="v cyan">${(v_circ/1000).toFixed(3)} km/s</div></div>
+        <div class="readout-cell"><div class="l">g at this altitude</div><div class="v">${g_at.toFixed(3)} m/s²</div></div>
+        <div class="readout-cell"><div class="l">Orbital period T</div><div class="v gold">${(T/60).toFixed(1)} min</div></div>
       `;
       document.getElementById('readout-content').innerHTML = html;
-      document.getElementById('equation-content').innerHTML = `Gravity provides centripetal force: GMm/r² = mv²/r<br>v = √(GM/r) = <b>${(v/1000).toFixed(3)} km/s</b><br>T = 2πr/v = <b>${(T/60).toFixed(1)} min</b><br>g at this altitude = ${g_at.toFixed(3)} m/s² (compare 9.81 at surface)`;
+      document.getElementById('equation-content').innerHTML = `Gravity provides centripetal force: GMm/r² = mv²/r → v = √(GM/r)<br>At r = ${(r/1000).toFixed(0)} km, v_orbital = <b>${(v_circ/1000).toFixed(3)} km/s</b><br>Your launch was ${this.params.v_launch.toFixed(2)} km/s. ${this.params.v_launch*1000 < v_circ*0.97 ? '<b>Too slow</b> — gravity wins.' : (this.params.v_launch*1000 > v_circ*1.03 ? '<b>Faster than orbit</b> — elliptical/escape path.' : '<b>Right around orbit speed</b> — circular orbit.')}`;
       const b = document.getElementById('banner');
       b.className = 'banner show gold';
-      document.getElementById('banner-text').innerHTML = '🛰️ Astronauts on the ISS aren\'t in zero gravity — g is still ~89% of surface value. They\'re weightless because they\'re in continuous free fall around Earth.';
+      let msg = '';
+      if (this.st.status === 'crashed') msg = '💥 The ball fell back to Earth. At this launch speed, gravity bends the trajectory faster than the ball moves sideways — so it intersects the ground. The path is part of an ellipse, with one focus at Earth\'s centre.';
+      else if (this.st.status === 'escaped') msg = '✨ The ball escaped Earth entirely. Above escape velocity (√(2GM/r) ≈ 11.2 km/s from surface), gravity cannot pull it back — the trajectory is a hyperbola.';
+      else msg = '🛰️ The ball is in continuous free fall — gravity pulls it toward Earth, but its sideways motion means Earth curves away just as fast. This IS what orbit is. The astronaut on the ISS isn\'t in "zero gravity" — they\'re falling forever, just like this ball.';
+      document.getElementById('banner-text').innerHTML = msg;
     }
   },
   fbd() {
     clearGroup(fbdSvg);
     if (this.params.mode === 'fall') {
-      el(fbdSvg, 'text', { x: 180, y: 24, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:'FREE FALLING OBJECT' });
+      el(fbdSvg, 'text', { x: 180, y: 24, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:'FREE-FALLING OBJECT' });
       el(fbdSvg, 'circle', { cx: 180, cy: 160, r: 28, fill: 'rgba(58,143,255,0.18)', stroke:'var(--accent)', 'stroke-width': 2 });
       el(fbdSvg, 'text', { x: 180, y: 164, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#fff', text:'m' });
-      arrow(fbdSvg, 180, 188, 180, 280, 'var(--red)', 'red', 'mg', 14);
-      el(fbdSvg, 'text', { x: 180, y: 305, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--gold)', text:'Net F = mg (only force)' });
+      forceArrow(fbdSvg, 180, 160, 0, 1, 100, 'var(--red)', 'red', 'mg', 28);
+      el(fbdSvg, 'text', { x: 180, y: 295, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--gold)', text:'Net F = mg (only force)' });
     } else {
-      el(fbdSvg, 'text', { x: 180, y: 24, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:'SATELLITE IN ORBIT' });
-      el(fbdSvg, 'circle', { cx: 180, cy: 220, r: 50, fill:'rgba(58,143,255,0.15)', stroke:'var(--accent)', 'stroke-width':1.5 });
-      el(fbdSvg, 'text', { x: 180, y: 224, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--accent)', text:'Earth' });
-      el(fbdSvg, 'circle', { cx: 180, cy: 90, r: 8, fill: 'var(--gold)' });
-      el(fbdSvg, 'text', { x: 180, y: 76, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--gold)', text:'satellite' });
-      arrow(fbdSvg, 180, 98, 180, 165, 'var(--red)', 'red', 'F_g', 14);
-      arrow(fbdSvg, 188, 90, 250, 90, 'var(--green)', 'green', 'v', 10);
-      el(fbdSvg, 'text', { x: 180, y: 305, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--gold)', text:'F_g = m v²/r' });
+      el(fbdSvg, 'text', { x: 180, y: 24, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:'BALL IN FLIGHT' });
+      el(fbdSvg, 'circle', { cx: 180, cy: 230, r: 45, fill:'rgba(58,143,255,0.15)', stroke:'var(--accent)', 'stroke-width':1.5 });
+      el(fbdSvg, 'text', { x: 180, y: 234, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--accent)', text:'Earth' });
+      el(fbdSvg, 'circle', { cx: 180, cy: 110, r: 8, fill: 'var(--gold)' });
+      el(fbdSvg, 'text', { x: 180, y: 96, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--gold)', text:'ball' });
+      forceArrow(fbdSvg, 180, 110, 0, 1, 100, 'var(--red)', 'red', 'F_g (gravity)', 9);
+      forceArrow(fbdSvg, 180, 110, 1, 0, 100, 'var(--green)', 'green', 'v (tangent)', 9);
+      el(fbdSvg, 'text', { x: 180, y: 305, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--gold)', text:'Only force is gravity → continuous free fall' });
+    }
+  }
+};
+
+// =====================================================================
+// SCENE 9 — ROLLING FRICTION & HOW CARS MOVE
+// =====================================================================
+SCENES.rolling = {
+  title: "Rolling Friction & How Cars Move",
+  sub: "Why wheels work · Friction propels driven wheels forward",
+  params: { mode: 'compare', F: 25, m: 8, surface: 'concrete' },
+  // mode: 'compare' (box vs wheel) | 'driven' (driven wheel with engine)
+  st: { x_box: 220, x_wh: 600, v_box: 0, v_wh: 0, theta: 0, x_drv: 250, v_drv: 0, drvTheta: 0 },
+  SURFACES: {
+    concrete:  { name: 'Dry concrete',  mu_k: 0.7,  mu_r: 0.015 },
+    smooth:    { name: 'Smooth tarmac', mu_k: 0.5,  mu_r: 0.012 },
+    snow:      { name: 'Packed snow',   mu_k: 0.1,  mu_r: 0.025 },
+    ice:       { name: 'Ice',           mu_k: 0.03, mu_r: 0.01 },
+  },
+  reset() { this.st = { x_box: 220, x_wh: 600, v_box: 0, v_wh: 0, theta: 0, x_drv: 250, v_drv: 0, drvTheta: 0 }; },
+  controls() {
+    const surfOpts = Object.keys(this.SURFACES).map(k =>
+      `<button class="${this.params.surface === k ? 'on' : ''}" data-s="${k}">${this.SURFACES[k].name}</button>`
+    ).join('');
+    const surf = this.SURFACES[this.params.surface];
+    const html = `
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Mode</span></div>
+        <div class="ctrl-toggle">
+          <button class="${this.params.mode === 'compare' ? 'on' : ''}" id="b-cmp">Box vs Wheel</button>
+          <button class="${this.params.mode === 'driven' ? 'on' : ''}" id="b-drv">Driven Wheel (engine)</button>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>${this.params.mode === 'driven' ? 'Engine push' : 'Applied force F'}</span><span class="ctrl-val" id="v-F">${this.params.F} N</span></div>
+        <input type="range" id="sl-F" min="0" max="80" step="1" value="${this.params.F}">
+        ${this.params.mode === 'driven' ? '<div class="ctrl-sub">The engine torques the wheel; the contact patch pushes the road backward.</div>' : '<div class="ctrl-sub">Same force applied to both.</div>'}
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Mass</span><span class="ctrl-val" id="v-m">${this.params.m} kg</span></div>
+        <input type="range" id="sl-m" min="2" max="30" step="0.5" value="${this.params.m}">
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Surface</span></div>
+        <div class="ctrl-toggle" style="flex-wrap:wrap;">${surfOpts}</div>
+        <div class="ctrl-sub">μ<sub>k</sub> = ${surf.mu_k} (sliding) · μ<sub>r</sub> = ${surf.mu_r} (rolling)</div>
+      </div>
+    `;
+    document.getElementById('controls-content').innerHTML = html;
+    document.getElementById('b-cmp').onclick = () => { this.params.mode = 'compare'; this.reset(); this.controls(); };
+    document.getElementById('b-drv').onclick = () => { this.params.mode = 'driven'; this.reset(); this.controls(); };
+    document.getElementById('sl-F').oninput = e => { this.params.F = +e.target.value; document.getElementById('v-F').textContent = this.params.F + ' N'; };
+    document.getElementById('sl-m').oninput = e => { this.params.m = +e.target.value; document.getElementById('v-m').textContent = this.params.m + ' kg'; };
+    document.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { this.params.surface = b.dataset.s; this.reset(); this.controls(); });
+  },
+  analyze() {
+    const surf = this.SURFACES[this.params.surface];
+    const N = this.params.m * G;
+    const f_slide_max = surf.mu_k * N;
+    const f_roll = surf.mu_r * N;
+    if (this.params.mode === 'compare') {
+      // Box: sliding friction
+      const F = this.params.F;
+      let box_a = 0, box_f = 0;
+      if (F > f_slide_max || Math.abs(this.st.v_box) > 0.01) {
+        box_f = f_slide_max;
+        box_a = (F - box_f) / this.params.m;
+      } else {
+        box_f = F;
+        box_a = 0;
+      }
+      // Wheel: rolling friction (much smaller, always opposes motion)
+      const wh_f = f_roll;
+      const wh_a = F > wh_f ? (F - wh_f) / this.params.m : 0;
+      return { box_a, box_f, wh_a, wh_f, N, f_slide_max };
+    } else {
+      // Driven wheel: engine torque tries to push road backward;
+      // road pushes wheel forward via static friction (acts FORWARD on wheel)
+      // f_drive ≤ μ_s · N (static limit). For simplicity, μ_s ≈ μ_k.
+      const f_drive_max = f_slide_max;
+      const F = Math.min(this.params.F, f_drive_max);
+      const a = F > f_roll ? (F - f_roll) / this.params.m : 0;
+      const slipping = this.params.F > f_drive_max;
+      return { a, f_drive: F, f_roll, slipping, f_drive_max, N };
+    }
+  },
+  step(dt) {
+    const r = this.analyze();
+    if (this.params.mode === 'compare') {
+      this.st.v_box += r.box_a * dt;
+      this.st.v_wh += r.wh_a * dt;
+      this.st.x_box += this.st.v_box * PX_PER_M * dt;
+      this.st.x_wh += this.st.v_wh * PX_PER_M * dt;
+      this.st.theta += this.st.v_wh * dt * 8;
+      if (this.st.x_box > 540) { this.st.x_box = 220; this.st.v_box = 0; }
+      if (this.st.x_wh > 1100) { this.st.x_wh = 600; this.st.v_wh = 0; this.st.theta = 0; }
+    } else {
+      this.st.v_drv += r.a * dt;
+      this.st.x_drv += this.st.v_drv * PX_PER_M * dt;
+      this.st.drvTheta += this.st.v_drv * dt * 8;
+      if (this.st.x_drv > 1080) { this.st.x_drv = 250; this.st.v_drv = 0; this.st.drvTheta = 0; }
+    }
+  },
+  draw() {
+    clearAll();
+    const floorY = 360;
+    el(gBg, 'line', { x1:0, y1:floorY, x2:W, y2:floorY, stroke:'var(--text2)', 'stroke-width':2 });
+    for (let x=10;x<W;x+=22) el(gBg, 'line', { x1:x, y1:floorY, x2:x-10, y2:floorY+14, stroke:'var(--text3)', 'stroke-width':1 });
+    const r = this.analyze();
+    if (this.params.mode === 'compare') {
+      // Divider
+      el(gBg, 'line', { x1: 580, y1: 80, x2: 580, y2: floorY, stroke: 'var(--border2)', 'stroke-width': 1, 'stroke-dasharray': '5 5' });
+      el(gBg, 'text', { x: 290, y: 60, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'var(--text2)', 'letter-spacing':'1px', text:'BOX (slides)' });
+      el(gBg, 'text', { x: 870, y: 60, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'var(--text2)', 'letter-spacing':'1px', text:'WHEEL (rolls)' });
+      // Box
+      drawBlock(gMain, this.st.x_box, floorY - 35, 90, 70, 'rgba(58,143,255,0.18)', 'var(--accent)', `${this.params.m}kg`);
+      // Wheel
+      const wx = this.st.x_wh, wy = floorY - 38, wR = 38;
+      el(gMain, 'circle', { cx: wx, cy: wy, r: wR, fill: 'rgba(192,96,255,0.18)', stroke: 'var(--violet)', 'stroke-width': 1.5 });
+      el(gMain, 'circle', { cx: wx, cy: wy, r: 4, fill: 'var(--violet)' });
+      // Spokes (to visualise rotation)
+      for (let k=0;k<4;k++) {
+        const a = this.st.theta + k * Math.PI/2;
+        el(gMain, 'line', { x1: wx, y1: wy, x2: wx + Math.cos(a)*wR*0.85, y2: wy + Math.sin(a)*wR*0.85, stroke: 'var(--violet)', 'stroke-width': 1.5 });
+      }
+      el(gMain, 'text', { x: wx, y: wy - wR - 8, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--violet)', text:`${this.params.m}kg` });
+      // Force arrows
+      if (this.params.F > 0.2) {
+        forceArrow(gFg, this.st.x_box, floorY - 35, -1, 0, this.params.F, 'var(--cyan)', 'cyan', `F=${this.params.F}`, 45);
+        forceArrow(gFg, wx, wy, -1, 0, this.params.F, 'var(--cyan)', 'cyan', `F=${this.params.F}`, wR + 5);
+      }
+      if (r.box_f > 0.2) forceArrow(gFg, this.st.x_box, floorY - 35, 1, 0, r.box_f, 'var(--gold)', 'gold', `f=${r.box_f.toFixed(1)}`, 45);
+      if (r.wh_f > 0.2) forceArrow(gFg, wx, wy, 1, 0, r.wh_f, 'var(--gold)', 'gold', `f=${r.wh_f.toFixed(2)}`, wR + 5);
+      // Status
+      document.getElementById('canvas-hint').textContent = `Sliding friction ≫ rolling friction (here ${(r.box_f/Math.max(0.001,r.wh_f)).toFixed(0)}×)`;
+      document.getElementById('canvas-status').textContent = `Box a = ${r.box_a.toFixed(2)} · Wheel a = ${r.wh_a.toFixed(2)} m/s²`;
+    } else {
+      // Driven wheel (a single car wheel)
+      const wx = this.st.x_drv, wy = floorY - 60, wR = 50;
+      // Car body suggestion
+      el(gMain, 'rect', { x: wx - 75, y: wy - 50, width: 150, height: 35, fill: 'rgba(58,143,255,0.15)', stroke: 'var(--accent)', 'stroke-width': 1.5, rx: 5 });
+      el(gMain, 'text', { x: wx, y: wy - 28, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--accent)', text:'CAR' });
+      // Wheel
+      el(gMain, 'circle', { cx: wx, cy: wy, r: wR, fill: 'rgba(60,60,60,0.4)', stroke: 'var(--text-bright)', 'stroke-width': 2 });
+      el(gMain, 'circle', { cx: wx, cy: wy, r: 8, fill: 'var(--gold)' });
+      for (let k=0;k<6;k++) {
+        const a = this.st.drvTheta + k * Math.PI/3;
+        el(gMain, 'line', { x1: wx, y1: wy, x2: wx + Math.cos(a)*wR*0.85, y2: wy + Math.sin(a)*wR*0.85, stroke: 'var(--text-bright)', 'stroke-width': 1.5 });
+      }
+      // Rotation arrow on wheel
+      const arrowR = wR + 16;
+      el(gFg, 'path', {
+        d: `M ${wx - arrowR + 6} ${wy - 4} A ${arrowR} ${arrowR} 0 0 1 ${wx + arrowR*0.7} ${wy - arrowR*0.7}`,
+        fill: 'none', stroke: 'var(--violet)', 'stroke-width': 2, 'marker-end': 'url(#arrow-violet)'
+      });
+      el(gFg, 'text', { x: wx - arrowR - 5, y: wy - 4, 'text-anchor':'end', 'font-family':'monospace', 'font-size':10, fill:'var(--violet)', text:'engine torque' });
+      // At the contact patch, two paired arrows:
+      // (i) wheel-on-road force points LEFT (backward, into ground hatching) — purple violet
+      // (ii) road-on-wheel friction (the reaction) points RIGHT (forward) — gold
+      const contactY = floorY;
+      // wheel→road (backward)
+      arrow(gFg, wx + 4, contactY + 6, wx - 55, contactY + 6, 'var(--violet)', 'violet', 'wheel pushes road back', 14);
+      // road→wheel (forward, = static friction)
+      arrow(gFg, wx - 4, contactY - 6, wx + 75, contactY - 6, 'var(--gold)', 'gold', 'friction forward (drives car)', -14);
+      // Resulting motion
+      if (this.st.v_drv > 0.1) {
+        el(gFg, 'text', { x: wx + 90, y: wy, 'font-family':'monospace', 'font-size':12, fill:'var(--green)', 'font-weight':'bold', text: `→ v=${this.st.v_drv.toFixed(2)} m/s` });
+      }
+      // Status
+      document.getElementById('canvas-hint').textContent = r.slipping ? '⚠ Engine push exceeds μₛN — wheel spins (loses grip, like on ice)' : '🚗 Friction at the contact patch propels the car forward';
+      document.getElementById('canvas-status').textContent = `a = ${r.a.toFixed(3)} m/s² · static limit = ${r.f_drive_max.toFixed(1)} N`;
+    }
+  },
+  readout() {
+    const r = this.analyze();
+    const surf = this.SURFACES[this.params.surface];
+    if (this.params.mode === 'compare') {
+      const html = `
+        <div class="readout-cell"><div class="l">Surface</div><div class="v cyan">${surf.name}</div></div>
+        <div class="readout-cell"><div class="l">Normal N</div><div class="v">${r.N.toFixed(1)} N</div></div>
+        <div class="readout-cell"><div class="l">Box friction f</div><div class="v red">${r.box_f.toFixed(2)} N</div></div>
+        <div class="readout-cell"><div class="l">Wheel friction f</div><div class="v green">${r.wh_f.toFixed(2)} N</div></div>
+        <div class="readout-cell"><div class="l">Box accel</div><div class="v">${r.box_a.toFixed(2)} m/s²</div></div>
+        <div class="readout-cell"><div class="l">Wheel accel</div><div class="v">${r.wh_a.toFixed(2)} m/s²</div></div>
+      `;
+      document.getElementById('readout-content').innerHTML = html;
+      document.getElementById('equation-content').innerHTML = `Box: f_slide = μ<sub>k</sub>N = ${surf.mu_k} × ${r.N.toFixed(1)} = <b>${r.box_f.toFixed(2)} N</b><br>Wheel: f_roll = μ<sub>r</sub>N = ${surf.mu_r} × ${r.N.toFixed(1)} = <b>${r.wh_f.toFixed(2)} N</b><br>Rolling friction is ${(r.box_f/Math.max(0.001,r.wh_f)).toFixed(0)}× smaller — this is why we invented wheels.`;
+      const b = document.getElementById('banner');
+      b.className = 'banner show gold';
+      document.getElementById('banner-text').innerHTML = '💡 Rolling friction comes from the tiny deformation of the wheel and surface at the contact point — much less than the shearing of microscopic bonds in sliding friction.';
+    } else {
+      const html = `
+        <div class="readout-cell"><div class="l">Surface</div><div class="v cyan">${surf.name}</div></div>
+        <div class="readout-cell"><div class="l">Engine push</div><div class="v">${this.params.F} N</div></div>
+        <div class="readout-cell"><div class="l">Friction forward</div><div class="v green">${r.f_drive.toFixed(2)} N</div></div>
+        <div class="readout-cell"><div class="l">Rolling drag</div><div class="v">${r.f_roll.toFixed(2)} N</div></div>
+        <div class="readout-cell"><div class="l">Max static (μ<sub>s</sub>N)</div><div class="v">${r.f_drive_max.toFixed(1)} N</div></div>
+        <div class="readout-cell"><div class="l">Acceleration</div><div class="v gold">${r.a.toFixed(3)} m/s²</div></div>
+      `;
+      document.getElementById('readout-content').innerHTML = html;
+      document.getElementById('equation-content').innerHTML = `Engine torques the wheel → contact patch tries to slip backward → road pushes wheel forward via <b>static friction</b>.<br>f_forward = ${r.f_drive.toFixed(2)} N (capped at μₛN = ${r.f_drive_max.toFixed(1)} N)<br>Net forward = f − f_roll = ${r.f_drive.toFixed(2)} − ${r.f_roll.toFixed(2)} = <b>${(r.f_drive - r.f_roll).toFixed(2)} N</b><br>a = (f − f_roll)/m = <b>${r.a.toFixed(3)} m/s²</b>`;
+      const b = document.getElementById('banner');
+      b.className = 'banner ' + (r.slipping ? 'show warn' : 'show success');
+      document.getElementById('banner-text').innerHTML = r.slipping
+        ? '⚠ Engine push exceeds μₛN — the contact patch slips. Wheel spins, car barely moves. This is why you skid on ice.'
+        : '🚗 Key insight: friction here points FORWARD on the wheel. Friction is the cause of motion, not opposition to it. Same physics as your foot pushing on the ground when you walk.';
+    }
+  },
+  fbd() {
+    clearGroup(fbdSvg);
+    const r = this.analyze();
+    if (this.params.mode === 'compare') {
+      el(fbdSvg, 'text', { x: 180, y: 22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--text2)', text:'BOX vs WHEEL' });
+      // Box
+      el(fbdSvg, 'rect', { x: 40, y: 130, width: 80, height: 60, fill:'rgba(58,143,255,0.15)', stroke:'var(--accent)', 'stroke-width':1.5 });
+      el(fbdSvg, 'text', { x: 80, y: 165, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#fff', text:'BOX' });
+      forceArrow(fbdSvg, 80, 160, 0, 1, this.params.m*G, 'var(--red)', 'red', 'mg', 30);
+      forceArrow(fbdSvg, 80, 160, 0, -1, this.params.m*G, 'var(--green)', 'green', 'N', 30);
+      if (this.params.F > 0.2) forceArrow(fbdSvg, 80, 160, -1, 0, this.params.F, 'var(--cyan)', 'cyan', 'F', 42);
+      if (r.box_f > 0.2) forceArrow(fbdSvg, 80, 160, 1, 0, r.box_f, 'var(--gold)', 'gold', `f_slide`, 42);
+      // Wheel
+      el(fbdSvg, 'circle', { cx: 270, cy: 160, r: 38, fill:'rgba(192,96,255,0.15)', stroke:'var(--violet)', 'stroke-width':1.5 });
+      el(fbdSvg, 'text', { x: 270, y: 164, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#fff', text:'WHEEL' });
+      forceArrow(fbdSvg, 270, 160, 0, 1, this.params.m*G, 'var(--red)', 'red', 'mg', 38);
+      forceArrow(fbdSvg, 270, 160, 0, -1, this.params.m*G, 'var(--green)', 'green', 'N', 38);
+      if (this.params.F > 0.2) forceArrow(fbdSvg, 270, 160, -1, 0, this.params.F, 'var(--cyan)', 'cyan', 'F', 42);
+      if (r.wh_f > 0.2) forceArrow(fbdSvg, 270, 160, 1, 0, r.wh_f, 'var(--gold)', 'gold', `f_roll`, 42);
+      el(fbdSvg, 'text', { x: 180, y: 300, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--gold)', text:'Same N. Different μ. Same equation: f = μN.' });
+    } else {
+      el(fbdSvg, 'text', { x: 180, y: 22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--text2)', text:'DRIVEN WHEEL — CONTACT PATCH' });
+      el(fbdSvg, 'circle', { cx: 180, cy: 160, r: 60, fill:'rgba(60,60,60,0.25)', stroke:'var(--text-bright)', 'stroke-width':2 });
+      el(fbdSvg, 'circle', { cx: 180, cy: 160, r: 6, fill:'var(--gold)' });
+      // Torque arc
+      el(fbdSvg, 'path', { d:'M 130 150 A 50 50 0 0 1 215 130', fill:'none', stroke:'var(--violet)', 'stroke-width':2, 'marker-end':'url(#arrow-violet)' });
+      el(fbdSvg, 'text', { x: 100, y: 130, 'font-family':'monospace', 'font-size':9, fill:'var(--violet)', text:'torque' });
+      // Forces at contact patch (bottom)
+      arrow(fbdSvg, 180+4, 226, 180-50, 226, 'var(--violet)', 'violet', 'wheel→road', 14);
+      arrow(fbdSvg, 180-4, 214, 180+50, 214, 'var(--gold)', 'gold', 'road→wheel', -14);
+      el(fbdSvg, 'text', { x: 180, y: 270, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--text2)', text:'Newton\'s 3rd-law pair' });
+      el(fbdSvg, 'text', { x: 180, y: 300, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--gold)', text:'Road\'s push on wheel = static friction = motive force' });
     }
   }
 };
