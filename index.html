@@ -185,14 +185,23 @@ body.light-theme .featured::before { display: none; }
 .featured:hover, .card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(58, 143, 255, 0.08); }
 .featured:hover::after, .card:hover::after { left: 100%; }
 
-/* Unified Icon Physics Animation */
+/* UNIFIED ICON PHYSICS ANIMATION */
 .featured-icon, .card-icon {
-  display: inline-block; line-height: 1;
+  display: inline-block; 
+  line-height: 1;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
 }
-.featured-icon { font-size: 64px; align-self: center; position: relative; }
-.card-icon { font-size: 48px; margin-bottom: 16px; }
+.featured-icon { 
+  font-size: 64px; 
+  align-self: center; 
+  position: relative; 
+}
+.card-icon { 
+  font-size: 48px; 
+  margin-bottom: 16px; 
+}
 
+/* The Hover Bounce */
 .featured:hover .featured-icon, .card:hover .card-icon {
   transform: scale(1.18) rotate(-6deg);
   filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
@@ -305,7 +314,7 @@ body.light-theme .footer-fine { color: var(--text3); }
 <div class="featured-wrap featured-grid">
 
   <a class="featured" href="maxwell.html">
-    <div class="featured-icon">∮</div>
+    <div class="featured-icon">∇</div>
     <div class="featured-body">
       <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
       <div class="featured-title">Maxwell's Equations Lab</div>
