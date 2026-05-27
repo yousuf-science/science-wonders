@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maxwell's Equations — Four Laws, One Light | Science Wonders</title>
+<meta name="description" content="Interactive playground for the four equations that govern all of classical electromagnetism. Place charges, sweep magnets through coils, charge capacitors, and watch how the four laws combine to make light itself.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
+  --bench-bg:#010812;
+  --grid-stroke:rgba(30,50,80,.22);
+  --axis-stroke:#5878a0;
+}
+
+body.light-theme {
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#ebf2fa;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#b07d00;--gold-bright:#8a6200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;
+  --bench-bg:#fdfdfd;
+  --grid-stroke:rgba(9,105,218,0.06);
+  --axis-stroke:#b6c2d1;
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background 0.2s, color 0.2s;}
+
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;transition:background 0.2s, border-color 0.2s;}
+body.light-theme header{background:rgba(255,255,255,0.96);}
+
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn { font-weight: bold; color: var(--gold); }
+
+/* Mode selector strip */
+.mode-strip{max-width:1080px;margin:18px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.mode-btn{font-family:monospace;font-size:10px;letter-spacing:1.5px;padding:14px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;text-align:center;line-height:1.5;transition:all .2s;}
+.mode-btn .mb-icon{display:block;font-size:18px;margin-bottom:6px;}
+.mode-btn .mb-name{display:block;color:var(--text);font-weight:bold;letter-spacing:2px;margin-bottom:3px;}
+.mode-btn .mb-tag{display:block;font-size:8.5px;color:var(--text3);letter-spacing:1px;line-height:1.4;}
+.mode-btn:hover{border-color:var(--accent);color:var(--text);}
+.mode-btn.active{border-color:var(--gold);background:rgba(240,192,96,.06);}
+.mode-btn.active .mb-name{color:var(--gold);}
+body.light-theme .mode-btn.active{background:var(--bg3);}
+@media(max-width:760px){
+  .mode-strip{grid-template-columns:repeat(5,1fr);gap:4px;}
+  .mode-btn{padding:8px 3px;font-size:8px;letter-spacing:.5px;}
+  .mode-btn .mb-icon{font-size:14px;margin-bottom:3px;}
+  .mode-btn .mb-name{font-size:9px;letter-spacing:1px;margin-bottom:0;}
+  .mode-btn .mb-tag{display:none;}
+}
+
+/* Canvas */
+.canvas-wrap{position:relative;max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.bench-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--bench-bg);transition:background 0.2s, border-color 0.2s;}
+svg#stage{display:block;width:100%;height:auto;cursor:default;}
+svg#stage .draggable{cursor:grab;}
+svg#stage .draggable:active{cursor:grabbing;}
+
+.badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.92);padding:5px 10px;border-radius:4px;pointer-events:none;letter-spacing:1.5px;border:1px solid var(--border2);transition:all 0.2s;}
+body.light-theme .badge{background:rgba(255,255,255,0.95);color:var(--text);}
+.badge-tl{top:10px;left:30px;color:var(--gold);}
+.badge-tr{top:10px;right:30px;color:var(--text2);}
+.badge-bl{bottom:14px;left:30px;color:var(--text3);font-size:9px;letter-spacing:1px;max-width:60%;}
+
+/* Panels */
+.panels{max-width:1080px;margin:14px auto 0;display:grid;grid-template-columns:360px 1fr;gap:12px;padding:0 20px;}
+@media(max-width:820px){.panels{grid-template-columns:1fr;}}
+
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px;transition:background 0.2s, border-color 0.2s;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin-bottom:9px;margin-top:14px;}
+.section-label:first-child{margin-top:0;}
+
+.scenario-btns,.toggle-btns{display:grid;gap:6px;grid-template-columns:1fr 1fr;}
+.scenario-btns button,.toggle-btns button{font-family:monospace;font-size:10px;padding:8px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;letter-spacing:.5px;text-align:center;line-height:1.3;}
+.scenario-btns button:hover,.toggle-btns button:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.scenario-btns button.active,.toggle-btns button.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+body.light-theme .scenario-btns button.active, body.light-theme .toggle-btns button.active { background:var(--bg3); color:var(--gold); }
+.scenario-btns.cols-1{grid-template-columns:1fr;}
+.scenario-btns.cols-3{grid-template-columns:repeat(3,1fr);}
+
+.param{margin-bottom:12px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.param-val{font-size:12px;font-weight:bold;}
+.param-sub{font-family:monospace;font-size:9.5px;color:var(--text3);margin-top:3px;letter-spacing:.5px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+/* Readout */
+.readout-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.readout-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;transition:background 0.2s, border-color 0.2s;}
+.readout-cell.wide{grid-column:span 2;}
+.r-label{font-family:monospace;font-size:9px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
+.r-value{font-family:monospace;font-size:15px;color:var(--text-bright);letter-spacing:.5px;word-break:break-word;}
+.r-value.green{color:var(--green);}
+.r-value.violet{color:var(--violet);}
+.r-value.gold{color:var(--gold);}
+.r-value.cyan{color:var(--cyan);}
+.r-value.red{color:var(--red);}
+.r-value.small{font-size:13px;}
+.r-sub{font-family:monospace;font-size:10px;color:var(--text3);margin-top:4px;line-height:1.5;}
+
+.fbox{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:14px;font-family:monospace;line-height:2;transition:background 0.2s, border-color 0.2s;}
+.fbox .fl{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.fbox .fe{font-size:12px;color:var(--gold-bright);}
+body.light-theme .fbox .fe{color:var(--gold);}
+.fbox .fe .nm{color:var(--cyan);}
+.fbox .gc{font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.7;}
+
+/* Hover-tooltip jargon */
+.tag{position:relative;text-decoration:underline dotted;text-underline-offset:3px;cursor:help;}
+.tag.t-flux{color:var(--cyan);}
+.tag.t-emf{color:var(--gold);}
+.tag.t-disp{color:var(--violet);}
+.tag.t-mono{color:var(--pink);}
+.tag.t-amp{color:var(--green);}
+.tip{visibility:hidden;opacity:0;transition:opacity .15s;position:absolute;bottom:130%;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);padding:9px 13px;border-radius:7px;width:230px;font-size:11px;font-family:'Georgia',serif;color:var(--text);text-align:center;z-index:20;line-height:1.5;font-style:italic;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.5);}
+.tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--border2);}
+.tag:hover .tip,.tag:focus .tip{visibility:visible;opacity:1;}
+
+/* Theory */
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,40px);transition:background 0.2s, border-color 0.2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h2{font-family:monospace;font-size:13px;color:var(--gold-bright);letter-spacing:2px;text-transform:uppercase;margin:34px 0 14px;padding-bottom:6px;border-bottom:1px dashed var(--border2);}
+body.light-theme .theory h2{color:var(--gold);}
+.theory h2:first-of-type{margin-top:0;}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:22px 0 10px;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.95;transition:background 0.2s;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;transition:background 0.2s, border-color 0.2s, color 0.2s;}
+.hb-green{background:rgba(64,255,170,.04);border:1px solid rgba(64,255,170,.2);color:#8effc8;}
+body.light-theme .hb-green{color:var(--green);background:rgba(64,255,170,0.06);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);background:rgba(192,96,255,0.06);}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);background:rgba(32,208,255,0.06);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);background:rgba(240,192,96,0.06);}
+
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);transition:border-color 0.2s;}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);font-size:11.5px;transition:border-color 0.2s, color 0.2s;}
+.ctable td:first-child{color:var(--gold-bright);width:22%;}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;transition:border-color 0.2s, color 0.2s;}
+footer a{color:var(--text2);text-decoration:none;}
+footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){
+  header{padding:12px 16px;gap:10px;}
+  .page-subtitle{display:none;}
+  .badge{font-size:9px;padding:4px 8px;}
+  .badge-bl{display:none;}
+}
+
+/* Mode 3 / 5 needle gauge */
+.gauge-svg{width:100%;height:auto;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Maxwell's Equations — Four Laws, One Light</div>
+  <div class="header-spacer"></div>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<!-- MODE STRIP -->
+<div class="mode-strip" id="mode-strip">
+  <button class="mode-btn active" data-mode="gauss">
+    <span class="mb-icon">⚡</span><span class="mb-name">GAUSS</span><span class="mb-tag">Charges → E field</span>
+  </button>
+  <button class="mode-btn" data-mode="gauss-mag">
+    <span class="mb-icon">🧲</span><span class="mb-name">NO MONOPOLES</span><span class="mb-tag">B loops close</span>
+  </button>
+  <button class="mode-btn" data-mode="faraday">
+    <span class="mb-icon">🔄</span><span class="mb-name">FARADAY</span><span class="mb-tag">dB/dt → EMF</span>
+  </button>
+  <button class="mode-btn" data-mode="ampere">
+    <span class="mb-icon">⭕</span><span class="mb-name">AMPÈRE-MAXWELL</span><span class="mb-tag">I + dE/dt → B</span>
+  </button>
+  <button class="mode-btn" data-mode="light">
+    <span class="mb-icon">🌊</span><span class="mb-name">LIGHT</span><span class="mb-tag">EM waves at c</span>
+  </button>
+</div>
+
+<!-- CANVAS -->
+<div class="canvas-wrap">
+  <div class="bench-frame">
+    <svg id="stage" viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="posGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff8090"/>
+          <stop offset="100%" stop-color="rgba(255,80,100,0)"/>
+        </radialGradient>
+        <radialGradient id="negGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#60a0ff"/>
+          <stop offset="100%" stop-color="rgba(96,160,255,0)"/>
+        </radialGradient>
+        <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#20d0ff"/>
+        </marker>
+        <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#c060ff"/>
+        </marker>
+        <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0c060"/>
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#40ffaa"/>
+        </marker>
+        <marker id="arrow-pink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6090"/>
+        </marker>
+      </defs>
+      <g id="g-grid"></g>
+      <g id="g-static"></g>
+      <g id="g-field"></g>
+      <g id="g-loop"></g>
+      <g id="g-actors" class="draggable"></g>
+      <g id="g-labels"></g>
+    </svg>
+    <div class="badge badge-tl" id="badge-mode">GAUSS'S LAW</div>
+    <div class="badge badge-tr" id="badge-info">—</div>
+    <div class="badge badge-bl" id="badge-hint">Drag charges to move them · Hover labels for definitions</div>
+  </div>
+</div>
+
+<!-- CONTROL PANELS -->
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">Setup &amp; Controls</div>
+
+    <div class="section-label">Scenario</div>
+    <div class="scenario-btns" id="scenario-btns"></div>
+
+    <div id="param-area"></div>
+
+    <div class="section-label" id="toggle-label" hidden>View Toggles</div>
+    <div class="toggle-btns" id="toggle-btns"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title" id="readout-title">Live Readout</div>
+    <div class="readout-grid" id="readout-grid"></div>
+
+    <div class="fbox">
+      <div class="fl" id="eq-label">Maxwell's Equation (this mode)</div>
+      <div class="fe" id="eq-symbolic">—</div>
+      <div class="fe" id="eq-numeric" style="color:var(--cyan);font-size:12px;margin-top:4px;">—</div>
+      <div class="gc" id="eq-explain">Pick a scenario.</div>
+    </div>
+  </div>
+</div>
+
+<!-- THEORY -->
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">Theory — How the Four Laws Make Everything</div>
+
+  <p>In 1865, James Clerk Maxwell published the equations that finally unified electricity, magnetism, and light into a single theory. There are four of them. Together, they describe every electromagnetic phenomenon you have ever experienced. Light, radio, X-rays, microwaves, the spark of static, the pull of a fridge magnet, the current in your phone charger. All of it. All four laws.</p>
+
+  <p>This simulation lets you play with each law in turn, then assemble them into the grand unification: <em>light is an electromagnetic wave</em>, and its speed falls out of the equations themselves.</p>
+
+  <h2>⚡ Equation 1 — Gauss's Law for Electricity</h2>
+  <p>Electric charges produce electric fields. The total <span class="tag t-flux">flux<span class="tip">Flux measures how much of a field "pierces" a surface. Imagine the field as flowing arrows. Flux counts how many cross the surface, weighted by area and direction.</span></span> of the electric field out of any closed surface equals the charge enclosed inside, divided by the vacuum permittivity ε₀.</p>
+  <div class="eq">∮ E · dA = Q_enclosed / ε₀
+    <div class="vars">E is the electric field vector. dA is a tiny patch of the closed surface, pointing outward. The circle on the integral means we sum over every patch of the closed surface. Q is the total charge sitting inside. ε₀ = 8.854 × 10⁻¹² C²/(N·m²).</div>
+  </div>
+  <p>The remarkable thing is the shape of the surface does not matter. Stretch it, dent it, balloon it. As long as it encloses the same charge, the total flux is the same. The simulation makes this real. Drag the Gaussian sphere around: the flux number jumps when a charge crosses the boundary and stays flat otherwise.</p>
+  <div class="hbox hb-green"><strong>Punchline:</strong> Field lines come out of positive charges and end on negative charges. The strength of the field falls off as 1/r² from a point charge because the same number of field lines spread over a sphere of area 4πr².</div>
+
+  <h2>🧲 Equation 2 — Gauss's Law for Magnetism</h2>
+  <p>There are no <span class="tag t-mono">magnetic monopoles<span class="tip">A monopole would be a magnetic charge — a lone north or south pole. None has ever been found in nature. Every magnetic field line in the universe is part of a closed loop.</span></span>. The total magnetic flux out of any closed surface is exactly zero.</p>
+  <div class="eq">∮ B · dA = 0
+    <div class="vars">Every field line that exits a closed surface must also re-enter it. There is no magnetic "source" or "sink".</div>
+  </div>
+  <p>This is why cutting a bar magnet in half does not give you a north pole and a south pole. It gives you two complete bar magnets, each with its own north and south. The simulation lets you try the cut and watch the field lines re-route themselves.</p>
+  <div class="hbox hb-violet"><strong>Punchline:</strong> Magnetic field lines always form closed loops. They never start or end. This is the cleanest, shortest of Maxwell's equations, and arguably the most mysterious — every other force in nature has a "charge", but magnetism does not.</div>
+
+  <h2>🔄 Equation 3 — Faraday's Law of Induction</h2>
+  <p>A changing magnetic flux through a loop induces an <span class="tag t-emf">EMF<span class="tip">Electromotive force. Despite the name, it is not a force but a voltage — the work done per unit charge as it moves around the circuit. Measured in volts.</span></span> around that loop. The induced EMF equals minus the rate of change of magnetic flux.</p>
+  <div class="eq">ε = −N · dΦ_B / dt    where    Φ_B = ∫ B · dA
+    <div class="vars">N is the number of turns of wire in the coil. Φ_B is the magnetic flux through one turn. The minus sign is Lenz's law: the induced current always opposes the change that produced it.</div>
+  </div>
+  <p>Push a bar magnet toward a coil and the coil tries to push it back. Pull the magnet away and the coil tries to pull it back. The coil never welcomes the change. Every generator on Earth (hydroelectric, wind, nuclear, coal) runs on this single principle: spin a coil in a magnetic field and electricity comes out.</p>
+  <div class="hbox hb-cyan"><strong>Punchline:</strong> Electricity and magnetism are not separate things. A magnet that moves becomes an electric source. The "−" sign (Lenz's law) is the universe enforcing conservation of energy: if induction worked the other way, you'd get free energy from a magnet falling toward a coil.</div>
+
+  <h2>⭕ Equation 4 — Ampère's Law with Maxwell's Correction</h2>
+  <p>Electric currents produce magnetic fields. So far, so Ampère. Maxwell's contribution was to realize that a <em>changing electric field</em> also produces a magnetic field, exactly as if it were a current. He called it the <span class="tag t-disp">displacement current<span class="tip">Not a real flow of charge, but a "virtual" current carried by a changing electric field. In a charging capacitor, no charge crosses the gap between the plates, but the changing E field there acts magnetically just as if a current did.</span></span>.</p>
+  <div class="eq">∮ B · dℓ = μ₀ ( I_enclosed + ε₀ · dΦ_E / dt )
+    <div class="vars">The left side is the line integral of B around a closed loop (an <span class="tag t-amp">Amperian loop<span class="tip">An imaginary closed path you draw in space. Ampère's law links the magnetic field along it to the current piercing any surface bounded by it.</span></span>). I is the real current through the loop. The second term is Maxwell's correction: ε₀ times the rate of change of electric flux. μ₀ = 4π × 10⁻⁷ T·m/A.</div>
+  </div>
+  <p>Why did Maxwell need to add a term? Consider a charging capacitor. A real current flows in the wire on either side, but no charge physically crosses the gap between the plates. Without Maxwell's correction, Ampère's law would give two different answers for B depending on whether the Amperian loop's surface crossed the wire or the gap. With the correction, both give the same answer. The displacement current "completes the circuit" through the changing electric field.</p>
+  <div class="hbox hb-gold"><strong>Punchline:</strong> A changing electric field acts magnetically just like a real current. This term seemed like bookkeeping at first. It turned out to be the key to everything that followed: it lets electromagnetic waves exist.</div>
+
+  <h2>🌊 The Payoff — Light Itself</h2>
+  <p>Combine Faraday and Ampère-Maxwell in empty space (no charges, no currents). A changing E field makes a B field. That changing B field makes an E field. That changing E field makes a B field. The two fields feed each other and propagate outward as a self-sustaining wave.</p>
+  <p>Working out the wave equation from the four laws, Maxwell found the speed of the wave was:</p>
+  <div class="eq">c = 1 / √(μ₀ · ε₀) = 1 / √(4π×10⁻⁷ × 8.854×10⁻¹²) ≈ 2.998 × 10⁸ m/s
+    <div class="vars">Plug in the experimentally measured values of μ₀ and ε₀ — both measured in laboratory experiments on static electricity and magnetism, with no light involved — and out pops the speed of light.</div>
+  </div>
+  <p>This was the moment electromagnetism and optics merged. Maxwell wrote: "We can scarcely avoid the inference that light consists in the transverse undulations of the same medium which is the cause of electric and magnetic phenomena." He was right. Light is an electromagnetic wave. Radio is too. So are microwaves, infrared, visible light, ultraviolet, X-rays, and gamma rays. The only difference between a radio wave and gamma ray is wavelength.</p>
+
+  <h2>Where You Meet Each Law in Daily Life</h2>
+  <table class="ctable">
+    <tr><th>Application</th><th>Law(s) at work</th><th>What happens</th></tr>
+    <tr><td>📱 Phone in a metal lift loses signal</td><td>Gauss (electricity)</td><td>The conducting walls force E to zero inside. Same principle as a Faraday cage.</td></tr>
+    <tr><td>🧲 Cutting a bar magnet</td><td>Gauss (magnetism)</td><td>You get two complete dipoles. No monopole appears, ever.</td></tr>
+    <tr><td>🚲 Dynamo on a bike wheel</td><td>Faraday</td><td>Spinning magnets near coils generate the AC that powers your light.</td></tr>
+    <tr><td>🍳 Induction hob</td><td>Faraday</td><td>An AC coil under the glass induces eddy currents in the iron pan. The pan heats; the glass stays cool.</td></tr>
+    <tr><td>🔌 Transformer in your charger</td><td>Faraday</td><td>Changing flux in the primary induces voltage in the secondary. Ratio of turns sets the voltage ratio.</td></tr>
+    <tr><td>🧲 MRI scanner</td><td>Ampère + Faraday</td><td>Huge currents in superconducting coils make uniform B. Radio coils probe and detect the response.</td></tr>
+    <tr><td>📶 Wi-Fi router antenna</td><td>All four</td><td>Oscillating current in the antenna radiates EM waves at ~2.4 GHz that your laptop catches.</td></tr>
+    <tr><td>⚡ Wireless phone charger</td><td>Ampère-Maxwell + Faraday</td><td>A coil in the pad oscillates B. A coil in the phone catches it. Power crosses an air gap.</td></tr>
+    <tr><td>☀️ Sunlight on your skin</td><td>All four (in empty space)</td><td>Eight minutes ago, oscillating charges in the Sun's photosphere launched these waves at c. Now they warm you.</td></tr>
+  </table>
+
+  <h2>The Equations, Together</h2>
+  <p>Maxwell's full set in integral form:</p>
+  <div class="eq">
+    ∮ E · dA = Q / ε₀          <span style="color:var(--text3);font-style:italic;">(Gauss — electricity)</span><br>
+    ∮ B · dA = 0               <span style="color:var(--text3);font-style:italic;">(Gauss — no monopoles)</span><br>
+    ∮ E · dℓ = − dΦ_B / dt     <span style="color:var(--text3);font-style:italic;">(Faraday)</span><br>
+    ∮ B · dℓ = μ₀ I + μ₀ε₀ dΦ_E / dt   <span style="color:var(--text3);font-style:italic;">(Ampère-Maxwell)</span>
+    <div class="vars">Four lines. Every classical electromagnetic phenomenon in the universe is contained in them. Special relativity falls out almost for free, because these equations are already relativistically correct as written — Einstein noticed.</div>
+  </div>
+  <p>Richard Feynman once wrote that ten thousand years from now, when civilizations have come and gone, the discovery that will still matter from the nineteenth century is Maxwell's discovery of the laws of electromagnetism. That is the scale of the achievement you have been playing with.</p>
+
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+
+// =====================================================================
+// CONSTANTS — real physics values (SI)
+// =====================================================================
+const EPS0 = 8.854187817e-12;        // C^2 / (N m^2)
+const MU0  = 4 * Math.PI * 1e-7;     // T m / A
+const KE   = 1 / (4 * Math.PI * EPS0); // ≈ 8.988e9 N m^2 / C^2
+const C_LIGHT = 1 / Math.sqrt(MU0 * EPS0); // ≈ 2.998e8 m/s
+
+// SVG dimensions
+const W = 1000, H = 460;
+const CX = W/2, CY = H/2;
+
+// =====================================================================
+// STATE
+// =====================================================================
+const state = {
+  mode: 'gauss',
+  // Mode 1: Gauss
+  gauss: {
+    scenario: 'positive',
+    charges: [],       // [{x,y,q}] in SVG coords; q in nC
+    gaussSphere: { x: CX, y: CY, r: 120 },
+    showLines: true,
+    showVectors: false,
+  },
+  // Mode 2: No monopoles
+  mag: {
+    scenario: 'bar',
+    cutMagnet: false,
+    strength: 1.0,
+  },
+  // Mode 3: Faraday
+  faraday: {
+    scenario: 'magnet-coil',
+    magnetX: 200,    // for magnet-coil
+    magnetVx: 0,
+    N: 50,           // turns
+    rotAngle: 0,     // for generator
+    rotSpeed: 1.0,
+    auto: false,     // auto-animate
+    lastTime: 0,
+    primaryCurrent: 0, // for transformer
+  },
+  // Mode 4: Ampère-Maxwell
+  ampere: {
+    scenario: 'wire',
+    current: 2.0,    // A
+    loopR: 80,       // pixels (Amperian loop radius)
+    capV: 0,         // capacitor voltage
+    capCharging: true,
+    dVdt: 5,         // V/s
+    showDisplacement: true,
+    probes: [],      // [{x,y}] user-placed B probes
+    capLoopX: CX,    // x-position of Amperian loop in capacitor mode (slidable)
+    phase: 0,        // animation phase for flowing current dots
+  },
+  // Mode 5: Light
+  light: {
+    scenario: 'plane-wave',
+    freq: 1.0,       // arbitrary units for animation
+    amp: 60,         // pixel amplitude
+    showE: true,
+    showB: true,
+    t: 0,
+    // Spectrum mode: log10(Hz) — 6=radio, 14.6=visible, 20=gamma
+    spectrumLog: 14.6,
+    // Race-light mode
+    raceDest: 'moon',
+    raceT: 0,        // 0..1 progress
+    raceRunning: false,
+  },
+};
+
+// =====================================================================
+// SVG HELPERS
+// =====================================================================
+function clearGroup(id) {
+  const g = document.getElementById(id);
+  while (g.firstChild) g.removeChild(g.firstChild);
+  return g;
+}
+function el(group, type, attrs) {
+  const node = document.createElementNS("http://www.w3.org/2000/svg", type);
+  for (const key in attrs) {
+    if (key === 'text') node.textContent = attrs[key];
+    else node.setAttribute(key, attrs[key]);
+  }
+  group.appendChild(node);
+  return node;
+}
+function drawGrid() {
+  const g = clearGroup('g-grid');
+  for (let x = 50; x < W; x += 50) el(g, 'line', { x1:x, y1:0, x2:x, y2:H, stroke:'var(--grid-stroke)', 'stroke-width':1 });
+  for (let y = 50; y < H; y += 50) el(g, 'line', { x1:0, y1:y, x2:W, y2:y, stroke:'var(--grid-stroke)', 'stroke-width':1 });
+}
+
+// =====================================================================
+// MODE DEFINITIONS — each registers its panel & render funcs
+// =====================================================================
+const MODES = {};
+
+// =====================================================================
+// MODE 1 — GAUSS'S LAW
+// =====================================================================
+MODES.gauss = {
+  title: 'GAUSS\'S LAW',
+  scenarios: [
+    { id:'positive', label:'+ Charge' },
+    { id:'negative', label:'− Charge' },
+    { id:'dipole', label:'Dipole (±)' },
+    { id:'like', label:'Two ⊕⊕' },
+    { id:'custom', label:'Custom (click stage)' },
+  ],
+  applyScenario(id) {
+    state.gauss.scenario = id;
+    if (id === 'positive') state.gauss.charges = [{ x:CX, y:CY, q:+5 }];
+    else if (id === 'negative') state.gauss.charges = [{ x:CX, y:CY, q:-5 }];
+    else if (id === 'dipole') state.gauss.charges = [{ x:CX-110, y:CY, q:+5 }, { x:CX+110, y:CY, q:-5 }];
+    else if (id === 'like') state.gauss.charges = [{ x:CX-110, y:CY, q:+5 }, { x:CX+110, y:CY, q:+5 }];
+    else if (id === 'custom' && state.gauss.charges.length === 0) state.gauss.charges = [{ x:CX, y:CY, q:+5 }];
+  },
+  paramsHTML: `
+    <div class="section-label">Parameters</div>
+    <div class="param">
+      <div class="param-row"><span>Charge magnitude |q|</span><span class="param-val" id="g-qv" style="color:var(--gold)">5 nC</span></div>
+      <input type="range" id="g-q" min="1" max="10" step="0.5" value="5">
+      <div class="param-sub">Bigger q → stronger field, more flux</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Gaussian sphere radius r</span><span class="param-val" id="g-rv" style="color:var(--cyan)">120 px</span></div>
+      <input type="range" id="g-r" min="30" max="200" step="2" value="120">
+      <div class="param-sub">Drag the yellow circle on stage to move it</div>
+    </div>
+  `,
+  toggles: [
+    { id:'lines', label:'Field Lines', default:true },
+    { id:'vectors', label:'Vector Arrows', default:false },
+  ],
+  applyToggle(id, on) {
+    if (id === 'lines') state.gauss.showLines = on;
+    if (id === 'vectors') state.gauss.showVectors = on;
+  },
+  bindParams() {
+    document.getElementById('g-q').oninput = function() {
+      const v = parseFloat(this.value);
+      document.getElementById('g-qv').textContent = v.toFixed(1) + ' nC';
+      // scale all charges proportionally to keep signs
+      state.gauss.charges.forEach(c => { c.q = Math.sign(c.q) * v; });
+      render();
+    };
+    document.getElementById('g-r').oninput = function() {
+      const v = parseFloat(this.value);
+      document.getElementById('g-rv').textContent = v.toFixed(0) + ' px';
+      state.gauss.gaussSphere.r = v;
+      render();
+    };
+  },
+  render() {
+    const g = clearGroup('g-field');
+    const gs = clearGroup('g-static');
+    const ga = clearGroup('g-actors');
+    const gl = clearGroup('g-loop');
+
+    // Field lines: trace from each + charge outward, into each − charge
+    if (state.gauss.showLines) drawFieldLines(g, state.gauss.charges);
+    if (state.gauss.showVectors) drawFieldVectors(g, state.gauss.charges);
+
+    // Gaussian sphere (draggable)
+    const sph = state.gauss.gaussSphere;
+    el(gl, 'circle', { cx:sph.x, cy:sph.y, r:sph.r, fill:'rgba(240,192,96,0.05)', stroke:'#f0c060', 'stroke-width':2, 'stroke-dasharray':'6 4', class:'draggable', id:'gauss-sphere' });
+    el(gl, 'text', { x:sph.x, y:sph.y-sph.r-8, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'GAUSSIAN SURFACE (drag)' });
+
+    // Charges
+    state.gauss.charges.forEach((c, i) => {
+      const color = c.q > 0 ? '#ff5070' : '#60a0ff';
+      const grad = c.q > 0 ? 'url(#posGlow)' : 'url(#negGlow)';
+      el(ga, 'circle', { cx:c.x, cy:c.y, r:30, fill:grad, opacity:0.5 });
+      el(ga, 'circle', { cx:c.x, cy:c.y, r:13, fill:color, stroke:'#fff', 'stroke-width':1.5, 'data-idx':i, class:'draggable charge-handle' });
+      el(ga, 'text', { x:c.x, y:c.y+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, 'font-weight':'bold', fill:'#fff', text:(c.q > 0 ? '+' : '−'), 'pointer-events':'none' });
+      el(ga, 'text', { x:c.x, y:c.y+26, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--text2)', text:Math.abs(c.q).toFixed(1)+' nC', 'pointer-events':'none' });
+    });
+
+    // Enclosed charge
+    const sphR = sph.r;
+    let qEnc = 0;
+    state.gauss.charges.forEach(c => {
+      const d = Math.hypot(c.x - sph.x, c.y - sph.y);
+      if (d < sphR) qEnc += c.q;
+    });
+    // Flux = Q/eps0, with q in nC = 1e-9 C
+    const flux = (qEnc * 1e-9) / EPS0; // N·m²/C
+    setBadgeMode('GAUSS\'S LAW');
+    setBadgeInfo(`Q_enclosed = ${qEnc.toFixed(2)} nC`);
+    setBadgeHint('Drag charges or the yellow sphere · Hover terms');
+
+    // Readouts
+    renderReadout([
+      { label:'Enclosed Charge', value: qEnc.toFixed(2) + ' nC', cls: qEnc > 0 ? 'red' : (qEnc < 0 ? 'cyan' : '') },
+      { label:'Electric Flux Φ_E', value: flux.toExponential(2) + ' N·m²/C', cls:'gold' },
+      { label:'Charges on Stage', value: state.gauss.charges.length, cls:'' },
+      { label:'Field Magnitude at Sphere', value: estimateFieldAtSphere().toExponential(2) + ' N/C', cls:'cyan' },
+    ]);
+
+    setEquation(
+      '∮ E · dA = Q_enc / ε₀',
+      `Φ_E = (${qEnc.toFixed(2)} × 10⁻⁹ C) / (8.854 × 10⁻¹² C²/Nm²) = <span class="nm">${flux.toExponential(2)} N·m²/C</span>`,
+      qEnc === 0
+        ? 'Net enclosed charge is zero, so the total flux is zero. Field lines still pierce the surface, but every entry is matched by an exit.'
+        : (qEnc > 0
+            ? 'Net positive charge enclosed. Field lines flow outward through the sphere. Flux is positive.'
+            : 'Net negative charge enclosed. Field lines flow inward. Flux is negative.')
+    );
+  },
+};
+
+function estimateFieldAtSphere() {
+  // Pick a point on the sphere and sum E from each charge (in SI-ish units)
+  const sph = state.gauss.gaussSphere;
+  // sample point: rightmost
+  const px = sph.x + sph.r, py = sph.y;
+  // Convert px distance to meters arbitrarily — 100 px = 1 m
+  const PIX_PER_M = 100;
+  let Ex = 0, Ey = 0;
+  state.gauss.charges.forEach(c => {
+    const dx = (px - c.x)/PIX_PER_M, dy = (py - c.y)/PIX_PER_M;
+    const r2 = dx*dx + dy*dy;
+    if (r2 < 1e-6) return;
+    const r = Math.sqrt(r2);
+    const E = KE * (c.q * 1e-9) / r2;
+    Ex += E * dx / r;
+    Ey += E * dy / r;
+  });
+  return Math.hypot(Ex, Ey);
+}
+
+function drawFieldLines(g, charges) {
+  // For each + charge, shoot N rays outward; trace until they hit a − or leave canvas
+  const N_RAYS = 16;
+  const STEP = 4;
+  const MAX_STEPS = 300;
+  charges.forEach(c => {
+    if (c.q <= 0) return;
+    for (let i = 0; i < N_RAYS; i++) {
+      const ang = (i / N_RAYS) * 2 * Math.PI;
+      let x = c.x + 14 * Math.cos(ang);
+      let y = c.y + 14 * Math.sin(ang);
+      const pts = [[x,y]];
+      for (let s = 0; s < MAX_STEPS; s++) {
+        let Ex = 0, Ey = 0;
+        for (const c2 of charges) {
+          const dx = x - c2.x, dy = y - c2.y;
+          const r2 = dx*dx + dy*dy;
+          if (r2 < 100) { // hit
+            if (c2.q < 0) { pts.push([c2.x, c2.y]); s = MAX_STEPS; break; }
+          }
+          const r3 = Math.pow(r2, 1.5);
+          Ex += c2.q * dx / r3;
+          Ey += c2.q * dy / r3;
+        }
+        const mag = Math.hypot(Ex, Ey);
+        if (mag < 1e-8) break;
+        x += STEP * Ex / mag;
+        y += STEP * Ey / mag;
+        if (x < 0 || x > W || y < 0 || y > H) { pts.push([x,y]); break; }
+        pts.push([x,y]);
+      }
+      const d = pts.map((p,i) => (i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      el(g, 'path', { d, fill:'none', stroke:'#20d0ff', 'stroke-width':1.2, opacity:0.55, 'marker-mid':'url(#arrow-cyan)' });
+    }
+  });
+  // If only negative charges exist, lines come in from the boundary
+  if (charges.every(c => c.q < 0) && charges.length > 0) {
+    charges.forEach(c => {
+      for (let i = 0; i < 12; i++) {
+        const ang = (i / 12) * 2 * Math.PI;
+        const x2 = c.x + Math.cos(ang)*250, y2 = c.y + Math.sin(ang)*250;
+        el(g, 'line', { x1:x2, y1:y2, x2:c.x + Math.cos(ang)*14, y2:c.y + Math.sin(ang)*14, stroke:'#20d0ff', 'stroke-width':1.2, opacity:0.55, 'marker-end':'url(#arrow-cyan)' });
+      }
+    });
+  }
+}
+
+function drawFieldVectors(g, charges) {
+  const STEP = 50;
+  for (let x = 30; x < W; x += STEP) {
+    for (let y = 30; y < H; y += STEP) {
+      let Ex = 0, Ey = 0;
+      for (const c of charges) {
+        const dx = x - c.x, dy = y - c.y;
+        const r2 = dx*dx + dy*dy;
+        if (r2 < 250) continue;
+        const r3 = Math.pow(r2, 1.5);
+        Ex += c.q * dx / r3;
+        Ey += c.q * dy / r3;
+      }
+      const mag = Math.hypot(Ex, Ey);
+      if (mag < 1e-8) continue;
+      const len = Math.min(18, mag * 30000);
+      const ux = Ex/mag, uy = Ey/mag;
+      el(g, 'line', { x1:x, y1:y, x2:x+ux*len, y2:y+uy*len, stroke:'#c060ff', 'stroke-width':1.2, opacity:0.65, 'marker-end':'url(#arrow-violet)' });
+    }
+  }
+}
+
+// =====================================================================
+// MODE 2 — GAUSS FOR MAGNETISM
+// =====================================================================
+MODES['gauss-mag'] = {
+  title: 'NO MAGNETIC MONOPOLES',
+  scenarios: [
+    { id:'bar', label:'Bar Magnet' },
+    { id:'loop', label:'Current Loop' },
+    { id:'solenoid', label:'Solenoid' },
+    { id:'try-monopole', label:'Try a Monopole' },
+  ],
+  applyScenario(id) {
+    state.mag.scenario = id;
+    state.mag.cutMagnet = false;
+  },
+  paramsHTML: `
+    <div class="section-label">Parameters</div>
+    <div class="param">
+      <div class="param-row"><span>Source strength</span><span class="param-val" id="m-sv" style="color:var(--gold)">1.0</span></div>
+      <input type="range" id="m-s" min="0.3" max="2.5" step="0.05" value="1.0">
+      <div class="param-sub">Scales the magnitude of B</div>
+    </div>
+  `,
+  toggles: [
+    { id:'cut', label:'✂ Cut Magnet', default:false },
+  ],
+  applyToggle(id, on) {
+    if (id === 'cut') state.mag.cutMagnet = on;
+  },
+  bindParams() {
+    document.getElementById('m-s').oninput = function() {
+      const v = parseFloat(this.value);
+      document.getElementById('m-sv').textContent = v.toFixed(2);
+      state.mag.strength = v;
+      render();
+    };
+  },
+  render() {
+    const g = clearGroup('g-field');
+    const gs = clearGroup('g-static');
+    const ga = clearGroup('g-actors');
+    const gl = clearGroup('g-loop');
+
+    setBadgeMode('NO MAGNETIC MONOPOLES');
+    const scen = state.mag.scenario;
+    setBadgeHint('Toggle "Cut Magnet" to see why monopoles don\'t exist');
+
+    if (scen === 'bar') {
+      drawBarMagnetField(g, gs, state.mag.cutMagnet);
+      setBadgeInfo(state.mag.cutMagnet ? 'Cut → two complete dipoles' : 'One bar magnet (N — S)');
+    } else if (scen === 'loop') {
+      drawCurrentLoopField(g, gs);
+      setBadgeInfo('Current loop = magnetic dipole');
+    } else if (scen === 'solenoid') {
+      drawSolenoidField(g, gs);
+      setBadgeInfo('Solenoid: uniform B inside, closed loops outside');
+    } else if (scen === 'try-monopole') {
+      drawTriedMonopole(g, gs);
+      setBadgeInfo('Even drawn alone, lines close back');
+    }
+
+    // Gaussian surface: small movable circle
+    const sx = state.gauss.gaussSphere.x, sy = state.gauss.gaussSphere.y;
+    el(gl, 'circle', { cx:sx, cy:sy, r:60, fill:'rgba(240,192,96,0.05)', stroke:'#f0c060', 'stroke-width':2, 'stroke-dasharray':'6 4', class:'draggable', id:'gauss-sphere' });
+    el(gl, 'text', { x:sx, y:sy-68, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'GAUSSIAN SURFACE' });
+
+    renderReadout([
+      { label:'Magnetic Flux Φ_B', value: '0 (exactly)', cls:'violet' },
+      { label:'Net Magnetic Charge', value: 'None — never', cls:'violet' },
+      { label:'Field Lines Through Surface', value: 'In = Out', cls:'gold' },
+      { label:'Monopoles Found, 1865-2026', value: 'Zero', cls:'red' },
+    ]);
+
+    setEquation(
+      '∮ B · dA = 0',
+      '∮ B · dA = 0 &nbsp;&nbsp;(exactly, for any closed surface, anywhere in the universe)',
+      'Every magnetic field line that exits a closed surface must also re-enter it. No source, no sink. Magnetic field lines are closed loops, always.'
+    );
+  },
+};
+
+function drawBarMagnetField(g, gs, cut) {
+  // bar(s) at center
+  if (!cut) {
+    drawBar(gs, CX - 60, CY - 15, 120, 30, 'N', 'S');
+    drawDipoleLines(g, CX, CY, 60, state.mag.strength);
+  } else {
+    drawBar(gs, CX - 130, CY - 15, 100, 30, 'N', 'S');
+    drawBar(gs, CX + 30, CY - 15, 100, 30, 'N', 'S');
+    el(gs, 'line', { x1:CX-15, y1:CY-25, x2:CX-15, y2:CY+25, stroke:'#ff4f60', 'stroke-width':2, 'stroke-dasharray':'3 3' });
+    el(gs, 'text', { x:CX, y:CY+50, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--red)', text:'cut here →' });
+    drawDipoleLines(g, CX - 80, CY, 50, state.mag.strength);
+    drawDipoleLines(g, CX + 80, CY, 50, state.mag.strength);
+  }
+}
+
+function drawBar(gs, x, y, w, h, leftLabel, rightLabel) {
+  el(gs, 'rect', { x, y, width:w/2, height:h, fill:'#ff5070', opacity:0.85 });
+  el(gs, 'rect', { x:x+w/2, y, width:w/2, height:h, fill:'#60a0ff', opacity:0.85 });
+  el(gs, 'text', { x:x+w/4, y:y+h/2+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, 'font-weight':'bold', fill:'#fff', text:leftLabel });
+  el(gs, 'text', { x:x+3*w/4, y:y+h/2+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, 'font-weight':'bold', fill:'#fff', text:rightLabel });
+}
+
+function drawDipoleLines(g, cx, cy, halfL, scale) {
+  // Approximate dipole field lines as ellipses through the two poles
+  const N = 6;
+  const xN = cx - halfL, xS = cx + halfL;
+  for (let i = 1; i <= N; i++) {
+    const a = halfL + i * 20 * scale;
+    const b = i * 18 * scale;
+    el(g, 'ellipse', { cx, cy, rx:a, ry:b, fill:'none', stroke:'#c060ff', 'stroke-width':1.3, opacity:0.55 });
+    // arrows on top + bottom
+    el(g, 'circle', { cx:cx, cy:cy-b, r:1.5, fill:'#c060ff' });
+  }
+  // Direction arrows: from N (left) to S (right) outside
+  for (let i = 1; i <= N; i++) {
+    const b = i * 18 * scale;
+    el(g, 'path', { d:`M ${cx-5} ${cy-b} L ${cx+5} ${cy-b}`, stroke:'#c060ff', 'stroke-width':1.5, 'marker-end':'url(#arrow-violet)', opacity:0.7 });
+    el(g, 'path', { d:`M ${cx+5} ${cy+b} L ${cx-5} ${cy+b}`, stroke:'#c060ff', 'stroke-width':1.5, 'marker-end':'url(#arrow-violet)', opacity:0.7 });
+  }
+  // Inside: from S to N (right to left)
+  el(g, 'path', { d:`M ${xS-3} ${cy} L ${xN+3} ${cy}`, stroke:'#c060ff', 'stroke-width':2, 'marker-end':'url(#arrow-violet)', opacity:0.85 });
+}
+
+function drawCurrentLoopField(g, gs) {
+  el(gs, 'ellipse', { cx:CX, cy:CY, rx:90, ry:24, fill:'none', stroke:'#f0c060', 'stroke-width':3 });
+  // current arrows
+  el(gs, 'text', { x:CX+90, y:CY+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'#f0c060', text:'⊙' });
+  el(gs, 'text', { x:CX-90, y:CY+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'#f0c060', text:'⊗' });
+  el(gs, 'text', { x:CX, y:CY+50, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'CURRENT LOOP (I)' });
+  drawDipoleLines(g, CX, CY, 50, state.mag.strength);
+}
+
+function drawSolenoidField(g, gs) {
+  // Draw coil
+  for (let i = 0; i < 16; i++) {
+    const x = CX - 160 + i*22;
+    el(gs, 'ellipse', { cx:x, cy:CY, rx:6, ry:36, fill:'none', stroke:'#f0c060', 'stroke-width':1.8 });
+  }
+  // current direction
+  el(gs, 'text', { x:CX-180, y:CY-50, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'I →' });
+  // inside: uniform B field arrows
+  const s = state.mag.strength;
+  for (let y = CY - 28; y <= CY + 28; y += 14) {
+    el(g, 'line', { x1:CX-140, y1:y, x2:CX+140, y2:y, stroke:'#c060ff', 'stroke-width':1.5, 'marker-end':'url(#arrow-violet)', opacity:0.8 });
+  }
+  // outside return loops
+  for (let i = 0; i < 4; i++) {
+    const ry = 60 + i*22;
+    el(g, 'path', { d:`M ${CX-160} ${CY} Q ${CX} ${CY-ry} ${CX+160} ${CY}`, fill:'none', stroke:'#c060ff', 'stroke-width':1.3, opacity:0.5 });
+    el(g, 'path', { d:`M ${CX-160} ${CY} Q ${CX} ${CY+ry} ${CX+160} ${CY}`, fill:'none', stroke:'#c060ff', 'stroke-width':1.3, opacity:0.5 });
+  }
+}
+
+function drawTriedMonopole(g, gs) {
+  // Show user attempting: lines leaving a single "pole" but they all curve back
+  el(gs, 'circle', { cx:CX, cy:CY, r:18, fill:'#ff5070', opacity:0.9 });
+  el(gs, 'text', { x:CX, y:CY+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'#fff', text:'N?' });
+  el(gs, 'text', { x:CX, y:CY+40, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--red)', text:'NATURE REFUSES' });
+  // attempted radial lines that curve into closed loops anyway
+  for (let i = 0; i < 8; i++) {
+    const ang = (i/8) * 2 * Math.PI;
+    const r1 = 90 + (i%2)*30;
+    el(g, 'path', { d:`M ${CX+18*Math.cos(ang)} ${CY+18*Math.sin(ang)} Q ${CX+r1*Math.cos(ang)} ${CY+r1*Math.sin(ang)} ${CX+18*Math.cos(ang+0.5)} ${CY+18*Math.sin(ang+0.5)}`, fill:'none', stroke:'#c060ff', 'stroke-width':1.3, opacity:0.55 });
+  }
+  el(gs, 'text', { x:CX, y:H-30, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'var(--violet)', text:'Lines that try to leave a "pole" alone always loop back. ∮ B · dA = 0.' });
+}
+
+// =====================================================================
+// MODE 3 — FARADAY'S LAW
+// =====================================================================
+MODES.faraday = {
+  title: 'FARADAY\'S LAW',
+  scenarios: [
+    { id:'magnet-coil', label:'Magnet → Coil' },
+    { id:'generator', label:'Rotating Coil' },
+    { id:'transformer', label:'Transformer' },
+  ],
+  applyScenario(id) {
+    state.faraday.scenario = id;
+    state.faraday.magnetX = 200;
+    state.faraday.rotAngle = 0;
+    state.faraday.auto = (id !== 'magnet-coil');
+  },
+  paramsHTML: `
+    <div class="section-label">Parameters</div>
+    <div class="param">
+      <div class="param-row"><span>Number of turns N</span><span class="param-val" id="f-Nv" style="color:var(--gold)">50</span></div>
+      <input type="range" id="f-N" min="1" max="200" step="1" value="50">
+      <div class="param-sub">More turns → larger induced EMF</div>
+    </div>
+    <div class="param" id="f-rot-param">
+      <div class="param-row"><span>Rotation speed ω</span><span class="param-val" id="f-wv" style="color:var(--cyan)">1.0 rev/s</span></div>
+      <input type="range" id="f-w" min="0.1" max="3" step="0.05" value="1.0">
+      <div class="param-sub">Faster spin → higher peak EMF</div>
+    </div>
+    <div class="param" id="f-mag-param">
+      <div class="param-row"><span>Magnet position</span><span class="param-val" id="f-mxv" style="color:var(--cyan)">200 px</span></div>
+      <input type="range" id="f-mx" min="100" max="600" step="2" value="200">
+      <div class="param-sub">Drag the magnet on stage too</div>
+    </div>
+  `,
+  toggles: [],
+  applyToggle() {},
+  bindParams() {
+    document.getElementById('f-N').oninput = function() {
+      state.faraday.N = parseInt(this.value);
+      document.getElementById('f-Nv').textContent = this.value;
+      render();
+    };
+    document.getElementById('f-w').oninput = function() {
+      state.faraday.rotSpeed = parseFloat(this.value);
+      document.getElementById('f-wv').textContent = this.value + ' rev/s';
+      render();
+    };
+    document.getElementById('f-mx').oninput = function() {
+      const newX = parseFloat(this.value);
+      state.faraday.magnetVx = newX - state.faraday.magnetX;
+      state.faraday.magnetX = newX;
+      document.getElementById('f-mxv').textContent = newX.toFixed(0) + ' px';
+      render();
+    };
+    const rotEl = document.getElementById('f-rot-param');
+    const magEl = document.getElementById('f-mag-param');
+    if (state.faraday.scenario === 'magnet-coil') { rotEl.style.display='none'; magEl.style.display=''; }
+    else if (state.faraday.scenario === 'transformer') { rotEl.style.display=''; magEl.style.display='none'; }
+    else { rotEl.style.display=''; magEl.style.display='none'; }
+  },
+  render() {
+    const g = clearGroup('g-field');
+    const gs = clearGroup('g-static');
+    const ga = clearGroup('g-actors');
+    const gl = clearGroup('g-loop');
+
+    setBadgeMode('FARADAY\'S LAW');
+    const sc = state.faraday.scenario;
+
+    let flux, emf, summary;
+    const N = state.faraday.N;
+    // Use SI-ish: coil area A = 0.01 m², magnet field B0 = 0.5 T at "surface"
+    const A = 0.01;
+
+    if (sc === 'magnet-coil') {
+      // Magnet at x=magnetX, coil at x=700
+      const dx = (700 - state.faraday.magnetX) / 100; // meters
+      const B = 0.5 / (1 + dx*dx); // simple 1/(1+d^2) falloff
+      flux = N * B * A; // weber
+      const vx = state.faraday.magnetVx / 100; // m per frame approx
+      // approximate dPhi/dt by recomputing at nearby position
+      const dx2 = (700 - (state.faraday.magnetX + vx*100))/100;
+      const B2 = 0.5/(1+dx2*dx2);
+      emf = -N * (B2 - B) * A / 0.05; // per ~50ms
+      drawMagnet(gs, state.faraday.magnetX, CY, true);
+      drawCoil(gs, 700, CY, 60, 90);
+      drawMagnetCoilField(g, state.faraday.magnetX, 700);
+      setBadgeInfo(`Magnet at x = ${state.faraday.magnetX.toFixed(0)} · Flux ≈ ${flux.toFixed(4)} Wb`);
+      setBadgeHint('Drag the bar magnet left/right. EMF appears only when it moves.');
+      summary = (Math.abs(emf) < 0.001)
+        ? 'Magnet still → no change in flux → no EMF. Move it!'
+        : (emf > 0 ? 'Flux dropping → EMF pushes current to oppose the drop (Lenz).' : 'Flux rising → EMF pushes current to oppose the rise (Lenz).');
+    }
+    else if (sc === 'generator') {
+      // Coil rotating in uniform B = 0.5 T
+      const t = performance.now() / 1000;
+      const ang = 2 * Math.PI * state.faraday.rotSpeed * t;
+      const B = 0.5;
+      flux = N * B * A * Math.cos(ang);
+      emf = N * B * A * 2 * Math.PI * state.faraday.rotSpeed * Math.sin(ang);
+      drawUniformB(gs);
+      drawRotatingCoil(gs, CX, CY, 120, 70, ang);
+      setBadgeInfo(`ω = ${state.faraday.rotSpeed.toFixed(2)} rev/s · Peak EMF = ${(N*B*A*2*Math.PI*state.faraday.rotSpeed).toFixed(3)} V`);
+      setBadgeHint('AC generators in every power plant work exactly like this.');
+      summary = 'Sinusoidal EMF. This is how all AC electricity is generated.';
+      animate();
+    }
+    else if (sc === 'transformer') {
+      const t = performance.now() / 1000;
+      const ang = 2 * Math.PI * state.faraday.rotSpeed * t;
+      const Iprim = Math.sin(ang); // arbitrary units
+      const B = 0.3 * Iprim;
+      flux = N * B * A;
+      emf = -N * 0.3 * A * 2 * Math.PI * state.faraday.rotSpeed * Math.cos(ang);
+      drawTransformer(gs, Iprim);
+      setBadgeInfo(`Primary AC current drives secondary EMF`);
+      setBadgeHint('A transformer: changing flux in primary induces voltage in secondary.');
+      summary = 'Primary AC → changing flux in iron core → induced EMF in secondary.';
+      animate();
+    }
+
+    // Needle gauge
+    drawEMFNeedle(gl, 850, 100, emf);
+
+    renderReadout([
+      { label:'Flux Φ_B', value: flux.toFixed(4) + ' Wb', cls:'cyan' },
+      { label:'Induced EMF ε', value: emf.toFixed(3) + ' V', cls: Math.abs(emf) < 0.01 ? '' : (emf > 0 ? 'green' : 'red'), small:true },
+      { label:'Turns N', value: N, cls:'gold' },
+      { label:'Lenz Direction', value: Math.abs(emf) < 0.01 ? '— (no change)' : (emf > 0 ? '↻ opposes ↑' : '↺ opposes ↓'), cls:'violet', small:true },
+    ]);
+
+    setEquation(
+      'ε = − N · dΦ_B / dt',
+      `ε = − ${N} × dΦ/dt = <span class="nm">${emf.toFixed(3)} V</span>`,
+      summary
+    );
+  },
+};
+
+function drawMagnet(gs, x, y, draggable) {
+  el(gs, 'rect', { x:x-40, y:y-12, width:40, height:24, fill:'#ff5070', class: draggable ? 'draggable':'', id: draggable ? 'magnet-handle':'' });
+  el(gs, 'rect', { x:x, y:y-12, width:40, height:24, fill:'#60a0ff', class: draggable ? 'draggable':'', id: draggable ? 'magnet-handle2':'' });
+  el(gs, 'text', { x:x-20, y:y+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#fff', text:'N' });
+  el(gs, 'text', { x:x+20, y:y+5, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#fff', text:'S' });
+}
+
+function drawCoil(gs, x, y, w, h) {
+  // a series of vertical ellipses representing turns
+  for (let i = 0; i < 6; i++) {
+    el(gs, 'ellipse', { cx:x-15+i*6, cy:y, rx:8, ry:h/2, fill:'none', stroke:'#f0c060', 'stroke-width':1.8 });
+  }
+  el(gs, 'text', { x:x+10, y:y+h/2+18, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'COIL' });
+}
+
+function drawMagnetCoilField(g, magX, coilX) {
+  // dipole-ish lines emanating from magnet, biased toward coil
+  for (let i = 0; i < 5; i++) {
+    const r = 30 + i*20;
+    el(g, 'path', {
+      d: `M ${magX+10} ${CY-r} Q ${(magX+coilX)/2} ${CY-r*1.4} ${coilX-30} ${CY-r*0.6}`,
+      fill:'none', stroke:'#c060ff', 'stroke-width':1.2, opacity:0.55
+    });
+    el(g, 'path', {
+      d: `M ${magX+10} ${CY+r} Q ${(magX+coilX)/2} ${CY+r*1.4} ${coilX-30} ${CY+r*0.6}`,
+      fill:'none', stroke:'#c060ff', 'stroke-width':1.2, opacity:0.55
+    });
+  }
+}
+
+function drawUniformB(gs) {
+  for (let y = 80; y < H-40; y += 30) {
+    el(gs, 'line', { x1:80, y1:y, x2:W-80, y2:y, stroke:'#c060ff', 'stroke-width':1.2, opacity:0.4, 'marker-end':'url(#arrow-violet)' });
+  }
+  el(gs, 'text', { x:120, y:50, 'font-family':'monospace', 'font-size':11, fill:'#c060ff', text:'UNIFORM B FIELD →' });
+}
+
+function drawRotatingCoil(gs, cx, cy, w, h, ang) {
+  const cos = Math.cos(ang), sin = Math.sin(ang);
+  const halfW = w/2;
+  // 4 corners projected (rotation about vertical axis)
+  const x1 = cx - halfW * cos, x2 = cx + halfW * cos;
+  el(gs, 'rect', { x:x1-3, y:cy-h/2, width:6, height:h, fill:'#f0c060' });
+  el(gs, 'rect', { x:x2-3, y:cy-h/2, width:6, height:h, fill:'#f0c060' });
+  el(gs, 'line', { x1, y1:cy-h/2, x2, y2:cy-h/2, stroke:'#f0c060', 'stroke-width':3, opacity: 0.5 + 0.5*Math.abs(cos) });
+  el(gs, 'line', { x1, y1:cy+h/2, x2, y2:cy+h/2, stroke:'#f0c060', 'stroke-width':3, opacity: 0.5 + 0.5*Math.abs(cos) });
+  // axis
+  el(gs, 'line', { x1:cx, y1:cy-h/2-20, x2:cx, y2:cy+h/2+20, stroke:'#5878a0', 'stroke-width':1, 'stroke-dasharray':'3 3' });
+  el(gs, 'text', { x:cx, y:cy+h/2+35, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'ROTATING COIL' });
+}
+
+function drawTransformer(gs, Iprim) {
+  // Primary coil left, secondary right, iron core in middle
+  const cx1 = CX-180, cx2 = CX+180;
+  // iron core
+  el(gs, 'rect', { x:CX-110, y:CY-90, width:220, height:180, fill:'none', stroke:'#5878a0', 'stroke-width':14, opacity:0.4 });
+  el(gs, 'rect', { x:CX-80, y:CY-60, width:160, height:120, fill:'none', stroke:'#5878a0', 'stroke-width':3, opacity:0.7 });
+  // primary
+  for (let i = 0; i < 5; i++) el(gs, 'ellipse', { cx:cx1+i*6, cy:CY, rx:8, ry:50, fill:'none', stroke:'#ff5070', 'stroke-width':1.8 });
+  // secondary
+  for (let i = 0; i < 5; i++) el(gs, 'ellipse', { cx:cx2-30+i*6, cy:CY, rx:8, ry:50, fill:'none', stroke:'#40ffaa', 'stroke-width':1.8 });
+  el(gs, 'text', { x:cx1, y:CY+75, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#ff5070', text:'PRIMARY (AC in)' });
+  el(gs, 'text', { x:cx2, y:CY+75, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#40ffaa', text:'SECONDARY (EMF out)' });
+  // flux arrows in core
+  const cl = Math.max(0.3, Math.abs(Iprim));
+  const dir = Iprim >= 0 ? 1 : -1;
+  el(gs, 'path', { d: dir > 0 ? `M ${CX-60} ${CY-70} L ${CX+60} ${CY-70}` : `M ${CX+60} ${CY-70} L ${CX-60} ${CY-70}`, stroke:'#c060ff', 'stroke-width': 2 + 3*cl, 'marker-end':'url(#arrow-violet)', opacity:0.8 });
+}
+
+function drawEMFNeedle(gl, cx, cy, emf) {
+  // simple gauge: needle from horizontal, range -1 to +1 V approx
+  el(gl, 'circle', { cx, cy, r:55, fill:'var(--bg3)', stroke:'var(--border2)', 'stroke-width':1.5 });
+  el(gl, 'path', { d:`M ${cx-50} ${cy} A 50 50 0 0 1 ${cx+50} ${cy}`, fill:'none', stroke:'var(--text3)', 'stroke-width':1 });
+  // ticks
+  for (let i = 0; i <= 8; i++) {
+    const a = Math.PI - i * Math.PI/8;
+    el(gl, 'line', { x1:cx+45*Math.cos(a), y1:cy-45*Math.sin(a), x2:cx+52*Math.cos(a), y2:cy-52*Math.sin(a), stroke:'var(--text3)', 'stroke-width':1 });
+  }
+  const clamped = Math.max(-1, Math.min(1, emf));
+  const ang = Math.PI - (clamped + 1) * Math.PI / 2;
+  el(gl, 'line', { x1:cx, y1:cy, x2:cx+50*Math.cos(ang), y2:cy-50*Math.sin(ang), stroke:'#f0c060', 'stroke-width':2.5 });
+  el(gl, 'circle', { cx, cy, r:4, fill:'#f0c060' });
+  el(gl, 'text', { x:cx, y:cy+18, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text3)', text:'EMF' });
+  el(gl, 'text', { x:cx-50, y:cy-58, 'font-family':'monospace', 'font-size':9, fill:'var(--text3)', text:'−' });
+  el(gl, 'text', { x:cx+44, y:cy-58, 'font-family':'monospace', 'font-size':9, fill:'var(--text3)', text:'+' });
+}
+
+// =====================================================================
+// MODE 4 — AMPÈRE-MAXWELL
+// =====================================================================
+MODES.ampere = {
+  title: 'AMPÈRE-MAXWELL',
+  scenarios: [
+    { id:'wire', label:'Straight Wire' },
+    { id:'solenoid', label:'Solenoid' },
+    { id:'capacitor', label:'Charging Capacitor' },
+  ],
+  applyScenario(id) {
+    state.ampere.scenario = id;
+    state.ampere.capV = 0;
+  },
+  paramsHTML: `
+    <div class="section-label">Parameters</div>
+    <div class="param" id="a-i-param">
+      <div class="param-row"><span>Current I</span><span class="param-val" id="a-iv" style="color:var(--gold)">2.0 A</span></div>
+      <input type="range" id="a-i" min="0.1" max="10" step="0.1" value="2.0">
+      <div class="param-sub">Real current through the wire</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Amperian loop radius</span><span class="param-val" id="a-rv" style="color:var(--cyan)">80 px</span></div>
+      <input type="range" id="a-r" min="20" max="200" step="2" value="80">
+      <div class="param-sub">Imaginary loop around (or near) the wire</div>
+    </div>
+    <div class="param" id="a-dv-param" style="display:none">
+      <div class="param-row"><span>Charging rate dV/dt</span><span class="param-val" id="a-dvv" style="color:var(--violet)">5 V/s</span></div>
+      <input type="range" id="a-dv" min="0" max="20" step="0.5" value="5">
+      <div class="param-sub">How fast the capacitor charges</div>
+    </div>
+  `,
+  toggles: [],
+  applyToggle() {},
+  bindParams() {
+    document.getElementById('a-i').oninput = function() {
+      state.ampere.current = parseFloat(this.value);
+      document.getElementById('a-iv').textContent = this.value + ' A';
+      render();
+    };
+    document.getElementById('a-r').oninput = function() {
+      state.ampere.loopR = parseFloat(this.value);
+      document.getElementById('a-rv').textContent = this.value + ' px';
+      render();
+    };
+    const dvEl = document.getElementById('a-dv');
+    if (dvEl) {
+      dvEl.oninput = function() {
+        state.ampere.dVdt = parseFloat(this.value);
+        document.getElementById('a-dvv').textContent = this.value + ' V/s';
+        render();
+      };
+    }
+    document.getElementById('a-dv-param').style.display = state.ampere.scenario === 'capacitor' ? '' : 'none';
+    document.getElementById('a-i-param').style.display = state.ampere.scenario === 'capacitor' ? 'none' : '';
+  },
+  render() {
+    const g = clearGroup('g-field');
+    const gs = clearGroup('g-static');
+    const ga = clearGroup('g-actors');
+    const gl = clearGroup('g-loop');
+
+    setBadgeMode('AMPÈRE-MAXWELL');
+    const sc = state.ampere.scenario;
+    const I = state.ampere.current;
+    const Rpx = state.ampere.loopR;
+    const PIX_PER_M = 1000; // 1000 px = 1 m (so 80px = 8cm)
+    const R = Rpx / PIX_PER_M; // meters
+
+    let B, summary, dispCurrent = 0;
+
+    state.ampere.phase = (state.ampere.phase + 0.04) % 1;
+
+    if (sc === 'wire') {
+      B = MU0 * I / (2 * Math.PI * R);
+      drawStraightWire(gs, I, state.ampere.phase);
+      drawAmperianLoop(gl, CX, CY, Rpx);
+      drawCircularB(g, CX, CY, Rpx, I);
+      setBadgeInfo(`I = ${I.toFixed(1)} A · r = ${(R*100).toFixed(1)} cm`);
+      setBadgeHint('Tap anywhere to drop a B-probe · Watch current flow along the wire');
+      summary = `Current ${I.toFixed(1)} A creates circular B around the wire. Strength falls as 1/r.`;
+    }
+    else if (sc === 'solenoid') {
+      const n = 1000;
+      B = MU0 * n * I;
+      drawSolenoidAmpere(gs, I, state.ampere.phase);
+      drawSolenoidAmpereLoop(gl);
+      drawSolenoidB(g, I);
+      setBadgeInfo(`n = ${n} turns/m · I = ${I.toFixed(1)} A`);
+      setBadgeHint('Tap inside or outside to probe B · Inside: uniform · Outside: ~zero');
+      summary = `B inside = μ₀ n I = ${B.toExponential(2)} T. Outside, B ≈ 0.`;
+    }
+    else if (sc === 'capacitor') {
+      const A_plate = 0.01;
+      const d = 0.005;
+      const dEdt = state.ampere.dVdt / d;
+      dispCurrent = EPS0 * A_plate * dEdt;
+      B = MU0 * EPS0 * R * dEdt / 2;
+      // Slidable loop: which "zone" is it in?
+      const loopX = state.ampere.capLoopX;
+      const zone = loopX < CX - 60 ? 'left-wire' : (loopX > CX + 60 ? 'right-wire' : 'gap');
+      // Effective current through Amperian loop's surface:
+      // Same magnitude in all three zones — that's the punchline.
+      const Ieff = (zone === 'gap') ? dispCurrent : dispCurrent; // by Maxwell's correction, equal
+      drawCapacitor(gs, state.ampere.dVdt, state.ampere.phase, dispCurrent);
+      drawSlidableLoop(gl, loopX, CY, Rpx, zone);
+      drawCapacitorBAroundLoop(g, loopX, CY, Rpx, dEdt, zone);
+      setBadgeInfo(`Loop zone: ${zone.toUpperCase()} · I_d = ${dispCurrent.toExponential(2)} A`);
+      setBadgeHint('Drag the dashed loop across the capacitor — B stays the same in all three zones!');
+      summary = (zone === 'gap')
+        ? `Loop in the GAP: no real charge crosses, yet ∮B·dℓ = μ₀·I_d gives the SAME B as the wire zones. This is Maxwell's correction at work.`
+        : `Loop around WIRE: real current ${dispCurrent.toExponential(2)} A pierces the loop's surface. ∮B·dℓ = μ₀·I.`;
+    }
+
+    // User-placed probes
+    drawProbes(gl, sc, I);
+
+    // B(r) mini-plot in readout area
+    const plotSVG = buildBrPlot(sc, I, R);
+
+    renderReadout([
+      { label:'Magnetic Field |B|', value: B.toExponential(3) + ' T', cls:'violet', small:true },
+      { label:sc === 'capacitor' ? 'Displacement Current I_d' : 'Real Current I', value: (sc === 'capacitor' ? dispCurrent.toExponential(3) + ' A' : I.toFixed(2) + ' A'), cls:'gold', small:true },
+      { label:'Loop Radius r', value: (R*100).toFixed(2) + ' cm', cls:'cyan' },
+      { label:'Probes on Stage', value: state.ampere.probes.length, cls:'' },
+      { label:'B vs r — your loop is the dot', value: plotSVG, cls:'', wide:true, isHTML:true },
+    ]);
+
+    const eqSym = sc === 'capacitor'
+      ? '∮ B · dℓ = μ₀ ε₀ dΦ_E/dt &nbsp; (= μ₀ I_d)'
+      : '∮ B · dℓ = μ₀ I_enclosed';
+    const eqNum = sc === 'wire'
+      ? `B = μ₀I/(2πr) = (4π×10⁻⁷)(${I.toFixed(1)}) / (2π × ${(R*100).toFixed(2)}×10⁻²) = <span class="nm">${B.toExponential(2)} T</span>`
+      : sc === 'solenoid'
+      ? `B = μ₀ n I = (4π×10⁻⁷)(1000)(${I.toFixed(1)}) = <span class="nm">${B.toExponential(2)} T</span>`
+      : `I_d = ε₀ A dE/dt = <span class="nm">${dispCurrent.toExponential(2)} A</span> &nbsp;→&nbsp; B = <span class="nm">${B.toExponential(2)} T</span>`;
+    setEquation(eqSym, eqNum, summary);
+
+    animate(); // always animate to show flowing current
+  },
+};
+
+function drawStraightWire(gs, I, phase) {
+  el(gs, 'line', { x1:CX, y1:30, x2:CX, y2:H-30, stroke:'#f0c060', 'stroke-width':5 });
+  el(gs, 'polygon', { points:`${CX-6},50 ${CX+6},50 ${CX},38`, fill:'#f0c060' });
+  el(gs, 'text', { x:CX+14, y:48, 'font-family':'monospace', 'font-size':11, fill:'#f0c060', text:'I' });
+  // Flowing charge dots — speed and density scale with I
+  const numDots = Math.max(3, Math.min(14, Math.round(I * 2)));
+  const spacing = (H - 80) / numDots;
+  for (let i = 0; i < numDots; i++) {
+    const y = 50 + ((i + phase) % numDots) * spacing;
+    el(gs, 'circle', { cx:CX, cy:y, r:3, fill:'#ffe8a0', opacity:0.9 });
+  }
+}
+
+function drawAmperianLoop(gl, cx, cy, r) {
+  el(gl, 'circle', { cx, cy, r, fill:'rgba(240,192,96,0.05)', stroke:'#f0c060', 'stroke-width':2, 'stroke-dasharray':'6 4' });
+  el(gl, 'text', { x:cx + r + 8, y:cy - 6, 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'AMPERIAN LOOP' });
+}
+
+function drawCircularB(g, cx, cy, r, I) {
+  const intensity = Math.min(1, I / 10);
+  for (let i = 0; i < 5; i++) {
+    const rr = 40 + i*40;
+    const opacity = Math.max(0.15, (1 / (i+1))) * (0.4 + 0.5*intensity);
+    el(g, 'circle', { cx, cy, r:rr, fill:'none', stroke:'#c060ff', 'stroke-width':1.4, opacity });
+    el(g, 'path', { d:`M ${cx-3} ${cy-rr} L ${cx+3} ${cy-rr}`, stroke:'#c060ff', 'stroke-width':1.5, 'marker-end':'url(#arrow-violet)', opacity:opacity+0.2 });
+  }
+}
+
+function drawSolenoidAmpere(gs, I, phase) {
+  for (let i = 0; i < 14; i++) {
+    el(gs, 'ellipse', { cx:CX-160+i*24, cy:CY, rx:7, ry:60, fill:'none', stroke:'#f0c060', 'stroke-width':1.8 });
+  }
+  el(gs, 'text', { x:CX-180, y:CY-80, 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'I →' });
+  // current dots flowing along top wire feed
+  const numDots = Math.max(3, Math.min(10, Math.round(I * 1.5)));
+  for (let i = 0; i < numDots; i++) {
+    const x = 60 + ((i + phase) % numDots) * (CX - 220) / numDots;
+    el(gs, 'circle', { cx:x, cy:CY-72, r:2.5, fill:'#ffe8a0', opacity:0.85 });
+  }
+}
+
+function drawSolenoidAmpereLoop(gl) {
+  el(gl, 'rect', { x:CX-100, y:CY-40, width:200, height:80, fill:'rgba(240,192,96,0.05)', stroke:'#f0c060', 'stroke-width':2, 'stroke-dasharray':'6 4' });
+  el(gl, 'text', { x:CX+110, y:CY-50, 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'AMPERIAN LOOP' });
+}
+
+function drawSolenoidB(g, I) {
+  const op = Math.min(1, 0.4 + I*0.06);
+  for (let y = CY-50; y <= CY+50; y += 18) {
+    el(g, 'line', { x1:CX-140, y1:y, x2:CX+140, y2:y, stroke:'#c060ff', 'stroke-width':1.6, 'marker-end':'url(#arrow-violet)', opacity:op });
+  }
+}
+
+function drawCapacitor(gs, dvdt, phase, Id) {
+  // Plates
+  el(gs, 'line', { x1:CX-40, y1:CY-100, x2:CX-40, y2:CY+100, stroke:'#f0c060', 'stroke-width':5 });
+  el(gs, 'line', { x1:CX+40, y1:CY-100, x2:CX+40, y2:CY+100, stroke:'#f0c060', 'stroke-width':5 });
+  // Wires
+  el(gs, 'line', { x1:CX-40, y1:CY, x2:60, y2:CY, stroke:'#f0c060', 'stroke-width':3 });
+  el(gs, 'line', { x1:CX+40, y1:CY, x2:W-60, y2:CY, stroke:'#f0c060', 'stroke-width':3 });
+  // Flowing dots scale with displacement current (=real current)
+  const flow = Math.max(0.5, Math.min(8, dvdt * 0.5));
+  const numDots = Math.max(3, Math.min(10, Math.round(flow * 2)));
+  for (let i = 0; i < numDots; i++) {
+    const t = (i + phase) % numDots / numDots;
+    const xL = 60 + t * (CX - 100);
+    const xR = (CX + 40) + t * (W - 100 - CX);
+    el(gs, 'circle', { cx:xL, cy:CY, r:3, fill:'#ffe8a0', opacity:0.9 });
+    el(gs, 'circle', { cx:xR, cy:CY, r:3, fill:'#ffe8a0', opacity:0.9 });
+  }
+  // Charge symbols
+  for (let i = 0; i < 7; i++) {
+    el(gs, 'text', { x:CX-50, y:CY-80+i*27, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'#ff5070', text:'+' });
+    el(gs, 'text', { x:CX+50, y:CY-80+i*27, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'#60a0ff', text:'−' });
+  }
+  // E field between plates
+  const op = Math.min(1, 0.3 + dvdt*0.04);
+  for (let y = CY-80; y <= CY+80; y += 25) {
+    el(gs, 'line', { x1:CX-30, y1:y, x2:CX+30, y2:y, stroke:'#20d0ff', 'stroke-width':1.6, 'marker-end':'url(#arrow-cyan)', opacity:op });
+  }
+  el(gs, 'text', { x:CX, y:CY+125, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'#20d0ff', text:'E field growing → "displacement current" I_d = ε₀ A dE/dt' });
+}
+
+function drawSlidableLoop(gl, lx, cy, r, zone) {
+  const color = zone === 'gap' ? '#c060ff' : '#f0c060';
+  el(gl, 'circle', { cx:lx, cy, r, fill:'rgba(240,192,96,0.04)', stroke:color, 'stroke-width':2.5, 'stroke-dasharray':'6 4', class:'draggable', id:'cap-loop' });
+  el(gl, 'circle', { cx:lx, cy, r:r+3, fill:'none', stroke:color, 'stroke-width':1, opacity:0.3 });
+  el(gl, 'text', { x:lx, y:cy - r - 12, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:color, text:'← DRAG ME →' });
+  el(gl, 'text', { x:lx, y:cy + r + 22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:color,
+    text: zone === 'gap' ? 'IN THE GAP → displacement current' : 'AROUND WIRE → real current' });
+}
+
+function drawCapacitorBAroundLoop(g, cx, cy, r, dEdt, zone) {
+  const intensity = Math.min(1, Math.abs(dEdt) / 4000);
+  for (let i = 0; i < 4; i++) {
+    const rr = 20 + i*22;
+    if (rr > r + 30) break;
+    const opacity = Math.max(0.2, 1 / (i+1)) * (0.4 + 0.5*intensity);
+    el(g, 'circle', { cx, cy, r:rr, fill:'none', stroke:'#c060ff', 'stroke-width':1.4, opacity });
+    el(g, 'path', { d:`M ${cx-3} ${cy-rr} L ${cx+3} ${cy-rr}`, stroke:'#c060ff', 'stroke-width':1.5, 'marker-end':'url(#arrow-violet)', opacity:opacity+0.2 });
+  }
+}
+
+// User-placed B probes — needle rotates to local B, digital readout shows |B|
+function drawProbes(gl, scenario, I) {
+  state.ampere.probes.forEach((p, idx) => {
+    // Compute local B at probe location
+    let Bx = 0, By = 0, Bmag = 0;
+    const PIX_PER_M = 1000;
+    if (scenario === 'wire') {
+      const dx = (p.x - CX) / PIX_PER_M;
+      const dy = (p.y - CY) / PIX_PER_M;
+      const r = Math.hypot(dx, dy);
+      if (r > 0.005) {
+        Bmag = MU0 * I / (2 * Math.PI * r);
+        // Direction: tangent (right-hand rule). For current going up (out of top, into bottom from arrow), B circles counterclockwise as seen from +z.
+        Bx = -dy / r * Bmag;
+        By =  dx / r * Bmag;
+      }
+    } else if (scenario === 'solenoid') {
+      const inside = (p.x > CX - 160 && p.x < CX + 160 && p.y > CY - 60 && p.y < CY + 60);
+      if (inside) { Bmag = MU0 * 1000 * I; Bx = Bmag; By = 0; }
+      else { Bmag = MU0 * 1000 * I * 0.02; Bx = Bmag; By = 0; } // ~zero
+    } else if (scenario === 'capacitor') {
+      const dEdt = state.ampere.dVdt / 0.005;
+      const inGap = (p.x > CX - 40 && p.x < CX + 40);
+      if (inGap) {
+        const dy = (p.y - CY) / PIX_PER_M;
+        const r = Math.abs(dy);
+        if (r > 0.005) {
+          Bmag = MU0 * EPS0 * r * dEdt / 2;
+          Bx = dy > 0 ? Bmag : -Bmag;
+          By = 0;
+        }
+      } else {
+        // around wire
+        const wireX = p.x < CX ? CX - 40 : CX + 40;
+        // skip — outside main interest
+      }
+    }
+    // Draw probe
+    const baseR = 22;
+    el(gl, 'circle', { cx:p.x, cy:p.y, r:baseR, fill:'rgba(8,15,30,0.95)', stroke:'#40ffaa', 'stroke-width':1.5 });
+    if (Bmag > 0) {
+      const ang = Math.atan2(By, Bx);
+      el(gl, 'line', { x1:p.x, y1:p.y, x2:p.x + (baseR-4)*Math.cos(ang), y2:p.y + (baseR-4)*Math.sin(ang), stroke:'#40ffaa', 'stroke-width':2.2, 'marker-end':'url(#arrow-green)' });
+    } else {
+      el(gl, 'text', { x:p.x, y:p.y+4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'#40ffaa', text:'·' });
+    }
+    el(gl, 'circle', { cx:p.x, cy:p.y, r:2, fill:'#40ffaa' });
+    // Digital readout
+    el(gl, 'rect', { x:p.x - 38, y:p.y + baseR + 4, width:76, height:18, fill:'rgba(8,15,30,0.95)', stroke:'#40ffaa', 'stroke-width':1, rx:3 });
+    el(gl, 'text', { x:p.x, y:p.y + baseR + 17, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'#40ffaa',
+      text: Bmag > 0 ? `|B|=${Bmag.toExponential(1)} T` : 'B ≈ 0' });
+    // Tiny ✕ delete button
+    el(gl, 'circle', { cx:p.x + baseR - 4, cy:p.y - baseR + 4, r:6, fill:'#ff4f60', stroke:'#fff', 'stroke-width':1, class:'draggable probe-delete', 'data-probe-idx':idx });
+    el(gl, 'text', { x:p.x + baseR - 4, y:p.y - baseR + 7, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':8, 'font-weight':'bold', fill:'#fff', text:'×', 'pointer-events':'none' });
+  });
+}
+
+// Inline B vs r plot (returns SVG string) — shows 1/r curve with dot at user's loop radius
+function buildBrPlot(scenario, I, R) {
+  if (scenario === 'solenoid') return '<span style="font-size:10px;color:var(--text3);">Solenoid: B is uniform inside, independent of r.</span>';
+  const w = 260, h = 70;
+  const padL = 30, padR = 8, padT = 6, padB = 18;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+  const rMin = 0.005, rMax = 0.20; // 0.5 cm to 20 cm
+  let path = '';
+  const N = 60;
+  let Bvals = [];
+  for (let i = 0; i <= N; i++) {
+    const r = rMin + (rMax - rMin) * (i / N);
+    const B = scenario === 'wire'
+      ? MU0 * I / (2 * Math.PI * r)
+      : MU0 * EPS0 * r * (state.ampere.dVdt / 0.005) / 2;
+    Bvals.push({ r, B });
+  }
+  const Bmax = Math.max(...Bvals.map(p => p.B));
+  Bvals.forEach((p, i) => {
+    const x = padL + (p.r - rMin) / (rMax - rMin) * plotW;
+    const y = padT + plotH - (p.B / Bmax) * plotH;
+    path += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+  });
+  // User dot
+  const Bnow = scenario === 'wire'
+    ? MU0 * I / (2 * Math.PI * R)
+    : MU0 * EPS0 * R * (state.ampere.dVdt / 0.005) / 2;
+  const Rclamp = Math.max(rMin, Math.min(rMax, R));
+  const dotX = padL + (Rclamp - rMin) / (rMax - rMin) * plotW;
+  const dotY = padT + plotH - Math.min(1, Bnow / Bmax) * plotH;
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;display:block;">
+    <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h - padB}" stroke="var(--text3)" stroke-width="1"/>
+    <line x1="${padL}" y1="${h - padB}" x2="${w - padR}" y2="${h - padB}" stroke="var(--text3)" stroke-width="1"/>
+    <text x="4" y="${padT + 8}" font-family="monospace" font-size="8" fill="var(--text3)">|B|</text>
+    <text x="${w - padR}" y="${h - 4}" text-anchor="end" font-family="monospace" font-size="8" fill="var(--text3)">r (m)</text>
+    <text x="${padL}" y="${h - 4}" text-anchor="middle" font-family="monospace" font-size="8" fill="var(--text3)">0</text>
+    <text x="${w - padR - 4}" y="${h - 4}" text-anchor="end" font-family="monospace" font-size="8" fill="var(--text3)">0.2</text>
+    <path d="${path}" fill="none" stroke="${scenario === 'wire' ? '#c060ff' : '#20d0ff'}" stroke-width="1.6"/>
+    <circle cx="${dotX}" cy="${dotY}" r="4" fill="#f0c060" stroke="#fff" stroke-width="1.2"/>
+    <line x1="${dotX}" y1="${dotY}" x2="${dotX}" y2="${h - padB}" stroke="#f0c060" stroke-width="0.8" stroke-dasharray="2 2"/>
+  </svg>`;
+}
+
+// =====================================================================
+// MODE 5 — LIGHT
+// =====================================================================
+MODES.light = {
+  title: 'EM WAVES = LIGHT',
+  scenarios: [
+    { id:'plane-wave', label:'Plane Wave' },
+    { id:'dipole', label:'Oscillating Dipole' },
+    { id:'derive-c', label:'Derive c' },
+  ],
+  applyScenario(id) {
+    state.light.scenario = id;
+  },
+  paramsHTML: `
+    <div class="section-label">Parameters</div>
+    <div class="param">
+      <div class="param-row"><span>Frequency</span><span class="param-val" id="l-fv" style="color:var(--gold)">1.0</span></div>
+      <input type="range" id="l-f" min="0.2" max="3" step="0.05" value="1.0">
+      <div class="param-sub">Arbitrary scale for animation speed</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Amplitude</span><span class="param-val" id="l-av" style="color:var(--cyan)">60 px</span></div>
+      <input type="range" id="l-a" min="20" max="100" step="2" value="60">
+      <div class="param-sub">Strength of E and B (arbitrary)</div>
+    </div>
+  `,
+  toggles: [
+    { id:'showE', label:'Show E', default:true },
+    { id:'showB', label:'Show B', default:true },
+  ],
+  applyToggle(id, on) {
+    if (id === 'showE') state.light.showE = on;
+    if (id === 'showB') state.light.showB = on;
+  },
+  bindParams() {
+    document.getElementById('l-f').oninput = function() {
+      state.light.freq = parseFloat(this.value);
+      document.getElementById('l-fv').textContent = this.value;
+      render();
+    };
+    document.getElementById('l-a').oninput = function() {
+      state.light.amp = parseFloat(this.value);
+      document.getElementById('l-av').textContent = this.value + ' px';
+      render();
+    };
+  },
+  render() {
+    const g = clearGroup('g-field');
+    const gs = clearGroup('g-static');
+    const ga = clearGroup('g-actors');
+    const gl = clearGroup('g-loop');
+
+    setBadgeMode('EM WAVES = LIGHT');
+
+    const sc = state.light.scenario;
+
+    if (sc === 'plane-wave') {
+      drawPlaneWave(g, gs);
+      setBadgeInfo(`f = ${state.light.freq.toFixed(2)} · E ⊥ B ⊥ direction`);
+      setBadgeHint('E and B oscillate in step. They are perpendicular and propagate together.');
+    } else if (sc === 'dipole') {
+      drawOscillatingDipole(g, gs);
+      setBadgeInfo('Accelerating charges radiate EM waves');
+      setBadgeHint('Every radio antenna and atom obeys this. No acceleration → no radiation.');
+    } else if (sc === 'derive-c') {
+      drawDeriveC(gs);
+      setBadgeInfo('c emerges from μ₀ and ε₀ alone');
+      setBadgeHint('Two electrostatic & magnetostatic constants → speed of light. No light needed to measure it.');
+    }
+
+    renderReadout([
+      { label:'μ₀ (permeability)', value: '4π × 10⁻⁷ T·m/A', cls:'violet', small:true },
+      { label:'ε₀ (permittivity)', value: '8.854 × 10⁻¹² C²/Nm²', cls:'cyan', small:true },
+      { label:'c = 1/√(μ₀ε₀)', value: C_LIGHT.toExponential(4) + ' m/s', cls:'gold', small:true },
+      { label:'Measured c', value: '2.998 × 10⁸ m/s', cls:'green', small:true },
+    ]);
+
+    setEquation(
+      'c = 1 / √(μ₀ ε₀)',
+      `c = 1/√((4π×10⁻⁷)(8.854×10⁻¹²)) = <span class="nm">${C_LIGHT.toExponential(4)} m/s</span>`,
+      'The speed of light falls out of two laboratory constants — measured without any reference to light. This is the smoking gun that light IS electromagnetism.'
+    );
+
+    if (sc === 'plane-wave' || sc === 'dipole') animate();
+  },
+};
+
+function drawPlaneWave(g, gs) {
+  // axis
+  el(gs, 'line', { x1:60, y1:CY, x2:W-60, y2:CY, stroke:'var(--axis-stroke)', 'stroke-width':1, 'stroke-dasharray':'2 4' });
+  el(gs, 'text', { x:W-60, y:CY-8, 'text-anchor':'end', 'font-family':'monospace', 'font-size':10, fill:'var(--text3)', text:'propagation →' });
+
+  const t = state.light.t;
+  const amp = state.light.amp;
+  const k = 0.025;
+  const omega = state.light.freq * 2;
+
+  // E (vertical, cyan)
+  if (state.light.showE) {
+    let d = '';
+    for (let x = 60; x < W-60; x += 4) {
+      const y = CY - amp * Math.sin(k*x - omega*t);
+      d += (x === 60 ? 'M':'L') + x + ' ' + y + ' ';
+    }
+    el(g, 'path', { d, fill:'none', stroke:'#20d0ff', 'stroke-width':2 });
+    // vertical arrows showing E
+    for (let x = 100; x < W-100; x += 60) {
+      const y = CY - amp * Math.sin(k*x - omega*t);
+      el(g, 'line', { x1:x, y1:CY, x2:x, y2:y, stroke:'#20d0ff', 'stroke-width':1.4, 'marker-end':'url(#arrow-cyan)', opacity:0.85 });
+    }
+    el(g, 'text', { x:75, y:CY-amp-10, 'font-family':'monospace', 'font-size':11, fill:'#20d0ff', text:'E (electric)' });
+  }
+
+  // B (horizontal-ish on perspective, violet) — drawn as a second curve, slightly offset
+  if (state.light.showB) {
+    let d2 = '';
+    for (let x = 60; x < W-60; x += 4) {
+      const y = CY + amp * 0.5 * Math.sin(k*x - omega*t);  // smaller, to suggest perpendicularity
+      d2 += (x === 60 ? 'M':'L') + x + ' ' + y + ' ';
+    }
+    el(g, 'path', { d:d2, fill:'none', stroke:'#c060ff', 'stroke-width':2, 'stroke-dasharray':'4 2' });
+    for (let x = 130; x < W-100; x += 60) {
+      const y = CY + amp * 0.5 * Math.sin(k*x - omega*t);
+      el(g, 'line', { x1:x, y1:CY, x2:x, y2:y, stroke:'#c060ff', 'stroke-width':1.4, 'marker-end':'url(#arrow-violet)', opacity:0.85 });
+    }
+    el(g, 'text', { x:75, y:CY+amp+22, 'font-family':'monospace', 'font-size':11, fill:'#c060ff', text:'B (magnetic, ⊥ E)' });
+  }
+
+  // propagation arrow
+  el(g, 'line', { x1:W-130, y1:CY+amp+50, x2:W-70, y2:CY+amp+50, stroke:'#f0c060', 'stroke-width':2.5, 'marker-end':'url(#arrow-gold)' });
+  el(g, 'text', { x:W-130, y:CY+amp+42, 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'at speed c' });
+}
+
+function drawOscillatingDipole(g, gs) {
+  const t = state.light.t;
+  const amp = state.light.amp * 0.5;
+  const omega = state.light.freq * 3;
+  const offset = amp * Math.sin(omega * t);
+
+  // Vertical line (antenna)
+  el(gs, 'line', { x1:CX, y1:CY-amp-30, x2:CX, y2:CY+amp+30, stroke:'var(--text3)', 'stroke-width':1, 'stroke-dasharray':'3 3' });
+
+  // Oscillating charges
+  el(g, 'circle', { cx:CX, cy:CY - offset, r:10, fill:'#ff5070' });
+  el(g, 'text', { x:CX, y:CY - offset + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#fff', text:'+' });
+  el(g, 'circle', { cx:CX, cy:CY + offset, r:10, fill:'#60a0ff' });
+  el(g, 'text', { x:CX, y:CY + offset + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, 'font-weight':'bold', fill:'#fff', text:'−' });
+
+  // Radiating wavefronts: rings at multiples of "wavelength"
+  const lambda = 70;
+  for (let i = 1; i <= 5; i++) {
+    const r = ((t * 60) % lambda) + i*lambda;
+    if (r < 400) {
+      el(g, 'circle', { cx:CX, cy:CY, r, fill:'none', stroke:'#20d0ff', 'stroke-width':1.5, opacity:Math.max(0, 0.7 - r/400) });
+    }
+  }
+  el(gs, 'text', { x:CX, y:H-25, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#20d0ff', text:'Oscillating charges radiate EM waves outward at speed c' });
+}
+
+function drawDeriveC(gs) {
+  // Big aesthetic equation reveal
+  const lines = [
+    { y:90,  text:'Take Maxwell\'s equations in empty space:', color:'var(--text2)', size:12 },
+    { y:120, text:'∮ E · dℓ = − dΦ_B/dt   and   ∮ B · dℓ = μ₀ε₀ dΦ_E/dt', color:'#f0c060', size:13 },
+    { y:160, text:'Take curl of each and combine →', color:'var(--text2)', size:12 },
+    { y:200, text:'∂²E/∂t² = (1/μ₀ε₀) ∇²E', color:'#20d0ff', size:14 },
+    { y:240, text:'Wave equation with v² = 1/(μ₀ε₀)', color:'var(--text2)', size:12 },
+    { y:285, text:`v = 1/√((4π×10⁻⁷)(8.854×10⁻¹²))`, color:'#c060ff', size:13 },
+    { y:320, text:`v = ${C_LIGHT.toExponential(4)} m/s`, color:'#40ffaa', size:18 },
+    { y:360, text:`= the measured speed of light, exactly.`, color:'#40ffaa', size:13 },
+    { y:410, text:'Light is electromagnetism. — J.C. Maxwell, 1865', color:'var(--gold)', size:11 },
+  ];
+  lines.forEach(l => {
+    el(gs, 'text', { x:CX, y:l.y, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':l.size, fill:l.color, text:l.text });
+  });
+}
+
+// =====================================================================
+// SHARED UI HELPERS
+// =====================================================================
+function setBadgeMode(t) { document.getElementById('badge-mode').textContent = t; }
+function setBadgeInfo(t) { document.getElementById('badge-info').textContent = t; }
+function setBadgeHint(t) { document.getElementById('badge-hint').textContent = t; }
+
+function renderReadout(cells) {
+  const wrap = document.getElementById('readout-grid');
+  wrap.innerHTML = '';
+  cells.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'readout-cell' + (c.wide ? ' wide' : '');
+    const valueClass = (c.cls || '') + (c.small ? ' small' : '');
+    const valueContent = c.isHTML ? c.value : c.value;
+    div.innerHTML = `
+      <div class="r-label">${c.label}</div>
+      <div class="r-value ${valueClass}">${valueContent}</div>
+      ${c.sub ? `<div class="r-sub">${c.sub}</div>` : ''}
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+function setEquation(symbolic, numeric, explain) {
+  document.getElementById('eq-symbolic').innerHTML = symbolic;
+  document.getElementById('eq-numeric').innerHTML = numeric;
+  document.getElementById('eq-explain').innerHTML = explain;
+}
+
+// =====================================================================
+// MODE SWITCHING & PANEL BUILDING
+// =====================================================================
+function activateMode(modeId) {
+  state.mode = modeId;
+  const mode = MODES[modeId];
+
+  document.querySelectorAll('#mode-strip .mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === modeId);
+  });
+
+  // Scenario buttons
+  const sbWrap = document.getElementById('scenario-btns');
+  sbWrap.innerHTML = '';
+  sbWrap.className = 'scenario-btns' + (mode.scenarios.length >= 5 ? ' cols-1' : (mode.scenarios.length === 3 ? ' cols-3' : ''));
+  const currScenario = state[modeStateKey(modeId)].scenario;
+  mode.scenarios.forEach(s => {
+    const b = document.createElement('button');
+    b.textContent = s.label;
+    if (s.id === currScenario) b.classList.add('active');
+    b.onclick = () => {
+      mode.applyScenario(s.id);
+      activateMode(modeId);
+    };
+    sbWrap.appendChild(b);
+  });
+
+  // Param area
+  document.getElementById('param-area').innerHTML = mode.paramsHTML;
+
+  // Toggles
+  const tbLabel = document.getElementById('toggle-label');
+  const tbWrap = document.getElementById('toggle-btns');
+  tbWrap.innerHTML = '';
+  if (mode.toggles.length > 0) {
+    tbLabel.hidden = false;
+    mode.toggles.forEach(t => {
+      const b = document.createElement('button');
+      b.textContent = t.label;
+      // initial state
+      const stKey = modeStateKey(modeId);
+      const stVal = state[stKey];
+      const propKey = t.id === 'lines' ? 'showLines' : t.id === 'vectors' ? 'showVectors' : t.id === 'cut' ? 'cutMagnet' : t.id === 'showE' ? 'showE' : t.id === 'showB' ? 'showB' : t.id;
+      if (stVal[propKey]) b.classList.add('active');
+      b.onclick = () => {
+        b.classList.toggle('active');
+        mode.applyToggle(t.id, b.classList.contains('active'));
+        render();
+      };
+      tbWrap.appendChild(b);
+    });
+  } else {
+    tbLabel.hidden = true;
+  }
+
+  mode.bindParams();
+  render();
+}
+
+function modeStateKey(modeId) {
+  if (modeId === 'gauss') return 'gauss';
+  if (modeId === 'gauss-mag') return 'mag';
+  if (modeId === 'faraday') return 'faraday';
+  if (modeId === 'ampere') return 'ampere';
+  if (modeId === 'light') return 'light';
+}
+
+function render() {
+  drawGrid();
+  MODES[state.mode].render();
+}
+
+// =====================================================================
+// ANIMATION (used by Faraday rotating, transformer, and Light modes)
+// =====================================================================
+let animHandle = null;
+function animate() {
+  if (animHandle) return; // already running
+  function tick() {
+    if (state.mode === 'light') {
+      state.light.t += 0.03;
+      render();
+      animHandle = requestAnimationFrame(tick);
+    } else if (state.mode === 'faraday' && (state.faraday.scenario === 'generator' || state.faraday.scenario === 'transformer')) {
+      render();
+      animHandle = requestAnimationFrame(tick);
+    } else if (state.mode === 'ampere' && state.ampere.scenario === 'capacitor') {
+      // gentle pulse on E arrows
+      animHandle = null; // no continuous animation needed
+    } else {
+      animHandle = null;
+    }
+  }
+  animHandle = requestAnimationFrame(tick);
+}
+
+// =====================================================================
+// DRAGGING (charges in Gauss, sphere everywhere, magnet in Faraday)
+// =====================================================================
+function bindDragging() {
+  const svg = document.getElementById('stage');
+  let dragging = null; // { type, idx? }
+
+  function getSvgPt(e) {
+    const rect = svg.getBoundingClientRect();
+    const cl = e.touches ? e.touches[0] : e;
+    return {
+      x: (cl.clientX - rect.left) * (W / rect.width),
+      y: (cl.clientY - rect.top) * (H / rect.height)
+    };
+  }
+
+  svg.addEventListener('mousedown', startDrag);
+  svg.addEventListener('touchstart', startDrag, {passive:false});
+
+  function startDrag(e) {
+    const target = e.target;
+    if (target.classList.contains('charge-handle')) {
+      dragging = { type:'charge', idx: parseInt(target.getAttribute('data-idx')) };
+      e.preventDefault();
+    } else if (target.id === 'gauss-sphere') {
+      dragging = { type:'sphere' };
+      e.preventDefault();
+    } else if (target.id === 'magnet-handle' || target.id === 'magnet-handle2') {
+      dragging = { type:'magnet' };
+      e.preventDefault();
+    } else if (state.mode === 'gauss' && state.gauss.scenario === 'custom') {
+      // click-to-place charge
+      const pt = getSvgPt(e);
+      if (state.gauss.charges.length < 4) {
+        state.gauss.charges.push({ x:pt.x, y:pt.y, q: e.shiftKey ? -5 : 5 });
+        render();
+      }
+    }
+  }
+
+  function move(e) {
+    if (!dragging) return;
+    const pt = getSvgPt(e);
+    if (dragging.type === 'charge') {
+      const c = state.gauss.charges[dragging.idx];
+      if (c) { c.x = pt.x; c.y = pt.y; render(); }
+    } else if (dragging.type === 'sphere') {
+      state.gauss.gaussSphere.x = pt.x;
+      state.gauss.gaussSphere.y = pt.y;
+      render();
+    } else if (dragging.type === 'magnet') {
+      const newX = Math.max(100, Math.min(600, pt.x));
+      state.faraday.magnetVx = newX - state.faraday.magnetX;
+      state.faraday.magnetX = newX;
+      const sl = document.getElementById('f-mx');
+      if (sl) { sl.value = newX; document.getElementById('f-mxv').textContent = newX.toFixed(0) + ' px'; }
+      render();
+      // decay velocity so EMF returns to 0 when not moving
+      clearTimeout(window._magV);
+      window._magV = setTimeout(() => { state.faraday.magnetVx = 0; render(); }, 80);
+    }
+    e.preventDefault();
+  }
+
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('mouseup', () => { dragging = null; });
+  window.addEventListener('touchend', () => { dragging = null; });
+}
+
+// =====================================================================
+// MODE STRIP BINDING
+// =====================================================================
+function bindModeStrip() {
+  document.querySelectorAll('#mode-strip .mode-btn').forEach(b => {
+    b.onclick = () => activateMode(b.dataset.mode);
+  });
+}
+
+// =====================================================================
+// THEME
+// =====================================================================
+function bindTheme() {
+  const themeSwitcher = document.getElementById('theme-switcher');
+  if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme');
+  themeSwitcher.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+    localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+    render();
+  });
+}
+
+// =====================================================================
+// BOOT
+// =====================================================================
+bindModeStrip();
+bindDragging();
+bindTheme();
+
+// Initialize Gauss with a + charge
+MODES.gauss.applyScenario('positive');
+MODES['gauss-mag'].applyScenario('bar');
+MODES.faraday.applyScenario('magnet-coil');
+MODES.ampere.applyScenario('wire');
+MODES.light.applyScenario('plane-wave');
+
+activateMode('gauss');
+window.addEventListener('resize', render);
+</script>
+</body>
+</html>
