@@ -432,6 +432,7 @@ const state = {
     raceDest: 'moon',
     raceT: 0,        // 0..1 progress
     raceRunning: false,
+    circSources: [], // tap-placed circular wave sources
   },
 };
 
@@ -1073,6 +1074,8 @@ MODES.ampere = {
   applyScenario(id) {
     state.ampere.scenario = id;
     state.ampere.capV = 0;
+    state.ampere.probes = [];      // clear probes — B context changes per scenario
+    state.ampere.capLoopX = CX;    // reset slidable loop to centre (gap)
   },
   paramsHTML: `
     <div class="section-label">Parameters</div>
@@ -1412,23 +1415,41 @@ MODES.light = {
   title: 'EM WAVES = LIGHT',
   scenarios: [
     { id:'plane-wave', label:'Plane Wave' },
+    { id:'circular-wave', label:'Circular Wave' },
+    { id:'spectrum', label:'EM Spectrum' },
     { id:'dipole', label:'Oscillating Dipole' },
+    { id:'race', label:'Race Light' },
     { id:'derive-c', label:'Derive c' },
   ],
   applyScenario(id) {
     state.light.scenario = id;
+    if (id === 'race') { state.light.raceT = 0; state.light.raceRunning = true; }
+  },
+  // Which toggles/params apply per scenario
+  scenarioToggles(sc) {
+    if (sc === 'plane-wave' || sc === 'circular-wave') return ['showE', 'showB'];
+    return [];
   },
   paramsHTML: `
     <div class="section-label">Parameters</div>
-    <div class="param">
+    <div class="param" id="l-freq-param">
       <div class="param-row"><span>Frequency</span><span class="param-val" id="l-fv" style="color:var(--gold)">1.0</span></div>
       <input type="range" id="l-f" min="0.2" max="3" step="0.05" value="1.0">
-      <div class="param-sub">Arbitrary scale for animation speed</div>
+      <div class="param-sub">Animation speed (arbitrary scale)</div>
     </div>
-    <div class="param">
+    <div class="param" id="l-amp-param">
       <div class="param-row"><span>Amplitude</span><span class="param-val" id="l-av" style="color:var(--cyan)">60 px</span></div>
       <input type="range" id="l-a" min="20" max="100" step="2" value="60">
       <div class="param-sub">Strength of E and B (arbitrary)</div>
+    </div>
+    <div class="param" id="l-spec-param" style="display:none">
+      <div class="param-row"><span>Frequency (real)</span><span class="param-val" id="l-specv" style="color:var(--gold)">—</span></div>
+      <input type="range" id="l-spec" min="6" max="20" step="0.1" value="14.6">
+      <div class="param-sub">Sweep radio → visible → gamma</div>
+    </div>
+    <div class="param" id="l-dest-param" style="display:none">
+      <div class="param-row"><span>Destination</span></div>
+      <div class="scenario-btns cols-1" id="l-dest-btns" style="margin-top:4px;"></div>
     </div>
   `,
   toggles: [
@@ -1450,6 +1471,32 @@ MODES.light = {
       document.getElementById('l-av').textContent = this.value + ' px';
       render();
     };
+    const spec = document.getElementById('l-spec');
+    if (spec) spec.oninput = function() {
+      state.light.spectrumLog = parseFloat(this.value);
+      render();
+    };
+    // Show/hide params per scenario
+    const sc = state.light.scenario;
+    const show = (id, on) => { const e = document.getElementById(id); if (e) e.style.display = on ? '' : 'none'; };
+    show('l-freq-param', sc === 'plane-wave' || sc === 'circular-wave' || sc === 'dipole');
+    show('l-amp-param', sc === 'plane-wave' || sc === 'circular-wave' || sc === 'dipole');
+    show('l-spec-param', sc === 'spectrum');
+    show('l-dest-param', sc === 'race');
+    // Build destination buttons for race mode
+    if (sc === 'race') {
+      const wrap = document.getElementById('l-dest-btns');
+      if (wrap) {
+        wrap.innerHTML = '';
+        RACE_DESTS.forEach(d => {
+          const b = document.createElement('button');
+          b.textContent = d.label;
+          if (d.id === state.light.raceDest) b.classList.add('active');
+          b.onclick = () => { state.light.raceDest = d.id; state.light.raceT = 0; state.light.raceRunning = true; MODES.light.bindParams(); render(); };
+          wrap.appendChild(b);
+        });
+      }
+    }
   },
   render() {
     const g = clearGroup('g-field');
@@ -1458,39 +1505,107 @@ MODES.light = {
     const gl = clearGroup('g-loop');
 
     setBadgeMode('EM WAVES = LIGHT');
-
     const sc = state.light.scenario;
 
     if (sc === 'plane-wave') {
       drawPlaneWave(g, gs);
       setBadgeInfo(`f = ${state.light.freq.toFixed(2)} · E ⊥ B ⊥ direction`);
-      setBadgeHint('E and B oscillate in step. They are perpendicular and propagate together.');
+      setBadgeHint('E and B oscillate in step, perpendicular, propagating together.');
+      lightReadoutConstants();
+    } else if (sc === 'circular-wave') {
+      drawCircularWave(g, gs);
+      setBadgeInfo('Wavefronts spreading from a point source');
+      setBadgeHint('Tap anywhere to launch a new wavefront from that point.');
+      lightReadoutConstants();
+    } else if (sc === 'spectrum') {
+      drawSpectrum(g, gs);
+      lightSpectrumReadout();
     } else if (sc === 'dipole') {
       drawOscillatingDipole(g, gs);
       setBadgeInfo('Accelerating charges radiate EM waves');
       setBadgeHint('Every radio antenna and atom obeys this. No acceleration → no radiation.');
+      lightReadoutConstants();
+    } else if (sc === 'race') {
+      drawRaceLight(g, gs);
+      lightRaceReadout();
     } else if (sc === 'derive-c') {
       drawDeriveC(gs);
       setBadgeInfo('c emerges from μ₀ and ε₀ alone');
-      setBadgeHint('Two electrostatic & magnetostatic constants → speed of light. No light needed to measure it.');
+      setBadgeHint('Two lab constants → speed of light, with no light involved.');
+      lightReadoutConstants();
     }
-
-    renderReadout([
-      { label:'μ₀ (permeability)', value: '4π × 10⁻⁷ T·m/A', cls:'violet', small:true },
-      { label:'ε₀ (permittivity)', value: '8.854 × 10⁻¹² C²/Nm²', cls:'cyan', small:true },
-      { label:'c = 1/√(μ₀ε₀)', value: C_LIGHT.toExponential(4) + ' m/s', cls:'gold', small:true },
-      { label:'Measured c', value: '2.998 × 10⁸ m/s', cls:'green', small:true },
-    ]);
 
     setEquation(
       'c = 1 / √(μ₀ ε₀)',
       `c = 1/√((4π×10⁻⁷)(8.854×10⁻¹²)) = <span class="nm">${C_LIGHT.toExponential(4)} m/s</span>`,
-      'The speed of light falls out of two laboratory constants — measured without any reference to light. This is the smoking gun that light IS electromagnetism.'
+      'The speed of light falls out of two laboratory constants, measured with no reference to light. This is the smoking gun that light IS electromagnetism.'
     );
 
-    if (sc === 'plane-wave' || sc === 'dipole') animate();
+    if (sc === 'plane-wave' || sc === 'circular-wave' || sc === 'dipole' || sc === 'race') animate();
   },
 };
+
+const RACE_DESTS = [
+  { id:'moon', label:'🌙 Moon', dist:3.84e8, time:'1.28 s', timeS:1.28 },
+  { id:'sun', label:'☀️ Sun', dist:1.496e11, time:'8.32 min', timeS:499 },
+  { id:'mars', label:'🔴 Mars (avg)', dist:2.25e11, time:'12.5 min', timeS:750 },
+  { id:'proxima', label:'⭐ Proxima Centauri', dist:4.0e16, time:'4.24 years', timeS:1.34e8 },
+];
+
+function lightReadoutConstants() {
+  renderReadout([
+    { label:'μ₀ (permeability)', value: '4π × 10⁻⁷ T·m/A', cls:'violet', small:true },
+    { label:'ε₀ (permittivity)', value: '8.854 × 10⁻¹² C²/Nm²', cls:'cyan', small:true },
+    { label:'c = 1/√(μ₀ε₀)', value: C_LIGHT.toExponential(4) + ' m/s', cls:'gold', small:true },
+    { label:'Measured c', value: '2.998 × 10⁸ m/s', cls:'green', small:true },
+  ]);
+}
+
+function lightSpectrumReadout() {
+  const logF = state.light.spectrumLog;
+  const f = Math.pow(10, logF);
+  const lambda = C_LIGHT / f;
+  const band = spectrumBand(logF);
+  setBadgeInfo(`f = 10^${logF.toFixed(1)} Hz · λ = ${formatLambda(lambda)}`);
+  setBadgeHint('Drag the slider from radio waves all the way to gamma rays.');
+  renderReadout([
+    { label:'Frequency f', value: f.toExponential(2) + ' Hz', cls:'gold', small:true },
+    { label:'Wavelength λ = c/f', value: formatLambda(lambda), cls:'cyan', small:true },
+    { label:'Band', value: band.name, cls:'violet' },
+    { label:'Everyday source', value: band.source, cls:'green', small:true },
+  ]);
+}
+
+function lightRaceReadout() {
+  const d = RACE_DESTS.find(x => x.id === state.light.raceDest);
+  renderReadout([
+    { label:'Distance', value: d.dist.toExponential(2) + ' m', cls:'cyan', small:true },
+    { label:'Light travel time', value: d.time, cls:'gold' },
+    { label:'Speed', value: '2.998 × 10⁸ m/s', cls:'green', small:true },
+    { label:'Progress', value: (state.light.raceT * 100).toFixed(0) + ' %', cls:'violet' },
+  ]);
+  setBadgeInfo(`Photon racing Earth → ${d.label}`);
+  setBadgeHint('Even at the fastest speed in the universe, distance humbles light.');
+}
+
+function spectrumBand(logF) {
+  if (logF < 9) return { name:'Radio', source:'FM/AM, TV broadcast', color:'#8a2020' };
+  if (logF < 12) return { name:'Microwave', source:'Wi-Fi, ovens, radar', color:'#b04010' };
+  if (logF < 14.3) return { name:'Infrared', source:'Heat, remote controls', color:'#d06000' };
+  if (logF < 14.8) return { name:'Visible light', source:'What your eyes see', color:'#40c060' };
+  if (logF < 16.5) return { name:'Ultraviolet', source:'Sunburn, sterilizers', color:'#6040d0' };
+  if (logF < 19.5) return { name:'X-ray', source:'Medical imaging', color:'#4060c0' };
+  return { name:'Gamma ray', source:'Nuclear, cosmic rays', color:'#c0c0ff' };
+}
+
+function formatLambda(m) {
+  if (m >= 1e3) return (m/1e3).toFixed(1) + ' km';
+  if (m >= 1) return m.toFixed(2) + ' m';
+  if (m >= 1e-3) return (m*1e3).toFixed(2) + ' mm';
+  if (m >= 1e-6) return (m*1e6).toFixed(2) + ' µm';
+  if (m >= 1e-9) return (m*1e9).toFixed(2) + ' nm';
+  return (m*1e12).toFixed(2) + ' pm';
+}
 
 function drawPlaneWave(g, gs) {
   // axis
@@ -1536,6 +1651,109 @@ function drawPlaneWave(g, gs) {
   // propagation arrow
   el(g, 'line', { x1:W-130, y1:CY+amp+50, x2:W-70, y2:CY+amp+50, stroke:'#f0c060', 'stroke-width':2.5, 'marker-end':'url(#arrow-gold)' });
   el(g, 'text', { x:W-130, y:CY+amp+42, 'font-family':'monospace', 'font-size':10, fill:'#f0c060', text:'at speed c' });
+}
+
+// Circular wavefronts spreading from source point(s). Tap to add sources.
+function drawCircularWave(g, gs) {
+  const t = state.light.t;
+  const omega = state.light.freq;
+  const lambda = 55;
+  // default source at centre if none placed
+  const sources = state.light.circSources && state.light.circSources.length
+    ? state.light.circSources : [{ x: CX, y: CY, t0: 0 }];
+  sources.forEach(src => {
+    const elapsed = (t - src.t0);
+    const maxR = elapsed * 80 * omega;
+    // concentric expanding rings
+    for (let r = (elapsed * 80 * omega) % lambda; r < 520; r += lambda) {
+      if (r < 6) continue;
+      const opacity = Math.max(0, 0.7 - r / 560);
+      if (opacity <= 0) continue;
+      // E rings (cyan, solid) and B rings (violet, dashed, offset by quarter wavelength)
+      if (state.light.showE) el(g, 'circle', { cx:src.x, cy:src.y, r, fill:'none', stroke:'#20d0ff', 'stroke-width':1.6, opacity });
+      if (state.light.showB) el(g, 'circle', { cx:src.x, cy:src.y, r:r + lambda/2, fill:'none', stroke:'#c060ff', 'stroke-width':1.2, 'stroke-dasharray':'4 3', opacity:opacity*0.8 });
+    }
+    el(g, 'circle', { cx:src.x, cy:src.y, r:5, fill:'#ffe8a0', stroke:'#f0c060', 'stroke-width':1.5 });
+  });
+  el(gs, 'text', { x:CX, y:H-22, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'#20d0ff', text:'Tap anywhere to launch a new wavefront · cyan = E, violet = B' });
+}
+
+// Real EM spectrum sweep with colour-tinted wave
+function drawSpectrum(g, gs) {
+  const logF = state.light.spectrumLog;
+  const band = spectrumBand(logF);
+  const f = Math.pow(10, logF);
+  // axis
+  el(gs, 'line', { x1:60, y1:CY, x2:W-60, y2:CY, stroke:'var(--axis-stroke)', 'stroke-width':1, 'stroke-dasharray':'2 4' });
+  // wavelength visually shrinks as f rises: map logF 6..20 → k 0.008..0.18
+  const k = 0.008 + (logF - 6) / 14 * 0.20;
+  const t = state.light.t;
+  const omega = 2;
+  const amp = 70;
+  let d = '';
+  for (let x = 60; x < W-60; x += 3) {
+    const y = CY - amp * Math.sin(k*x - omega*t);
+    d += (x === 60 ? 'M':'L') + x + ' ' + y.toFixed(1) + ' ';
+  }
+  el(g, 'path', { d, fill:'none', stroke:band.color, 'stroke-width':2.4 });
+  // visible-light rainbow strip indicator
+  el(gs, 'text', { x:CX, y:60, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':16, 'font-weight':'bold', fill:band.color, text:band.name.toUpperCase() });
+  el(gs, 'text', { x:CX, y:CY+amp+34, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'var(--text2)', text:`λ = c/f = ${formatLambda(C_LIGHT/f)}   ·   f = ${f.toExponential(1)} Hz` });
+  // spectrum bar at bottom
+  const barY = H - 40, barX0 = 80, barW = W - 160;
+  const bands = [
+    { lo:6, hi:9, c:'#8a2020', n:'Radio' },
+    { lo:9, hi:12, c:'#b04010', n:'Micro' },
+    { lo:12, hi:14.3, c:'#d06000', n:'IR' },
+    { lo:14.3, hi:14.8, c:'#40c060', n:'Vis' },
+    { lo:14.8, hi:16.5, c:'#6040d0', n:'UV' },
+    { lo:16.5, hi:19.5, c:'#4060c0', n:'X-ray' },
+    { lo:19.5, hi:20, c:'#c0c0ff', n:'γ' },
+  ];
+  bands.forEach(b => {
+    const x = barX0 + (b.lo - 6) / 14 * barW;
+    const w = (b.hi - b.lo) / 14 * barW;
+    el(gs, 'rect', { x, y:barY, width:w, height:14, fill:b.c, opacity:0.85 });
+    if (w > 20) el(gs, 'text', { x:x + w/2, y:barY+25, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':8, fill:'var(--text3)', text:b.n });
+  });
+  // marker for current position
+  const mx = barX0 + (logF - 6) / 14 * barW;
+  el(gs, 'polygon', { points:`${mx-5},${barY-6} ${mx+5},${barY-6} ${mx},${barY}`, fill:'#fff' });
+}
+
+// Race a photon across a real distance, with a live clock
+function drawRaceLight(g, gs) {
+  const d = RACE_DESTS.find(x => x.id === state.light.raceDest);
+  const x0 = 90, x1 = W - 90;
+  // track
+  el(gs, 'line', { x1:x0, y1:CY, x2:x1, y2:CY, stroke:'var(--border2)', 'stroke-width':2, 'stroke-dasharray':'4 4' });
+  // Earth (start)
+  el(gs, 'circle', { cx:x0, cy:CY, r:14, fill:'#3a8fff' });
+  el(gs, 'text', { x:x0, y:CY+34, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:'EARTH' });
+  // Destination
+  el(gs, 'circle', { cx:x1, cy:CY, r:16, fill:'#f0c060' });
+  el(gs, 'text', { x:x1, y:CY+36, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:d.label });
+  // advance progress
+  if (state.light.raceRunning) {
+    state.light.raceT += 0.004;
+    if (state.light.raceT >= 1) { state.light.raceT = 1; state.light.raceRunning = false; }
+  }
+  const px = x0 + (x1 - x0) * state.light.raceT;
+  // photon with trail
+  el(g, 'line', { x1:x0, y1:CY, x2:px, y2:CY, stroke:'#20d0ff', 'stroke-width':2, opacity:0.4 });
+  el(g, 'circle', { cx:px, cy:CY, r:7, fill:'#ffe8a0', stroke:'#20d0ff', 'stroke-width':2 });
+  // live clock — scale elapsed to real travel time
+  const elapsedReal = state.light.raceT * d.timeS;
+  let clock;
+  if (d.timeS < 60) clock = elapsedReal.toFixed(2) + ' s';
+  else if (d.timeS < 3600) clock = (elapsedReal/60).toFixed(2) + ' min';
+  else clock = (elapsedReal/3.156e7).toFixed(2) + ' yr';
+  el(g, 'text', { x:CX, y:CY-50, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':22, 'font-weight':'bold', fill:'#40ffaa', text:clock });
+  el(g, 'text', { x:CX, y:CY-26, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text3)', text:'elapsed (light travel time)' });
+  if (!state.light.raceRunning && state.light.raceT >= 1) {
+    el(g, 'text', { x:CX, y:CY+70, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'#f0c060', text:`Arrived. Light needed ${d.time} to cross ${d.dist.toExponential(1)} m.` });
+    el(g, 'text', { x:CX, y:CY+92, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text3)', text:'Tap a destination again to replay.' });
+  }
 }
 
 function drawOscillatingDipole(g, gs) {
@@ -1642,16 +1860,18 @@ function activateMode(modeId) {
   // Param area
   document.getElementById('param-area').innerHTML = mode.paramsHTML;
 
-  // Toggles
+  // Toggles — filtered to those relevant for the current scenario
   const tbLabel = document.getElementById('toggle-label');
   const tbWrap = document.getElementById('toggle-btns');
   tbWrap.innerHTML = '';
-  if (mode.toggles.length > 0) {
+  const relevantToggles = mode.scenarioToggles
+    ? mode.toggles.filter(t => mode.scenarioToggles(currScenario).includes(t.id))
+    : mode.toggles;
+  if (relevantToggles.length > 0) {
     tbLabel.hidden = false;
-    mode.toggles.forEach(t => {
+    relevantToggles.forEach(t => {
       const b = document.createElement('button');
       b.textContent = t.label;
-      // initial state
       const stKey = modeStateKey(modeId);
       const stVal = state[stKey];
       const propKey = t.id === 'lines' ? 'showLines' : t.id === 'vectors' ? 'showVectors' : t.id === 'cut' ? 'cutMagnet' : t.id === 'showE' ? 'showE' : t.id === 'showB' ? 'showB' : t.id;
@@ -1691,19 +1911,23 @@ let animHandle = null;
 function animate() {
   if (animHandle) return; // already running
   function tick() {
+    let keepGoing = false;
     if (state.mode === 'light') {
-      state.light.t += 0.03;
-      render();
-      animHandle = requestAnimationFrame(tick);
+      const sc = state.light.scenario;
+      if (sc === 'plane-wave' || sc === 'circular-wave' || sc === 'dipole' || sc === 'spectrum' || sc === 'race') {
+        state.light.t += 0.03;
+        render();
+        keepGoing = true;
+      }
     } else if (state.mode === 'faraday' && (state.faraday.scenario === 'generator' || state.faraday.scenario === 'transformer')) {
       render();
-      animHandle = requestAnimationFrame(tick);
-    } else if (state.mode === 'ampere' && state.ampere.scenario === 'capacitor') {
-      // gentle pulse on E arrows
-      animHandle = null; // no continuous animation needed
-    } else {
-      animHandle = null;
+      keepGoing = true;
+    } else if (state.mode === 'ampere') {
+      // flowing current dots animate in all ampere scenarios
+      render();
+      keepGoing = true;
     }
+    animHandle = keepGoing ? requestAnimationFrame(tick) : null;
   }
   animHandle = requestAnimationFrame(tick);
 }
@@ -1732,6 +1956,15 @@ function bindDragging() {
     if (target.classList.contains('charge-handle')) {
       dragging = { type:'charge', idx: parseInt(target.getAttribute('data-idx')) };
       e.preventDefault();
+    } else if (target.classList.contains('probe-delete')) {
+      // remove a probe
+      const idx = parseInt(target.getAttribute('data-probe-idx'));
+      state.ampere.probes.splice(idx, 1);
+      render();
+      e.preventDefault();
+    } else if (target.id === 'cap-loop') {
+      dragging = { type:'cap-loop' };
+      e.preventDefault();
     } else if (target.id === 'gauss-sphere') {
       dragging = { type:'sphere' };
       e.preventDefault();
@@ -1739,12 +1972,26 @@ function bindDragging() {
       dragging = { type:'magnet' };
       e.preventDefault();
     } else if (state.mode === 'gauss' && state.gauss.scenario === 'custom') {
-      // click-to-place charge
       const pt = getSvgPt(e);
       if (state.gauss.charges.length < 4) {
         state.gauss.charges.push({ x:pt.x, y:pt.y, q: e.shiftKey ? -5 : 5 });
         render();
       }
+    } else if (state.mode === 'ampere') {
+      // tap to drop a B-probe
+      const pt = getSvgPt(e);
+      if (state.ampere.probes.length < 6) {
+        state.ampere.probes.push({ x:pt.x, y:pt.y });
+        render();
+      }
+      e.preventDefault();
+    } else if (state.mode === 'light' && state.light.scenario === 'circular-wave') {
+      // tap to launch a new wavefront
+      const pt = getSvgPt(e);
+      if (state.light.circSources.length >= 4) state.light.circSources.shift();
+      state.light.circSources.push({ x:pt.x, y:pt.y, t0: state.light.t });
+      render();
+      e.preventDefault();
     }
   }
 
@@ -1758,6 +2005,9 @@ function bindDragging() {
       state.gauss.gaussSphere.x = pt.x;
       state.gauss.gaussSphere.y = pt.y;
       render();
+    } else if (dragging.type === 'cap-loop') {
+      state.ampere.capLoopX = Math.max(110, Math.min(W - 110, pt.x));
+      render();
     } else if (dragging.type === 'magnet') {
       const newX = Math.max(100, Math.min(600, pt.x));
       state.faraday.magnetVx = newX - state.faraday.magnetX;
@@ -1765,7 +2015,6 @@ function bindDragging() {
       const sl = document.getElementById('f-mx');
       if (sl) { sl.value = newX; document.getElementById('f-mxv').textContent = newX.toFixed(0) + ' px'; }
       render();
-      // decay velocity so EMF returns to 0 when not moving
       clearTimeout(window._magV);
       window._magV = setTimeout(() => { state.faraday.magnetVx = 0; render(); }, 80);
     }
