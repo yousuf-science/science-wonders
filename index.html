@@ -71,7 +71,10 @@ body {
 
 /* Starfield */
 .starfield {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     radial-gradient(1.5px 1.5px at 20% 18%, rgba(184, 206, 236, 0.55), transparent),
     radial-gradient(1px 1px at 60% 70%, rgba(240, 192, 96, 0.35), transparent),
@@ -99,135 +102,180 @@ header {
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   transition: background 0.25s ease, border-color 0.25s ease;
 }
-body.light-theme header { background: rgba(255, 255, 255, 0.92); }
+body.light-theme header {
+  background: rgba(255, 255, 255, 0.92);
+}
 .logo { font-family: monospace; font-size: 12px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; }
 .logo .logo-star { display: inline-block; animation: starPulse 4s ease-in-out infinite; }
 @keyframes starPulse { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: 0.55; transform: scale(1.12);} }
 .logo span { color: var(--text2); }
-.tagline { font-family: monospace; font-size: 11px; color: var(--text3); border-left: 1px solid var(--border2); padding-left: 16px; letter-spacing: 2px; }
+.tagline {
+  font-family: monospace; font-size: 11px; color: var(--text3);
+  border-left: 1px solid var(--border2); padding-left: 16px; letter-spacing: 2px;
+}
 .header-spacer { flex: 1; }
 .header-links { display: flex; gap: 6px; align-items: center; }
 .header-link {
   font-family: monospace; font-size: 10px; letter-spacing: 2px;
-  color: var(--text2); text-decoration: none; padding: 6px 12px;
-  border-radius: 5px; border: 1px solid transparent; cursor: pointer;
-  user-select: none; transition: color 0.2s, border-color 0.2s, background 0.2s;
+  color: var(--text2); text-decoration: none;
+  padding: 6px 12px; border-radius: 5px; border: 1px solid transparent;
+  cursor: pointer; user-select: none;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 .header-link:hover { color: var(--accent); border-color: var(--border2); background: var(--bg3); }
-.theme-toggle-btn { font-weight: bold; color: var(--gold); }
+
+/* Theme switch explicit style overrides */
+.theme-toggle-btn {
+  font-weight: bold;
+  color: var(--gold);
+}
 
 .hero { text-align: center; padding: 90px 24px 50px; position: relative; }
-.hero-eyebrow { font-family: monospace; font-size: 10px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; margin-bottom: 22px; opacity: 0.85; }
-.hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: normal; color: var(--text-bright); letter-spacing: 1px; margin-bottom: 22px; line-height: 1.2; }
+.hero-eyebrow {
+  font-family: monospace; font-size: 10px; letter-spacing: 5px;
+  color: var(--gold); text-transform: uppercase;
+  margin-bottom: 22px; opacity: 0.85;
+}
+.hero h1 {
+  font-size: clamp(28px, 5vw, 44px); font-weight: normal;
+  color: var(--text-bright); letter-spacing: 1px;
+  margin-bottom: 22px; line-height: 1.2;
+}
 .hero h1 .accent-word { color: var(--gold); font-style: italic; }
-.hero p { font-size: 16px; color: var(--text2); max-width: 600px; margin: 0 auto; line-height: 1.85; }
-
-/* SCREEN NOTICE BANNER */
-.screen-notice {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  background: rgba(58, 143, 255, 0.08); border: 1px solid rgba(58, 143, 255, 0.2);
-  color: var(--accent); font-family: monospace; font-size: 10.5px; letter-spacing: 1px;
-  padding: 8px 18px; border-radius: 20px; margin-top: 24px;
-  transition: background 0.25s, border-color 0.25s;
+.hero p {
+  font-size: 16px; color: var(--text2);
+  max-width: 600px; margin: 0 auto; line-height: 1.85;
 }
-body.light-theme .screen-notice {
-  background: rgba(9, 105, 218, 0.05); border-color: rgba(9, 105, 218, 0.2);
+.hero .notice {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 6px 16px;
+  background: rgba(240, 192, 96, 0.08);
+  border: 1px solid rgba(240, 192, 96, 0.3);
+  border-radius: 20px;
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 1px;
 }
 
-.stats-strip { display: flex; justify-content: center; margin: 40px auto 0; max-width: 720px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 18px 0; flex-wrap: wrap; transition: border-color 0.25s ease; }
+.stats-strip {
+  display: flex; justify-content: center;
+  margin: 40px auto 0; max-width: 720px;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  padding: 18px 0; flex-wrap: wrap;
+  transition: border-color 0.25s ease;
+}
 .stat { flex: 1; min-width: 140px; text-align: center; padding: 4px 16px; border-right: 1px solid var(--border); transition: border-color 0.25s ease; }
 .stat:last-child { border-right: none; }
 .stat-num { font-family: monospace; font-size: 20px; color: var(--gold); letter-spacing: 1px; margin-bottom: 4px; }
 .stat-lbl { font-family: monospace; font-size: 9px; letter-spacing: 3px; color: var(--text3); text-transform: uppercase; }
+@media (max-width: 600px) {
+  .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 10px; }
+  .stat:last-child { border-bottom: none; }
+}
 
-.section-divider { display: flex; align-items: center; gap: 16px; max-width: 960px; margin: 60px auto 26px; padding: 0 24px; }
-.section-divider .line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent); }
-.section-divider .label { font-family: monospace; font-size: 10px; letter-spacing: 4px; color: var(--text3); text-transform: uppercase; white-space: nowrap; }
+.section-divider {
+  display: flex; align-items: center; gap: 16px;
+  max-width: 960px; margin: 60px auto 26px; padding: 0 24px;
+}
+.section-divider .line {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
+}
+.section-divider .label {
+  font-family: monospace; font-size: 10px; letter-spacing: 4px;
+  color: var(--text3); text-transform: uppercase; white-space: nowrap;
+}
 .section-divider .label .star { color: var(--gold); display: inline-block; margin: 0 6px; }
 
-/* UNIFIED CARD STYLES */
-.featured-wrap, .grid { max-width: 960px; margin: 0 auto; padding: 0 24px 20px; }
-.featured-grid, .grid { display: grid; gap: 20px; }
-.featured-grid { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
-.grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); padding-bottom: 50px; }
-
-.featured, .card {
-  position: relative; text-decoration: none; color: inherit; overflow: hidden;
-  border: 1px solid var(--border); border-radius: 12px;
+/* Featured */
+.featured-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 20px; }
+.featured-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
+@media (max-width: 760px) { .featured-grid { grid-template-columns: 1fr; } }
+.featured {
+  position: relative; display: grid; grid-template-columns: auto 1fr; gap: 28px;
+  background: var(--featured-gradient);
+  border: 1px solid var(--border2); border-radius: 14px;
+  padding: 32px clamp(24px, 4vw, 40px);
+  text-decoration: none; color: inherit; overflow: hidden;
   transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
 }
-
-.featured {
-  display: grid; grid-template-columns: auto 1fr; gap: 28px;
-  background: var(--featured-gradient); border-color: var(--border2);
-  padding: 32px clamp(24px, 4vw, 40px);
-}
-.card {
-  display: flex; flex-direction: column; background: var(--bg2); padding: 28px;
-}
-
-/* Featured Background Glows */
 .featured::before {
   content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(circle at 90% 50%, rgba(58, 143, 255, 0.08), transparent 55%),
-              radial-gradient(circle at 5% 100%, rgba(240, 192, 96, 0.04), transparent 55%);
+  background:
+    radial-gradient(circle at 90% 50%, rgba(58, 143, 255, 0.08), transparent 55%),
+    radial-gradient(circle at 5% 100%, rgba(240, 192, 96, 0.04), transparent 55%);
 }
 body.light-theme .featured::before { display: none; }
+.featured:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(58, 143, 255, 0.12); }
+.featured-icon {
+  position: relative; font-size: 64px; align-self: center;
+  display: inline-block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  line-height: 1;
+}
+.featured:hover .featured-icon {
+  transform: scale(1.18) rotate(-4deg);
+  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
+}
+.featured-body { position: relative; }
 
-/* Hover Sweep Line (Applied to BOTH) */
-.featured::after, .card::after {
-  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 2px;
+/* GOLD "NEW · JUST LAUNCHED" BADGE */
+.featured-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: monospace; font-size: 10px; letter-spacing: 2px;
+  padding: 5px 11px; border-radius: 4px;
+  background: rgba(240, 192, 96, 0.08);
+  border: 1px solid rgba(240, 192, 96, 0.4);
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.featured-tag .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+  animation: blink 1.6s infinite;
+}
+@keyframes blink { 0%,100% { opacity: 1;} 50% { opacity: 0.3;} }
+
+.featured-title { font-family: monospace; font-size: 20px; color: var(--text-bright); letter-spacing: 1.5px; margin-bottom: 10px; }
+.featured-desc { font-size: 14px; color: var(--text); line-height: 1.85; margin-bottom: 18px; max-width: 580px; }
+.featured-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.featured-meta .cat { font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); transition: background 0.25s, border-color 0.25s; }
+.featured-link { font-family: monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+.featured-link .arrow { display: inline-block; transition: transform 0.25s; }
+.featured:hover .featured-link .arrow { transform: translateX(5px); }
+@media (max-width: 600px) { .featured { grid-template-columns: 1fr; padding: 24px; gap: 12px; } .featured-icon { text-align: center; font-size: 52px; } }
+
+/* Grid */
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px; max-width: 960px; margin: 0 auto; padding: 0 24px 50px;
+}
+.card {
+  position: relative; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 28px; cursor: pointer;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
+  text-decoration: none; display: flex; flex-direction: column;
+  color: inherit; overflow: hidden;
+}
+.card::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 1px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
   transition: left 0.7s ease;
 }
-
-/* Hover States */
-.featured:hover, .card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(58, 143, 255, 0.08); }
-.featured:hover::after, .card:hover::after { left: 100%; }
-
-/* UNIFIED ICON ANIMATION (Smooth & Clean) */
-.featured-icon, .card-icon {
-  display: inline-block; 
-  line-height: 1;
-  transition: transform 0.3s ease, filter 0.3s ease;
-  transform-origin: center center; /* Forces identical rotation anchors */
-}
-
-.featured-icon { 
-  font-size: 64px; 
-  align-self: center; 
-  position: relative; 
-}
-
-.card-icon { 
-  font-size: 48px; 
-  margin-bottom: 16px; 
-}
-
-/* The Hover Effect (Restored to original gentle tilt) */
-.featured:hover .featured-icon, .card:hover .card-icon {
-  transform: scale(1.15) rotate(-4deg);
-  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
-}
-/* GOLD "NEW" BADGE */
-.featured-tag { display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 5px 11px; border-radius: 4px; background: rgba(240, 192, 96, 0.08); border: 1px solid rgba(240, 192, 96, 0.4); color: var(--gold); margin-bottom: 12px; }
-.featured-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); animation: blink 1.6s infinite; }
-@keyframes blink { 0%,100% { opacity: 1;} 50% { opacity: 0.3;} }
-
-/* Card Typography */
-.featured-title { font-family: monospace; font-size: 20px; color: var(--text-bright); letter-spacing: 1.5px; margin-bottom: 10px; }
-.featured-desc { font-size: 14px; color: var(--text); line-height: 1.85; margin-bottom: 18px; max-width: 580px; }
+.card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(58, 143, 255, 0.08); }
+.card:hover::after { left: 100%; }
+.card:hover .card-icon { transform: scale(1.18) rotate(-4deg); filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4)); }
+.card-icon { font-size: 48px; margin-bottom: 16px; display: inline-block; transition: transform 0.3s ease, filter 0.3s ease; line-height: 1; }
 .card-title { font-family: monospace; font-size: 15px; color: var(--text-bright); letter-spacing: 1px; margin-bottom: 10px; }
 .card-desc { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 18px; flex: 1; }
-
-.featured-meta, .card-tag-wrapper { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.cat, .card-tag { display: inline-block; font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); transition: background 0.25s, border-color 0.25s; }
-.card-tag { align-self: flex-start; padding: 3px 10px; }
-
-.featured-link, .card-link { font-family: monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; margin-top: auto; }
-.card-link { margin-top: 16px; font-size: 11px; }
-.arrow { display: inline-block; transition: transform 0.25s; }
-.featured:hover .arrow, .card:hover .arrow { transform: translateX(5px); }
+.card-tag { display: inline-block; font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 3px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); align-self: flex-start; transition: background 0.25s, border-color 0.25s; }
+.card-link { margin-top: 16px; font-family: monospace; font-size: 11px; color: var(--accent); letter-spacing: 1px; }
+.card-link .arrow { display: inline-block; transition: transform 0.25s; }
+.card:hover .card-link .arrow { transform: translateX(5px); }
 
 /* About */
 .about-wrap { max-width: 720px; margin: 30px auto 60px; padding: 0 24px; }
@@ -252,18 +300,11 @@ footer { text-align: center; padding: 30px 24px; font-family: monospace; font-si
 .footer-fine { font-size: 9px; color: #2a3a55; letter-spacing: 1.5px; margin-top: 12px; line-height: 1.7; }
 body.light-theme .footer-fine { color: var(--text3); }
 
-@media (max-width: 760px) { .featured-grid { grid-template-columns: 1fr; } }
 @media (max-width: 700px) {
   header { padding: 12px 16px; }
   .tagline { display: none; }
   .header-link { font-size: 9px; padding: 5px 8px; letter-spacing: 1.5px; }
   .hero { padding: 60px 18px 40px; }
-  .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 10px; }
-  .stat:last-child { border-bottom: none; }
-}
-@media (max-width: 600px) {
-  .featured { grid-template-columns: 1fr; padding: 24px; gap: 12px; }
-  .featured-icon { text-align: center; font-size: 52px; }
 }
 </style>
 </head>
@@ -286,10 +327,7 @@ body.light-theme .footer-fine { color: var(--text3); }
   <div class="hero-eyebrow">Real Equations · Live in Your Browser · Zero Installs</div>
   <h1>The universe, made <span class="accent-word">playable</span>.</h1>
   <p>Every simulation here runs the actual physics equations — no shortcuts, no fakery. Push the sliders. Drag the masses. Launch the rocket. See what the universe really does.</p>
-  
-  <div class="screen-notice">
-    <span class="icon">🖥️</span> For the best interactive experience, launch these simulations on a desktop or larger screen.
-  </div>
+  <div class="notice">🖥️ For the best interactive experience, open on a larger screen.</div>
 
   <div class="stats-strip">
     <div class="stat">
@@ -316,7 +354,7 @@ body.light-theme .footer-fine { color: var(--text3); }
 <div class="featured-wrap featured-grid">
 
   <a class="featured" href="maxwell.html">
-    <div class="featured-icon">∮</div>
+    <div class="featured-icon">∇</div>
     <div class="featured-body">
       <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
       <div class="featured-title">Maxwell's Equations Lab</div>
@@ -393,6 +431,7 @@ body.light-theme .footer-fine { color: var(--text3); }
     </div>
   </a>
 
+  
 </div>
 
 <div class="section-divider">
@@ -404,6 +443,7 @@ body.light-theme .footer-fine { color: var(--text3); }
 <div class="grid">
 
   <a class="card" href="gravity.html">
+    <div class="grid-glow-bar"></div>
     <div class="card-icon">🌌</div>
     <div class="card-title">N-Body Gravitational Simulation</div>
     <div class="card-desc">Watch planets orbit a star under real Newtonian gravity. Add bodies, adjust star mass, and see live orbital velocities and periods computed in SI units.</div>
@@ -495,10 +535,6 @@ body.light-theme .footer-fine { color: var(--text3); }
 </footer>
 
 <script>
-  // Ensure the theme applies instantly before the rest of the DOM fully loads to prevent flash
-  const currentTheme = localStorage.getItem('theme');
-  if (currentTheme === 'light') document.body.classList.add('light-theme');
-
   document.addEventListener("DOMContentLoaded", () => {
     // Dynamic asset discovery metric calculation counter
     const totalSimulations = document.querySelectorAll('a.featured, a.card').length;
@@ -506,6 +542,11 @@ body.light-theme .footer-fine { color: var(--text3); }
 
     // Local Storage persistent Theme state initialization loop
     const themeBtn = document.getElementById('theme-switcher');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'light') {
+      document.body.classList.add('light-theme');
+    }
 
     themeBtn.addEventListener('click', () => {
       document.body.classList.toggle('light-theme');
