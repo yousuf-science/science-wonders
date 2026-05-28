@@ -215,8 +215,16 @@ body.light-theme .featured::before { display: none; }
   transition: transform 0.3s ease, filter 0.3s ease;
   line-height: 1;
 }
+
+  /* Keep the standard card icon behavior exactly as it is */
+.card:hover .card-icon { 
+  transform: scale(1.18) rotate(-4deg); 
+  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4)); 
+}
+
+/* Force the featured icon to physically jump UP and LEFT like the standard cards */
 .featured:hover .featured-icon {
-  transform: scale(1.18) rotate(-4deg);
+  transform: scale(1.18) rotate(-4deg) translate(-8px, -12px);
   filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
 }
 .featured-body { position: relative; }
