@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dark Energy &amp; Today | Science Wonders</title>
+<meta name="description" content="Watch the tug of war between gravity and dark energy that is stretching the universe apart faster and faster — and see where we stand today.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
+  --bench-bg:#010812;
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#ebf2fa;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#b07d00;--gold-bright:#8a6200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;
+  --bench-bg:#fdfdfd;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.55;min-height:100vh;}
+header{display:flex;align-items:center;gap:18px;padding:12px 24px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:30;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.stages{max-width:1080px;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.stage-btn{font-family:monospace;font-size:10.5px;letter-spacing:1.5px;padding:11px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;text-align:center;line-height:1.35;}
+.stage-btn .si{font-size:18px;margin-right:8px;}
+.stage-btn .sn{color:var(--text);font-weight:bold;letter-spacing:1.2px;}
+.stage-btn:hover{border-color:var(--accent);}
+.stage-btn.active{border-color:var(--gold);background:rgba(240,192,96,.06);}
+.stage-btn.active .sn{color:var(--gold);}
+
+.top-row{max-width:1080px;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:1fr 280px;gap:12px;}
+@media(max-width:820px){.top-row{grid-template-columns:1fr;}}
+.bench-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--bench-bg);}
+svg#stage-svg{display:block;width:100%;height:auto;}
+.bench-badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.92);padding:5px 10px;border-radius:4px;pointer-events:none;letter-spacing:1.5px;border:1px solid var(--border2);color:var(--gold);top:10px;left:14px;}
+body.light-theme .bench-badge{background:rgba(255,255,255,.95);color:var(--text);}
+
+.side-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:3px;color:var(--text2);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:12px 0 7px;}
+.section-label:first-child{margin-top:0;}
+.btn-row{display:grid;gap:5px;}
+.btn-row.cols-2{grid-template-columns:1fr 1fr;}
+.btn-row.cols-3{grid-template-columns:repeat(3,1fr);}
+.btn-row button{font-family:'Georgia',serif;font-size:12px;padding:8px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text);cursor:pointer;text-align:center;line-height:1.25;}
+.btn-row button:hover{background:var(--bg3);border-color:var(--accent);}
+.btn-row button.active{border-color:var(--gold);background:rgba(240,192,96,.08);color:var(--gold);}
+.param{margin-bottom:11px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--text);margin-bottom:4px;}
+.param-val{font-family:monospace;font-size:11.5px;font-weight:bold;color:var(--gold);}
+.param-sub{font-size:10.5px;color:var(--text3);margin-top:3px;font-style:italic;line-height:1.4;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:24px;}
+
+.subtitle{max-width:1080px;margin:10px auto 0;padding:0 16px;}
+.subtitle-inner{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:10px;padding:14px 18px;font-size:16px;line-height:1.5;color:var(--text-bright);min-height:60px;display:flex;align-items:center;gap:10px;}
+.subtitle-inner .spk{font-size:18px;flex-shrink:0;}
+.subtitle-inner b{color:var(--gold-bright);}
+body.light-theme .subtitle-inner b{color:var(--gold);}
+
+.bottom-row{max-width:1080px;margin:10px auto 0;padding:0 16px 14px;display:grid;grid-template-columns:280px 1fr;gap:12px;}
+@media(max-width:820px){.bottom-row{grid-template-columns:1fr;}}
+.narr-block{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.narr-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 12px;margin-bottom:10px;cursor:pointer;user-select:none;}
+.narr-toggle .nt-label{font-size:13px;color:var(--text);}
+.narr-toggle .nt-state{font-family:monospace;font-size:10.5px;font-weight:bold;padding:3px 9px;border-radius:18px;}
+.narr-toggle .nt-state.on{background:rgba(64,255,170,.15);color:var(--green);}
+.narr-toggle .nt-state.off{background:var(--bg2);color:var(--text3);}
+.voice-row{margin-bottom:9px;}
+.voice-row label{display:block;font-size:9.5px;color:var(--text3);font-family:monospace;letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase;}
+.voice-row select{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;padding:6px 8px;border-radius:5px;}
+.info-block{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.readout-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 11px;margin-bottom:7px;}
+.r-label{font-family:monospace;font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
+.r-value{font-family:monospace;font-size:13px;color:var(--text-bright);}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.red{color:var(--red);}
+
+.theory-wrap{max-width:1080px;margin:14px auto 0;padding:0 16px 50px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px clamp(18px,4vw,36px);}
+.theory h2{font-family:monospace;font-size:12px;color:var(--gold-bright);letter-spacing:2px;text-transform:uppercase;margin:22px 0 10px;padding-bottom:5px;border-bottom:1px dashed var(--border2);}
+body.light-theme .theory h2{color:var(--gold);}
+.theory h2:first-of-type{margin-top:0;}
+.theory p{font-size:14.5px;color:var(--text2);margin-bottom:10px;line-height:1.8;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+
+footer{border-top:1px solid var(--border);padding:16px 24px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}
+.page-nav{max-width:1080px;margin:0 auto;padding:8px 16px;text-align:center;font-family:monospace;font-size:11px;letter-spacing:1.5px;}
+.page-nav a{color:var(--cyan);text-decoration:none;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);display:inline-block;margin:2px;}
+.page-nav a:hover{background:var(--bg3);border-color:var(--accent);}
+@media(max-width:600px){header{padding:11px 14px;gap:10px;}.page-subtitle{display:none;}.subtitle-inner{font-size:14.5px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Dark Energy &amp; Today</div>
+  <div class="header-spacer"></div>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="stages" id="stages">
+  <button class="stage-btn active" data-stage="expansion"><span class="si">💨</span><span class="sn">FLYING APART — TUG OF WAR</span></button>
+  <button class="stage-btn" data-stage="today"><span class="si">🌍</span><span class="sn">TODAY &amp; THE FUTURE</span></button>
+</div>
+
+<div class="top-row">
+  <div class="bench-frame">
+    <svg id="stage-svg" viewBox="0 0 720 480" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c060ff" stop-opacity="0.45"/>
+          <stop offset="60%" stop-color="#c060ff" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#c060ff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff8d4" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#fff8d4" stop-opacity="0"/>
+        </radialGradient>
+        <marker id="ar-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#40ffaa"/>
+        </marker>
+        <marker id="ar-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ff6090"/>
+        </marker>
+      </defs>
+      <g id="g-bg"></g><g id="g-main"></g><g id="g-fx"></g><g id="g-lab"></g>
+    </svg>
+    <div class="bench-badge" id="stage-badge">FLYING APART — THE TUG OF WAR</div>
+  </div>
+
+  <div class="side-panel" id="side-panel"></div>
+</div>
+
+<div class="subtitle"><div class="subtitle-inner"><span class="spk" id="spk">🔊</span><span id="caption">Tap a button on the right and turn your sound on.</span></div></div>
+
+<div class="bottom-row">
+  <div class="narr-block">
+    <div class="panel-title">Voice</div>
+    <div class="narr-toggle" id="narr-toggle">
+      <span class="nt-label">🔊 Narration</span>
+      <span class="nt-state on" id="nt-state">ON</span>
+    </div>
+    <div class="voice-row">
+      <label>Speaker</label>
+      <select id="voice-select"><option>Loading…</option></select>
+    </div>
+    <div class="voice-row">
+      <label>Speed</label>
+      <input type="range" id="rate-slider" min="0.7" max="1.4" step="0.05" value="1.0">
+      <div class="param-sub" style="margin-top:3px;">Slower or faster — your choice.</div>
+    </div>
+  </div>
+  <div class="info-block">
+    <div class="panel-title" id="info-title">What's Happening</div>
+    <div id="info-area"></div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a href="cosmic-birth.html">← Back to Page A: Birth of Your Universe</a>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <h2>💨 The tug of war in the sky</h2>
+  <p>Gravity pulls things together. So a universe full of stars and galaxies should be <em>slowing down</em> — gravity putting the brakes on the expansion. But in 1998 astronomers measured it carefully and got the opposite answer: the universe is <strong>speeding up</strong>.</p>
+  <p>Whatever is doing that, we call it <em>dark energy</em>. It acts like a faint push, baked into empty space itself, that gets stronger as there is more space. Today dark energy has won the tug of war, and the universe is flying apart faster and faster.</p>
+  <p>There is also <em>dark matter</em> — extra invisible stuff that adds gravity but does not glow. You can see its effect: galaxies spin faster than their visible stars would explain, as if surrounded by an unseen halo of mass. The simulation shows those halos as faint violet glows around each galaxy.</p>
+
+  <h2>🌍 Today, in real numbers</h2>
+  <p>The universe is <strong>13.8 billion years old</strong>, expanding at roughly <strong>70 km/s per megaparsec</strong>, and bathed in the faint first-light glow at <strong>2.725 K</strong>. The mix: about 5% ordinary matter (stars, planets, you), 27% dark matter (the invisible halo), 68% dark energy (the push).</p>
+  <p>If dark energy keeps doing what it's doing, galaxies will keep drifting further apart. In the very far future the sky will be empty and dark. But that is a very long time from now.</p>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+const W=720, H=480, CX=W/2, CY=H/2;
+let clock=0;
+
+// ============================ NARRATION ============================
+const synth=(typeof window!=='undefined'&&window.speechSynthesis)?window.speechSynthesis:null;
+const narr={on:true, voice:null, rate:1.0};
+let sceneToken=0;
+
+const VOICE_SLOTS=[
+  {id:'us-m', label:'Male (US)',   prefer:['Google US English','Microsoft Guy Online','Microsoft David','Alex','Daniel'], lang:/en-US/i, gender:'male'},
+  {id:'us-f', label:'Female (US)', prefer:['Google US English Female','Microsoft Aria Online','Microsoft Zira','Samantha','Karen'], lang:/en-US/i, gender:'female'},
+  {id:'uk-m', label:'Male (UK)',   prefer:['Google UK English Male','Microsoft Ryan Online','Daniel','Oliver'], lang:/en-GB/i, gender:'male'},
+  {id:'uk-f', label:'Female (UK)', prefer:['Google UK English Female','Microsoft Sonia Online','Microsoft Hazel','Kate'], lang:/en-GB/i, gender:'female'},
+];
+
+function pickVoiceForSlot(slot, voices){
+  for(const name of slot.prefer){ const v=voices.find(v=>v.name===name); if(v) return v; }
+  const fHints=/female|woman|aria|zira|samantha|kate|sonia|hazel|karen|serena|moira/i;
+  const mHints=/male|man|guy|david|alex|daniel|oliver|ryan|fred/i;
+  const matches=voices.filter(v=>slot.lang.test(v.lang));
+  for(const v of matches){
+    if(slot.gender==='female' && fHints.test(v.name)) return v;
+    if(slot.gender==='male' && mHints.test(v.name)) return v;
+  }
+  if(matches.length>0) return matches[0];
+  return voices.find(v=>/^en/i.test(v.lang)) || voices[0] || null;
+}
+
+function populateVoices(){
+  const sel=document.getElementById('voice-select');
+  if(!sel||!synth) return;
+  const voices=synth.getVoices();
+  if(!voices||voices.length===0){ sel.innerHTML='<option>(no voices yet)</option>'; return; }
+  sel.innerHTML='';
+  const mapping={};
+  VOICE_SLOTS.forEach(slot=>{
+    const v=pickVoiceForSlot(slot, voices);
+    if(v){
+      mapping[slot.id]=v;
+      const op=document.createElement('option');
+      op.value=slot.id; op.textContent=slot.label;
+      sel.appendChild(op);
+    }
+  });
+  let saved=null; try{ saved=localStorage.getItem('cosmoB-voice'); }catch(e){}
+  if(saved && mapping[saved]){ sel.value=saved; narr.voice=mapping[saved]; }
+  else { const first=Object.keys(mapping)[0]; if(first){ sel.value=first; narr.voice=mapping[first]; } }
+  sel.onchange=function(){
+    narr.voice=mapping[this.value]||null;
+    try{ localStorage.setItem('cosmoB-voice',this.value); }catch(e){}
+    sceneToken++; stopSpeak();
+  };
+}
+if(synth){ populateVoices(); synth.onvoiceschanged=populateVoices; }
+
+function stripHTML(s){return s.replace(/<[^>]+>/g,'');}
+function stopSpeak(){try{if(synth)synth.cancel();}catch(e){}}
+function setCaption(html){document.getElementById('caption').innerHTML=html;document.getElementById('spk').textContent=narr.on?'🔊':'💬';}
+
+function speakAndWait(html){
+  return new Promise(res=>{
+    setCaption(html);
+    const txt=stripHTML(html);
+    const est=Math.min(14000, 900+txt.length*55/narr.rate);
+    if(!narr.on||!synth){ setTimeout(res, Math.min(est, 3500/narr.rate)); return; }
+    let done=false; const fin=()=>{if(!done){done=true;res();}};
+    try{
+      synth.cancel();
+      const u=new SpeechSynthesisUtterance(txt);
+      if(narr.voice) u.voice=narr.voice;
+      u.rate=narr.rate;
+      u.onend=fin; u.onerror=fin;
+      synth.speak(u);
+      setTimeout(fin, est+1500);
+    }catch(e){ setTimeout(fin, est); }
+  });
+}
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function runScript(steps){
+  const my=++sceneToken;
+  stopSpeak();
+  for(const s of steps){
+    if(my!==sceneToken) return;
+    if(s.before){try{s.before();}catch(e){}}
+    await speakAndWait(s.text);
+    if(my!==sceneToken) return;
+    if(s.hold) await delay(s.hold/narr.rate);
+  }
+}
+
+// ============================ SVG ============================
+function clr(id){const g=document.getElementById(id);while(g.firstChild)g.removeChild(g.firstChild);return g;}
+function el(g,t,a){const n=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a){if(k==='text')n.textContent=a[k];else n.setAttribute(k,a[k]);}g.appendChild(n);return n;}
+function setBadge(t){document.getElementById('stage-badge').textContent=t;}
+
+// ============================ STATE ============================
+const state={
+  stage:'expansion',
+  exp:{
+    pull:0.32,
+    push:0.68,
+    showDark:true,        // halos visible
+    showPush:true,        // push field arrows visible
+    a:1, v:0.18,          // toy scale factor / velocity for animation
+  },
+  today:{
+    future:1.0,
+  },
+};
+
+// =========================================================
+// EXPANSION STAGE
+// =========================================================
+function expansion_render(){
+  const bg=clr('g-bg'), main=clr('g-main'), fx=clr('g-fx'), lab=clr('g-lab');
+  setBadge('TUG OF WAR — GRAVITY vs DARK ENERGY');
+
+  // Backdrop: faint dark-energy "fabric of space" gradient
+  if(state.exp.showPush){
+    // Draw subtle outward-pointing arrows in a grid as the "push field"
+    const push=state.exp.push;
+    for(let gx=70; gx<W-30; gx+=70){
+      for(let gy=80; gy<H-40; gy+=70){
+        const dx=gx-CX, dy=gy-CY, d=Math.hypot(dx,dy);
+        if(d<10) continue;
+        const ux=dx/d, uy=dy/d;
+        const len=8+push*16;
+        const op=0.18+push*0.35;
+        el(bg,'line',{x1:gx,y1:gy,x2:gx+ux*len,y2:gy+uy*len,stroke:'#40ffaa','stroke-width':1.2,opacity:op,'marker-end':'url(#ar-green)'});
+      }
+    }
+  }
+
+  // physics step (toy Friedmann-like)
+  const M=state.exp.pull, DE=state.exp.push;
+  let a=state.exp.a, v=state.exp.v;
+  const dt=0.025;
+  const accel = -M/Math.max(0.05,a*a) + DE*a*0.42;
+  v += accel*dt; a += v*dt;
+  if(a<0.06){ a=0.06; v=Math.abs(v)*-0.25; }
+  if(a>3.6){ a=3.6; }
+  state.exp.a=a; state.exp.v=v;
+
+  // ring of galaxies, scaled by a
+  const baseR=110;
+  const r=baseR*a;
+  const N=10;
+  const galaxies=[];
+  for(let i=0;i<N;i++){
+    const ang=i/N*Math.PI*2 + clock*0.0015;
+    const gx=CX+Math.cos(ang)*r, gy=CY+Math.sin(ang)*r*0.85;
+    galaxies.push({x:gx,y:gy,ang});
+  }
+  // central galaxy
+  galaxies.push({x:CX,y:CY,ang:0,center:true});
+
+  // Draw dark-matter halos first (behind galaxies)
+  if(state.exp.showDark){
+    galaxies.forEach(g=>{
+      const haloR = g.center ? 36 : 28;
+      el(main,'circle',{cx:g.x,cy:g.y,r:haloR,fill:'url(#halo)','pointer-events':'none'});
+    });
+  }
+  // Draw spiral galaxies
+  galaxies.forEach((g,gi)=>{
+    const R = g.center ? 11 : 9;
+    // arms
+    for(let arm=0; arm<2; arm++){
+      for(let k=0;k<16;k++){
+        const t=k/16;
+        const sa=t*Math.PI*3 + (gi+arm*0.5)*1.7 + clock*0.005;
+        const rr=t*R;
+        const x=g.x+Math.cos(sa)*rr, y=g.y+Math.sin(sa)*rr*0.5;
+        el(main,'circle',{cx:x,cy:y,r:1.2,fill:'#ffe8a0',opacity:0.85-t*0.5});
+      }
+    }
+    el(main,'circle',{cx:g.x,cy:g.y,r:2.4,fill:'#fff8d4'});
+  });
+
+  // Velocity arrows showing direction of motion
+  if(Math.abs(v)>0.005){
+    galaxies.forEach(g=>{
+      if(g.center) return;
+      const dx=g.x-CX, dy=g.y-CY, d=Math.hypot(dx,dy);
+      if(d<1) return;
+      const ux=dx/d, uy=dy/d;
+      const dir = v>0?1:-1;
+      const arrowLen=10+Math.min(40, Math.abs(v)*80);
+      const col = v>0?'#40ffaa':'#ff6090';
+      el(fx,'line',{x1:g.x,y1:g.y,x2:g.x+ux*arrowLen*dir,y2:g.y+uy*arrowLen*dir,stroke:col,'stroke-width':1.8,opacity:0.85,'marker-end':v>0?'url(#ar-green)':'url(#ar-red)'});
+    });
+  }
+
+  // Verdict label
+  let verdict='', vColor='var(--gold)';
+  if(v>0.05 && accel>0){ verdict='ACCELERATING APART'; vColor='var(--green)'; }
+  else if(v>0.005){ verdict='COASTING OUTWARD'; vColor='var(--cyan)'; }
+  else if(v<-0.05){ verdict='COLLAPSING'; vColor='var(--red)'; }
+  else if(Math.abs(v)<0.005){ verdict='BALANCED'; vColor='var(--gold)'; }
+  else { verdict='SLOWING'; vColor='var(--gold)'; }
+  el(lab,'text',{x:CX,y:40,'text-anchor':'middle','font-family':'monospace','font-size':14,fill:vColor,'font-weight':'bold',text:verdict});
+
+  // legend at bottom
+  let yL=H-22;
+  if(state.exp.showDark){
+    el(main,'circle',{cx:24,cy:yL,r:6,fill:'url(#halo)'});
+    el(lab,'text',{x:38,y:yL+4,'font-family':'monospace','font-size':9,fill:'var(--violet)',text:'violet glow = DARK MATTER (invisible gravity)'});
+  }
+  if(state.exp.showPush){
+    el(bg,'line',{x1:340,y1:yL,x2:360,y2:yL,stroke:'#40ffaa','stroke-width':1.5,'marker-end':'url(#ar-green)'});
+    el(lab,'text',{x:368,y:yL+4,'font-family':'monospace','font-size':9,fill:'var(--green)',text:'green arrows = DARK ENERGY (pushing space apart)'});
+  }
+}
+
+function expansion_info(){
+  document.getElementById('info-title').textContent='THE TUG OF WAR';
+  const M=state.exp.pull, DE=state.exp.push;
+  const winner = DE>M*1.4 ? 'Dark energy wins → ACCELERATING'
+                : DE>M*0.9 ? 'Dark energy edges ahead → speeding up slowly'
+                : M>DE*1.5 ? 'Gravity wins → COLLAPSING'
+                : 'Close — slowing down';
+  document.getElementById('info-area').innerHTML=`
+    <div class="readout-cell"><div class="r-label">Pull-together (gravity)</div><div class="r-value red">${Math.round(M*100)}%</div></div>
+    <div class="readout-cell"><div class="r-label">Push-apart (dark energy)</div><div class="r-value green">${Math.round(DE*100)}%</div></div>
+    <div class="readout-cell"><div class="r-label">Outcome</div><div class="r-value gold" style="font-size:11.5px;">${winner}</div></div>
+    <div class="readout-cell"><div class="r-label">Real universe today</div><div class="r-value cyan" style="font-size:11px;">~32% gravity · ~68% dark energy</div></div>
+  `;
+}
+
+function expansion_setControls(){
+  document.getElementById('side-panel').innerHTML=`
+    <div class="panel-title">Tug Of War</div>
+    <div class="param">
+      <div class="param-row"><span>Pull-together (gravity)</span><span class="param-val" id="exp-p" style="color:var(--red)">${Math.round(state.exp.pull*100)}%</span></div>
+      <input type="range" id="exp-pull" min="0" max="1" step="0.01" value="${state.exp.pull}">
+      <div class="param-sub">All the matter and dark matter trying to pull things back together.</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Push-apart (dark energy)</span><span class="param-val" id="exp-d" style="color:var(--green)">${Math.round(state.exp.push*100)}%</span></div>
+      <input type="range" id="exp-push" min="0" max="1" step="0.01" value="${state.exp.push}">
+      <div class="param-sub">The mysterious push baked into empty space.</div>
+    </div>
+    <div class="section-label">Show / hide</div>
+    <div class="btn-row cols-2">
+      <button id="tg-dark" class="${state.exp.showDark?'active':''}">🟣 Dark matter halos</button>
+      <button id="tg-push" class="${state.exp.showPush?'active':''}">🟢 Dark energy arrows</button>
+    </div>
+    <div class="section-label">Quick tries</div>
+    <div class="btn-row cols-3">
+      <button id="qt-gravity">All gravity</button>
+      <button id="qt-real">Real mix</button>
+      <button id="qt-rip">Rip apart</button>
+    </div>
+    <div class="btn-row cols-2" style="margin-top:8px;">
+      <button id="exp-intro">▶ Tell the story</button>
+      <button id="exp-reset">↻ Reset motion</button>
+    </div>
+  `;
+  document.getElementById('exp-pull').oninput=function(){
+    state.exp.pull=parseFloat(this.value);
+    document.getElementById('exp-p').textContent=Math.round(state.exp.pull*100)+'%';
+    state.exp.a=1; state.exp.v=0.18; expansion_info();
+  };
+  document.getElementById('exp-push').oninput=function(){
+    state.exp.push=parseFloat(this.value);
+    document.getElementById('exp-d').textContent=Math.round(state.exp.push*100)+'%';
+    state.exp.a=1; state.exp.v=0.18; expansion_info();
+  };
+  document.getElementById('tg-dark').onclick=function(){ state.exp.showDark=!state.exp.showDark; this.classList.toggle('active'); };
+  document.getElementById('tg-push').onclick=function(){ state.exp.showPush=!state.exp.showPush; this.classList.toggle('active'); };
+  document.getElementById('qt-gravity').onclick=()=>{
+    state.exp.pull=0.95; state.exp.push=0.0; state.exp.a=1; state.exp.v=0.18;
+    expansion_setControls(); expansion_info();
+    runScript([{text:'I have turned dark energy off. Only gravity is at work now. Watch — galaxies pull each other back inward, and the universe <b>collapses</b>.'}]);
+  };
+  document.getElementById('qt-real').onclick=()=>{
+    state.exp.pull=0.32; state.exp.push=0.68; state.exp.a=1; state.exp.v=0.18;
+    expansion_setControls(); expansion_info();
+    runScript([{text:'This is the real mix astronomers measure today: about one-third pull, two-thirds push. Dark energy wins, and the universe is <b>accelerating</b> outward.'}]);
+  };
+  document.getElementById('qt-rip').onclick=()=>{
+    state.exp.pull=0.05; state.exp.push=1.0; state.exp.a=1; state.exp.v=0.18;
+    expansion_setControls(); expansion_info();
+    runScript([{text:'Now dark energy is overwhelming. Galaxies fly apart so fast that nothing can keep up. This is sometimes called the <b>Big Rip</b>.'}]);
+  };
+  document.getElementById('exp-intro').onclick=expansion_intro;
+  document.getElementById('exp-reset').onclick=()=>{ state.exp.a=1; state.exp.v=0.18; };
+}
+
+async function expansion_intro(){
+  await runScript([
+    {text:'There is a tug of war happening in space. <b>Gravity</b> pulls everything back together. A mysterious push, called <b>dark energy</b>, tries to spread everything apart.'},
+    {text:'For most of cosmic history gravity was winning. But about five billion years ago, dark energy took over — and now the universe is <b>accelerating</b> outward.'},
+    {text:'The violet glows around the galaxies are the <b>dark matter halos</b> — invisible mass we can only detect by its gravity. The green arrows are the <b>dark energy push</b>, baked into space itself.'},
+    {text:'Try the quick buttons: <b>all gravity</b> shows what happens with only pull. <b>Real mix</b> is our actual universe. <b>Rip apart</b> shows a runaway future.'},
+  ]);
+}
+
+// =========================================================
+// TODAY STAGE — deep field, redshifting galaxies, cooling CMB
+// =========================================================
+function today_render(){
+  const bg=clr('g-bg'), main=clr('g-main'), fx=clr('g-fx'), lab=clr('g-lab');
+  setBadge('TODAY · AND BEYOND');
+
+  const f=state.today.future;
+
+  // 1) CMB temperature backdrop: subtle gradient washing across the canvas.
+  //    Today it's a barely-warm fog; in the far future it cools toward black.
+  const cmbT = 2.725/f; // Kelvin
+  const warmth = Math.max(0, Math.min(1, (cmbT-0.5)/2.5)); // 0..1
+  const backR = Math.round(8 + warmth*38);
+  const backG = Math.round(4 + warmth*14);
+  const backB = Math.round(14 + warmth*40);
+  el(bg,'rect',{x:0,y:0,width:W,height:H,fill:`rgb(${backR},${backG},${backB})`});
+
+  // 2) Deep field of very far galaxies: hundreds of tiny coloured specks,
+  //    redshifting from white→orange→red as future advances.
+  if(!today_render._deep){
+    const arr=[]; let s=11;
+    for(let i=0;i<360;i++){
+      s=(s*9301+49297)%233280; const a=s/233280;
+      s=(s*9301+49297)%233280; const b=s/233280;
+      s=(s*9301+49297)%233280; const c=s/233280;
+      arr.push({x:a*W, y:b*H, r:0.4+c*1.4, base:Math.floor(c*60)+30});
+    }
+    today_render._deep=arr;
+  }
+  // redshift hue: white at f=1, slide toward red-orange as f rises
+  const rsR = Math.round(255 - Math.min(1,(f-1)*0.5)*40);
+  const rsG = Math.round(255 - Math.min(1,(f-1)*0.5)*120);
+  const rsB = Math.round(255 - Math.min(1,(f-1)*0.5)*210);
+  today_render._deep.forEach(s=>{
+    const tw=0.45+0.55*Math.sin(clock*0.022+s.x*0.013+s.y*0.011);
+    // dim with future
+    const dimFactor = Math.max(0.05, 1.3 - f*0.32);
+    el(bg,'circle',{cx:s.x,cy:s.y,r:s.r,fill:`rgb(${rsR},${rsG},${rsB})`,opacity:tw*dimFactor*0.85});
+  });
+
+  // 3) Mid-field bright stars (twinkling, dimming with future)
+  if(!today_render._mid){
+    const arr=[]; let s=29;
+    for(let i=0;i<70;i++){
+      s=(s*9301+49297)%233280; const a=s/233280;
+      s=(s*9301+49297)%233280; const b=s/233280;
+      arr.push({x:a*W, y:b*H, r:1.0+Math.random()*1.3});
+    }
+    today_render._mid=arr;
+  }
+  const midDim = Math.max(0.05, 1.2-f*0.3);
+  today_render._mid.forEach(s=>{
+    const tw=0.5+0.5*Math.sin(clock*0.035+s.x*0.02);
+    el(bg,'circle',{cx:s.x,cy:s.y,r:s.r,fill:'#fff',opacity:tw*midDim*0.9});
+    // soft halo
+    el(bg,'circle',{cx:s.x,cy:s.y,r:s.r*2.5,fill:'url(#starGlow)',opacity:tw*midDim*0.4});
+  });
+
+  // 4) Foreground galaxies: ring around centre, drift outward, redshift, dim
+  const N=8;
+  const baseR=85;
+  const r=baseR*f;
+  // redshift colour: stars start cream, end deep red
+  const galR=Math.round(255 - Math.min(1,(f-1)*0.5)*60);
+  const galG=Math.round(232 - Math.min(1,(f-1)*0.5)*150);
+  const galB=Math.round(160 - Math.min(1,(f-1)*0.5)*150);
+  const galColour = `rgb(${galR},${galG},${galB})`;
+  const galDim = Math.max(0.04, 1.4-f*0.32);
+  for(let i=0;i<N;i++){
+    const ang=i/N*Math.PI*2 + clock*0.0009;
+    const gx=CX+Math.cos(ang)*r, gy=CY+Math.sin(ang)*r*0.7;
+    if(gx<-30||gx>W+30||gy<-30||gy>H+30) continue;
+    // halo (dark-matter glow) — fades in the very far future
+    if(galDim>0.2){
+      el(main,'circle',{cx:gx,cy:gy,r:22,fill:'url(#halo)',opacity:galDim});
+    }
+    // spiral
+    if(galDim>0.15){
+      for(let k=0;k<18;k++){
+        const tt=k/18;
+        const sa=tt*Math.PI*3+i*1.5+clock*0.005;
+        const rr=tt*10;
+        el(main,'circle',{cx:gx+Math.cos(sa)*rr,cy:gy+Math.sin(sa)*rr*0.5,r:1.2,fill:galColour,opacity:(0.85-tt*0.5)*galDim});
+      }
+    }
+    el(main,'circle',{cx:gx,cy:gy,r:2.4,fill:galColour,opacity:galDim});
+  }
+
+  // Central "us"
+  if(galDim>0.15){
+    el(main,'circle',{cx:CX,cy:CY,r:24,fill:'url(#halo)',opacity:galDim});
+    for(let k=0;k<22;k++){
+      const tt=k/22;
+      const sa=tt*Math.PI*3+clock*0.004;
+      const rr=tt*12;
+      el(main,'circle',{cx:CX+Math.cos(sa)*rr,cy:CY+Math.sin(sa)*rr*0.5,r:1.4,fill:galColour,opacity:(0.9-tt*0.5)*galDim});
+    }
+  }
+  el(main,'circle',{cx:CX,cy:CY,r:3,fill:'#fff',opacity:Math.max(0.2,galDim)});
+  el(lab,'text',{x:CX,y:CY+22,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'var(--text3)',text:'(you are here)'});
+
+  // 5) Major label + age + CMB temp at top
+  const ageGyr = 13.8*f;
+  let majorLabel;
+  if(f<1.1) majorLabel='RIGHT NOW · 13.8 BILLION YEARS OLD';
+  else if(f<1.7) majorLabel=`${ageGyr.toFixed(1)} GYR · galaxies drifting apart`;
+  else if(f<2.5) majorLabel=`${ageGyr.toFixed(1)} GYR · light reddening`;
+  else if(f<3.5) majorLabel=`${ageGyr.toFixed(1)} GYR · stars burning out`;
+  else if(f<4.5) majorLabel=`${ageGyr.toFixed(1)} GYR · sky going dark`;
+  else majorLabel=`${ageGyr.toFixed(0)} GYR · the long heat death`;
+  el(lab,'text',{x:CX,y:48,'text-anchor':'middle','font-family':'monospace','font-size':13,fill:'var(--gold)','font-weight':'bold',text:majorLabel});
+  el(lab,'text',{x:CX,y:66,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:`First-light glow ${cmbT.toFixed(3)} K — every 13.8 Byr, halves`});
+
+  // 6) Milestone strip along the bottom showing where we are on the future timeline
+  const stripY=H-22, stripX0=40, stripW=W-80;
+  el(main,'line',{x1:stripX0,y1:stripY,x2:stripX0+stripW,y2:stripY,stroke:'var(--border2)','stroke-width':1.5});
+  const milestones=[
+    {f:1.0, label:'NOW'},
+    {f:1.36,label:'☀️ Sun dies'},        // ~5 Gyr from now
+    {f:1.9, label:'Last stars'},          // ~13 Gyr from now (rough placeholder)
+    {f:3.0, label:'Sky empty'},
+    {f:5.0, label:'Heat death'},
+  ];
+  milestones.forEach(m=>{
+    const x=stripX0 + (m.f-1)/(5-1)*stripW;
+    if(x<stripX0-2||x>stripX0+stripW+2) return;
+    const isPast = f >= m.f - 0.04;
+    el(main,'circle',{cx:x,cy:stripY,r:isPast?5:3,fill:isPast?'var(--gold)':'var(--text3)',stroke:isPast?'#fff':'none','stroke-width':1});
+    el(lab,'text',{x,y:stripY-9,'text-anchor':'middle','font-family':'monospace','font-size':8.5,fill:isPast?'var(--gold)':'var(--text3)',text:m.label});
+  });
+  // current position pointer
+  const curX = stripX0 + (Math.min(5,Math.max(1,f))-1)/(5-1)*stripW;
+  el(main,'polygon',{points:`${curX-5},${stripY+8} ${curX+5},${stripY+8} ${curX},${stripY+2}`,fill:'#fff'});
+}
+
+function today_info(){
+  const f=state.today.future;
+  document.getElementById('info-title').textContent='THE NUMBERS';
+  document.getElementById('info-area').innerHTML=`
+    <div class="readout-cell"><div class="r-label">Age</div><div class="r-value gold">${(13.8*f).toFixed(1)} billion years</div></div>
+    <div class="readout-cell"><div class="r-label">First-light glow (CMB)</div><div class="r-value cyan">${(2.725/f).toFixed(3)} K</div></div>
+    <div class="readout-cell"><div class="r-label">Expansion rate (H₀)</div><div class="r-value violet">~70 km/s per megaparsec</div></div>
+    <div class="readout-cell"><div class="r-label">What it's made of</div><div class="r-value" style="font-size:11.5px;">5% ordinary · 27% dark matter · 68% dark energy</div></div>
+  `;
+}
+
+function today_setControls(){
+  document.getElementById('side-panel').innerHTML=`
+    <div class="panel-title">Today &amp; The Future</div>
+    <div class="param">
+      <div class="param-row"><span>Fast-forward time</span><span class="param-val" id="tod-fv">${state.today.future.toFixed(1)}×</span></div>
+      <input type="range" id="tod-f" min="1" max="5" step="0.05" value="${state.today.future}">
+      <div class="param-sub">1× = today. Slide forward to peek at the future — galaxies drift, the glow cools.</div>
+    </div>
+    <div class="btn-row cols-2" style="margin-top:8px;">
+      <button id="tod-intro">▶ Tell me where we are</button>
+      <button id="tod-back">← Tug of war</button>
+    </div>
+  `;
+  document.getElementById('tod-f').oninput=function(){
+    state.today.future=parseFloat(this.value);
+    document.getElementById('tod-fv').textContent=state.today.future.toFixed(1)+'×';
+    today_info();
+  };
+  document.getElementById('tod-intro').onclick=today_intro;
+  document.getElementById('tod-back').onclick=()=>activate('expansion');
+}
+
+async function today_intro(){
+  await runScript([
+    {text:'And here you are — <b>13.8 billion years</b> after the Big Bang, on a small rocky planet, in one of perhaps two trillion galaxies.'},
+    {text:'The faint glow from the very first light, the cosmic microwave background, has cooled to just <b>2.725 degrees</b> above absolute zero. The universe is still stretching, faster and faster.'},
+    {text:'Slide <b>fast-forward time</b> to peek into the future. Galaxies drift further apart. The faint glow fades. Eventually the sky goes dark and quiet — but that is a very long time from now.'},
+  ]);
+}
+
+// ============================ SHELL ============================
+function render(){
+  try{
+    if(state.stage==='expansion') expansion_render();
+    else if(state.stage==='today') today_render();
+  }catch(e){}
+}
+
+function activate(stage){
+  sceneToken++; stopSpeak();
+  state.stage=stage;
+  document.querySelectorAll('#stages .stage-btn').forEach(b=>b.classList.toggle('active',b.dataset.stage===stage));
+  if(stage==='expansion'){
+    state.exp.a=1; state.exp.v=0.18;
+    expansion_setControls(); expansion_info();
+  } else if(stage==='today'){
+    today_setControls(); today_info();
+  }
+}
+document.querySelectorAll('#stages .stage-btn').forEach(b=>b.addEventListener('click',function(){ activate(this.dataset.stage); }));
+
+// Narration controls
+document.getElementById('narr-toggle').onclick=function(){
+  narr.on=!narr.on;
+  const s=document.getElementById('nt-state');
+  s.textContent=narr.on?'ON':'OFF';
+  s.className='nt-state '+(narr.on?'on':'off');
+  document.getElementById('spk').textContent=narr.on?'🔊':'💬';
+  sceneToken++;
+  if(!narr.on) stopSpeak();
+};
+document.getElementById('rate-slider').oninput=function(){ narr.rate=parseFloat(this.value); };
+
+// Theme
+document.getElementById('theme-switcher').onclick=function(){
+  document.body.classList.toggle('light-theme');
+  try{ localStorage.setItem('cosmoB-theme',document.body.classList.contains('light-theme')?'light':'dark'); }catch(e){}
+};
+try{ if(localStorage.getItem('cosmoB-theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+
+// Animation loop
+function frame(){ clock++; try{ render(); }catch(e){} requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+
+// Boot
+expansion_setControls();
+expansion_info();
+setCaption(`Tap <b>"▶ Tell the story"</b> on the right, or play with the sliders. Turn your sound on for narration.`);
+</script>
+</body>
+</html>

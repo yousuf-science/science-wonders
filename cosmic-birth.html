@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Birth Of Your Universe | Science Wonders</title>
+<meta name="description" content="Watch a universe being born — from a multiverse of bubbles, through a hot quark soup, to the first burst of light that still fills the sky today.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
+  --bench-bg:#010812;
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#ebf2fa;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#b07d00;--gold-bright:#8a6200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;
+  --bench-bg:#fdfdfd;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.55;min-height:100vh;}
+header{display:flex;align-items:center;gap:18px;padding:12px 24px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:30;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+/* Stage strip */
+.stages{max-width:1080px;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.stage-btn{font-family:monospace;font-size:10.5px;letter-spacing:1.5px;padding:11px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;text-align:center;line-height:1.35;}
+.stage-btn .si{font-size:18px;margin-right:8px;}
+.stage-btn .sn{color:var(--text);font-weight:bold;letter-spacing:1.2px;}
+.stage-btn:hover{border-color:var(--accent);}
+.stage-btn.active{border-color:var(--gold);background:rgba(240,192,96,.06);}
+.stage-btn.active .sn{color:var(--gold);}
+
+/* Top row: canvas + side controls (lens-page pattern) */
+.top-row{max-width:1080px;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:1fr 280px;gap:12px;}
+@media(max-width:820px){.top-row{grid-template-columns:1fr;}}
+
+/* Canvas */
+.bench-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--bench-bg);}
+svg#stage-svg{display:block;width:100%;height:auto;}
+svg#stage-svg .tappable{cursor:pointer;}
+.bench-badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.92);padding:5px 10px;border-radius:4px;pointer-events:none;letter-spacing:1.5px;border:1px solid var(--border2);color:var(--gold);top:10px;left:14px;}
+body.light-theme .bench-badge{background:rgba(255,255,255,.95);color:var(--text);}
+
+/* Side panel beside canvas (the controls) */
+.side-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:3px;color:var(--text2);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:12px 0 7px;}
+.section-label:first-child{margin-top:0;}
+
+.btn-row{display:grid;gap:5px;}
+.btn-row.cols-2{grid-template-columns:1fr 1fr;}
+.btn-row.cols-3{grid-template-columns:repeat(3,1fr);}
+.btn-row button{font-family:'Georgia',serif;font-size:12px;padding:8px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text);cursor:pointer;text-align:center;line-height:1.25;}
+.btn-row button:hover{background:var(--bg3);border-color:var(--accent);}
+.btn-row button.active{border-color:var(--gold);background:rgba(240,192,96,.08);color:var(--gold);}
+
+.param{margin-bottom:11px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--text);margin-bottom:4px;}
+.param-val{font-family:monospace;font-size:11.5px;font-weight:bold;color:var(--gold);}
+.param-sub{font-size:10.5px;color:var(--text3);margin-top:3px;font-style:italic;line-height:1.4;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:24px;}
+
+/* Subtitle below canvas */
+.subtitle{max-width:1080px;margin:10px auto 0;padding:0 16px;}
+.subtitle-inner{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:10px;padding:14px 18px;font-size:16px;line-height:1.5;color:var(--text-bright);min-height:60px;display:flex;align-items:center;gap:10px;}
+.subtitle-inner .spk{font-size:18px;flex-shrink:0;}
+.subtitle-inner b{color:var(--gold-bright);}
+body.light-theme .subtitle-inner b{color:var(--gold);}
+
+/* Below: narration controls + info panel side by side */
+.bottom-row{max-width:1080px;margin:10px auto 0;padding:0 16px 14px;display:grid;grid-template-columns:280px 1fr;gap:12px;}
+@media(max-width:820px){.bottom-row{grid-template-columns:1fr;}}
+
+.narr-block{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.narr-toggle{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 12px;margin-bottom:10px;cursor:pointer;user-select:none;}
+.narr-toggle .nt-label{font-size:13px;color:var(--text);}
+.narr-toggle .nt-state{font-family:monospace;font-size:10.5px;font-weight:bold;padding:3px 9px;border-radius:18px;}
+.narr-toggle .nt-state.on{background:rgba(64,255,170,.15);color:var(--green);}
+.narr-toggle .nt-state.off{background:var(--bg2);color:var(--text3);}
+.voice-row{margin-bottom:9px;}
+.voice-row label{display:block;font-size:9.5px;color:var(--text3);font-family:monospace;letter-spacing:1.5px;margin-bottom:4px;text-transform:uppercase;}
+.voice-row select{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;padding:6px 8px;border-radius:5px;}
+
+.info-block{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.readout-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 11px;margin-bottom:7px;}
+.r-label{font-family:monospace;font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
+.r-value{font-family:monospace;font-size:13px;color:var(--text-bright);}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.red{color:var(--red);}
+
+/* Theory section */
+.theory-wrap{max-width:1080px;margin:14px auto 0;padding:0 16px 50px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px clamp(18px,4vw,36px);}
+.theory h2{font-family:monospace;font-size:12px;color:var(--gold-bright);letter-spacing:2px;text-transform:uppercase;margin:22px 0 10px;padding-bottom:5px;border-bottom:1px dashed var(--border2);}
+body.light-theme .theory h2{color:var(--gold);}
+.theory h2:first-of-type{margin-top:0;}
+.theory p{font-size:14.5px;color:var(--text2);margin-bottom:10px;line-height:1.8;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .ctable{width:100%;border-collapse:collapse;font-family:'Georgia',serif;font-size:12.5px;margin-top:8px;}
+.theory .ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:7px 9px;border-bottom:1px solid var(--border);font-family:monospace;}
+.theory .ctable td{padding:7px 9px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.theory .ctable td:first-child{color:var(--gold-bright);width:22%;font-weight:bold;}
+body.light-theme .theory .ctable td:first-child{color:var(--gold);}
+
+footer{border-top:1px solid var(--border);padding:16px 24px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}
+
+/* Page links */
+.page-nav{max-width:1080px;margin:0 auto;padding:8px 16px;text-align:center;font-family:monospace;font-size:11px;letter-spacing:1.5px;}
+.page-nav a{color:var(--cyan);text-decoration:none;padding:6px 12px;border-radius:6px;border:1px solid var(--border2);display:inline-block;margin:2px;}
+.page-nav a:hover{background:var(--bg3);border-color:var(--accent);}
+
+@media(max-width:600px){
+  header{padding:11px 14px;gap:10px;}
+  .page-subtitle{display:none;}
+  .subtitle-inner{font-size:14.5px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">The Birth Of Your Universe</div>
+  <div class="header-spacer"></div>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="stages" id="stages">
+  <button class="stage-btn active" data-stage="multiverse"><span class="si">🌌</span><span class="sn">MULTIVERSE</span></button>
+  <button class="stage-btn" data-stage="timeline"><span class="si">⏳</span><span class="sn">LIFE STORY OF YOUR UNIVERSE</span></button>
+</div>
+
+<div class="top-row">
+  <div class="bench-frame">
+    <svg id="stage-svg" viewBox="0 0 720 480" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="bubGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+          <stop offset="60%" stop-color="#ffffff" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="hotGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff8d4" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#ff4f60" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="qgpFire" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffe070" stop-opacity="0.5"/>
+          <stop offset="50%" stop-color="#ff5050" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#400010" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="blur1"><feGaussianBlur stdDeviation="2"/></filter>
+        <marker id="ar-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#40ffaa"/>
+        </marker>
+        <marker id="ar-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0c060"/>
+        </marker>
+      </defs>
+      <g id="g-bg"></g><g id="g-main"></g><g id="g-fx"></g><g id="g-lab"></g>
+    </svg>
+    <div class="bench-badge" id="stage-badge">MULTIVERSE — MANY UNIVERSES ARE BORN</div>
+  </div>
+
+  <div class="side-panel" id="side-panel">
+    <!-- controls injected here -->
+  </div>
+</div>
+
+<div class="subtitle"><div class="subtitle-inner"><span class="spk" id="spk">🔊</span><span id="caption">Tap a button on the right and turn your sound on — I will tell you the story.</span></div></div>
+
+<div class="bottom-row">
+  <div class="narr-block">
+    <div class="panel-title">Voice</div>
+    <div class="narr-toggle" id="narr-toggle">
+      <span class="nt-label">🔊 Narration</span>
+      <span class="nt-state on" id="nt-state">ON</span>
+    </div>
+    <div class="voice-row">
+      <label>Speaker</label>
+      <select id="voice-select"><option>Loading…</option></select>
+    </div>
+    <div class="voice-row">
+      <label>Speed</label>
+      <input type="range" id="rate-slider" min="0.7" max="1.4" step="0.05" value="1.0">
+      <div class="param-sub" style="margin-top:3px;">Slower or faster — your choice.</div>
+    </div>
+  </div>
+  <div class="info-block">
+    <div class="panel-title" id="info-title">What's Happening</div>
+    <div id="info-area"></div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a href="cosmic-energy.html">→ Continue to Page B: Dark Energy &amp; Today</a>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <h2>The Story In Plain Words</h2>
+  <p>About <em>13.8 billion years ago</em>, everything you see was packed into a single point. From that one start, space stretched out, cooled down, and slowly grew into stars, planets, oceans — you and me. That moment is called the <strong>Big Bang</strong>.</p>
+
+  <h2>🌌 Could there be many universes?</h2>
+  <p>Many serious scientists think yes. The leading idea is called <em>eternal inflation</em>: the same stretching that made our universe never stops in some far-away patches, and each patch becomes its own bubble universe. Other bubbles might have slightly different rules — different forces, different particles, faster or slower stretching.</p>
+  <p>This isn't fiction. It's a prediction of the same equations that explain the sky. Most of those other universes would be <strong>dead</strong>: too much stretching rips them apart; too little and they collapse back before anything interesting happens. Only a narrow range of rules makes a long-lived universe like ours.</p>
+
+  <h2>⏳ The life story of our universe</h2>
+  <table class="ctable">
+    <tr><th>Age</th><th>What happened</th></tr>
+    <tr><td>0 seconds</td><td>The Big Bang. The start of space and time.</td></tr>
+    <tr><td>10⁻³⁵ s</td><td><em>Inflation</em>: space stretches by an unimaginable amount in a flash.</td></tr>
+    <tr><td>up to ~10 µs</td><td><strong>The quark soup</strong> — too hot for even a proton to form. A glowing fog of free quarks and gluons.</td></tr>
+    <tr><td>~10 µs</td><td>Quarks snap together into protons and neutrons.</td></tr>
+    <tr><td>~3 minutes</td><td>First light atomic nuclei: hydrogen and helium.</td></tr>
+    <tr><td>~380,000 yrs</td><td><strong>First light (CMB).</strong> The fog clears. Light streams across space for the first time. We still see this glow today.</td></tr>
+    <tr><td>~150 million yrs</td><td>The first stars switch on.</td></tr>
+    <tr><td>~1 billion yrs</td><td>Galaxies grow.</td></tr>
+    <tr><td>13.8 billion yrs</td><td>Today.</td></tr>
+  </table>
+  <p style="margin-top:12px;">When you are ready to see why the universe is flying apart faster and faster today, <a href="cosmic-energy.html" style="color:var(--cyan);">continue to Page B</a>.</p>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+const W=720, H=480, CX=W/2, CY=H/2;
+let clock=0;
+
+// ============================ NARRATION ============================
+const synth=(typeof window!=='undefined'&&window.speechSynthesis)?window.speechSynthesis:null;
+const narr={on:true, voice:null, rate:1.0};
+let sceneToken=0;
+
+// Curated 4-voice list. We pick the best available browser voice for each slot.
+const VOICE_SLOTS=[
+  {id:'us-m', label:'Male (US)',   prefer:['Google US English','Microsoft Guy Online','Microsoft David','Alex','en-US Standard-B','Daniel'], lang:/en-US/i, gender:'male'},
+  {id:'us-f', label:'Female (US)', prefer:['Google US English Female','Microsoft Aria Online','Microsoft Zira','Samantha','en-US Standard-C','Karen'], lang:/en-US/i, gender:'female'},
+  {id:'uk-m', label:'Male (UK)',   prefer:['Google UK English Male','Microsoft Ryan Online','Daniel','Oliver'], lang:/en-GB/i, gender:'male'},
+  {id:'uk-f', label:'Female (UK)', prefer:['Google UK English Female','Microsoft Sonia Online','Microsoft Hazel','Kate','Serena'], lang:/en-GB/i, gender:'female'},
+];
+
+function pickVoiceForSlot(slot, voices){
+  // First try preferred names
+  for(const name of slot.prefer){
+    const v=voices.find(v=>v.name===name);
+    if(v) return v;
+  }
+  // Then any voice matching language + name hint
+  const femaleHints=/female|woman|aria|zira|samantha|kate|sonia|hazel|karen|serena|moira/i;
+  const maleHints=/male|man|guy|david|alex|daniel|oliver|ryan|fred/i;
+  const matches=voices.filter(v=>slot.lang.test(v.lang));
+  for(const v of matches){
+    if(slot.gender==='female' && femaleHints.test(v.name)) return v;
+    if(slot.gender==='male' && maleHints.test(v.name)) return v;
+  }
+  // Fall back to any voice in the right language
+  if(matches.length>0) return matches[0];
+  // Final fallback: any English voice
+  return voices.find(v=>/^en/i.test(v.lang)) || voices[0] || null;
+}
+
+function populateVoices(){
+  const sel=document.getElementById('voice-select');
+  if(!sel||!synth) return;
+  const voices=synth.getVoices();
+  if(!voices||voices.length===0){ sel.innerHTML='<option>(no voices yet)</option>'; return; }
+  sel.innerHTML='';
+  const mapping={};
+  VOICE_SLOTS.forEach(slot=>{
+    const v=pickVoiceForSlot(slot, voices);
+    if(v){
+      mapping[slot.id]=v;
+      const op=document.createElement('option');
+      op.value=slot.id; op.textContent=slot.label;
+      sel.appendChild(op);
+    }
+  });
+  // restore choice
+  let saved=null; try{ saved=localStorage.getItem('cosmoA-voice'); }catch(e){}
+  if(saved && mapping[saved]){ sel.value=saved; narr.voice=mapping[saved]; }
+  else { const first=Object.keys(mapping)[0]; if(first){ sel.value=first; narr.voice=mapping[first]; } }
+  sel.onchange=function(){
+    narr.voice=mapping[this.value]||null;
+    try{ localStorage.setItem('cosmoA-voice',this.value); }catch(e){}
+    sceneToken++; stopSpeak();   // kill in-flight narration so new voice applies
+  };
+}
+if(synth){
+  populateVoices();
+  synth.onvoiceschanged=populateVoices;
+}
+
+function stripHTML(s){return s.replace(/<[^>]+>/g,'');}
+function stopSpeak(){try{if(synth)synth.cancel();}catch(e){}}
+function setCaption(html){document.getElementById('caption').innerHTML=html;document.getElementById('spk').textContent=narr.on?'🔊':'💬';}
+
+// Speak-and-wait: resolves on actual onend, with a sensible max timeout
+function speakAndWait(html){
+  return new Promise(res=>{
+    setCaption(html);
+    const txt=stripHTML(html);
+    // estimate is scaled by rate so the fallback timeout still matches
+    const est=Math.min(14000, 900+txt.length*55/narr.rate);
+    if(!narr.on||!synth){ setTimeout(res, Math.min(est, 3500/narr.rate)); return; }
+    let done=false; const fin=()=>{if(!done){done=true;res();}};
+    try{
+      synth.cancel();
+      const u=new SpeechSynthesisUtterance(txt);
+      if(narr.voice) u.voice=narr.voice;
+      u.rate=narr.rate;
+      u.onend=fin; u.onerror=fin;
+      synth.speak(u);
+      setTimeout(fin, est+1500);
+    }catch(e){ setTimeout(fin, est); }
+  });
+}
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function runScript(steps){
+  const my=++sceneToken;
+  stopSpeak();
+  for(const s of steps){
+    if(my!==sceneToken) return;
+    if(s.before){ try{s.before();}catch(e){} }
+    await speakAndWait(s.text);
+    if(my!==sceneToken) return;
+    if(s.hold) await delay(s.hold/narr.rate);
+  }
+}
+
+// ============================ SVG ============================
+function clr(id){const g=document.getElementById(id);while(g.firstChild)g.removeChild(g.firstChild);return g;}
+function el(g,t,a){const n=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a){if(k==='text')n.textContent=a[k];else n.setAttribute(k,a[k]);}g.appendChild(n);return n;}
+function setBadge(t){document.getElementById('stage-badge').textContent=t;}
+
+// ============================ STATE ============================
+const state={
+  stage:'multiverse',
+  multi:{
+    stretch:0.5, stick:0.5, weight:0.5,
+    bubbles:[], selectedIdx:4,
+  },
+  timeline:{
+    phase:'inflation',
+    qgpT:1.0, qgpAuto:false, qgpAutoStart:0, qgpAutoDur:9000,
+    qgpStir:{x:CX,y:CY,active:false,strength:0},
+    cmbReveal:0, cmbAuto:false, cmbAutoStart:0, cmbAutoDur:6000,
+    // Per-phase transition progress. -1 = idle/loop, 0..1 = playing the transition.
+    phaseProg:{inflation:-1, hadrons:-1, nuclei:-1, stars:-1, galaxies:-1},
+    phaseStart:{inflation:0, hadrons:0, nuclei:0, stars:0, galaxies:0},
+    phaseDur:{inflation:5000, hadrons:5500, nuclei:6000, stars:6500, galaxies:6000},
+  },
+};
+
+// ============================ MULTIVERSE ============================
+function multi_generateBubbles(){
+  const arr=[];
+  // Spiral arrangement around the big bang
+  const positions=[
+    {x:240,y:130},{x:430,y:120},{x:580,y:170},
+    {x:230,y:240},{x:460,y:240},{x:600,y:280},
+    {x:260,y:360},{x:440,y:370},{x:590,y:380},
+  ];
+  for(let i=0;i<9;i++){
+    let s,k,w;
+    if(i===4){ s=state.multi.stretch; k=state.multi.stick; w=state.multi.weight; }
+    else {
+      s=Math.random(); k=Math.random(); w=Math.random();
+    }
+    arr.push({x:positions[i].x, y:positions[i].y, stretch:s, stick:k, weight:w, phase:Math.random()*Math.PI*2});
+  }
+  state.multi.bubbles=arr;
+}
+
+function multi_verdict(b){
+  const s=b.stretch, k=b.stick, w=b.weight;
+  if(s>0.85) return {alive:false,reason:'ripped apart by too much stretching',glow:0.15};
+  if(s<0.15) return {alive:false,reason:'collapsed — too little stretching',glow:0.10};
+  if(k<0.15) return {alive:false,reason:'too weak: nothing could stick together',glow:0.12};
+  if(k>0.90) return {alive:false,reason:'everything collapsed into black holes',glow:0.18};
+  if(w<0.12) return {alive:false,reason:'particles too light — no stable stars',glow:0.12};
+  if(w>0.90) return {alive:false,reason:'particles too heavy — no chemistry',glow:0.14};
+  const score=1-(Math.abs(s-0.5)*1.2+Math.abs(k-0.5)+Math.abs(w-0.5))/3;
+  return {alive:true,reason:score>0.7?'a calm, long-lived universe like ours':'survives, but different from ours',glow:0.45+0.55*score};
+}
+
+function multi_render(){
+  const bg=clr('g-bg'), main=clr('g-main'), fx=clr('g-fx'), lab=clr('g-lab');
+  setBadge('MULTIVERSE — MANY UNIVERSES ARE BORN');
+
+  // starfield backdrop
+  if(!multi_render._stars){
+    const s=[]; let seed=7;
+    for(let i=0;i<80;i++){ seed=(seed*9301+49297)%233280; const a=seed/233280; seed=(seed*9301+49297)%233280; const b=seed/233280; s.push({x:a*W,y:b*H,r:0.5+Math.random()*0.7}); }
+    multi_render._stars=s;
+  }
+  multi_render._stars.forEach(s=>{
+    const tw=0.4+0.6*Math.sin(clock*0.04+s.x);
+    el(bg,'circle',{cx:s.x,cy:s.y,r:s.r,fill:'#fff',opacity:0.4*tw});
+  });
+
+  // Big Bang point — bright pulsing core
+  const bx=80, by=CY;
+  const pulse=4+3*Math.sin(clock*0.18);
+  el(main,'circle',{cx:bx,cy:by,r:40+pulse,fill:'url(#hotGrad)',opacity:0.55});
+  el(main,'circle',{cx:bx,cy:by,r:20+pulse*0.4,fill:'url(#hotGrad)',opacity:0.9});
+  el(main,'circle',{cx:bx,cy:by,r:8,fill:'#fff8d4'});
+  // emerging rays
+  for(let i=0;i<8;i++){
+    const ang=i*Math.PI*2/8 + clock*0.005;
+    const r1=22+pulse*0.5, r2=r1+18;
+    el(main,'line',{x1:bx+Math.cos(ang)*r1,y1:by+Math.sin(ang)*r1,x2:bx+Math.cos(ang)*r2,y2:by+Math.sin(ang)*r2,stroke:'#fff8d4','stroke-width':1.5,opacity:0.6});
+  }
+  el(lab,'text',{x:bx,y:by+55,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--gold)',text:'BIG BANG'});
+  el(lab,'text',{x:bx,y:by-50,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'var(--text3)',text:'t = 0'});
+
+  // Branches: curving lines from bang to each bubble
+  state.multi.bubbles.forEach((b,i)=>{
+    const mx=(bx+b.x)/2, my=(by+b.y)/2 + (i-4)*8;
+    el(main,'path',{d:`M ${bx+22} ${by} Q ${mx} ${my} ${b.x-22} ${b.y}`,fill:'none',stroke:'var(--border2)','stroke-width':1,opacity:0.45});
+    // travelling spark
+    const t=((clock*0.01)+i*0.11)%1;
+    const sx=bx+22 + (b.x-22-(bx+22))*t + (mx-(bx+22+b.x-22)/2)*4*t*(1-t);
+    const sy=by + (b.y-by)*t + (my-(by+b.y)/2)*4*t*(1-t);
+    el(fx,'circle',{cx:sx,cy:sy,r:1.5,fill:'#fff8d4',opacity:0.8});
+  });
+
+  // Bubbles with parameter-driven appearance
+  state.multi.bubbles.forEach((b,i)=>{
+    const v=multi_verdict(b);
+    const r=22+v.glow*14 + Math.sin(clock*0.04+b.phase)*1.5;
+    const hue=Math.round(20+b.stretch*260);
+    const stroke = v.alive ? `hsl(${hue},75%,68%)` : '#5a2030';
+    const fill   = v.alive ? `hsla(${hue},75%,60%,${0.18+v.glow*0.45})` : 'rgba(70,20,28,0.18)';
+    const sel = i===state.multi.selectedIdx;
+    el(main,'circle',{cx:b.x,cy:b.y,r:r+(sel?5:0),fill:'none',stroke:sel?'#fff':stroke,'stroke-width':sel?2.2:1.4,opacity:sel?1:0.9,class:'tappable','data-bub':i});
+    el(main,'circle',{cx:b.x,cy:b.y,r:r,fill:fill,class:'tappable','data-bub':i});
+    el(main,'circle',{cx:b.x,cy:b.y,r:r,fill:'url(#bubGrad)',opacity:0.4,'pointer-events':'none'});
+    if(!v.alive){
+      el(main,'line',{x1:b.x-r*0.45,y1:b.y-r*0.45,x2:b.x+r*0.45,y2:b.y+r*0.45,stroke:'#ff4f60','stroke-width':1.8,opacity:0.7,'pointer-events':'none'});
+      el(main,'line',{x1:b.x+r*0.45,y1:b.y-r*0.45,x2:b.x-r*0.45,y2:b.y+r*0.45,stroke:'#ff4f60','stroke-width':1.8,opacity:0.7,'pointer-events':'none'});
+    } else {
+      // tiny galaxies inside
+      for(let j=0;j<4;j++){
+        const a=clock*0.008+j*1.6+b.phase;
+        el(fx,'circle',{cx:b.x+Math.cos(a)*r*0.55,cy:b.y+Math.sin(a)*r*0.45,r:1.4,fill:'#ffe8a0',opacity:0.8,'pointer-events':'none'});
+      }
+    }
+    if(i===state.multi.selectedIdx){
+      el(lab,'text',{x:b.x,y:b.y+r+15,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'#fff',text: i===4?'YOUR UNIVERSE':'SELECTED'});
+    }
+  });
+
+  el(lab,'text',{x:CX,y:25,'text-anchor':'middle','font-family':'monospace','font-size':11,fill:'var(--text2)',text:'Each bubble = one possible universe. Tap to inspect.'});
+}
+
+function multi_info(){
+  const sb=state.multi.bubbles[state.multi.selectedIdx]||state.multi.bubbles[4];
+  if(!sb) return;
+  const v=multi_verdict(sb);
+  document.getElementById('info-title').textContent='SELECTED UNIVERSE';
+  document.getElementById('info-area').innerHTML=`
+    <div class="readout-cell" style="text-align:center;padding:14px 11px;">
+      <div style="font-size:18px;color:${v.alive?'var(--green)':'var(--red)'};font-family:'Georgia',serif;margin-bottom:4px;">${v.alive?'✓ Alive':'✗ Dead'}</div>
+      <div style="font-size:12px;color:var(--text3);font-style:italic;">${v.reason}</div>
+    </div>
+    <div class="readout-cell"><div class="r-label">Stretching force</div><div class="r-value cyan">${Math.round(sb.stretch*100)} / 100</div></div>
+    <div class="readout-cell"><div class="r-label">Stickiness</div><div class="r-value violet">${Math.round(sb.stick*100)} / 100</div></div>
+    <div class="readout-cell"><div class="r-label">Particle weight</div><div class="r-value gold">${Math.round(sb.weight*100)} / 100</div></div>
+  `;
+}
+
+function multi_setControls(){
+  const area=document.getElementById('side-panel');
+  area.innerHTML=`
+    <div class="panel-title">Play With The Rules</div>
+    <div class="param">
+      <div class="param-row"><span>Stretching force</span><span class="param-val" id="multi-s">${Math.round(state.multi.stretch*100)}</span></div>
+      <input type="range" id="multi-stretch" min="0" max="1" step="0.01" value="${state.multi.stretch}">
+      <div class="param-sub">Too much → universe rips apart. Too little → collapses.</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Stickiness</span><span class="param-val" id="multi-k">${Math.round(state.multi.stick*100)}</span></div>
+      <input type="range" id="multi-stick" min="0" max="1" step="0.01" value="${state.multi.stick}">
+      <div class="param-sub">How strongly things pull on each other.</div>
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Particle weight</span><span class="param-val" id="multi-w">${Math.round(state.multi.weight*100)}</span></div>
+      <input type="range" id="multi-weight" min="0" max="1" step="0.01" value="${state.multi.weight}">
+      <div class="param-sub">How heavy the basic ingredients are.</div>
+    </div>
+    <div class="section-label">Actions</div>
+    <div class="btn-row cols-2">
+      <button id="multi-shuffle">🎲 New bubbles</button>
+      <button id="multi-next">→ Use this one</button>
+    </div>
+    <div class="btn-row cols-2" style="margin-top:6px;">
+      <button id="multi-intro">▶ Tell me the story</button>
+    </div>
+  `;
+  const bind=(id,prop,outId)=>{
+    const e=document.getElementById(id);
+    if(!e) return;
+    e.oninput=function(){
+      state.multi[prop]=parseFloat(this.value);
+      document.getElementById(outId).textContent=Math.round(state.multi[prop]*100);
+      if(state.multi.bubbles[4]){
+        state.multi.bubbles[4].stretch=state.multi.stretch;
+        state.multi.bubbles[4].stick=state.multi.stick;
+        state.multi.bubbles[4].weight=state.multi.weight;
+      }
+      state.multi.selectedIdx=4;
+      multi_info();
+    };
+  };
+  bind('multi-stretch','stretch','multi-s');
+  bind('multi-stick','stick','multi-k');
+  bind('multi-weight','weight','multi-w');
+  document.getElementById('multi-shuffle').onclick=()=>{
+    multi_generateBubbles(); state.multi.selectedIdx=4; multi_info();
+    runScript([{text:'A fresh batch. Most are <b>dead</b>, marked with a red cross. Only a narrow few are alive.'}]);
+  };
+  document.getElementById('multi-next').onclick=()=>{ activate('timeline'); };
+  document.getElementById('multi-intro').onclick=()=>multi_intro();
+}
+
+async function multi_intro(){
+  await runScript([
+    {text:'In the first instant, our universe was a tiny, blindingly hot speck. Many scientists believe that <b>many</b> such universes can be born — each with its own rules.'},
+    {text:'Around the big bang you see <b>nine bubble universes</b>. Each has a different mix of three rules: the <b>stretching force</b>, the <b>stickiness</b> between things, and the <b>weight</b> of the basic ingredients.'},
+    {text:'Notice — most are <b>dead</b>. Some ripped apart. Some collapsed. Some could never form atoms. Only a narrow set of rules makes a calm, lasting universe.'},
+    {text:'Play with the three sliders on the right. They control the middle bubble — your universe. Or tap <b>new bubbles</b> for a random batch. When you are happy, tap <b>use this one</b> to follow its life story.'},
+  ]);
+}
+
+// ============================ TIMELINE ============================
+// Per-phase transition timing. Returns progress in [0..1] (0=before, 1=after).
+// If the phase is idle (-1), returns 1 (showing the "after" state).
+function phaseProg(id){
+  const p=state.timeline.phaseProg[id];
+  if(p===undefined||p===-1) return 1;
+  const t=(performance.now()-state.timeline.phaseStart[id])/state.timeline.phaseDur[id];
+  if(t>=1){ state.timeline.phaseProg[id]=-1; return 1; }
+  return t;
+}
+function playPhase(id, withNarration){
+  state.timeline.phaseProg[id]=0;
+  state.timeline.phaseStart[id]=performance.now();
+  if(withNarration) phaseNarration(id);
+}
+function phaseNarration(id){
+  if(id==='inflation') runScript([
+    {text:'In its very first instant the universe was barely a speck. Watch — in a flash so brief there are no real words for it, that speck blows up by a factor more than a trillion trillion.'},
+    {text:'This is <b>inflation</b>. Space itself stretches. After this sudden burst, the universe is finally large enough for everything else to happen.'},
+  ]);
+  else if(id==='hadrons') runScript([
+    {text:'The fireball has cooled. Quarks are no longer free — they have locked into <b>trios</b>. Each trio is a proton or a neutron.'},
+    {text:'Around them, electrons whizz about. But they cannot settle yet: they keep bouncing off the surrounding fog of light.'},
+  ]);
+  else if(id==='nuclei') runScript([
+    {text:'In the first three minutes, protons and neutrons start <b>colliding and fusing</b>.'},
+    {text:'A proton and a neutron stick → deuterium. Two of those merge → helium. Watch the little flashes — that is the first nuclear furnace, building the universe\'s first ingredients.'},
+    {text:'After three minutes the universe is mostly hydrogen and a little helium. Everything else will be built much, much later inside stars.'},
+  ]);
+  else if(id==='stars') runScript([
+    {text:'For a hundred and fifty million years after the first light, the sky was dark. Just cold gas.'},
+    {text:'Then gravity began to win. A great cloud of hydrogen contracts — squeezes — gets hotter — and at last, <b>ignites</b>.'},
+    {text:'The first star is born. The Dark Ages are over.'},
+  ]);
+  else if(id==='galaxies') runScript([
+    {text:'Over billions of years, gravity sculpts a vast <b>cosmic web</b>. Gas flows along glowing filaments.'},
+    {text:'Where the filaments meet, gas piles up, stars are born by the millions, and the whole region begins to spin.'},
+    {text:'A galaxy.'},
+  ]);
+}
+
+const PHASES=[
+  {id:'inflation', name:'INFLATION',     t:'10⁻³⁵ s'},
+  {id:'qgp',       name:'QUARK SOUP',    t:'up to 10 µs'},
+  {id:'hadrons',   name:'PROTONS FORM',  t:'10 µs'},
+  {id:'nuclei',    name:'FIRST NUCLEI',  t:'3 min'},
+  {id:'cmb',       name:'FIRST LIGHT',   t:'380,000 yr'},
+  {id:'stars',     name:'FIRST STARS',   t:'150 Myr'},
+  {id:'galaxies',  name:'GALAXIES',      t:'1 Byr+'},
+];
+
+function timeline_render(){
+  const bg=clr('g-bg'), main=clr('g-main'), fx=clr('g-fx'), lab=clr('g-lab');
+  setBadge('LIFE STORY OF YOUR UNIVERSE');
+
+  // Timeline strip across the top
+  const y0=34;
+  el(main,'line',{x1:36,y1:y0,x2:W-36,y2:y0,stroke:'var(--border2)','stroke-width':2});
+  PHASES.forEach((p,i)=>{
+    const x=36+i*(W-72)/(PHASES.length-1);
+    const sel=p.id===state.timeline.phase;
+    el(main,'circle',{cx:x,cy:y0,r:sel?9:6,fill:sel?'var(--gold)':'var(--bg3)',stroke:sel?'#fff':'var(--border2)','stroke-width':1.5,class:'tappable','data-phase':p.id});
+  });
+  // Active label below strip
+  const p=PHASES.find(x=>x.id===state.timeline.phase);
+  if(p){
+    const idx=PHASES.findIndex(x=>x.id===state.timeline.phase);
+    const x=36+idx*(W-72)/(PHASES.length-1);
+    el(lab,'text',{x,y:y0-14,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'var(--gold)',text:p.t});
+    el(lab,'text',{x,y:y0+22,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'var(--gold-bright)',text:p.name});
+  }
+
+  if(state.timeline.phase==='inflation') draw_inflation(main,fx,lab);
+  else if(state.timeline.phase==='qgp') draw_qgp(main,fx,lab);
+  else if(state.timeline.phase==='hadrons') draw_hadrons(main,fx,lab);
+  else if(state.timeline.phase==='nuclei') draw_nuclei(main,fx,lab);
+  else if(state.timeline.phase==='cmb') draw_cmb(main,fx,lab);
+  else if(state.timeline.phase==='stars') draw_stars(main,fx,lab);
+  else if(state.timeline.phase==='galaxies') draw_galaxies(main,fx,lab);
+}
+
+// ------ Inflation: tiny speck → SUDDEN violent blowup → settled, with a size counter.
+// The drama is the contrast between "before" and "after".
+function draw_inflation(main,fx,lab){
+  const t = phaseProg('inflation');   // 0..1 progresses, -1=idle (treated as 1)
+  const cx=CX, cy=CY+10;
+
+  // Three-phase shape: pre-pause | burst | settled
+  // 0..0.18 = pre (tiny speck, still)
+  // 0.18..0.45 = BURST (size explodes ~exponentially)
+  // 0.45..1 = settled (gentle drift, expanded)
+  let size, ringOpa, motionBlur;
+  if(t<0.18){
+    size = 1;                       // a barely-visible speck
+    ringOpa = 0;
+    motionBlur = 0;
+  } else if(t<0.45){
+    const u = (t-0.18)/0.27;        // 0..1 inside the burst
+    size = Math.pow(2, u*9.2);      // 1 → ~590, exponential
+    ringOpa = u;
+    motionBlur = u;
+  } else {
+    size = Math.pow(2, 9.2) + (t-0.45)*40;
+    ringOpa = Math.max(0, 1-(t-0.45)*1.4);
+    motionBlur = Math.max(0, 0.6-(t-0.45)*1.5);
+  }
+
+  // Backdrop: a faint reference grid that DOESN'T stretch — shows the universe was small, then large.
+  // Plus a stretching grid of points to convey "space itself is stretching".
+  // We map size to a scale: scale=1 at size=1, max ~3.0
+  const scale = Math.min(3.0, 0.3 + size*0.005);
+  const gridW=460, gridH=320;
+  const rows=6, cols=8;
+  // Stretching grid (the universe)
+  for(let i=0;i<=rows;i++){
+    for(let j=0;j<=cols;j++){
+      const u=j/cols-0.5, v=i/rows-0.5;
+      const x=cx+u*gridW*scale, y=cy+v*gridH*scale;
+      if(x<-10||x>W+10||y<-10||y>H+10) continue;
+      el(main,'circle',{cx:x,cy:y,r:1.7,fill:'#ffe8a0',opacity:0.6});
+    }
+  }
+  // Bright burst rings during the explosion
+  if(ringOpa>0.05){
+    for(let i=0;i<4;i++){
+      const f=((performance.now()-state.timeline.phaseStart.inflation)*0.001+i/4)%1;
+      const r=20+f*260;
+      el(main,'circle',{cx,cy,r,fill:'none',stroke:'#fff8d4','stroke-width':3,opacity:ringOpa*(1-f)*0.85});
+    }
+  }
+  // Motion-blur arrows during the burst — every grid point getting pushed outward fast
+  if(motionBlur>0.05){
+    for(let i=0;i<=rows;i+=2){
+      for(let j=0;j<=cols;j+=2){
+        const u=j/cols-0.5, v=i/rows-0.5;
+        if(Math.abs(u)<0.06 && Math.abs(v)<0.06) continue;
+        const x=cx+u*gridW*scale, y=cy+v*gridH*scale;
+        const len = 18+motionBlur*44;
+        const d=Math.hypot(u,v); if(d<0.001) continue;
+        const ux=u/d, uy=v/d;
+        el(fx,'line',{x1:x-ux*len,y1:y-uy*len*0.7,x2:x,y2:y,stroke:'#40ffaa','stroke-width':2,opacity:motionBlur*0.9});
+      }
+    }
+  }
+  // Central speck — always visible, brighter early
+  const speckR = t<0.18 ? 4 : Math.max(2, 8-(t-0.18)*16);
+  el(main,'circle',{cx,cy,r:speckR+4,fill:'url(#hotGrad)',opacity:0.8});
+  el(main,'circle',{cx,cy,r:speckR,fill:'#fff8d4'});
+
+  // Size readout — the "wow" number that climbs explosively
+  let sizeLabel;
+  if(size<10) sizeLabel = '1×';
+  else if(size<1e3) sizeLabel = size.toFixed(0)+'×';
+  else if(size<1e6) sizeLabel = (size/1e3).toFixed(1)+' thousand ×';
+  else if(size<1e9) sizeLabel = (size/1e6).toFixed(1)+' million ×';
+  else sizeLabel = (size/1e9).toFixed(2)+' billion ×';
+  // Phase label
+  let phaseTxt;
+  if(t<0.18) phaseTxt='BEFORE — a quiet speck';
+  else if(t<0.45) phaseTxt='⚡ INFLATION — SPACE EXPLODES OUTWARD ⚡';
+  else phaseTxt='AFTER — expansion calms down';
+  el(lab,'text',{x:CX,y:78,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:t<0.18?'var(--text2)':(t<0.45?'var(--gold-bright)':'var(--cyan)'),'font-weight':'bold',text:phaseTxt});
+  el(lab,'text',{x:CX,y:98,'text-anchor':'middle','font-family':'monospace','font-size':11,fill:'var(--gold)',text:'Universe size: '+sizeLabel});
+  el(lab,'text',{x:CX,y:H-22,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:'In a fraction of a fraction of a second, space stretched by more than a trillion trillion times.'});
+}
+
+// ------ QGP: hot fireball of free quarks (r/g/b) that bind when cool. Stirrable.
+let _qgpPts=null;
+function qgp_init(){
+  const pts=[];
+  let s=1;function rnd(){s=(s*9301+49297)%233280;return s/233280;}
+  const N=72;
+  const cx=CX, cy=CY+25, R=170;
+  for(let i=0;i<N;i++){
+    const a=rnd()*Math.PI*2, r=Math.sqrt(rnd())*R;
+    pts.push({x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r, vx:(rnd()-0.5)*3, vy:(rnd()-0.5)*3, c:Math.floor(rnd()*3), id:i});
+  }
+  _qgpPts=pts;
+}
+
+function draw_qgp(main,fx,lab){
+  const T=state.timeline.qgpT;
+  if(state.timeline.qgpAuto){
+    const t=(performance.now()-state.timeline.qgpAutoStart)/state.timeline.qgpAutoDur;
+    if(t>=1){ state.timeline.qgpAuto=false; state.timeline.qgpT=0; }
+    else { state.timeline.qgpT=1-t; }
+    const sl=document.getElementById('qgp-t'); if(sl){sl.value=state.timeline.qgpT;const v=document.getElementById('qgp-tv');if(v)v.textContent=Math.round(state.timeline.qgpT*100);}
+  }
+  const cx=CX, cy=CY+25, R=170;
+  // glowing fireball backdrop
+  const fireR=R+30, fireOpa=0.6+0.3*T;
+  el(main,'circle',{cx,cy,r:fireR,fill:'url(#qgpFire)',opacity:fireOpa});
+  el(main,'circle',{cx,cy,r:R,fill:`rgba(255,90,80,${0.05+T*0.12})`,stroke:'var(--border2)','stroke-width':1.5});
+
+  // initialize particles
+  if(!_qgpPts) qgp_init();
+  const pts=_qgpPts;
+
+  // physics: at high T particles are fast & free. At low T they bind into triples.
+  const speed=0.4+T*2.8;
+  // confinement strength: how strongly we pull triples together as T drops
+  const conf=Math.max(0, 0.4-T)*0.18;
+  // form triples by sorted indices i, i+1, i+2 (deterministic but visually fine)
+  pts.forEach(p=>{
+    p.x+=p.vx*speed; p.y+=p.vy*speed;
+    // confine within the fireball
+    const dx=p.x-cx, dy=p.y-cy, dist=Math.hypot(dx,dy);
+    if(dist>R-6){
+      const nx=dx/dist, ny=dy/dist;
+      p.x=cx+nx*(R-6); p.y=cy+ny*(R-6);
+      // reflect
+      const dot=p.vx*nx+p.vy*ny;
+      p.vx-=2*dot*nx; p.vy-=2*dot*ny;
+    }
+    // thermal jitter
+    if(T>0.15){ p.vx+=(Math.random()-0.5)*0.1*T; p.vy+=(Math.random()-0.5)*0.1*T; }
+    const m=Math.hypot(p.vx,p.vy); if(m>3.5){p.vx*=3.5/m;p.vy*=3.5/m;}
+  });
+  // Stir from mouse
+  if(state.timeline.qgpStir.active && state.timeline.qgpStir.strength>0){
+    const sx=state.timeline.qgpStir.x, sy=state.timeline.qgpStir.y;
+    pts.forEach(p=>{
+      const dx=p.x-sx, dy=p.y-sy, d=Math.hypot(dx,dy);
+      if(d<80 && d>0){
+        const force=state.timeline.qgpStir.strength*(1-d/80)*0.6;
+        p.vx+=dx/d*force; p.vy+=dy/d*force;
+      }
+    });
+    state.timeline.qgpStir.strength*=0.9;
+  }
+  // Binding into triples when cool
+  if(T<0.45){
+    for(let i=0;i<pts.length-2;i+=3){
+      const a=pts[i], b=pts[i+1], c=pts[i+2];
+      const cxg=(a.x+b.x+c.x)/3, cyg=(a.y+b.y+c.y)/3;
+      const k=(0.45-T)*conf*1.8;
+      [a,b,c].forEach(p=>{ p.x+=(cxg-p.x)*k; p.y+=(cyg-p.y)*k; });
+    }
+  }
+  // Render: at low T, render bound triples as joined groups
+  const colours=['#ff5070','#40ffaa','#3a8fff'];
+  if(T<0.35){
+    // Draw triples as faint white circle behind 3 quarks
+    for(let i=0;i<pts.length-2;i+=3){
+      const a=pts[i], b=pts[i+1], c=pts[i+2];
+      const cxg=(a.x+b.x+c.x)/3, cyg=(a.y+b.y+c.y)/3;
+      el(main,'circle',{cx:cxg,cy:cyg,r:11,fill:'rgba(255,255,255,0.10)',stroke:'rgba(255,255,255,0.35)','stroke-width':1});
+    }
+  }
+  // Draw each particle
+  pts.forEach(p=>{
+    el(main,'circle',{cx:p.x,cy:p.y,r:5,fill:colours[p.c]});
+    el(main,'circle',{cx:p.x-1.4,cy:p.y-1.4,r:1.4,fill:'#fff',opacity:0.55});
+    // motion trail at high T
+    if(T>0.5){
+      el(fx,'circle',{cx:p.x-p.vx*2,cy:p.y-p.vy*2,r:2.5,fill:colours[p.c],opacity:0.3});
+    }
+  });
+
+  // Temperature label
+  const tempLabel = T>0.6?'BLAZING HOT — FREE QUARKS' : T>0.3?'COOLING DOWN…' : 'COOL ENOUGH — QUARKS HAVE BOUND';
+  el(lab,'text',{x:CX,y:85,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:'var(--gold)',text:tempLabel});
+  // hot/cold gauge on right
+  el(lab,'text',{x:W-30,y:120,'font-family':'monospace','font-size':9,fill:'var(--text3)',text:'HOT'});
+  el(lab,'text',{x:W-30,y:H-32,'font-family':'monospace','font-size':9,fill:'var(--text3)',text:'COOL'});
+  el(main,'rect',{x:W-22,y:130,width:8,height:H-180,fill:'var(--bg3)',stroke:'var(--border2)','stroke-width':1});
+  el(main,'rect',{x:W-22,y:130+(1-T)*(H-180),width:8,height:T*(H-180),fill:'#ff5070',opacity:0.9});
+  // Instructions
+  el(lab,'text',{x:CX,y:H-12,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'var(--text3)',text:'Click & drag inside the fireball to stir it.'});
+}
+
+// ------ Hadrons era: stable protons & neutrons. Electrons orbit but
+// keep scattering off photons (showing why the universe is still foggy).
+function draw_hadrons(main,fx,lab){
+  const t = phaseProg('hadrons');
+  // Optional fade-in during transition
+  const fadeIn = Math.min(1, t*2);
+
+  const baryons=[
+    {cx:170,cy:200,type:'p'},
+    {cx:340,cy:170,type:'n'},
+    {cx:520,cy:200,type:'p'},
+    {cx:230,cy:340,type:'n'},
+    {cx:430,cy:360,type:'p'},
+    {cx:560,cy:340,type:'n'},
+  ];
+
+  // Faint hot fog backdrop (the universe is opaque in this era)
+  el(main,'rect',{x:60,y:120,width:W-120,height:H-160,rx:14,fill:'rgba(255,160,80,0.05)',stroke:'var(--border2)','stroke-width':1});
+
+  // Baryon trios
+  baryons.forEach((b,i)=>{
+    const wob=Math.sin(clock*0.05+i)*1.4;
+    // quark trio (rotating)
+    for(let j=0;j<3;j++){
+      const a=clock*0.05+j*Math.PI*2/3+i;
+      const col = b.type==='p' ? (j<2?'#ff5070':'#3a8fff') : (j<2?'#3a8fff':'#ff5070');
+      el(main,'circle',{cx:b.cx+Math.cos(a)*5,cy:b.cy+Math.sin(a)*5+wob,r:4.5,fill:col,opacity:fadeIn});
+    }
+    el(main,'circle',{cx:b.cx,cy:b.cy,r:14,fill:'none',stroke:b.type==='p'?'#f0c060':'#5878a0','stroke-width':1.4,opacity:fadeIn});
+    el(lab,'text',{x:b.cx,y:b.cy+26,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'var(--text3)',text:b.type==='p'?'proton':'neutron',opacity:fadeIn});
+  });
+
+  // Electrons whizzing around — but bouncing off "photons" (yellow specks)
+  if(!draw_hadrons._es){
+    const arr=[]; let s=17;
+    for(let i=0;i<12;i++){
+      s=(s*9301+49297)%233280; const a=s/233280;
+      s=(s*9301+49297)%233280; const b=s/233280;
+      arr.push({x:80+a*(W-160), y:120+b*(H-200), vx:(Math.random()-0.5)*4, vy:(Math.random()-0.5)*4});
+    }
+    draw_hadrons._es=arr;
+  }
+  const es=draw_hadrons._es;
+  es.forEach(e=>{
+    e.x+=e.vx; e.y+=e.vy;
+    // bounce off walls
+    if(e.x<70||e.x>W-70){ e.vx=-e.vx; e.x=Math.max(70,Math.min(W-70,e.x)); }
+    if(e.y<120||e.y>H-60){ e.vy=-e.vy; e.y=Math.max(120,Math.min(H-60,e.y)); }
+    // random scatter (photon collision)
+    if(Math.random()<0.02){
+      const a=Math.random()*Math.PI*2;
+      e.vx=Math.cos(a)*4; e.vy=Math.sin(a)*4;
+      // flash a tiny photon
+      el(fx,'circle',{cx:e.x,cy:e.y,r:5,fill:'#fff8d4',opacity:0.7});
+    }
+    // motion trail
+    el(fx,'line',{x1:e.x-e.vx*3,y1:e.y-e.vy*3,x2:e.x,y2:e.y,stroke:'#3a8fff','stroke-width':1.5,opacity:0.5*fadeIn});
+    el(main,'circle',{cx:e.x,cy:e.y,r:2.5,fill:'#3a8fff',opacity:fadeIn});
+  });
+
+  // Scattered photons floating around
+  if(!draw_hadrons._ph){
+    const arr=[]; let s=23;
+    for(let i=0;i<22;i++){
+      s=(s*9301+49297)%233280; const a=s/233280;
+      s=(s*9301+49297)%233280; const b=s/233280;
+      arr.push({x:80+a*(W-160), y:120+b*(H-200), ph:Math.random()*Math.PI*2});
+    }
+    draw_hadrons._ph=arr;
+  }
+  draw_hadrons._ph.forEach((p,i)=>{
+    const fl = 0.4+0.6*Math.sin(clock*0.06+p.ph);
+    el(fx,'circle',{cx:p.x,cy:p.y,r:1.5,fill:'#ffe8a0',opacity:fl*0.7*fadeIn});
+  });
+
+  el(lab,'text',{x:CX,y:90,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:'var(--gold)',text:'PROTONS & NEUTRONS FORMED — UNIVERSE STILL FOGGY'});
+  el(lab,'text',{x:CX,y:H-22,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:'Electrons whizz but cannot settle — they keep bouncing off photons (the yellow specks).'});
+}
+
+// ------ First Nuclei: protons + neutrons COLLIDE and FUSE.
+// Watch deuterium form, then helium. Bright flashes mark each merge.
+function draw_nuclei(main,fx,lab){
+  const t = phaseProg('nuclei');
+
+  // Particle pool with positions and velocities
+  if(!draw_nuclei._pool || draw_nuclei._poolPlayId !== state.timeline.phaseStart.nuclei){
+    draw_nuclei._poolPlayId = state.timeline.phaseStart.nuclei;
+    const pool=[];
+    let s=41;function rnd(){s=(s*9301+49297)%233280;return s/233280;}
+    // start with bare protons & neutrons
+    for(let i=0;i<10;i++){ pool.push({x:80+rnd()*(W-160), y:130+rnd()*(H-200), vx:(rnd()-0.5)*2.2, vy:(rnd()-0.5)*2.2, type:'p', n:1, age:rnd()}); }
+    for(let i=0;i<10;i++){ pool.push({x:80+rnd()*(W-160), y:130+rnd()*(H-200), vx:(rnd()-0.5)*2.2, vy:(rnd()-0.5)*2.2, type:'n', n:1, age:rnd()}); }
+    draw_nuclei._pool=pool;
+    draw_nuclei._flashes=[];
+  }
+  const pool=draw_nuclei._pool;
+  const flashes=draw_nuclei._flashes;
+
+  // Move
+  pool.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<70){p.x=70;p.vx=Math.abs(p.vx);}
+    if(p.x>W-70){p.x=W-70;p.vx=-Math.abs(p.vx);}
+    if(p.y<120){p.y=120;p.vy=Math.abs(p.vy);}
+    if(p.y>H-60){p.y=H-60;p.vy=-Math.abs(p.vy);}
+  });
+
+  // Fusion check: pairs of close particles. Different recipes:
+  //  p + n -> D (deuterium, n=2)
+  //  D + D -> He4 (n=4)
+  // Only allow fusion during the active phase
+  if(t>0.15 && t<0.95){
+    for(let i=0;i<pool.length;i++){
+      for(let j=i+1;j<pool.length;j++){
+        const a=pool[i], b=pool[j];
+        if(!a || !b) continue;
+        const dx=a.x-b.x, dy=a.y-b.y;
+        if(Math.abs(dx)>18 || Math.abs(dy)>18) continue;
+        const d=Math.hypot(dx,dy);
+        if(d>18) continue;
+        // Fusion rules
+        let merged=null;
+        if((a.type==='p' && b.type==='n') || (a.type==='n' && b.type==='p')){
+          merged={x:(a.x+b.x)/2, y:(a.y+b.y)/2, vx:(a.vx+b.vx)/2*0.6, vy:(a.vy+b.vy)/2*0.6, type:'D', n:2, age:0};
+        } else if(a.type==='D' && b.type==='D'){
+          merged={x:(a.x+b.x)/2, y:(a.y+b.y)/2, vx:(a.vx+b.vx)/2*0.5, vy:(a.vy+b.vy)/2*0.5, type:'He', n:4, age:0};
+        }
+        if(merged){
+          flashes.push({x:merged.x, y:merged.y, t:performance.now()});
+          pool[i]=merged; pool[j]=null;
+          break;
+        }
+      }
+    }
+    // remove nulls
+    draw_nuclei._pool = pool.filter(x=>x);
+  }
+
+  // Render particles
+  draw_nuclei._pool.forEach(p=>{
+    const cols=p.type==='p'?['#f0c060']:p.type==='n'?['#5878a0']:p.type==='D'?['#f0c060','#5878a0']:['#f0c060','#5878a0','#f0c060','#5878a0'];
+    if(p.n===1){
+      el(main,'circle',{cx:p.x,cy:p.y,r:5,fill:cols[0]});
+    } else {
+      // cluster
+      for(let k=0;k<p.n;k++){
+        const a=clock*0.04+k*Math.PI*2/p.n;
+        el(main,'circle',{cx:p.x+Math.cos(a)*4,cy:p.y+Math.sin(a)*4,r:4,fill:cols[k]});
+      }
+      el(main,'circle',{cx:p.x,cy:p.y,r:11,fill:'none',stroke:'#fff','stroke-width':1,'stroke-dasharray':'2 2',opacity:0.45});
+      // label
+      const lbl = p.type==='D'?'D':p.type==='He'?'He':'';
+      if(lbl) el(lab,'text',{x:p.x,y:p.y+22,'text-anchor':'middle','font-family':'monospace','font-size':9,fill:'#fff',text:lbl});
+    }
+  });
+
+  // Flashes
+  const now=performance.now();
+  draw_nuclei._flashes = flashes.filter(f=>now-f.t<800);
+  draw_nuclei._flashes.forEach(f=>{
+    const age=(now-f.t)/800;
+    el(fx,'circle',{cx:f.x,cy:f.y,r:6+age*20,fill:'none',stroke:'#fff8d4','stroke-width':2,opacity:1-age});
+    el(fx,'circle',{cx:f.x,cy:f.y,r:4,fill:'#fff8d4',opacity:(1-age)*0.7});
+  });
+
+  // Counters
+  const protons=draw_nuclei._pool.filter(p=>p.type==='p').length;
+  const neutrons=draw_nuclei._pool.filter(p=>p.type==='n').length;
+  const deuterium=draw_nuclei._pool.filter(p=>p.type==='D').length;
+  const helium=draw_nuclei._pool.filter(p=>p.type==='He').length;
+  el(lab,'text',{x:60,y:H-60,'font-family':'monospace','font-size':10,fill:'var(--gold)',text:`Free p: ${protons}  ·  Free n: ${neutrons}  ·  D: ${deuterium}  ·  He: ${helium}`});
+
+  el(lab,'text',{x:CX,y:90,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:'var(--gold)',text:'THE FIRST THREE MINUTES — NUCLEI BUILDING'});
+  el(lab,'text',{x:CX,y:H-22,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:'p + n → deuterium · D + D → helium. Every flash is a fusion.'});
+}
+
+// ------ CMB: fog clearing to reveal patchy anisotropy + photons streaming
+function draw_cmb(main,fx,lab){
+  if(state.timeline.cmbAuto){
+    const t=(performance.now()-state.timeline.cmbAutoStart)/state.timeline.cmbAutoDur;
+    state.timeline.cmbReveal=Math.min(1,t);
+    if(t>=1) state.timeline.cmbAuto=false;
+    const sl=document.getElementById('cmb-r'); if(sl){sl.value=state.timeline.cmbReveal;const v=document.getElementById('cmb-rv');if(v)v.textContent=Math.round(state.timeline.cmbReveal*100)+'%';}
+  }
+  const reveal=state.timeline.cmbReveal;
+  const cx=CX, cy=CY+25, R=180;
+
+  // outer fog haze when not yet cleared
+  const hazeR=R+50, hazeOp=(1-reveal)*0.5;
+  if(hazeOp>0.02){
+    for(let i=0;i<3;i++){
+      el(main,'circle',{cx,cy,r:hazeR-i*10,fill:`rgba(255,140,80,${hazeOp*(0.4-i*0.1)})`,filter:'url(#blur1)'});
+    }
+  }
+
+  // The disc
+  el(main,'circle',{cx,cy,r:R,fill:'#1a0e08',stroke:'var(--border2)','stroke-width':2});
+
+  // anisotropy patches (deterministic)
+  if(!draw_cmb._patches){
+    let s=3;function rnd(){s=(s*9301+49297)%233280;return s/233280;}
+    const arr=[];
+    for(let i=0;i<90;i++){
+      const a=rnd()*Math.PI*2, rr=Math.sqrt(rnd())*0.96;
+      arr.push({x:Math.cos(a)*rr, y:Math.sin(a)*rr, r:0.08+rnd()*0.16, t:rnd()});
+    }
+    draw_cmb._patches=arr;
+  }
+  draw_cmb._patches.forEach(p=>{
+    const px=cx+p.x*R, py=cy+p.y*R, pr=p.r*R*0.7;
+    const c=p.t;
+    const r1=Math.round(80+c*175), g1=Math.round(80+(1-Math.abs(c-0.5)*2)*100), b1=Math.round(80+(1-c)*175);
+    el(main,'circle',{cx:px,cy:py,r:pr,fill:`rgba(${r1},${g1},${b1},${0.22+reveal*0.62})`});
+  });
+
+  // Photons streaming outward once cleared
+  if(reveal>0.05){
+    for(let i=0;i<24;i++){
+      const ang=i*Math.PI*2/24;
+      const t=((clock*0.014)+i/24)%1;
+      const rr=R+t*80;
+      const px=cx+Math.cos(ang)*rr, py=cy+Math.sin(ang)*rr;
+      el(fx,'circle',{cx:px,cy:py,r:1.8,fill:'#fff8d4',opacity:(1-t)*0.8*reveal});
+    }
+  }
+  // label
+  const lbl = reveal<0.15 ? 'A HOT FOG — LIGHT IS TRAPPED' : reveal<0.85 ? 'COOLING — THE FOG IS CLEARING' : 'CLEAR! THIS LIGHT STILL FILLS THE SKY';
+  el(lab,'text',{x:CX,y:90,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:'var(--gold)',text:lbl});
+  el(lab,'text',{x:CX,y:H-22,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:'The patches are the real map of the baby universe — measured by space telescopes.'});
+}
+
+// ------ First Stars: a gas cloud contracts under gravity and IGNITES.
+// Three beats: dark cold cloud → contracting blob → ignition flash → starlight.
+function draw_stars(main,fx,lab){
+  const t = phaseProg('stars');
+
+  // We tell the story with one central protostar + several others off-stage
+  const cx=CX, cy=CY+10;
+
+  // Phase blends:
+  // 0..0.35: dark cloud — scattered gas dots, almost invisible
+  // 0.35..0.6: contracting — dots stream inward, central blob grows
+  // 0.6..0.72: heating up — central blob brightens red→white
+  // 0.72..0.8: IGNITION FLASH
+  // 0.8..1.0: star with diffraction spikes
+
+  // Gas particles around the central region
+  if(!draw_stars._gas || draw_stars._gasPlayId !== state.timeline.phaseStart.stars){
+    draw_stars._gasPlayId = state.timeline.phaseStart.stars;
+    const arr=[]; let s=53;function rnd(){s=(s*9301+49297)%233280;return s/233280;}
+    for(let i=0;i<150;i++){
+      const a=rnd()*Math.PI*2, r=80+rnd()*140;
+      arr.push({x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r*0.85, ox:cx+Math.cos(a)*r, oy:cy+Math.sin(a)*r*0.85, vx:0, vy:0});
+    }
+    draw_stars._gas=arr;
+  }
+  const gas=draw_stars._gas;
+
+  // Move gas: it contracts during 0.2..0.7 of progress
+  if(t>0.2 && t<0.75){
+    const pull = Math.min(1, (t-0.2)/0.5) * 0.04;
+    gas.forEach(p=>{
+      const dx=cx-p.x, dy=cy-p.y;
+      p.x+=dx*pull; p.y+=dy*pull;
+    });
+  } else if(t>=0.75){
+    // freeze — the gas has fallen into the star
+    gas.forEach(p=>{
+      const dx=cx-p.x, dy=cy-p.y;
+      p.x+=dx*0.06; p.y+=dy*0.06;
+    });
+  }
+
+  // Render gas as faint specks
+  const gasOpa = t<0.35 ? 0.35 : Math.max(0.05, 0.35*(1-(t-0.35)*1.4));
+  gas.forEach(p=>{
+    if(Math.hypot(p.x-cx,p.y-cy)<6) return; // hide once they reach centre
+    el(main,'circle',{cx:p.x,cy:p.y,r:1.4,fill:'#5878a0',opacity:gasOpa});
+  });
+  // Faint cloud nebula tint while still cold
+  if(t<0.6){
+    const nebOpa = 0.15*(1 - Math.max(0,(t-0.2)*1.6));
+    el(main,'ellipse',{cx,cy,rx:160,ry:130,fill:'#3a8fff',opacity:nebOpa});
+  }
+
+  // Central protostar — grows and changes colour
+  let coreR=0, coreFill='#1e3050';
+  if(t<0.35){ coreR=2; coreFill='#3a5070'; }
+  else if(t<0.6){
+    // contracting blob, growing red
+    coreR = 4 + (t-0.35)*40;
+    const heat = (t-0.35)/0.25;
+    const r = Math.round(80+heat*175), g=Math.round(40+heat*60), b=Math.round(40+heat*40);
+    coreFill = `rgb(${r},${g},${b})`;
+  }
+  else if(t<0.72){
+    // heating up to ignition
+    coreR = 16 + (t-0.6)*30;
+    const heat = (t-0.6)/0.12;
+    const r=255, g=Math.round(120+heat*135), bb=Math.round(60+heat*170);
+    coreFill = `rgb(${r},${g},${bb})`;
+  }
+  else if(t<0.8){
+    // ignition flash — explode brightness
+    const u=(t-0.72)/0.08;
+    coreR = 28 + u*40;
+    coreFill = '#fff8d4';
+    // flash ring
+    el(fx,'circle',{cx,cy,r:30+u*150,fill:'none',stroke:'#fff8d4','stroke-width':3,opacity:1-u});
+    el(fx,'circle',{cx,cy,r:30+u*220,fill:'none',stroke:'#ffe8a0','stroke-width':2,opacity:(1-u)*0.6});
+  }
+  else {
+    // burning star
+    coreR=22 + 2*Math.sin(clock*0.1);
+    coreFill='#fff8d4';
+    // diffraction spikes
+    for(let a=0;a<4;a++){
+      const ang=a*Math.PI/2 + Math.PI/4*((a%2));
+      const len=70+5*Math.sin(clock*0.08+a);
+      el(fx,'line',{x1:cx-Math.cos(ang)*len,y1:cy-Math.sin(ang)*len,x2:cx+Math.cos(ang)*len,y2:cy+Math.sin(ang)*len,stroke:'#fff8d4','stroke-width':2,opacity:0.55});
+    }
+    // halo
+    el(main,'circle',{cx,cy,r:50,fill:'#fff8d4',opacity:0.2});
+    el(main,'circle',{cx,cy,r:80,fill:'url(#hotGrad)',opacity:0.4});
+  }
+  el(main,'circle',{cx,cy,r:coreR,fill:coreFill});
+
+  // Background of other dim stars that ignite later (just sprinkles)
+  if(t>0.82){
+    const others=[[120,170,0.7],[600,180,0.9],[200,360,0.6],[560,360,0.8],[420,140,0.5]];
+    others.forEach(([x,y,sz],i)=>{
+      const tw=0.5+0.5*Math.sin(clock*0.06+i);
+      el(main,'circle',{cx:x,cy:y,r:18*sz,fill:'#fff8d4',opacity:0.12*tw});
+      el(main,'circle',{cx:x,cy:y,r:4*sz,fill:'#fff8d4',opacity:0.85*tw});
+    });
+  }
+
+  // Labels
+  let lbl;
+  if(t<0.35) lbl='COLD GAS — THE DARK AGES';
+  else if(t<0.6) lbl='⤓ GRAVITY PULLS THE CLOUD IN ⤓';
+  else if(t<0.72) lbl='HOTTER… HOTTER…';
+  else if(t<0.8) lbl='⚡ IGNITION ⚡';
+  else lbl='THE FIRST STAR SHINES';
+  el(lab,'text',{x:CX,y:78,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:t>=0.72?'var(--gold-bright)':'var(--gold)','font-weight':'bold',text:lbl});
+  el(lab,'text',{x:CX,y:H-22,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:'A cold cloud, squeezed until its core is hot enough for hydrogen to fuse. The Dark Ages end.'});
+}
+
+// ------ Galaxies: cosmic web filaments light up, gas flows toward nodes,
+// galaxies condense and grow spiral arms.
+function draw_galaxies(main,fx,lab){
+  const t = phaseProg('galaxies');
+
+  // Cosmic-web nodes (where galaxies will sit) + filament links
+  if(!draw_galaxies._nodes){
+    const nodes=[
+      {x:160,y:200},{x:340,y:160},{x:560,y:210},
+      {x:240,y:340},{x:460,y:360},{x:600,y:330},{x:120,y:340},
+    ];
+    const links=[
+      [0,1],[1,2],[0,3],[1,3],[1,4],[2,4],[2,5],[3,4],[4,5],[3,6],
+    ];
+    draw_galaxies._nodes=nodes;
+    draw_galaxies._links=links;
+  }
+  const nodes=draw_galaxies._nodes;
+  const links=draw_galaxies._links;
+
+  // Filaments brighten as t increases
+  const filOpa = t<0.15 ? 0 : Math.min(1, (t-0.15)*2.5);
+  links.forEach(([a,b])=>{
+    const A=nodes[a], B=nodes[b];
+    el(main,'line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,stroke:'#3a8fff','stroke-width':1.6,opacity:filOpa*0.45});
+    el(main,'line',{x1:A.x,y1:A.y,x2:B.x,y2:B.y,stroke:'#fff','stroke-width':0.6,opacity:filOpa*0.35});
+  });
+
+  // Flowing sparks along filaments — gas streaming toward nodes
+  if(t>0.25 && t<0.85){
+    links.forEach(([a,b],li)=>{
+      const A=nodes[a], B=nodes[b];
+      for(let k=0;k<3;k++){
+        const prog=((performance.now()*0.0006)+li*0.13+k/3)%1;
+        const x=A.x+(B.x-A.x)*prog, y=A.y+(B.y-A.y)*prog;
+        el(fx,'circle',{cx:x,cy:y,r:1.6,fill:'#ffe8a0',opacity:0.85});
+      }
+    });
+  }
+
+  // Galaxies condense at nodes, growing in size
+  const galSize = Math.max(0, (t-0.4))*1.8;
+  nodes.forEach((nd,i)=>{
+    if(galSize<=0) return;
+    const R = Math.min(20, galSize*22);
+    // halo
+    el(main,'circle',{cx:nd.x,cy:nd.y,r:R*1.4,fill:'#c060ff',opacity:0.1});
+    // spiral arms grow with progress
+    const armsVisible = Math.min(1, (t-0.55)*3);
+    if(armsVisible>0){
+      const rot = clock*0.012 + i*1.3;
+      for(let arm=0;arm<2;arm++){
+        const N = Math.max(6, Math.round(20*armsVisible));
+        for(let k=0;k<N;k++){
+          const tt=k/N;
+          const sa=tt*Math.PI*3+rot+arm*Math.PI;
+          const rr=tt*R*1.5;
+          el(main,'circle',{cx:nd.x+Math.cos(sa)*rr,cy:nd.y+Math.sin(sa)*rr*0.5,r:1.4,fill:'#ffe8a0',opacity:(0.9-tt*0.5)*armsVisible});
+        }
+      }
+    }
+    // core
+    el(main,'circle',{cx:nd.x,cy:nd.y,r:Math.min(5,R*0.45),fill:'#fff8d4'});
+  });
+
+  // Labels
+  let lbl;
+  if(t<0.15) lbl='STILL THE DARK AGES…';
+  else if(t<0.4) lbl='🕸️ COSMIC WEB LIGHTS UP';
+  else if(t<0.6) lbl='GAS POURS INTO THE NODES';
+  else lbl='GALAXIES TAKE SHAPE';
+  el(lab,'text',{x:CX,y:90,'text-anchor':'middle','font-family':'monospace','font-size':12,fill:'var(--gold)','font-weight':'bold',text:lbl});
+  el(lab,'text',{x:CX,y:H-22,'text-anchor':'middle','font-family':'monospace','font-size':10,fill:'var(--text3)',text:'The universe is a cosmic web. Galaxies grow where filaments cross.'});
+}
+
+function timeline_setControls(){
+  const ph=state.timeline.phase;
+  let html=`<div class="panel-title">Timeline</div>
+    <div class="section-label">Pick a moment</div>
+    <div class="btn-row" id="phase-btns"></div>`;
+  if(ph==='qgp'){
+    html+=`<div class="section-label">Cool The Quark Soup</div>
+      <div class="param">
+        <div class="param-row"><span>Temperature</span><span class="param-val" id="qgp-tv">${Math.round(state.timeline.qgpT*100)}</span></div>
+        <input type="range" id="qgp-t" min="0" max="1" step="0.01" value="${state.timeline.qgpT}">
+        <div class="param-sub">Hot → free quarks. Cool → trios bind together.</div>
+      </div>
+      <div class="btn-row cols-2">
+        <button id="qgp-play">▶ Auto-cool</button>
+        <button id="qgp-reset">↻ Reheat</button>
+      </div>`;
+  } else if(ph==='cmb'){
+    html+=`<div class="section-label">Clear The Fog</div>
+      <div class="param">
+        <div class="param-row"><span>Fog clearing</span><span class="param-val" id="cmb-rv">${Math.round(state.timeline.cmbReveal*100)}%</span></div>
+        <input type="range" id="cmb-r" min="0" max="1" step="0.01" value="${state.timeline.cmbReveal}">
+        <div class="param-sub">Slide to clear the fog and reveal the first light.</div>
+      </div>
+      <div class="btn-row cols-2">
+        <button id="cmb-play">▶ Auto-reveal</button>
+        <button id="cmb-reset">↻ Refog</button>
+      </div>`;
+  } else {
+    const phaseLabels={
+      inflation:'Replay the burst',
+      hadrons:'Replay this scene',
+      nuclei:'Replay the fusion',
+      stars:'Replay the ignition',
+      galaxies:'Replay the assembly',
+    };
+    const labelTxt = phaseLabels[ph] || 'Replay this scene';
+    html+=`<div class="section-label">Watch the change</div>
+      <div class="btn-row cols-1">
+        <button id="phase-play">▶ ${labelTxt}</button>
+      </div>
+      <div class="param-sub" style="margin-top:8px;">Each phase shows the moment of change. Tap replay to watch it again.</div>`;
+  }
+  html+=`<div class="section-label" style="margin-top:14px;">Story</div>
+    <div class="btn-row cols-2">
+      <button id="tl-intro">▶ Tell the story</button>
+      <button id="tl-back">← Multiverse</button>
+    </div>`;
+
+  document.getElementById('side-panel').innerHTML=html;
+
+  // phase buttons
+  const pb=document.getElementById('phase-btns');
+  PHASES.forEach(p=>{
+    const b=document.createElement('button');
+    b.textContent=p.name;
+    if(p.id===ph) b.classList.add('active');
+    b.onclick=()=>goToPhase(p.id);
+    pb.appendChild(b);
+  });
+
+  if(ph==='qgp'){
+    const sl=document.getElementById('qgp-t');
+    sl.oninput=function(){ state.timeline.qgpT=parseFloat(this.value); document.getElementById('qgp-tv').textContent=Math.round(state.timeline.qgpT*100); state.timeline.qgpAuto=false; };
+    document.getElementById('qgp-play').onclick=()=>{
+      state.timeline.qgpT=1; state.timeline.qgpAuto=true; state.timeline.qgpAutoStart=performance.now();
+      runScript([
+        {text:'I am cooling the universe down for you. Right now it is around four <b>trillion</b> degrees — a hot soup of free particles.'},
+        {text:'The coloured dots are <b>quarks</b>. Red, green and blue colour charges, zipping around freely. At this temperature they cannot stick to anything.'},
+        {text:'As I keep cooling, watch them slow… and then suddenly snap together into <b>trios</b>. Each trio is a proton or a neutron — the seeds of every atom in your body.'},
+      ]);
+    };
+    document.getElementById('qgp-reset').onclick=()=>{ state.timeline.qgpT=1; state.timeline.qgpAuto=false; };
+  }
+  if(ph==='cmb'){
+    const sl=document.getElementById('cmb-r');
+    sl.oninput=function(){ state.timeline.cmbReveal=parseFloat(this.value); document.getElementById('cmb-rv').textContent=Math.round(state.timeline.cmbReveal*100)+'%'; state.timeline.cmbAuto=false; };
+    document.getElementById('cmb-play').onclick=()=>{
+      state.timeline.cmbReveal=0; state.timeline.cmbAuto=true; state.timeline.cmbAutoStart=performance.now();
+      runScript([
+        {text:'For nearly four hundred thousand years, the universe was a glowing fog. Light bounced around inside it and could not escape.'},
+        {text:'Then it cooled enough for the fog to clear. In a blink, light streamed across the universe for the very first time.'},
+        {text:'And here is the wonder — that very first light is still arriving today. The patches of warmer and cooler colour are the real map of the baby universe.'},
+      ]);
+    };
+    document.getElementById('cmb-reset').onclick=()=>{ state.timeline.cmbReveal=0; state.timeline.cmbAuto=false; };
+  }
+  document.getElementById('tl-intro').onclick=timeline_intro;
+  document.getElementById('tl-back').onclick=()=>activate('multiverse');
+  const pp=document.getElementById('phase-play');
+  if(pp) pp.onclick=()=>playPhase(state.timeline.phase, true);
+}
+
+function goToPhase(id){
+  sceneToken++; stopSpeak();
+  state.timeline.phase=id;
+  timeline_setControls();
+  timeline_info();
+  // For transition phases, auto-play the animation + its narration on arrival.
+  const transitionPhases = ['inflation','hadrons','nuclei','stars','galaxies'];
+  if(transitionPhases.includes(id)){
+    playPhase(id, true);
+    return;
+  }
+  // QGP and CMB get a short one-line intro (their own play buttons launch the narration)
+  let line='';
+  if(id==='qgp') line='<b>Quark soup:</b> too hot for atoms — even for protons. A fog of free quarks. Grab the temperature slider, or press auto-cool.';
+  else if(id==='cmb') line='<b>First light:</b> at 380,000 years the fog clears. The leftover glow is still arriving today.';
+  if(line) runScript([{text:line}]);
+}
+
+function timeline_info(){
+  const p=PHASES.find(x=>x.id===state.timeline.phase);
+  if(!p) return;
+  document.getElementById('info-title').textContent='THIS MOMENT';
+  document.getElementById('info-area').innerHTML=`
+    <div class="readout-cell"><div class="r-label">Age of Universe</div><div class="r-value gold">${p.t}</div></div>
+    <div class="readout-cell"><div class="r-label">Stage</div><div class="r-value cyan">${p.name}</div></div>
+  `;
+}
+
+async function timeline_intro(){
+  state.timeline.phase='inflation';
+  timeline_setControls(); timeline_info();
+  // Auto-play inflation's animation + narration as part of the intro
+  playPhase('inflation', false);
+  await runScript([
+    {text:'Now let us follow your universe from the very first instant to today. The dots along the top mark the great moments.'},
+    {text:'We begin with <b>inflation</b> — the lightning-fast stretching. In its first instant the universe was barely a speck; in a flash so brief there are no real words for it, it blew up by more than a trillion trillion times.'},
+    {text:'Tap any other dot to jump to that phase, or use the phase buttons on the right.'},
+  ]);
+}
+
+// ============================ SHELL ============================
+function render(){
+  try{
+    if(state.stage==='multiverse') multi_render();
+    else if(state.stage==='timeline') timeline_render();
+  }catch(e){}
+}
+
+function activate(stage){
+  sceneToken++; stopSpeak();   // kill any in-flight narration from previous stage
+  state.stage=stage;
+  document.querySelectorAll('#stages .stage-btn').forEach(b=>b.classList.toggle('active',b.dataset.stage===stage));
+  if(stage==='multiverse'){
+    if(state.multi.bubbles.length===0) multi_generateBubbles();
+    multi_setControls(); multi_info();
+  } else if(stage==='timeline'){
+    timeline_setControls(); timeline_info();
+    if(_qgpPts===null) qgp_init();
+    timeline_intro();
+  }
+}
+document.querySelectorAll('#stages .stage-btn').forEach(b=>b.addEventListener('click',function(){ activate(this.dataset.stage); }));
+
+// SVG interaction: bubble taps, phase taps, QGP stir
+const svg=document.getElementById('stage-svg');
+function svgPoint(e){
+  const rect=svg.getBoundingClientRect();
+  const cl=e.touches?e.touches[0]:e;
+  return {x:(cl.clientX-rect.left)*(W/rect.width), y:(cl.clientY-rect.top)*(H/rect.height)};
+}
+let stirring=false;
+svg.addEventListener('click',function(e){
+  const t=e.target;
+  const bub=t.getAttribute&&t.getAttribute('data-bub');
+  if(bub!==null && bub!==undefined && state.stage==='multiverse'){
+    state.multi.selectedIdx=parseInt(bub); multi_info();
+    const sb=state.multi.bubbles[state.multi.selectedIdx];
+    const v=multi_verdict(sb);
+    runScript([{text: v.alive?`This bubble is <b>alive</b> — ${v.reason}.`:`This bubble is <b>dead</b>: ${v.reason}.`}]);
+  }
+  const ph=t.getAttribute&&t.getAttribute('data-phase');
+  if(ph && state.stage==='timeline') goToPhase(ph);
+});
+svg.addEventListener('mousedown',function(e){
+  if(state.stage==='timeline' && state.timeline.phase==='qgp'){
+    stirring=true;
+    const p=svgPoint(e);
+    state.timeline.qgpStir.x=p.x; state.timeline.qgpStir.y=p.y;
+    state.timeline.qgpStir.active=true; state.timeline.qgpStir.strength=1.0;
+  }
+});
+svg.addEventListener('touchstart',function(e){
+  if(state.stage==='timeline' && state.timeline.phase==='qgp'){
+    stirring=true;
+    const p=svgPoint(e);
+    state.timeline.qgpStir.x=p.x; state.timeline.qgpStir.y=p.y;
+    state.timeline.qgpStir.active=true; state.timeline.qgpStir.strength=1.0;
+    e.preventDefault();
+  }
+},{passive:false});
+window.addEventListener('mousemove',function(e){
+  if(!stirring) return;
+  const p=svgPoint(e);
+  state.timeline.qgpStir.x=p.x; state.timeline.qgpStir.y=p.y; state.timeline.qgpStir.strength=1.0;
+});
+window.addEventListener('touchmove',function(e){
+  if(!stirring) return;
+  const p=svgPoint(e);
+  state.timeline.qgpStir.x=p.x; state.timeline.qgpStir.y=p.y; state.timeline.qgpStir.strength=1.0;
+  e.preventDefault();
+},{passive:false});
+window.addEventListener('mouseup',function(){ stirring=false; state.timeline.qgpStir.active=false; });
+window.addEventListener('touchend',function(){ stirring=false; state.timeline.qgpStir.active=false; });
+
+// Narration controls
+document.getElementById('narr-toggle').onclick=function(){
+  narr.on=!narr.on;
+  const s=document.getElementById('nt-state');
+  s.textContent=narr.on?'ON':'OFF';
+  s.className='nt-state '+(narr.on?'on':'off');
+  document.getElementById('spk').textContent=narr.on?'🔊':'💬';
+  sceneToken++;       // invalidate any pending runScript steps
+  if(!narr.on) stopSpeak();
+};
+document.getElementById('rate-slider').oninput=function(){
+  narr.rate=parseFloat(this.value);
+};
+
+// Theme
+document.getElementById('theme-switcher').onclick=function(){
+  document.body.classList.toggle('light-theme');
+  try{ localStorage.setItem('cosmoA-theme',document.body.classList.contains('light-theme')?'light':'dark'); }catch(e){}
+};
+try{ if(localStorage.getItem('cosmoA-theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+
+// Animation loop (self-healing)
+function frame(){ clock++; try{ render(); }catch(e){} requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+
+// Boot
+multi_generateBubbles();
+multi_setControls();
+multi_info();
+setCaption(`Tap <b>"▶ Tell me the story"</b> on the right, or play with the sliders. Turn your sound on for narration.`);
+</script>
+</body>
+</html>
