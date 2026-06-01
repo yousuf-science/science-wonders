@@ -16,8 +16,19 @@
 <meta property="og:type" content="website">
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Science Wonders — Interactive Physics Simulations</title>
+
+<!-- ── PWA: makes this site installable as an app on all devices ── -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#010409">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<!-- Apple / iOS install support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Science Wonders">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Real physics, simulated in your browser. Built by a researcher to make natural science tangible — for anyone curious.">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -388,6 +399,7 @@ body.light-theme .footer-fine { color: var(--text3); }
   <div class="tagline">Interactive Physics Simulations</div>
   <div class="header-spacer"></div>
   <div class="header-links">
+    <a class="header-link theme-toggle-btn" id="install-btn" style="display:none; color:var(--gold); border-color:var(--border2);">⬇ Install App</a>
     <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
     <a class="header-link" href="#about">About</a>
     <a class="header-link" href="https://github.com/yousuf-science/science-wonders" target="_blank" rel="noopener">GitHub ↗</a>
@@ -650,6 +662,37 @@ body.light-theme .footer-fine { color: var(--text3); }
       }
       localStorage.setItem('theme', theme);
     });
+  });
+
+  // ── PWA: register the service worker for offline + installability ──
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Science Wonders app ready (offline enabled).'))
+        .catch(err => console.log('Service worker registration failed:', err));
+    });
+  }
+
+  // ── PWA: custom "Install App" button (Android / desktop Chrome & Edge) ──
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('install-btn');
+    if (btn) {
+      btn.style.display = 'inline-block';
+      btn.addEventListener('click', async () => {
+        btn.style.display = 'none';
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+      });
+    }
+  });
+  // Hide the button once installed
+  window.addEventListener('appinstalled', () => {
+    const btn = document.getElementById('install-btn');
+    if (btn) btn.style.display = 'none';
   });
 </script>
 
