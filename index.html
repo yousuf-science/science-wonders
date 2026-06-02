@@ -655,9 +655,10 @@ body.light-theme .footer-fine { color: var(--text3); }
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     // Dynamic asset discovery metric calculation counter
-    const totalSimulations = document.querySelectorAll('a.featured, a.card').length;
+    
+    const totalSimulations = document.querySelectorAll('a.featured, a.card').length + document.querySelectorAll('.featured-cosmos').length;
     document.getElementById('sim-count').textContent = totalSimulations;
-
+    
     // Local Storage persistent Theme state initialization loop
     const themeBtn = document.getElementById('theme-switcher');
     const currentTheme = localStorage.getItem('theme');
