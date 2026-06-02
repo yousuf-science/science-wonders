@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tiny Speck That Colours Your World | Science Wonders</title>
+<meta name="description" content="One tiny crystal, far too small to see. Change only its size and it glows a different colour. Explore how this quantum trick powers TVs, medicine, and supercharges greenhouses.">
+<script>
+(function() {
+  try {
+    const t = localStorage.getItem('theme');
+    if (t === 'light') document.documentElement.classList.add('light-theme');
+  } catch (e) {}
+})();
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
+  --bench-bg:#010610;
+}
+html.light-theme, body.light-theme {
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#ebf2fa;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#b07d00;--gold-bright:#8a6200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;
+  --bench-bg:#fafbfc;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s; overflow-x: hidden;}
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,0.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.canvas-wrap{position:relative;max-width:1050px;margin:18px auto 0;padding:0 20px;}
+.bench-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--bench-bg);transition:background .2s,border-color .2s; box-shadow: 0 10px 40px rgba(0,0,0,0.3);}
+/* Taller canvas to fit the graph inside */
+canvas#stage{display:block;width:100%;height:540px;touch-action:none;}
+
+/* Controls moved directly under the canvas */
+.main-controls-wrap { max-width: 1050px; margin: 12px auto 0; padding: 0 20px; }
+.main-controls { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 16px 24px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;color:var(--text);margin-bottom:8px;}
+.param-val{font-family:monospace;font-size:15px;font-weight:bold;color:var(--gold);}
+input[type=range]{width:100%;height:8px;background:var(--bg2);border-radius:4px;outline:none;-webkit-appearance:none;cursor:pointer;border:1px solid var(--border2);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 0 10px rgba(58,143,255,0.6); transition: transform 0.1s;}
+input[type=range]::-webkit-slider-thumb:hover{transform: scale(1.15);}
+
+.subtitle{max-width:1050px;margin:12px auto 0;padding:0 20px;}
+.subtitle-inner{background:var(--bg2);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:10px;padding:12px 24px;font-size:16px;line-height:1.6;color:var(--text-bright);min-height:60px;display:flex;align-items:center;gap:15px; transition:background .2s,border-color .2s; flex-wrap: wrap;}
+.subtitle-inner .spk{font-size:24px;flex-shrink:0;cursor:pointer; transition: transform 0.2s;}
+.subtitle-inner .spk:hover{transform: scale(1.1);}
+.subtitle-inner b{color:var(--gold-bright);}
+body.light-theme .subtitle-inner b{color:var(--gold);}
+.caption-text { flex: 1; min-width: 300px; }
+
+/* Voice Controls */
+.voice-controls { display: flex; align-items: center; gap: 12px; background: var(--bg3); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border2); font-family: monospace; font-size: 11px; }
+.voice-controls select { background: var(--bg2); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px; font-family: inherit; outline: none; cursor: pointer; }
+.voice-controls .speed-wrap { display: flex; align-items: center; gap: 6px; }
+.voice-controls input[type=range] { width: 60px; height: 4px; }
+.voice-controls input[type=range]::-webkit-slider-thumb { width: 14px; height: 14px; }
+
+.panels{max-width:1050px;margin:12px auto 0;display:grid;grid-template-columns:400px 1fr;gap:12px;padding:0 20px;}
+@media(max-width:860px){.panels{grid-template-columns:1fr;}}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:22px;transition:background .2s,border-color .2s;}
+.panel-title{font-family:monospace;font-size:10px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 10px;}
+
+.scene-btns{display:grid;gap:8px;grid-template-columns:1fr 1fr;}
+.scene-btns button{font-family:'Georgia',serif;font-size:13px;padding:12px 6px;background:transparent;border:1px solid var(--border2);border-radius:7px;color:var(--text);cursor:pointer;transition:all .15s;text-align:center;line-height:1.3;}
+.scene-btns button .ic{display:block;font-size:24px;margin-bottom:4px;}
+.scene-btns button:hover{background:var(--bg3);border-color:var(--accent);}
+.scene-btns button.active{border-color:var(--gold);background:rgba(240,192,96,.08);box-shadow:inset 0 0 10px rgba(240,192,96,.1); color:var(--text-bright);}
+body.light-theme .scene-btns button.active{background:var(--bg3); color:var(--text);}
+.scene-btns button.wide{grid-column: span 2; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px;}
+.scene-btns button.wide .ic{margin-bottom: 0;}
+
+.bigresult{text-align:center;padding:10px 0 8px;}
+.bigresult .swatch{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;border:3px solid var(--border2);transition:background .2s, box-shadow .2s;}
+.bigresult .cname{font-size:26px;color:var(--text-bright);font-family:'Georgia',serif; font-weight:bold;}
+.bigresult .csub{font-size:14px;color:var(--text2);margin-top:4px;font-style:italic;}
+
+.curious{margin-top:16px;border-top:1px dashed var(--border2);padding-top:12px;}
+.curious summary{font-family:monospace;font-size:11px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;cursor:pointer; outline:none;}
+.curious summary:hover{color:var(--gold);}
+.curious .cbody{margin-top:12px;font-family:monospace;font-size:12.5px;line-height:1.9;color:var(--text2);background:var(--bg3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:14px 18px;}
+.curious .cbody .nm{color:var(--cyan); font-weight:bold;}
+
+.theory-wrap{max-width:1050px;margin:24px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,40px); transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h2{font-family:monospace;font-size:14px;color:var(--gold-bright);letter-spacing:2px;text-transform:uppercase;margin:30px 0 12px;padding-bottom:6px;border-bottom:1px dashed var(--border2);}
+body.light-theme .theory h2{color:var(--gold);}
+.theory h2:first-of-type{margin-top:0;}
+.theory p{font-size:15px;color:var(--text2);margin-bottom:12px;line-height:1.9;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+
+footer{border-top:1px solid var(--border);padding:24px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">The Tiny Speck That Colours Your World</div>
+  <div class="header-spacer"></div>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="canvas-wrap">
+  <div class="bench-frame">
+    <!-- Taller canvas to incorporate the live frequency graph inside it -->
+    <canvas id="stage" width="1050" height="540"></canvas>
+  </div>
+</div>
+
+<!-- Controls are now immediately below the canvas for instant feedback -->
+<div class="main-controls-wrap">
+  <div class="main-controls" id="param-area">
+    <!-- Sliders injected here via JS -->
+  </div>
+</div>
+
+<div class="subtitle">
+  <div class="subtitle-inner">
+    <span class="spk" id="spk" title="Toggle Audio">🔊</span>
+    <span class="caption-text" id="caption">Select a scene below to explore the physics.</span>
+    
+    <div class="voice-controls">
+      <select id="voice-select"><option>Loading voices...</option></select>
+      <div class="speed-wrap">
+        <label for="voice-speed">Speed:</label>
+        <input type="range" id="voice-speed" min="0.7" max="1.3" step="0.1" value="0.9">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-title">Interactive Labs</div>
+    <div class="section-label">Select a concept to explore</div>
+    <div class="scene-btns" id="scene-btns">
+      <button data-scene="play" class="active"><span class="ic">🤏</span>1. The Concept</button>
+      <button data-scene="tv"><span class="ic">📺</span>2. QLED TV</button>
+      <button data-scene="solar"><span class="ic">☀️</span>3. Solar Cells</button>
+      <button data-scene="remote"><span class="ic">🦴</span>4. Bio-Imaging</button>
+      <button data-scene="agri" class="wide"><span class="ic">🌱</span>5. The Quantum Greenhouse</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Physics Readout</div>
+    <div class="bigresult">
+      <div class="swatch" id="swatch"></div>
+      <div class="cname" id="cname">—</div>
+      <div class="csub" id="csub">—</div>
+    </div>
+    
+    <details class="curious" open>
+      <summary>The Physics Explained (The "Why")</summary>
+      <div class="cbody" id="curious-body">—</div>
+    </details>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">The Core Concept: Confinement</div>
+  <p>Everything you just played with is driven by a single rule of physics: <strong>Quantum Confinement</strong>. If you trap a tiny bit of electricity (an electron) in a microscopic space, the size of that space controls its energy and color.</p>
+
+  <h2>Why does size equal frequency?</h2>
+  <p>In the quantum world, an electron acts like a <strong>wave</strong>. Imagine pushing the walls of a room closer together while a wave is bouncing between them. The wave gets squished. A squished wave is forced to have a <strong>shorter wavelength</strong> and a <strong>higher frequency</strong>. Higher frequency light carries more energy, appearing as Blue or Violet. If you expand the room, the wave stretches out, dropping in frequency to become Red or even invisible Infrared.</p>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+
+// =====================================================================
+// GLOBAL SETUP & UTILS
+// =====================================================================
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const W = canvas.width;
+const H = canvas.height;
+
+const state = {
+  scene: 'play',
+  narrate: true,
+  clock: 0,
+  sparks: [],
+  bgParticles: []
+};
+
+// Theme Toggle
+document.getElementById('theme-switcher').onclick = function() {
+  document.body.classList.toggle('light-theme');
+  document.body.classList.contains('light-theme') ? localStorage.setItem('theme', 'light') : localStorage.setItem('theme', 'dark');
+};
+function isLight() { return document.body.classList.contains('light-theme'); }
+
+// Background "Quantum Foam"
+for(let i=0; i<40; i++) {
+  state.bgParticles.push({
+    x: Math.random()*W, y: Math.random()*(H-100), // Keep out of graph area
+    s: Math.random()*2 + 1,
+    vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5,
+    hue: Math.random()*360
+  });
+}
+
+function drawBackground() {
+  ctx.fillStyle = isLight() ? '#fafbfc' : '#010610';
+  ctx.fillRect(0, 0, W, H);
+  
+  ctx.globalCompositeOperation = isLight() ? 'multiply' : 'screen';
+  state.bgParticles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < 0) p.x = W; if(p.x > W) p.x = 0;
+    if(p.y < 0) p.y = H-100; if(p.y > H-100) p.y = 0;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2);
+    ctx.fillStyle = isLight() ? `hsla(${p.hue}, 50%, 70%, 0.4)` : `hsla(${p.hue}, 80%, 60%, 0.2)`;
+    ctx.fill();
+  });
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+// Color & Spectrum Math (Size 2-12nm -> WL 300-800nm)
+function sizeToWavelength(nm) { return 300 + ((nm - 2) * 50); }
+
+function sizeToColor(nm) {
+  let wl = sizeToWavelength(nm);
+  if (wl >= 750) return { hex: '#ff3333', ui: '#551111', name: 'Infrared', energy: 'Low Frequency (Invisible)', wl: wl };
+  let hue = Math.max(0, Math.min(270, 270 - ((nm - 2) / 8) * 270));
+  let name = "Green";
+  if (hue > 210) name = "Violet";
+  else if (hue > 190) name = "Blue";
+  else if (hue > 160) name = "Cyan";
+  else if (hue > 80) name = "Green";
+  else if (hue > 40) name = "Yellow";
+  else if (hue > 15) name = "Orange";
+  else name = "Red";
+  
+  let energy = nm < 4 ? "High Frequency" : (nm > 7 ? "Low Frequency" : "Medium Frequency");
+  return { hex: `hsl(${hue}, 100%, 60%)`, ui: `hsl(${hue}, 100%, 50%)`, name: name, energy: energy, wl: wl };
+}
+
+// =====================================================================
+// INTEGRATED SPECTRUM GRAPH (Drawn at the bottom of the canvas)
+// =====================================================================
+function drawSpectrumGraph(peaks, contextLine = null) {
+  let gy = H - 100; // Graph starts 100px from bottom
+  let gh = 100;
+  
+  // Graph Background / Border
+  ctx.fillStyle = isLight() ? '#ebf2fa' : '#0c1830';
+  ctx.fillRect(0, gy, W, gh);
+  ctx.strokeStyle = isLight() ? '#d0d7de' : '#1e3050';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+
+  // Rainbow Gradient backdrop
+  let grad = ctx.createLinearGradient(0, 0, W, 0);
+  grad.addColorStop(0, isLight() ? '#d0e0ff' : '#201040'); // UV
+  grad.addColorStop(0.2, '#20d0ff'); // Blue
+  grad.addColorStop(0.5, '#40ffaa'); // Green
+  grad.addColorStop(0.8, '#ff4f60'); // Red
+  grad.addColorStop(1, isLight() ? '#ffd0d0' : '#401010'); // IR
+  ctx.fillStyle = grad;
+  ctx.globalAlpha = 0.2; ctx.fillRect(0, gy, W, gh); ctx.globalAlpha = 1.0;
+
+  // Labels
+  ctx.fillStyle = isLight() ? '#666' : '#888'; ctx.font = '10px monospace';
+  ctx.textAlign = 'left'; ctx.fillText('← HIGH FREQUENCY (UV)', 10, H - 10);
+  ctx.textAlign = 'right'; ctx.fillText('LOW FREQUENCY (IR) →', W - 10, H - 10);
+  ctx.textAlign = 'center'; ctx.fillText('LIVE FREQUENCY SPECTRUM', W/2, gy + 15);
+
+  // Context Overlays (e.g., Solar, Tissue)
+  if (contextLine === 'solar') {
+    ctx.beginPath(); ctx.moveTo(0, H); ctx.quadraticCurveTo(W/2, gy-30, W, H);
+    ctx.strokeStyle = isLight() ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)'; 
+    ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = isLight() ? '#666' : '#aaa'; ctx.fillText('Full Solar Energy Spectrum', W/2, gy + 35);
+  }
+  if (contextLine === 'tissue') {
+    ctx.beginPath(); ctx.moveTo(0, H); ctx.quadraticCurveTo(W*0.3, gy-80, W*0.7, H); 
+    ctx.fillStyle = isLight() ? 'rgba(107,69,58,0.2)' : 'rgba(255,100,100,0.15)'; ctx.fill();
+    ctx.fillStyle = isLight() ? '#6b453a' : '#ff8888'; ctx.fillText('Tissue Blocking Zone (Scatters Light)', W*0.35, gy + 35);
+  }
+
+  // Draw Dynamic Peaks
+  peaks.forEach(p => {
+    let x = ((p.wl - 300) / 500) * W; // Map 300-800nm to canvas width
+    ctx.beginPath();
+    ctx.moveTo(x - 60, H);
+    ctx.quadraticCurveTo(x, H - p.intensity, x + 60, H);
+    ctx.strokeStyle = p.color; ctx.lineWidth = 4;
+    ctx.stroke();
+    
+    // Fill glow
+    ctx.fillStyle = p.color; ctx.globalAlpha = 0.3;
+    ctx.fill(); ctx.globalAlpha = 1.0;
+  });
+}
+
+// =====================================================================
+// TEXT-TO-SPEECH (TTS) ENGINE WITH UI
+// =====================================================================
+const synth = window.speechSynthesis;
+let availableVoices = [];
+const voiceSelect = document.getElementById('voice-select');
+const speedSelect = document.getElementById('voice-speed');
+
+function populateVoiceList() {
+  availableVoices = synth.getVoices();
+  // Filter for English (Prioritize UK/GB as requested, fallback to US)
+  let engVoices = availableVoices.filter(v => v.lang.includes('en-GB') || v.lang.includes('en-UK'));
+  if(engVoices.length === 0) engVoices = availableVoices.filter(v => v.lang.includes('en-US') || v.lang.includes('en'));
+  
+  voiceSelect.innerHTML = '';
+  if(engVoices.length === 0) { voiceSelect.innerHTML = '<option>TTS Unavailable</option>'; return; }
+  
+  engVoices.forEach((voice, i) => {
+    let opt = document.createElement('option');
+    opt.textContent = `${voice.name} (${voice.lang})`;
+    opt.value = i;
+    voiceSelect.appendChild(opt);
+  });
+}
+
+// Browser quirks require this event listener
+if (speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = populateVoiceList;
+} else {
+  setTimeout(populateVoiceList, 1000);
+}
+
+function speak(text) {
+  document.getElementById('caption').innerHTML = text;
+  if (!state.narrate) return;
+  synth.cancel();
+  let u = new SpeechSynthesisUtterance(text.replace(/<[^>]*>?/gm, '')); // Strip HTML tags for speech
+  
+  let selectedIndex = voiceSelect.value;
+  if (availableVoices[selectedIndex]) {
+    u.voice = availableVoices[selectedIndex];
+  }
+  u.rate = parseFloat(speedSelect.value);
+  synth.speak(u);
+}
+
+document.getElementById('spk').onclick = function() {
+  state.narrate = !state.narrate;
+  this.textContent = state.narrate ? '🔊' : '🔇';
+  this.style.opacity = state.narrate ? '1' : '0.5';
+  if (!state.narrate) synth.cancel();
+};
+
+// Sparks utility
+function createSparks(x, y, color, amount) {
+  for(let i=0; i<amount; i++) {
+    state.sparks.push({ x: x, y: y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1.0, color: color });
+  }
+}
+function drawSparks() {
+  ctx.globalCompositeOperation = isLight() ? 'source-over' : 'lighter';
+  for (let i = state.sparks.length - 1; i >= 0; i--) {
+    let s = state.sparks[i];
+    s.x += s.vx; s.y += s.vy; s.life -= 0.03;
+    if (s.life > 0) {
+      ctx.globalAlpha = s.life; ctx.fillStyle = s.color;
+      ctx.shadowBlur = 10; ctx.shadowColor = s.color;
+      ctx.beginPath(); ctx.arc(s.x, s.y, 3, 0, Math.PI*2); ctx.fill();
+    } else { state.sparks.splice(i, 1); }
+  }
+  ctx.shadowBlur = 0; ctx.globalAlpha = 1.0; ctx.globalCompositeOperation = 'source-over';
+}
+
+// =====================================================================
+// SCENE 1: THE SQUEEZE (CONCEPT)
+// =====================================================================
+let playState = { size: 6, currentW: 360, x: W/2, vx: 5, shake: 0 };
+
+function initPlay() {
+  document.getElementById('param-area').innerHTML = `
+    <div class="param-row"><span>1. Shrink the box to compress the wave (Size in Nanometers)</span><span class="param-val" id="val-size">6.0 nm</span></div>
+    <input type="range" id="sl-size" min="2" max="10" step="0.1" value="6">
+  `;
+  document.getElementById('sl-size').oninput = (e) => {
+    playState.size = parseFloat(e.target.value);
+    document.getElementById('val-size').textContent = playState.size.toFixed(1) + ' nm';
+    updatePlayReadout();
+  };
+  speak("Imagine an electron as a wave trapped in a box. When you squeeze the box, the wave is squished. A squished wave creates a higher frequency, which glows as blue light!");
+  updatePlayReadout();
+}
+
+function updatePlayReadout() {
+  let col = sizeToColor(playState.size);
+  let sw = document.getElementById('swatch');
+  sw.style.background = col.ui; sw.style.boxShadow = `0 0 40px ${col.ui}`;
+  document.getElementById('cname').textContent = col.name;
+  document.getElementById('csub').textContent = col.energy;
+  document.getElementById('curious-body').innerHTML = `<span class="nm">THE CONCEPT:</span> By physically shrinking the box, you force the electron's wave to compress. A compressed wave inherently possesses a <strong>higher frequency</strong>, shifting the physical color toward extreme blue. Expand it, and the wave relaxes into red.`;
+}
+
+function stepPlay() {
+  let targetW = playState.size * 60;
+  playState.currentW += (targetW - playState.currentW) * 0.15;
+  let left = W/2 - playState.currentW/2; let right = W/2 + playState.currentW/2;
+  let speed = 60 / playState.size; 
+  playState.x += playState.vx > 0 ? speed : -speed;
+  
+  if (playState.x < left + 15) { playState.x = left + 15; playState.vx = 1; }
+  if (playState.x > right - 15) { playState.x = right - 15; playState.vx = -1; }
+  if (playState.size <= 2.2) { playState.shake = 12; if(Math.random() > 0.4) createSparks(playState.x, 220, '#fff', 3); } else { playState.shake = 0; }
+}
+
+function drawPlay() {
+  ctx.fillStyle = isLight() ? 'rgba(250, 251, 252, 0.3)' : 'rgba(1, 6, 16, 0.3)';
+  ctx.fillRect(0, 0, W, H-100);
+  
+  ctx.save();
+  if (playState.shake > 0) ctx.translate((Math.random()-0.5)*playState.shake, (Math.random()-0.5)*playState.shake);
+  let left = W/2 - playState.currentW/2; let col = sizeToColor(playState.size);
+  
+  ctx.strokeStyle = isLight() ? '#b6c2d1' : '#1e3050'; ctx.lineWidth = 4;
+  ctx.strokeRect(left, 100, playState.currentW, 220);
+  
+  // Standing Quantum Wave
+  let freq = 12 / playState.size; 
+  ctx.beginPath();
+  for(let wx = 0; wx <= playState.currentW; wx+=5) {
+    let wy = 210 + Math.sin(wx * 0.05 * freq + state.clock*0.1) * 70 * Math.sin((wx/playState.currentW)*Math.PI);
+    if(wx===0) ctx.moveTo(left+wx, wy); else ctx.lineTo(left+wx, wy);
+  }
+  ctx.strokeStyle = col.hex; ctx.lineWidth = 3; ctx.globalAlpha = 0.5; ctx.stroke(); ctx.globalAlpha = 1.0;
+
+  // Particle
+  ctx.globalCompositeOperation = isLight() ? 'source-over' : 'screen';
+  ctx.shadowBlur = 40; ctx.shadowColor = col.hex; ctx.fillStyle = col.hex;
+  ctx.beginPath(); ctx.arc(playState.x, 210, 18, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0; ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(playState.x, 210, 7, 0, Math.PI*2); ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+  drawSparks(); ctx.restore();
+
+  drawSpectrumGraph([{ wl: col.wl, intensity: 90, color: col.ui }]);
+}
+
+// =====================================================================
+// SCENE 2: QLED TV
+// =====================================================================
+let tvState = { r: 5, g: 5, b: 5, tvAlpha: 0 };
+
+function initTV() {
+  document.getElementById('param-area').innerHTML = `
+    <div style="display:flex; gap:20px; width:100%;">
+      <div style="flex:1;"><div class="param-row"><span style="color:#ff4f60">Dot 1 (Red)</span><span class="param-val" id="tv-r-val">${tvState.r.toFixed(1)} nm</span></div><input type="range" id="sl-tv-r" min="2" max="10" step="0.1" value="${tvState.r}"></div>
+      <div style="flex:1;"><div class="param-row"><span style="color:#40ffaa">Dot 2 (Green)</span><span class="param-val" id="tv-g-val">${tvState.g.toFixed(1)} nm</span></div><input type="range" id="sl-tv-g" min="2" max="10" step="0.1" value="${tvState.g}"></div>
+      <div style="flex:1;"><div class="param-row"><span style="color:#20d0ff">Dot 3 (Blue)</span><span class="param-val" id="tv-b-val">${tvState.b.toFixed(1)} nm</span></div><input type="range" id="sl-tv-b" min="2" max="10" step="0.1" value="${tvState.b}"></div>
+    </div>
+  `;
+  ['r','g','b'].forEach(c => {
+    document.getElementById(`sl-tv-${c}`).oninput = (e) => {
+      tvState[c] = parseFloat(e.target.value);
+      document.getElementById(`tv-${c}-val`).textContent = tvState[c].toFixed(1) + ' nm';
+      checkTV();
+    };
+  });
+  speak("To make a TV pixel, we don't mix chemicals. We just cut the crystal into 3 sizes! Small for high-frequency blue, medium for green, and large for low-frequency red.");
+  checkTV();
+}
+
+function checkTV() {
+  let isR = tvState.r >= 9.5; let isG = tvState.g >= 5.5 && tvState.g <= 6.5; let isB = tvState.b <= 2.5;
+  if (isR && isG && isB) {
+    document.getElementById('cname').textContent = "Full Spectrum"; document.getElementById('csub').textContent = "Pixel Calibrated!";
+    document.getElementById('swatch').style.background = '#ffffff'; document.getElementById('swatch').style.boxShadow = `0 0 50px #ffffff`;
+    document.getElementById('curious-body').innerHTML = `<span class="nm">THE CONCEPT:</span> Notice the graph! By sizing the dots exactly, we forced them to emit three distinct frequencies. Your brain combines these specific waves to perceive pure white light and vivid colors.`;
+    if(state.scene === 'tv' && tvState.tvAlpha === 0) speak("Perfect! By controlling the sizes, you've controlled the frequencies, combining them to create white light.");
+  } else {
+    document.getElementById('cname').textContent = "Mixed Frequencies"; document.getElementById('csub').textContent = "Keep tuning the dots...";
+    let c1 = sizeToColor(tvState.r), c2 = sizeToColor(tvState.g), c3 = sizeToColor(tvState.b);
+    document.getElementById('swatch').style.background = `conic-gradient(${c1.ui}, ${c2.ui}, ${c3.ui}, ${c1.ui})`; document.getElementById('swatch').style.boxShadow = `none`;
+    document.getElementById('curious-body').innerHTML = `Adjust the dot sizes to space their frequencies evenly across the graph below.`;
+  }
+}
+
+function drawTV() {
+  drawBackground();
+  let win = (tvState.r >= 9.5) && (tvState.g >= 5.5 && tvState.g <= 6.5) && (tvState.b <= 2.5);
+  tvState.tvAlpha += (win ? 0.05 : -0.05); tvState.tvAlpha = Math.max(0, Math.min(1, tvState.tvAlpha));
+  
+  ctx.fillStyle = isLight() ? '#d0d7de' : '#111'; ctx.shadowBlur = win ? 30 : 0; ctx.shadowColor = '#fff';
+  ctx.fillRect(350, 20, 350, 140); ctx.shadowBlur = 0;
+  ctx.strokeStyle = isLight() ? '#888' : '#333'; ctx.lineWidth = 4; ctx.strokeRect(350, 20, 350, 140);
+  
+  if (tvState.tvAlpha > 0) {
+    ctx.save(); ctx.globalAlpha = tvState.tvAlpha; ctx.beginPath(); ctx.rect(354, 24, 342, 132); ctx.clip();
+    let sky = ctx.createLinearGradient(354, 24, 354, 156); sky.addColorStop(0, '#2b0f4c'); sky.addColorStop(1, '#ff4f60');
+    ctx.fillStyle = sky; ctx.fillRect(354, 24, 342, 132);
+    ctx.shadowBlur = 30; ctx.shadowColor = '#ffe8a0'; ctx.fillStyle = '#ffe8a0'; ctx.beginPath(); ctx.arc(525, 105, 40, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = '#080012'; ctx.fillRect(354, 105, 342, 51);
+    ctx.strokeStyle = '#c060ff'; ctx.lineWidth = 1; for(let i=-5; i<=5; i++) { ctx.beginPath(); ctx.moveTo(525 + i*15, 105); ctx.lineTo(525 + i*60, 156); ctx.stroke(); }
+    ctx.restore();
+  } else {
+    ctx.fillStyle = isLight() ? '#888' : '#222'; ctx.font = 'bold 20px monospace'; ctx.textAlign = 'center'; ctx.fillText('NO SIGNAL', 525, 95);
+  }
+
+  let c1 = sizeToColor(tvState.r), c2 = sizeToColor(tvState.g), c3 = sizeToColor(tvState.b);
+  const dots = [{cx: 400, s: tvState.r, c:c1}, {cx: 525, s: tvState.g, c:c2}, {cx: 650, s: tvState.b, c:c3}];
+  dots.forEach((d, i) => {
+    let boxW = d.s * 10; let left = d.cx - boxW/2;
+    let beam = ctx.createLinearGradient(0, 160, 0, 240); beam.addColorStop(0, d.c.hex); beam.addColorStop(1, 'transparent');
+    ctx.fillStyle = beam; ctx.globalAlpha = win ? 0.8 : 0.3; ctx.fillRect(d.cx - 15, 160, 30, 80); ctx.globalAlpha = 1.0;
+    ctx.strokeStyle = isLight() ? '#b6c2d1' : '#1e3050'; ctx.lineWidth = 2; ctx.strokeRect(left, 240, boxW, 100);
+    let offset = Math.sin(state.clock * 0.05 + i*10) * Math.max(0, (boxW/2 - 10));
+    ctx.globalCompositeOperation = 'screen'; ctx.shadowBlur = 20; ctx.shadowColor = d.c.hex; ctx.fillStyle = d.c.hex;
+    ctx.beginPath(); ctx.arc(d.cx + offset, 290, 10, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0; ctx.globalCompositeOperation = 'source-over';
+  });
+
+  drawSpectrumGraph([{ wl: c1.wl, intensity: 90, color: c1.ui }, { wl: c2.wl, intensity: 90, color: c2.ui }, { wl: c3.wl, intensity: 90, color: c3.ui }]);
+}
+
+// =====================================================================
+// SCENE 3: SOLAR CELLS
+// =====================================================================
+let solarState = { l1: 8, l2: 8, l3: 8, photons: [], battery: 0 };
+
+function initSolar() {
+  document.getElementById('param-area').innerHTML = `
+    <div style="display:flex; gap:20px; width:100%;">
+      <div style="flex:1;"><div class="param-row"><span>Layer 1 (Blue)</span><span class="param-val" id="sol-l1">${solarState.l1.toFixed(1)} nm</span></div><input type="range" id="sl-sol-1" min="2" max="10" step="0.1" value="${solarState.l1}"></div>
+      <div style="flex:1;"><div class="param-row"><span>Layer 2 (Green)</span><span class="param-val" id="sol-l2">${solarState.l2.toFixed(1)} nm</span></div><input type="range" id="sl-sol-2" min="2" max="10" step="0.1" value="${solarState.l2}"></div>
+      <div style="flex:1;"><div class="param-row"><span>Layer 3 (Red)</span><span class="param-val" id="sol-l3">${solarState.l3.toFixed(1)} nm</span></div><input type="range" id="sl-sol-3" min="2" max="10" step="0.1" value="${solarState.l3}"></div>
+    </div>
+  `;
+  [1,2,3].forEach(i => {
+    document.getElementById(`sl-sol-${i}`).oninput = (e) => {
+      solarState[`l${i}`] = parseFloat(e.target.value); document.getElementById(`sol-l${i}`).textContent = solarState[`l${i}`].toFixed(1) + ' nm';
+      updateSolarReadout();
+    };
+  });
+  solarState.photons = []; solarState.battery = 0;
+  speak("Sunlight is a mix of all wave frequencies! A dot can only absorb a wave if the box size matches the wave's frequency. Stack three different sizes to capture it all.");
+  updateSolarReadout();
+}
+
+function updateSolarReadout() {
+  let isBlue = solarState.l1 <= 3.5; let isGreen = solarState.l2 >= 5.5 && solarState.l2 <= 7.0; let isRed = solarState.l3 >= 9;
+  document.getElementById('swatch').style.background = 'linear-gradient(135deg, #20d0ff, #40ffaa, #ff4f60)'; document.getElementById('swatch').style.boxShadow = 'none';
+
+  if (isBlue && isGreen && isRed) {
+    document.getElementById('cname').textContent = "Full Spectrum"; document.getElementById('csub').textContent = "Maximum Efficiency!";
+    document.getElementById('curious-body').innerHTML = `<span class="nm">THE CONCEPT:</span> Dots only catch light if their "box size" matches the light's frequency. By stacking Small (high-freq), Medium (mid-freq), and Large (low-freq) dots, the solar panel acts like a perfect net for the entire spectrum.`;
+  } else {
+    document.getElementById('cname').textContent = "Leaking Waves"; document.getElementById('csub').textContent = "Tune sizes to match frequencies.";
+    document.getElementById('curious-body').innerHTML = `If a low-frequency red wave hits a tiny box, it passes right through because it doesn't "fit". You must tune the layers to match the incoming frequencies.`;
+  }
+}
+
+function stepSolar() {
+  if (state.clock % 12 === 0) {
+    let types = [{s:9.5, c:'#ff4f60'}, {s:6, c:'#40ffaa'}, {s:2.5, c:'#20d0ff'}];
+    let type = types[Math.floor(Math.random()*3)];
+    solarState.photons.push({ x: 300 + Math.random()*250, y: 0, s: type.s, c: type.c, active: true, offset: Math.random()*100 });
+  }
+  solarState.photons.forEach(p => {
+    if(!p.active) return; p.y += 5;
+    let hitLayer = 0;
+    if (p.y > 100 && p.y < 120) hitLayer = 1; else if (p.y > 190 && p.y < 210) hitLayer = 2; else if (p.y > 280 && p.y < 300) hitLayer = 3;
+
+    if (hitLayer > 0) {
+      let layerSize = solarState[`l${hitLayer}`]; let absorbed = false;
+      if (p.s < 4 && layerSize <= 4) absorbed = true; 
+      if (p.s > 4 && p.s < 8 && layerSize > 4 && layerSize < 8) absorbed = true; 
+      if (p.s > 8 && layerSize >= 8) absorbed = true; 
+      if (absorbed) { p.active = false; createSparks(p.x, p.y+10, p.c, 5); solarState.battery = Math.min(100, solarState.battery + 2.5); }
+    }
+  });
+  if(state.clock % 5 === 0) solarState.battery = Math.max(0, solarState.battery - 0.5);
+}
+
+function drawSolar() {
+  drawBackground();
+  ctx.shadowBlur = 60; ctx.shadowColor = '#ffe8a0'; ctx.fillStyle = '#ffe8a0';
+  ctx.beginPath(); ctx.arc(425, 0, 70, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+
+  const layers = [{y: 100, s: solarState.l1}, {y: 190, s: solarState.l2}, {y: 280, s: solarState.l3}];
+  layers.forEach(l => {
+    let col = sizeToColor(l.s).hex;
+    ctx.fillStyle = col; ctx.globalAlpha = 0.2; ctx.fillRect(250, l.y, 350, 24); ctx.globalAlpha = 1.0;
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.strokeRect(250, l.y, 350, 24);
+  });
+
+  ctx.lineWidth = 3; ctx.lineCap = 'round';
+  solarState.photons.forEach(p => {
+    if(!p.active) return; ctx.strokeStyle = p.c; ctx.shadowBlur = 10; ctx.shadowColor = p.c; ctx.beginPath();
+    ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + Math.sin((p.y + p.offset)*0.1)*12, p.y + 20); ctx.stroke();
+  });
+  ctx.shadowBlur = 0; drawSparks();
+
+  let bx = 720; ctx.strokeStyle = isLight() ? '#b6c2d1' : '#1e3050'; ctx.lineWidth = 4;
+  ctx.strokeRect(bx, 100, 90, 200); ctx.fillRect(bx+25, 80, 40, 20); 
+  
+  let fillH = (solarState.battery / 100) * 196;
+  let batCol = solarState.battery > 80 ? '#40ffaa' : (solarState.battery > 40 ? '#f0c060' : '#ff4f60');
+  ctx.fillStyle = batCol; ctx.shadowBlur = 20; ctx.shadowColor = batCol;
+  ctx.fillRect(bx+2, 298 - fillH, 86, fillH); ctx.shadowBlur = 0;
+  ctx.fillStyle = isLight() ? '#000' : '#fff'; ctx.font = 'bold 22px monospace'; ctx.textAlign = 'center';
+  ctx.fillText(Math.floor(solarState.battery) + '%', bx+45, 210);
+
+  let c1 = sizeToColor(solarState.l1), c2 = sizeToColor(solarState.l2), c3 = sizeToColor(solarState.l3);
+  drawSpectrumGraph([{ wl: c1.wl, intensity: 90, color: c1.ui }, { wl: c2.wl, intensity: 90, color: c2.ui }, { wl: c3.wl, intensity: 90, color: c3.ui }], 'solar');
+}
+
+// =====================================================================
+// SCENE 4: BIO-IMAGING
+// =====================================================================
+let remoteState = { size: 5, waves: [] };
+
+function initRemote() {
+  document.getElementById('param-area').innerHTML = `
+    <div class="param-row"><span>Expand the box to drop the frequency into the Infrared zone (Nanometers)</span><span class="param-val" id="rm-val">5.0 nm</span></div>
+    <input type="range" id="sl-rm" min="4" max="15" step="0.1" value="5">
+  `;
+  document.getElementById('sl-rm').oninput = (e) => {
+    remoteState.size = parseFloat(e.target.value); document.getElementById('rm-val').textContent = remoteState.size.toFixed(1) + ' nm';
+    updateRemoteReadout();
+  };
+  remoteState.waves = [];
+  speak("High frequency visible light scatters against solid tissue. By making the box larger, we stretch the wave, dropping its frequency into the Infrared zone which passes right through skin!");
+  updateRemoteReadout();
+}
+
+function updateRemoteReadout() {
+  let isIR = remoteState.size >= 12; let col = sizeToColor(remoteState.size);
+  let sw = document.getElementById('swatch'); sw.style.background = col.ui;
+  
+  if (isIR) {
+    sw.style.boxShadow = 'none'; document.getElementById('cname').textContent = col.name; document.getElementById('csub').textContent = "Deep Tissue Penetration";
+    document.getElementById('curious-body').innerHTML = `<span class="nm">THE CONCEPT:</span> By increasing the size of the box (L), the wave's frequency drops dramatically. Look at the graph: Human tissue easily blocks high-frequency light, but becomes almost completely transparent to low-frequency Infrared light!`;
+  } else {
+    sw.style.boxShadow = `0 0 40px ${col.ui}`; document.getElementById('cname').textContent = col.name; document.getElementById('csub').textContent = "Scattered by tissue";
+    document.getElementById('curious-body').innerHTML = `High-frequency waves scatter immediately when they hit dense barriers like skin. Increase the size of the dot to lower the frequency.`;
+  }
+}
+
+function stepRemote() {
+  if (state.clock % 20 === 0) remoteState.waves.push({ x: 280, r: 0 });
+  remoteState.waves.forEach(w => { w.x += 5; w.r += 0.5; });
+  if (remoteState.waves.length > 25) remoteState.waves.shift();
+}
+
+function drawRemote() {
+  drawBackground();
+  let col = sizeToColor(remoteState.size); let isIR = remoteState.size >= 12;
+  
+  ctx.lineWidth = 3;
+  remoteState.waves.forEach(w => {
+    if (!isIR && w.x > 480) { if(w.x < 490 && Math.random()>0.5) createSparks(490, 200 + (Math.random()-0.5)*120, col.hex, 1); return; }
+    ctx.strokeStyle = col.hex; ctx.globalAlpha = isIR ? 0.3 : 0.8; ctx.beginPath();
+    ctx.moveTo(w.x, 200 - w.r - 20); ctx.quadraticCurveTo(w.x + 25, 200, w.x, 200 + w.r + 20); ctx.stroke();
+  });
+  ctx.globalAlpha = 1.0;
+
+  ctx.fillStyle = isLight() ? '#ccc' : '#333'; ctx.fillRect(150, 190, 80, 20);
+  ctx.beginPath(); ctx.moveTo(230, 190); ctx.lineTo(260, 200); ctx.lineTo(230, 210); ctx.fill();
+  ctx.shadowBlur = 30; ctx.shadowColor = col.hex; ctx.fillStyle = col.hex;
+  ctx.beginPath(); ctx.arc(260, 200, remoteState.size * 1.5, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+  ctx.fillStyle = 'var(--text2)'; ctx.font = '14px monospace'; ctx.textAlign = 'center'; ctx.fillText('Medical Emitter', 200, 240);
+
+  let tissueGrad = ctx.createLinearGradient(490, 0, 550, 0);
+  tissueGrad.addColorStop(0, isLight() ? '#e5c4b8' : '#6b453a'); tissueGrad.addColorStop(1, isLight() ? '#d6ad9f' : '#4a2c23');
+  ctx.fillStyle = isIR ? (isLight()?'rgba(229,196,184,0.3)':'rgba(107,69,58,0.3)') : tissueGrad;
+  ctx.beginPath(); for(let y=40; y<=360; y+=20) { ctx.lineTo(490 + Math.sin(y*0.1)*10, y); }
+  ctx.lineTo(550, 360); ctx.lineTo(550, 40); ctx.fill();
+  ctx.fillStyle = 'var(--text2)'; ctx.fillText('Skin/Tissue', 520, 30);
+
+  let hit = isIR && remoteState.waves.some(w => w.x > 730);
+  let rColor = hit ? '#40ffaa' : (isLight()?'#ddd':'#111');
+  ctx.shadowBlur = hit ? 40 : 0; ctx.shadowColor = '#40ffaa'; ctx.fillStyle = rColor; ctx.beginPath();
+  for(let a=0; a<Math.PI*2; a+=0.5) { let rad = 40 + Math.sin(a*4 + state.clock*0.05)*5; ctx.lineTo(770 + Math.cos(a)*rad, 200 + Math.sin(a)*rad); }
+  ctx.fill(); ctx.shadowBlur = 0;
+  if (hit && Math.random()>0.7) createSparks(770+(Math.random()-0.5)*40, 200+(Math.random()-0.5)*40, '#40ffaa', 1);
+  ctx.fillStyle = 'var(--text2)'; ctx.fillText('Hidden Target Cell', 770, 280);
+  drawSparks();
+
+  drawSpectrumGraph([{ wl: col.wl, intensity: 90, color: col.ui }], 'tissue');
+}
+
+// =====================================================================
+// SCENE 5: THE QUANTUM GREENHOUSE
+// =====================================================================
+let agriState = { size: 5, growth: 0 };
+
+function initAgri() {
+  document.getElementById('param-area').innerHTML = `
+    <div class="param-row"><span>Tune the glass dots to emit low-frequency RED light (Nanometers)</span><span class="param-val" id="agri-val">5.0 nm</span></div>
+    <input type="range" id="sl-agri" min="2" max="12" step="0.1" value="5">
+  `;
+  document.getElementById('sl-agri').oninput = (e) => {
+    agriState.size = parseFloat(e.target.value); document.getElementById('agri-val').textContent = agriState.size.toFixed(1) + ' nm';
+    updateAgriReadout();
+  };
+  agriState.growth = 0;
+  speak("Plants waste high-frequency green light. By putting specific quantum dots in the greenhouse glass, we can absorb that wasted wave, lower its frequency inside the box, and emit it as pure Red light to supercharge growth.");
+  updateAgriReadout();
+}
+
+function updateAgriReadout() {
+  let isRed = agriState.size >= 9 && agriState.size <= 10.5; let col = sizeToColor(agriState.size);
+  let sw = document.getElementById('swatch'); sw.style.background = col.ui;
+  
+  if (isRed) {
+    sw.style.boxShadow = `0 0 50px ${col.ui}`; document.getElementById('cname').textContent = "Red Spectrum"; document.getElementById('csub').textContent = "Photosynthesis Supercharged!";
+    document.getElementById('curious-body').innerHTML = `<span class="nm">THE CONCEPT:</span> We trap wasted sunlight in ~9.5nm boxes. This exact box size forces the emitted wave to have the low frequency of Red light. Chlorophyll absorbs this specific frequency perfectly, boosting crop yields!`;
+  } else {
+    sw.style.boxShadow = 'none'; document.getElementById('cname').textContent = col.name; document.getElementById('csub').textContent = "Sub-optimal frequency";
+    document.getElementById('curious-body').innerHTML = `Look at the graph: this frequency isn't aligned with the plant's absorption zone. Expand the dots to ~9.5nm to drop the frequency into the Red zone.`;
+  }
+}
+
+function stepAgri() {
+  let isRed = agriState.size >= 9 && agriState.size <= 10.5;
+  if (isRed) { agriState.growth += 0.005; if (agriState.growth > 1) agriState.growth = 1; } 
+  else { agriState.growth -= 0.002; if (agriState.growth < 0) agriState.growth = 0; }
+}
+
+function drawAgri() {
+  drawBackground();
+  let col = sizeToColor(agriState.size); let isRed = agriState.size >= 9 && agriState.size <= 10.5;
+
+  ctx.shadowBlur = 50; ctx.shadowColor = '#ffe8a0'; ctx.fillStyle = '#ffe8a0';
+  ctx.beginPath(); ctx.arc(200, 50, 40, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+  
+  ctx.fillStyle = col.hex; ctx.globalAlpha = 0.2 + (isRed ? 0.3 : 0);
+  ctx.beginPath(); ctx.moveTo(350, 150); ctx.lineTo(525, 50); ctx.lineTo(700, 150); ctx.lineTo(700, 350); ctx.lineTo(350, 350); ctx.fill(); ctx.globalAlpha = 1.0;
+  
+  ctx.strokeStyle = isLight() ? '#888' : '#fff'; ctx.lineWidth = 6;
+  ctx.beginPath(); ctx.moveTo(350, 350); ctx.lineTo(350, 150); ctx.lineTo(525, 50); ctx.lineTo(700, 150); ctx.lineTo(700, 350); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(350, 150); ctx.lineTo(700, 150); ctx.stroke();
+  
+  ctx.strokeStyle = col.hex; ctx.lineWidth = 3; ctx.globalAlpha = 0.4;
+  for(let i=0; i<5; i++) {
+    let rx = 400 + i*60; ctx.beginPath(); ctx.moveTo(rx, 150); ctx.lineTo(rx + Math.sin(state.clock*0.05 + i)*10, 330); ctx.stroke();
+  }
+  ctx.globalAlpha = 1.0;
+
+  ctx.fillStyle = isLight() ? '#5c4033' : '#3b251b'; ctx.fillRect(360, 330, 330, 20);
+
+  // The Plant
+  ctx.save(); ctx.translate(525, 330); ctx.strokeStyle = '#40ffaa'; ctx.lineWidth = 8; ctx.lineCap = 'round';
+  let th = agriState.growth * -150;
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(20, th/2, 0, th); ctx.stroke();
+  
+  if (agriState.growth > 0.3) {
+    ctx.fillStyle = '#40ffaa'; let s1 = (agriState.growth - 0.3) * 1.5;
+    ctx.beginPath(); ctx.ellipse(10, -30, 25*s1, 10*s1, Math.PI/4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-10, -70, 20*s1, 8*s1, -Math.PI/6, 0, Math.PI*2); ctx.fill();
+  }
+  
+  if (agriState.growth > 0.8) {
+    ctx.fillStyle = '#ff4f60'; ctx.shadowBlur = 10; ctx.shadowColor = '#ff4f60'; let s2 = (agriState.growth - 0.8) * 5;
+    ctx.beginPath(); ctx.arc(25, -40, 10*s2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-20, -90, 8*s2, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(10, -120, 12*s2, 0, Math.PI*2); ctx.fill(); ctx.shadowBlur = 0;
+  }
+  ctx.restore();
+
+  if (isRed && Math.random()>0.5) createSparks(400 + Math.random()*250, 100 + Math.random()*200, col.hex, 1);
+  drawSparks();
+
+  drawSpectrumGraph([{ wl: col.wl, intensity: 90, color: col.ui }]);
+  let gy = H-100;
+  ctx.beginPath(); ctx.moveTo(0, H); ctx.quadraticCurveTo(W*0.3, gy-80, W*0.5, H); 
+  ctx.moveTo(W*0.6, H); ctx.quadraticCurveTo(W*0.8, gy-80, W*0.9, H); 
+  ctx.fillStyle = 'rgba(64,255,170,0.2)'; ctx.fill();
+  ctx.fillStyle = isLight() ? '#000' : '#fff'; ctx.textAlign='center'; ctx.fillText('Plant Absorption Zones', W/2, gy + 35);
+}
+
+// =====================================================================
+// ROUTER & MAIN LOOP
+// =====================================================================
+const SCENES = {
+  play: { init: initPlay, step: stepPlay, draw: drawPlay },
+  tv: { init: initTV, step: () => {}, draw: drawTV },
+  solar: { init: initSolar, step: stepSolar, draw: drawSolar },
+  remote: { init: initRemote, step: stepRemote, draw: drawRemote },
+  agri: { init: initAgri, step: stepAgri, draw: drawAgri }
+};
+
+function activate(sceneName) {
+  state.scene = sceneName; synth.cancel(); state.sparks = [];
+  document.querySelectorAll('#scene-btns button').forEach(b => b.classList.toggle('active', b.dataset.scene === sceneName));
+  if(SCENES[sceneName].init) SCENES[sceneName].init();
+}
+
+document.querySelectorAll('#scene-btns button').forEach(b => {
+  b.addEventListener('click', () => activate(b.dataset.scene));
+});
+
+function frame() {
+  state.clock++;
+  if(SCENES[state.scene]) {
+    if(SCENES[state.scene].step) SCENES[state.scene].step();
+    SCENES[state.scene].draw();
+  }
+  requestAnimationFrame(frame);
+}
+
+// Init Game
+activate('play');
+requestAnimationFrame(frame);
+
+</script>
+</body>
+</html>
