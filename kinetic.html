@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic Theory of Gases — Science Wonders</title>
+<meta name="description" content="An interactive kinetic theory of gases simulation. Watch temperature become motion, pressure become collisions, and the gas laws, Maxwell–Boltzmann distribution, diffusion, effusion and real-gas behaviour emerge from a box of bouncing molecules.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --box-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --box-bg:#0a1220;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+/* MODE TABS */
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 13px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:820px){.stage{grid-template-columns:1fr;}}
+
+/* NEW LAYOUT: box + sliders on left, small graph on right */
+.top-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){
+  .top-grid{display:flex;flex-direction:column;}
+  .left-col{order:1;} .right-col{order:2;}
+}
+
+/* compact slider bar directly under the box */
+.slider-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.sb-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
+@media(max-width:430px){.sb-grid{grid-template-columns:1fr;}}
+.sb-item .param-row{margin-bottom:3px;}
+.sb-item input[type=range]{margin-top:1px;}
+.sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+.sb-actions{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap;}
+.sb-actions .minibtn{flex:1;min-width:78px;}
+
+/* smaller aux/graph panel */
+canvas#aux{display:block;width:100%;height:auto;background:var(--box-bg);}
+.aux-small canvas#aux{max-height:300px;}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+/* THE GAS BOX */
+.box-wrap{position:relative;background:var(--box-bg);}
+canvas#gasbox{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
+.box-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .box-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.bb-tl{top:9px;left:9px;color:var(--gold);}
+.bb-tr{top:9px;right:9px;color:var(--cyan);}
+.bb-piston{bottom:9px;left:50%;transform:translateX(-50%);color:var(--text2);font-size:8.5px;}
+
+/* AUX PANEL (histogram / graph) */
+canvas#aux{display:block;width:100%;height:auto;background:var(--box-bg);}
+
+/* CONTROLS */
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:14px 0 9px;}
+.section-label:first-child{margin-top:0;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}
+.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
+.minibtn{font-family:monospace;font-size:10.5px;padding:7px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+body.light-theme .minibtn.active{background:var(--bg3);}
+
+.param{margin-bottom:12px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.param-sub{font-family:monospace;font-size:9.5px;color:var(--text3);margin-top:3px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+.dimswitch{display:flex;gap:0;border:1px solid var(--border2);border-radius:6px;overflow:hidden;}
+.dimswitch button{flex:1;font-family:monospace;font-size:11px;padding:7px;background:transparent;border:none;color:var(--text2);cursor:pointer;transition:all .15s;}
+.dimswitch button.active{background:var(--accent);color:#fff;}
+body.light-theme .dimswitch button.active{color:#fff;}
+
+/* READOUTS */
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}.rcell.wide{grid-column:span 2;}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+/* THEORY */
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;transition:background .2s;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-green{background:rgba(64,255,170,.04);border:1px solid rgba(64,255,170,.2);color:#8effc8;}
+body.light-theme .hb-green{color:var(--green);}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}
+footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){
+  header{padding:12px 16px;gap:10px;}
+  .page-subtitle{display:none;}
+  .mode-tab{font-size:9.5px;padding:6px 9px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Kinetic Theory of Gases</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="mode-bar" id="mode-bar"></div>
+
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+
+      <!-- GAS BOX -->
+      <div class="card">
+        <div class="card-title">The Gas Box <span class="hint" id="box-hint">drag the piston wall ⟺ to change volume</span></div>
+        <div class="box-wrap">
+          <canvas id="gasbox" width="520" height="420"></canvas>
+          <div class="box-badge bb-tl" id="bb-temp">300 K</div>
+          <div class="box-badge bb-tr" id="bb-press">1.0 atm</div>
+        </div>
+      </div>
+
+      <!-- COMPACT SLIDER BAR (directly under box) -->
+      <div class="slider-bar">
+        <div class="sb-grid">
+          <div class="sb-item">
+            <div class="param-row"><span>🌡 Temperature</span><span class="param-val" id="t-v">300 K</span></div>
+            <input type="range" id="sl-t" min="0" max="1200" step="5" value="300">
+            <div class="sb-mini" id="t-sub">27 °C · room temperature</div>
+          </div>
+          <div class="sb-item">
+            <div class="param-row"><span>📦 Volume</span><span class="param-val" id="vol-v">100%</span></div>
+            <input type="range" id="sl-vol" min="30" max="100" step="1" value="100">
+            <div class="sb-mini">or drag the piston ⟺ on the box</div>
+          </div>
+          <div class="sb-item">
+            <div class="param-row"><span>⚛ Molecules N</span><span class="param-val" id="n-v">200</span></div>
+            <input type="range" id="sl-n" min="2" max="500" step="1" value="200">
+            <div class="sb-mini" id="n-sub">box ≈ 20 nm wide</div>
+          </div>
+          <div class="sb-item">
+            <div class="param-row"><span>⏩ Sim speed</span><span class="param-val" id="spd-v">1.0×</span></div>
+            <input type="range" id="sl-spd" min="0.1" max="3" step="0.1" value="1">
+            <div class="sb-mini">slow down to watch collisions</div>
+          </div>
+        </div>
+        <div class="sb-actions">
+          <button class="minibtn" id="btn-pause">⏸ Pause</button>
+          <button class="minibtn" id="btn-reset">↺ Reset</button>
+          <span id="mode-actions" style="display:flex;gap:6px;flex:2;min-width:0;"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="right-col">
+
+      <!-- AUX: histogram or gas-law graph (smaller) -->
+      <div class="card aux-small">
+        <div class="card-title" id="aux-title">Speed Distribution <span class="hint" id="aux-hint">live histogram vs theory</span></div>
+        <div class="box-wrap">
+          <canvas id="aux" width="520" height="360"></canvas>
+        </div>
+      </div>
+
+      <!-- SETUP -->
+      <div class="card">
+        <div class="card-title">Setup</div>
+        <div class="card-pad">
+          <div class="section-label">Readout dimension</div>
+          <div class="dimswitch" id="dimswitch">
+            <button data-dim="3" class="active">3D (real gas)</button>
+            <button data-dim="2">2D</button>
+          </div>
+          <div class="param-sub" id="dim-sub" style="margin-top:6px;">Particles move in 2D for clarity. Numbers computed for a real 3D gas.</div>
+
+          <div class="section-label" style="margin-top:14px;">Gas</div>
+          <div class="btn-grid c3" id="gas-btns"></div>
+
+          <div class="section-label" style="margin-top:14px;">Show on screen</div>
+          <div class="toggle-row" id="toggle-row"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- READOUTS (full width) -->
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Live Physics Readout <span class="hint">real SI units</span></div>
+    <div class="card-pad">
+      <div class="readout-grid">
+        <div class="rcell"><div class="r-label">Pressure P</div><div class="r-value gold" id="r-p">—</div><div class="r-sub" id="r-p-sub">from wall impacts</div></div>
+        <div class="rcell"><div class="r-label">Volume V</div><div class="r-value" id="r-vol">—</div><div class="r-sub" id="r-vol-sub"></div></div>
+        <div class="rcell"><div class="r-label">Temperature T</div><div class="r-value cyan" id="r-t">—</div><div class="r-sub" id="r-t-sub"></div></div>
+        <div class="rcell"><div class="r-label">Molecules N</div><div class="r-value" id="r-n">—</div><div class="r-sub" id="r-n-sub"></div></div>
+        <div class="rcell"><div class="r-label">v_rms</div><div class="r-value green sm" id="r-vrms">—</div><div class="r-sub">root-mean-square speed</div></div>
+        <div class="rcell"><div class="r-label">v_avg · v_p</div><div class="r-value sm" id="r-vavg">—</div><div class="r-sub">average · most probable</div></div>
+        <div class="rcell"><div class="r-label">Mean KE / molecule</div><div class="r-value sm" id="r-ke">—</div><div class="r-sub" id="r-ke-sub">½m⟨v²⟩</div></div>
+        <div class="rcell"><div class="r-label">Internal energy U</div><div class="r-value sm" id="r-u">—</div><div class="r-sub" id="r-u-sub"></div></div>
+        <div class="rcell"><div class="r-label">Mean free path λ</div><div class="r-value sm" id="r-mfp">—</div><div class="r-sub">between collisions</div></div>
+        <div class="rcell"><div class="r-label">Collision freq</div><div class="r-value sm" id="r-cf">—</div><div class="r-sub">per molecule</div></div>
+        <div class="rcell wide"><div class="r-label">Ideal-gas check &nbsp; PV / NkT</div><div class="r-value orange sm" id="r-pvnkt">—</div><div class="r-sub" id="r-pvnkt-sub">= 1.000 for an ideal gas</div></div>
+      </div>
+      <div class="law-strip" id="law-strip">
+        <b>PV = NkT = nRT</b> &nbsp;— the ideal gas law. Every gas law below is this one equation with something held fixed.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+// ============================================================================
+// KINETIC THEORY OF GASES — engine
+// Visuals are 2D; readouts computed for real 2D OR 3D gas (toggle).
+// All readouts in real SI units. Box represents a ~20 nm region.
+// ============================================================================
+
+// ---- Physical constants ----
+const kB = 1.380649e-23;            // J/K
+const U  = 1.66053906660e-27;       // kg per atomic mass unit
+const NA = 6.02214076e23;
+const R  = 8.314462618;             // J/mol/K
+
+// ---- Gases: mass (u), DOF f (trans+rot, NCERT convention), molecular diameter (m), colour ----
+const GASES = {
+  He:  { name:'Helium',   M:4.0026,  f:3, d:2.60e-10, col:'#7ad6ff' },
+  Ne:  { name:'Neon',     M:20.18,   f:3, d:2.75e-10, col:'#9affd0' },
+  Ar:  { name:'Argon',    M:39.95,   f:3, d:3.64e-10, col:'#f0c060' },
+  N2:  { name:'Nitrogen', M:28.01,   f:5, d:3.64e-10, col:'#8fa8ff' },
+  O2:  { name:'Oxygen',   M:32.00,   f:5, d:3.46e-10, col:'#ff8f8f' },
+  CO2: { name:'Carbon dioxide', M:44.01, f:6, d:3.30e-10, col:'#c79bff' }
+};
+const GAMMA = { 3:'1.67', 5:'1.40', 6:'1.33' };
+
+// ---- Visualisation scale constants ----
+const L_REAL   = 20e-9;             // real box width at 100% volume (m)
+let   BOXW = 520, BOXH = 420;       // canvas px (set on resize)
+let   AUXH = 360;                   // graph/histogram canvas height (smaller)
+const MARGIN = 14;                  // inner wall margin (px)
+const C_V = 167;                    // (m/s) per (px/frame) velocity scale
+let   pxPerM, dtReal;               // derived in recalcScales()
+
+// ---- State ----
+const S = {
+  mode: 'sandbox',
+  dim: 3,
+  gas: 'Ar',
+  gas2: 'He',          // for M-B explorer / diffusion second gas
+  T: 300,              // K (target)
+  N: 200,
+  volPct: 100,         // piston volume %
+  speed: 1.0,
+  paused: false,
+  show: { speedcol:true, vectors:false, trails:false, tagged:false, flash:true },
+  realgas: false,      // van der Waals attraction + finite size active
+  partition: false,    // diffusion partition present
+  hole: false,         // effusion hole present
+  brownian: false
+};
+
+let parts = [];        // particles
+let pistonX = 0;       // px, right movable wall
+let leftWall, topWall, botWall;
+let wallImpulse = 0;   // accumulated real impulse (kg·m/s) on walls
+let impulseTime = 0;   // accumulated real time for impulse window
+let measuredP = 0;
+let wallHits = 0, wallHitRate = 0, hitAccum = 0;
+let flashWalls = [];   // {side, t}
+let escaped = { a:0, b:0 };   // effusion counters
+let graphData = [];    // for gas-law modes: {x,y}
+let tEl = 0;           // sim elapsed (real seconds)
+let mixHistory = [];   // diffusion mixing metric over time
+
+function gasMassKg(key){ return GASES[key].M * U; }
+
+function recalcScales(){
+  pxPerM = (BOXW - 2*MARGIN) / L_REAL;
+  dtReal = 1 / (C_V * pxPerM);   // real seconds per frame-unit
+}
+
+// ---- Gaussian (Box–Muller) ----
+function gauss(sigma){
+  let u1=0,u2=0; while(u1===0) u1=Math.random(); while(u2===0) u2=Math.random();
+  return sigma * Math.sqrt(-2*Math.log(u1)) * Math.cos(2*Math.PI*u2);
+}
+
+// sigma in px/frame for a given gas at temperature T (per component)
+function sigmaSim(key, T){
+  const sigmaReal = Math.sqrt(kB * T / gasMassKg(key));  // m/s per component
+  return sigmaReal / C_V;
+}
+
+// particle visual radius (px) — exaggerated vs real for visibility
+function partRadius(key){
+  return S.realgas ? 6.5 : 4.2;
+}
+
+function makeParticle(key, x, y, T, group){
+  const s = sigmaSim(key, Math.max(T, 0.0001));
+  const p = {
+    key, group: group||'a',
+    x, y,
+    vx: gauss(s), vy: gauss(s),
+    vz: (S.dim===3) ? gauss(s) : 0,
+    r: partRadius(key),
+    m: GASES[key].M,           // sim mass ∝ molar mass
+    trail: [],
+    tagged:false,
+    big:false
+  };
+  return p;
+}
+
+function innerBounds(){
+  leftWall = MARGIN; topWall = MARGIN; botWall = BOXH - MARGIN;
+  const fullRight = BOXW - MARGIN;
+  pistonX = leftWall + (fullRight - leftWall) * (S.volPct/100);
+}
+
+// ---- Spawn for current mode ----
+function spawn(){
+  recalcScales();
+  innerBounds();
+  parts = [];
+  graphData = [];
+  mixHistory = [];
+  escaped = { a:0, b:0 };
+  tEl = 0;
+  const xr = [leftWall, pistonX];
+  const yr = [topWall, botWall];
+
+  if (S.mode === 'diffusion'){
+    // two gases separated left/right
+    S.partition = true;
+    const mid = (leftWall + pistonX)/2;
+    for (let i=0;i<S.N;i++){
+      const left = i < S.N/2;
+      const key = left ? S.gas : S.gas2;
+      const x = left ? rand(leftWall+8, mid-8) : rand(mid+8, pistonX-8);
+      const y = rand(topWall+8, botWall-8);
+      const p = makeParticle(key, x, y, S.T, left?'a':'b');
+      parts.push(p);
+    }
+  } else if (S.mode === 'effusion'){
+    S.hole = true;
+    for (let i=0;i<S.N;i++){
+      const key = (i%2===0)? S.gas : S.gas2;
+      const x = rand(leftWall+8, (leftWall+pistonX)/2 - 8);
+      const y = rand(topWall+8, botWall-8);
+      parts.push(makeParticle(key, x, y, S.T, (i%2===0)?'a':'b'));
+    }
+  } else if (S.mode === 'brownian'){
+    // many small + one big
+    for (let i=0;i<S.N;i++){
+      const p = makeParticle('He', rand(xr[0]+8,xr[1]-8), rand(yr[0]+8,yr[1]-8), S.T, 'a');
+      p.r = 3.0;
+      parts.push(p);
+    }
+    const big = makeParticle('Ar', (leftWall+pistonX)/2, (topWall+botWall)/2, S.T, 'big');
+    big.big = true; big.r = 20; big.m = 4000; big.vx*=0.05; big.vy*=0.05; big.vz*=0.05;
+    big.tagged = true;
+    parts.push(big);
+  } else if (S.mode === 'mb'){
+    // two gases overlaid, different masses
+    for (let i=0;i<S.N;i++){
+      const key = (i<S.N/2)? S.gas : S.gas2;
+      parts.push(makeParticle(key, rand(xr[0]+8,xr[1]-8), rand(yr[0]+8,yr[1]-8), S.T, (i<S.N/2)?'a':'b'));
+    }
+  } else {
+    if (S.mode==='realgas') S.realgas = true;
+    for (let i=0;i<S.N;i++){
+      parts.push(makeParticle(S.gas, rand(xr[0]+8,xr[1]-8), rand(yr[0]+8,yr[1]-8), S.T, 'a'));
+    }
+  }
+  if (parts[0] && S.show.tagged && S.mode!=='brownian') parts[0].tagged = true;
+}
+function rand(a,b){ return a + Math.random()*(b-a); }
+
+// ---- Thermostat: rescale velocities so mean KE matches target T ----
+function thermostat(){
+  if (S.mode==='brownian') return;          // let big particle wander freely
+  if (S.T <= 0){ parts.forEach(p=>{p.vx=p.vy=p.vz=0;}); return; }
+  const dof = S.dim;
+  let ke=0, count=0;
+  for (const p of parts){
+    if (p.big) continue;
+    ke += p.m * (p.vx*p.vx + p.vy*p.vy + (S.dim===3?p.vz*p.vz:0));
+    count++;
+  }
+  if (count===0 || ke===0) return;
+  // current sim "temperature" ∝ meanKE/dof; target sigma per component:
+  // <½ m v²> over dof components should equal (dof/2) kT_sim. We rescale to target.
+  const meanCompEnergy = ke / (count*dof);            // sim units: m*<v_comp²>
+  // target per-component (sim): m * sigmaSim² with sigma in px/frame, but m here is molar-mass units.
+  // Use ratio scaling toward target derived from set T via a reference gas-independent measure:
+  // target meanCompEnergy_target = kB*T/(C_V²) * (1/U)  -> keep dimensionless consistent:
+  // Simpler: target = (sigma_target_for_unit_mass)². Since p.m ∝ M and sigma∝1/√M, m*sigma² ∝ kT (mass cancels). Good.
+  const target = kB*S.T/(C_V*C_V*U);                  // = M*sigmaSim² (same for all gases)
+  const scale = Math.sqrt(target/meanCompEnergy);
+  if (isFinite(scale) && scale>0){
+    const s = 0.5 + 0.5*scale; // gentle relaxation toward target each frame
+    for (const p of parts){ if(p.big) continue; p.vx*=s; p.vy*=s; p.vz*=s; }
+  }
+}
+
+// ---- Wall collisions with real impulse accounting ----
+function wallCollide(p){
+  const mkg = gasMassKg(p.key) * (p.big?1000:1);
+  // left
+  if (p.x - p.r < leftWall){ p.x = leftWall + p.r; if(p.vx<0){ recordImpulse('L', 2*mkg*Math.abs(p.vx)*C_V); p.vx=-p.vx; } }
+  // right (piston)
+  if (p.x + p.r > pistonX){
+    // effusion hole: allow escape through a gap in the right wall
+    if (S.hole && p.y>topWall+ (botWall-topWall)*0.42 && p.y< topWall+(botWall-topWall)*0.58){
+      // passes through hole — counts as escape, remove later
+      p._escape = true;
+    } else {
+      p.x = pistonX - p.r; if(p.vx>0){ recordImpulse('R', 2*mkg*Math.abs(p.vx)*C_V); p.vx=-p.vx; }
+    }
+  }
+  // top
+  if (p.y - p.r < topWall){ p.y = topWall + p.r; if(p.vy<0){ recordImpulse('T', 2*mkg*Math.abs(p.vy)*C_V); p.vy=-p.vy; } }
+  // bottom
+  if (p.y + p.r > botWall){ p.y = botWall - p.r; if(p.vy>0){ recordImpulse('B', 2*mkg*Math.abs(p.vy)*C_V); p.vy=-p.vy; } }
+  // diffusion partition (centre wall with no gap until released)
+  if (S.partition){
+    const mid = (leftWall+pistonX)/2;
+    if (Math.abs(p.x-mid) < p.r){
+      if (p.group==='a' && p.x<mid){ p.x=mid-p.r; if(p.vx>0)p.vx=-p.vx; }
+      else if (p.group==='b' && p.x>mid){ p.x=mid+p.r; if(p.vx<0)p.vx=-p.vx; }
+      else if (p.x<mid){ p.x=mid-p.r; if(p.vx>0)p.vx=-p.vx; }
+      else { p.x=mid+p.r; if(p.vx<0)p.vx=-p.vx; }
+    }
+  }
+}
+function recordImpulse(side, J){
+  wallImpulse += J; wallHits++; hitAccum++;
+  if (S.show.flash) flashWalls.push({side, t:1});
+}
+
+// ---- Particle–particle elastic collisions (3D-consistent via hidden z) ----
+function collidePair(a, b){
+  const dx = b.x-a.x, dy = b.y-a.y;
+  const rs = a.r + b.r;
+  const d2 = dx*dx + dy*dy;
+  if (d2 > rs*rs || d2===0) return;
+  const d = Math.sqrt(d2);
+  // hidden z separation that places spheres exactly in contact (3D mode)
+  let dz = 0;
+  if (S.dim===3){
+    const zz = rs*rs - d2;
+    dz = (zz>0?Math.sqrt(zz):0) * (Math.random()<0.5?-1:1);
+  }
+  const nrm = Math.sqrt(d2 + dz*dz) || 1;
+  const nx=dx/nrm, ny=dy/nrm, nz=dz/nrm;
+  // relative velocity along normal
+  const dvx=b.vx-a.vx, dvy=b.vy-a.vy, dvz=(b.vz||0)-(a.vz||0);
+  const rel = dvx*nx + dvy*ny + dvz*nz;
+  if (rel>0) return;            // separating
+  const ma=a.m, mb=b.m;
+  const imp = 2*rel/(ma+mb);
+  a.vx += imp*mb*nx; a.vy += imp*mb*ny; a.vz=(a.vz||0)+imp*mb*nz;
+  b.vx -= imp*ma*nx; b.vy -= imp*ma*ny; b.vz=(b.vz||0)-imp*ma*nz;
+  // separate overlap in xy
+  const overlap = rs - d;
+  if (overlap>0){
+    const ox=(dx/d)*overlap*0.5, oy=(dy/d)*overlap*0.5;
+    a.x-=ox; a.y-=oy; b.x+=ox; b.y+=oy;
+  }
+}
+
+// ---- van der Waals weak attraction (real-gas mode) ----
+function vdwForces(){
+  if (!S.realgas) return;
+  const cutoff = 26, cut2 = cutoff*cutoff;
+  for (let i=0;i<parts.length;i++){
+    for (let j=i+1;j<parts.length;j++){
+      const a=parts[i], b=parts[j];
+      const dx=b.x-a.x, dy=b.y-a.y; const d2=dx*dx+dy*dy;
+      if (d2>cut2 || d2<1) continue;
+      const d=Math.sqrt(d2);
+      // weak attractive well beyond contact
+      const rs=a.r+b.r;
+      if (d>rs){
+        const fAtt = 0.020 * (1 - (d-rs)/(cutoff-rs));
+        const fx=fAtt*dx/d, fy=fAtt*dy/d;
+        a.vx+=fx/a.m; a.vy+=fy/a.m; b.vx-=fx/b.m; b.vy-=fy/b.m;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// SIMULATION STEP
+// ============================================================================
+let gasbox, gctx, aux, actx;
+
+function step(){
+  const sub = 1;
+  const speed = S.speed;
+  // integrate
+  for (const p of parts){
+    p.x += p.vx*speed; p.y += p.vy*speed;
+    if (S.show.trails && (p.tagged || p.big)){
+      p.trail.push([p.x,p.y]); if(p.trail.length>180) p.trail.shift();
+    }
+  }
+  vdwForces();
+  // particle collisions (spatial hashing for speed)
+  collideAll();
+  // walls
+  for (const p of parts) wallCollide(p);
+  // effusion: remove escaped
+  if (S.hole){
+    for (const p of parts){
+      if (p._escape){
+        if (p.group==='a') escaped.a++; else escaped.b++;
+      }
+    }
+    parts = parts.filter(p=>!p._escape);
+  }
+  thermostat();
+
+  // time + pressure window
+  tEl += dtReal*speed;
+  impulseTime += dtReal*speed;
+  hitTimer += dtReal*speed;
+  if (impulseTime > 0){
+    const area = realWallArea();
+    measuredP = wallImpulse / (area*impulseTime);
+  }
+  if (impulseTime > 40*dtReal){ // sliding reset
+    wallImpulse *= 0.5; impulseTime *= 0.5;
+  }
+  if (hitTimer > 30*dtReal){ wallHitRate = hitAccum/hitTimer; hitAccum=0; hitTimer=0; }
+
+  // gas-law data recording
+  recordGasLaw();
+  // diffusion mixing metric
+  if (S.mode==='diffusion') recordMixing();
+
+  // flashes decay
+  flashWalls.forEach(f=>f.t-=0.08); flashWalls = flashWalls.filter(f=>f.t>0);
+}
+let hitTimer=0;
+
+function collideAll(){
+  // simple grid hash
+  const cell = 16;
+  const grid = {};
+  for (let i=0;i<parts.length;i++){
+    const p=parts[i];
+    const cx=(p.x/cell)|0, cy=(p.y/cell)|0;
+    const k=cx+','+cy;
+    (grid[k]||(grid[k]=[])).push(i);
+  }
+  for (const k in grid){
+    const [cx,cy]=k.split(',').map(Number);
+    const here=grid[k];
+    for (let a=0;a<here.length;a++){
+      for (let b=a+1;b<here.length;b++) collidePair(parts[here[a]],parts[here[b]]);
+      for (const off of [[1,0],[0,1],[1,1],[-1,1]]){
+        const nk=(cx+off[0])+','+(cy+off[1]);
+        const nb=grid[nk]; if(!nb) continue;
+        for (const bi of nb) for (const ai of here) collidePair(parts[ai],parts[bi]);
+      }
+    }
+  }
+}
+
+// ---- real geometry ----
+function realWidth(){ return (pistonX - leftWall)/pxPerM; }
+function realHeight(){ return (botWall - topWall)/pxPerM; }
+function realVolume(){
+  const w=realWidth(), h=realHeight();
+  return (S.dim===3) ? w*h*h : w*h;  // cube-ish (depth=height) for 3D; area for 2D
+}
+function realWallArea(){
+  // pressure = impulse/(area·time); use area consistent with dimension
+  const h=realHeight();
+  return (S.dim===3) ? h*h : h; // 3D wall area (h×depth), 2D wall "length"
+}
+
+// ---- live kinetic quantities (real SI) ----
+function meanSquareSpeedReal(){
+  // from actual particles, in (m/s)²
+  let sum=0,c=0;
+  for (const p of parts){ if(p.big) continue; const v2=(p.vx*p.vx+p.vy*p.vy+(S.dim===3?p.vz*p.vz:0)); sum+=v2; c++; }
+  if(!c) return 0;
+  return (sum/c)*C_V*C_V;
+}
+function kinetics(){
+  const m = gasMassKg(S.gas);
+  const T = S.T;
+  const d = S.dim;
+  const vrms = Math.sqrt(d*kB*T/m);
+  const vavg = d===3 ? Math.sqrt(8*kB*T/(Math.PI*m)) : Math.sqrt(Math.PI*kB*T/(2*m));
+  const vp   = d===3 ? Math.sqrt(2*kB*T/m) : Math.sqrt(kB*T/m);
+  const meanKE = 0.5*m*vrms*vrms;                 // = (d/2)kT
+  const f = GASES[S.gas].f;
+  const U_int = (f/2)*kB*T*activeN();             // internal energy of the sample
+  const V = realVolume();
+  const n = activeN()/V;                          // number density
+  const P_kinetic = n*kB*T;                       // = (N/V)(m<v²>/d) for ideal
+  // mean free path (dimension-aware), collision freq
+  const dmol = GASES[S.gas].d;
+  let mfp, cf;
+  if (d===3){ mfp = 1/(Math.SQRT2*n*Math.PI*dmol*dmol); }
+  else { const n2=activeN()/ (realWidth()*realHeight()); mfp = 1/(Math.SQRT2*n2*dmol*2); }
+  cf = vavg/mfp;
+  return {vrms,vavg,vp,meanKE,U_int,P_kinetic,V,n,mfp,cf,f};
+}
+function activeN(){ let c=0; for(const p of parts){ if(!p.big) c++; } return c; }
+
+// ---- gas-law recording ----
+function recordGasLaw(){
+  if (!['boyle','charles','gaylussac'].includes(S.mode)) return;
+  const k=kinetics();
+  let x,y;
+  if (S.mode==='boyle'){ x=k.V*1e27; y=k.P_kinetic/1e5; }              // V(nm³ scale), P(atm)
+  else if (S.mode==='charles'){ x=S.T; y=k.V*1e27; }                   // T(K), V
+  else { x=S.T; y=k.P_kinetic/1e5; }                                   // Gay-Lussac T,P
+  if (graphData.length===0 || Math.abs(graphData[graphData.length-1].x - x) > (S.mode==='boyle'?0.2:2))
+    graphData.push({x,y});
+  if (graphData.length>400) graphData.shift();
+}
+function recordMixing(){
+  // fraction of 'a' particles on the right half = mixing measure
+  const mid=(leftWall+pistonX)/2; let aRight=0,a=0;
+  for(const p of parts){ if(p.group==='a'){a++; if(p.x>mid)aRight++;} }
+  const frac = a? aRight/a : 0;
+  mixHistory.push(frac); if(mixHistory.length>300) mixHistory.shift();
+}
+
+// ============================================================================
+// RENDERING — gas box
+// ============================================================================
+function cssv(n){ return getComputedStyle(document.body).getPropertyValue(n).trim() || '#fff'; }
+
+function speedColor(v2){
+  // map speed to blue->red
+  const k=kinetics();
+  const ref = (k.vrms/C_V);  // px/frame rms
+  const t = Math.min(1, Math.sqrt(v2)/(ref*1.8+1e-6));
+  const r = Math.round(60+195*t), g=Math.round(120*(1-Math.abs(t-0.5)*2)+60), b=Math.round(255-205*t);
+  return `rgb(${r},${g},${b})`;
+}
+
+function drawBox(){
+  if(!gctx) return;
+  gctx.clearRect(0,0,BOXW,BOXH);
+  gctx.fillStyle = cssv('--box-bg'); gctx.fillRect(0,0,BOXW,BOXH);
+  // walls
+  gctx.strokeStyle = cssv('--border2'); gctx.lineWidth=2;
+  gctx.strokeRect(leftWall, topWall, pistonX-leftWall, botWall-topWall);
+  // partition
+  if (S.partition){
+    const mid=(leftWall+pistonX)/2;
+    gctx.strokeStyle=cssv('--gold'); gctx.setLineDash([5,5]); gctx.beginPath();
+    gctx.moveTo(mid,topWall); gctx.lineTo(mid,botWall); gctx.stroke(); gctx.setLineDash([]);
+  }
+  // effusion hole
+  if (S.hole){
+    const y0=topWall+(botWall-topWall)*0.42, y1=topWall+(botWall-topWall)*0.58;
+    gctx.strokeStyle=cssv('--box-bg'); gctx.lineWidth=4;
+    gctx.beginPath(); gctx.moveTo(pistonX,y0); gctx.lineTo(pistonX,y1); gctx.stroke();
+    gctx.strokeStyle=cssv('--green'); gctx.lineWidth=1.5; gctx.setLineDash([3,3]);
+    gctx.beginPath(); gctx.moveTo(pistonX,y0); gctx.lineTo(pistonX+30,y0); gctx.moveTo(pistonX,y1); gctx.lineTo(pistonX+30,y1); gctx.stroke(); gctx.setLineDash([]);
+  }
+  // piston handle (clearly draggable, unless partition/hole modes)
+  if(!S.partition && !S.hole){
+    const my=(topWall+botWall)/2;
+    gctx.fillStyle=cssv('--gold'); gctx.globalAlpha=0.85;
+    gctx.fillRect(pistonX-4, topWall, 8, botWall-topWall); gctx.globalAlpha=0.25;
+    gctx.fillRect(pistonX-4, topWall, 8, botWall-topWall); gctx.globalAlpha=1;
+    // grip dots + drag arrows
+    gctx.fillStyle=cssv('--bg'); for(let i=-2;i<=2;i++){ gctx.fillRect(pistonX-2, my+i*7-1, 4, 2); }
+    gctx.fillStyle=cssv('--gold-bright'); gctx.font='bold 13px monospace';
+    gctx.fillText('⟺', pistonX-7, topWall-4);
+  }
+  // wall flashes
+  for(const fl of flashWalls){
+    gctx.strokeStyle=`rgba(255,200,90,${fl.t})`; gctx.lineWidth=3; gctx.beginPath();
+    if(fl.side==='L'){gctx.moveTo(leftWall,topWall);gctx.lineTo(leftWall,botWall);}
+    else if(fl.side==='R'){gctx.moveTo(pistonX,topWall);gctx.lineTo(pistonX,botWall);}
+    else if(fl.side==='T'){gctx.moveTo(leftWall,topWall);gctx.lineTo(pistonX,topWall);}
+    else {gctx.moveTo(leftWall,botWall);gctx.lineTo(pistonX,botWall);}
+    gctx.stroke();
+  }
+  // trails
+  if (S.show.trails){
+    for(const p of parts){ if(!(p.tagged||p.big)||p.trail.length<2) continue;
+      gctx.strokeStyle = p.big?cssv('--gold'):cssv('--cyan'); gctx.lineWidth=1.2; gctx.globalAlpha=0.6;
+      gctx.beginPath(); gctx.moveTo(p.trail[0][0],p.trail[0][1]);
+      for(let i=1;i<p.trail.length;i++) gctx.lineTo(p.trail[i][0],p.trail[i][1]);
+      gctx.stroke(); gctx.globalAlpha=1;
+    }
+  }
+  // particles
+  for(const p of parts){
+    const v2=p.vx*p.vx+p.vy*p.vy+(S.dim===3?p.vz*p.vz:0);
+    let col;
+    if (p.big) col=cssv('--gold');
+    else if (S.mode==='diffusion'||S.mode==='mb'||S.mode==='effusion') col = (p.group==='a')?GASES[S.gas].col:GASES[S.gas2].col;
+    else if (S.show.speedcol) col=speedColor(v2);
+    else col=GASES[p.key].col;
+    gctx.beginPath(); gctx.arc(p.x,p.y,p.r,0,7); gctx.fillStyle=col; gctx.fill();
+    if (p.tagged && !p.big){ gctx.strokeStyle='#fff'; gctx.lineWidth=1.5; gctx.stroke(); }
+    if (p.big){ gctx.strokeStyle=cssv('--gold-bright'); gctx.lineWidth=2; gctx.stroke(); }
+    // velocity vectors
+    if (S.show.vectors && !p.big){
+      gctx.strokeStyle='rgba(255,255,255,0.5)'; gctx.lineWidth=1;
+      gctx.beginPath(); gctx.moveTo(p.x,p.y); gctx.lineTo(p.x+p.vx*4,p.y+p.vy*4); gctx.stroke();
+    }
+  }
+  drawLawBanner();
+}
+
+// on-canvas live banner: shows the variables you're playing with + the law
+function drawLawBanner(){
+  const m=S.mode;
+  if(['mb','diffusion','effusion','brownian'].includes(m)) return;
+  const arColor=a=> a==='▲'?'#ff6b6b' : a==='▼'?'#46e0a0' : cssv('--text3');
+  let cells, law;
+  const Pv=_curPatm.toFixed(2)+' atm', Vv=Math.round(S.volPct)+'%', Tv=Math.round(S.T)+' K';
+  if(m==='charles'){ cells=[['VOLUME',Vv,_arrowV],['TEMP',Tv,_arrowT]]; law='V / T  stays constant'; }
+  else if(m==='gaylussac'){ cells=[['PRESSURE',Pv,_arrowP],['TEMP',Tv,_arrowT]]; law='P / T  stays constant'; }
+  else if(m==='boyle'){ cells=[['VOLUME',Vv,_arrowV],['PRESSURE',Pv,_arrowP]]; law='P × V  stays constant'; }
+  else if(m==='realgas'){ cells=[['VOLUME',Vv,_arrowV],['PRESSURE',Pv,_arrowP]]; law='watch PV/NkT drift from 1'; }
+  else { cells=[['VOLUME',Vv,_arrowV],['PRESSURE',Pv,_arrowP]]; law='PV = NkT — try the piston'; }
+  // panel geometry
+  const pw=232, ph=46; let px=(leftWall+pistonX)/2 - pw/2; px=Math.max(4, Math.min(BOXW-pw-4, px)); const py=topWall+8;
+  gctx.save();
+  gctx.globalAlpha=0.92; gctx.fillStyle=cssv('--bg2');
+  roundRect(gctx,px,py,pw,ph,8); gctx.fill();
+  gctx.globalAlpha=1; gctx.lineWidth=1; gctx.strokeStyle=cssv('--border2'); roundRect(gctx,px,py,pw,ph,8); gctx.stroke();
+  // two stat cells
+  cells.forEach((c,i)=>{
+    const cx=px+12+i*(pw/2);
+    gctx.fillStyle=cssv('--text3'); gctx.font='8px monospace'; gctx.fillText(c[0], cx, py+14);
+    gctx.fillStyle=cssv('--text-bright'); gctx.font='bold 15px monospace'; gctx.fillText(c[1], cx, py+30);
+    gctx.fillStyle=arColor(c[2]); gctx.font='bold 12px monospace'; gctx.fillText(c[2]==='·'?'':c[2], cx+ (pw/2-26), py+28);
+  });
+  // law line
+  gctx.fillStyle=cssv('--gold'); gctx.font='9px monospace'; gctx.textAlign='center';
+  gctx.fillText(law, px+pw/2, py+ph-4); gctx.textAlign='left';
+  gctx.restore();
+}
+function roundRect(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r); c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath(); }
+
+// ============================================================================
+// RENDERING — aux panel (histogram or gas-law graph)
+// ============================================================================
+function drawAux(){
+  if(!actx) return;
+  actx.clearRect(0,0,BOXW,AUXH);
+  actx.fillStyle=cssv('--box-bg'); actx.fillRect(0,0,BOXW,AUXH);
+  if (['boyle','charles','gaylussac'].includes(S.mode)) drawGraph();
+  else drawHistogram();
+}
+
+function speedListReal(group){
+  const out=[];
+  for(const p of parts){ if(p.big) continue; if(group&&p.group!==group) continue;
+    out.push(Math.sqrt(p.vx*p.vx+p.vy*p.vy+(S.dim===3?p.vz*p.vz:0))*C_V); }
+  return out;
+}
+function mbCurve(key,T,d,v){
+  const m=gasMassKg(key);
+  if (d===3) return 4*Math.PI*Math.pow(m/(2*Math.PI*kB*T),1.5)*v*v*Math.exp(-m*v*v/(2*kB*T));
+  return (m/(kB*T))*v*Math.exp(-m*v*v/(2*kB*T));
+}
+function drawHistogram(){
+  const pad=46, w=BOXW-pad-16, h=AUXH-pad-30, x0=pad, y0=AUXH-pad;
+  // x scale: 0 .. vmax
+  const vmaxHe = Math.sqrt(3*kB*Math.max(S.T,1)/gasMassKg('He'))*1.9;
+  const vmax = Math.max(400, vmaxHe);
+  const bins=40; const binw=vmax/bins;
+  const groups = (S.mode==='mb'||S.mode==='diffusion'||S.mode==='effusion')?['a','b']:['a'];
+  const cols = { a: GASES[S.gas].col, b: GASES[S.gas2].col };
+  // histograms
+  let maxCount=1;
+  const hists={};
+  groups.forEach(gr=>{
+    const arr=speedListReal(gr); const hh=new Array(bins).fill(0);
+    arr.forEach(v=>{ const bi=Math.min(bins-1,(v/binw)|0); hh[bi]++; });
+    hists[gr]=hh; maxCount=Math.max(maxCount,...hh);
+  });
+  // axes
+  actx.strokeStyle=cssv('--border2'); actx.lineWidth=1;
+  actx.beginPath(); actx.moveTo(x0,topWall+6); actx.lineTo(x0,y0); actx.lineTo(x0+w,y0); actx.stroke();
+  actx.fillStyle=cssv('--text3'); actx.font='10px monospace';
+  actx.fillText('speed (m/s) →', x0+w-86, y0+22);
+  actx.save(); actx.translate(14,topWall+90); actx.rotate(-Math.PI/2); actx.fillText('# molecules', 0,0); actx.restore();
+  for(let t=0;t<=vmax;t+=Math.ceil(vmax/4/100)*100){ const px=x0+(t/vmax)*w; actx.fillStyle=cssv('--text3'); actx.fillText(t, px-8, y0+14); actx.strokeStyle=cssv('--grid-stroke'); actx.beginPath(); actx.moveTo(px,topWall+6); actx.lineTo(px,y0); actx.stroke(); }
+  // bars
+  groups.forEach(gr=>{
+    const hh=hists[gr]; actx.fillStyle=cols[gr]; actx.globalAlpha=groups.length>1?0.45:0.65;
+    for(let i=0;i<bins;i++){ const bh=(hh[i]/maxCount)*h; actx.fillRect(x0+(i/bins)*w, y0-bh, w/bins-1, bh); }
+    actx.globalAlpha=1;
+  });
+  // theory curves
+  groups.forEach(gr=>{
+    const key= gr==='a'?S.gas:S.gas2;
+    actx.strokeStyle=cols[gr]; actx.lineWidth=2; actx.beginPath();
+    let peak=0; for(let v=1;v<vmax;v+=4) peak=Math.max(peak,mbCurve(key,Math.max(S.T,1),S.dim,v));
+    for(let v=0;v<=vmax;v+=4){ const fy=mbCurve(key,Math.max(S.T,1),S.dim,v)/peak; const px=x0+(v/vmax)*w, py=y0-fy*h*0.92;
+      if(v===0)actx.moveTo(px,py); else actx.lineTo(px,py); }
+    actx.stroke();
+  });
+  // markers v_p, v_avg, v_rms for primary gas
+  const k=kinetics();
+  [['v_p',k.vp,cssv('--cyan')],['v_avg',k.vavg,cssv('--gold')],['v_rms',k.vrms,cssv('--green')]].forEach((mk,idx)=>{
+    const px=x0+(mk[1]/vmax)*w; if(px>x0+w) return;
+    actx.strokeStyle=mk[2]; actx.setLineDash([4,3]); actx.lineWidth=1; actx.beginPath(); actx.moveTo(px,topWall+6); actx.lineTo(px,y0); actx.stroke(); actx.setLineDash([]);
+    actx.fillStyle=mk[2]; actx.font='9px monospace'; actx.fillText(mk[0], px-8, topWall+16+idx*11);
+  });
+}
+
+function drawGraph(){
+  const pad=52, w=BOXW-pad-18, h=AUXH-pad-30, x0=pad, y0=AUXH-pad;
+  let xlab,ylab,title;
+  if(S.mode==='boyle'){xlab='Volume →';ylab='Pressure (atm)';title='P vs V  (T constant) — Boyle\'s Law';}
+  else if(S.mode==='charles'){xlab='Temperature (K) →';ylab='Volume';title='V vs T  (P constant) — Charles\'s Law';}
+  else {xlab='Temperature (K) →';ylab='Pressure (atm)';title='P vs T  (V constant) — Gay-Lussac\'s Law';}
+  actx.fillStyle=cssv('--text2'); actx.font='11px monospace'; actx.fillText(title, x0-6, 20);
+  // ranges
+  let xs=graphData.map(d=>d.x), ys=graphData.map(d=>d.y);
+  let xmin=Math.min(...xs,0), xmax=Math.max(...xs,1)*1.1;
+  if(S.mode!=='boyle'){ xmin=-300; xmax=Math.max(...xs,400)*1.1; } // show extrapolation to -273
+  let ymax=Math.max(...ys,1)*1.15, ymin=0;
+  function X(v){return x0+((v-xmin)/(xmax-xmin))*w;}
+  function Y(v){return y0-((v-ymin)/(ymax-ymin))*h;}
+  // grid + axes
+  actx.strokeStyle=cssv('--border2'); actx.lineWidth=1; actx.beginPath();
+  actx.moveTo(X(Math.max(xmin,0)),topWall+24); actx.lineTo(X(Math.max(xmin,0)),y0); actx.lineTo(x0+w,y0); actx.stroke();
+  actx.fillStyle=cssv('--text3'); actx.font='10px monospace';
+  actx.fillText(xlab,x0+w-70,y0+22); actx.save();actx.translate(14,topWall+120);actx.rotate(-Math.PI/2);actx.fillText(ylab,0,0);actx.restore();
+  // absolute-zero marker for Charles/Gay-Lussac
+  if(S.mode!=='boyle'){
+    const pz=X(0);
+    actx.strokeStyle=cssv('--violet'); actx.setLineDash([4,3]); actx.beginPath(); actx.moveTo(pz,topWall+24); actx.lineTo(pz,y0); actx.stroke(); actx.setLineDash([]);
+    actx.fillStyle=cssv('--violet'); actx.fillText('0 K', pz-8, y0+14);
+    const pm=X(-273.15); if(pm>x0-30){ actx.fillStyle=cssv('--text3'); actx.fillText('-273°C', pm-14, topWall+36); }
+    // extrapolation line to origin
+    if(graphData.length>2){
+      const last=graphData[graphData.length-1];
+      actx.strokeStyle=cssv('--text3'); actx.setLineDash([3,4]); actx.lineWidth=1;
+      actx.beginPath(); actx.moveTo(X(0),Y(0)); actx.lineTo(X(last.x),Y(last.y)); actx.stroke(); actx.setLineDash([]);
+    }
+  }
+  // data
+  actx.strokeStyle=cssv('--gold'); actx.lineWidth=2; actx.beginPath();
+  graphData.forEach((d,i)=>{ const px=X(d.x),py=Y(d.y); if(i===0)actx.moveTo(px,py); else actx.lineTo(px,py); });
+  actx.stroke();
+  // current point
+  if(graphData.length){ const d=graphData[graphData.length-1]; actx.fillStyle=cssv('--cyan'); actx.beginPath(); actx.arc(X(d.x),Y(d.y),4,0,7); actx.fill(); }
+}
+
+// ============================================================================
+// READOUTS
+// ============================================================================
+function fmt(v,unit,dp){ if(!isFinite(v))return '—'; return v.toFixed(dp==null?2:dp)+(unit?(' '+unit):''); }
+function sci(v,unit){ if(!isFinite(v)||v===0)return '0 '+(unit||''); const e=Math.floor(Math.log10(Math.abs(v))); const m=v/Math.pow(10,e); return m.toFixed(2)+'×10'+sup(e)+(unit?(' '+unit):''); }
+function sup(n){ const s={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'}; return String(n).split('').map(c=>s[c]||c).join(''); }
+function $(id){ return document.getElementById(id); }
+
+// ---- on-canvas live law banner state ----
+let _prevP=null,_prevV=null,_prevT=null,_arrowP='·',_arrowV='·',_arrowT='·',_curPatm=0;
+function arrow(cur,prev){ if(prev==null)return '·'; if(cur>prev*1.003)return '▲'; if(cur<prev*0.997)return '▼'; return '·'; }
+
+function updateReadout(){
+  const k=kinetics();
+  const N=activeN();
+  const Patm = k.P_kinetic/101325;
+  // live-banner arrows
+  _arrowP=arrow(Patm,_prevP); _arrowV=arrow(S.volPct,_prevV); _arrowT=arrow(S.T,_prevT);
+  _prevP=Patm; _prevV=S.volPct; _prevT=S.T; _curPatm=Patm;
+  // badges
+  $('bb-temp').textContent = S.T.toFixed(0)+' K';
+  $('bb-press').textContent = Patm.toFixed(2)+' atm';
+  // cells
+  $('r-p').textContent = Patm>=0.01? Patm.toFixed(3)+' atm' : sci(k.P_kinetic,'Pa');
+  $('r-p-sub').textContent = '= '+sci(k.P_kinetic,'Pa')+(S.dim===2?' (2D)':'');
+  $('r-vol').textContent = S.dim===3? (k.V*1e27).toFixed(1)+' nm³' : (k.V*1e18).toFixed(1)+' nm²';
+  $('r-vol-sub').textContent = 'box '+(realWidth()*1e9).toFixed(1)+'×'+(realHeight()*1e9).toFixed(1)+' nm';
+  $('r-t').textContent = S.T.toFixed(0)+' K';
+  $('r-t-sub').textContent = (S.T-273.15).toFixed(0)+' °C';
+  $('r-n').textContent = N;
+  $('r-n-sub').textContent = (N/NA).toExponential(2)+' mol';
+  $('r-vrms').textContent = k.vrms.toFixed(0)+' m/s';
+  $('r-vavg').textContent = k.vavg.toFixed(0)+' · '+k.vp.toFixed(0)+' m/s';
+  $('r-ke').textContent = sci(k.meanKE,'J');
+  $('r-ke-sub').textContent = '= ('+S.dim+'/2)kT';
+  $('r-u').textContent = sci(k.U_int,'J');
+  $('r-u-sub').textContent = 'f='+k.f+' → Cv='+(k.f/2).toFixed(1)+'R, γ='+GAMMA[k.f];
+  $('r-mfp').textContent = (k.mfp*1e9).toFixed(1)+' nm';
+  $('r-cf').textContent = sci(k.cf,'/s');
+  $('r-pvnkt').textContent = idealRatio().toFixed(3);
+  // PV/NkT: ideal mode →1; realgas mode deviates
+  const dev = idealRatio();
+  $('r-pvnkt-sub').textContent = S.realgas ? (dev<0.98?'< 1 : attraction dominates (real gas)':dev>1.02?'> 1 : finite size dominates':'≈ 1') : '= 1.000 for an ideal gas';
+  updateLawStrip(k, Patm);
+}
+function idealRatio(){
+  if(!S.realgas) return 1.000;
+  // crude vdW: P_measured vs NkT/V using measured pressure
+  const k=kinetics();
+  const ideal=k.P_kinetic;
+  const meas = measuredP>0? measuredP : ideal;
+  let r = meas/ideal;
+  if(!isFinite(r)||r<=0) r=1;
+  return Math.max(0.6,Math.min(1.4,r));
+}
+function updateLawStrip(k,Patm){
+  const el=$('law-strip');
+  if(S.mode==='boyle') el.innerHTML='<b>Boyle\'s Law — PV = constant</b> (T, N fixed)<br>Now: P×V = <span class="big">'+(Patm*k.V*1e27).toFixed(1)+'</span> &nbsp;(push the piston — watch it stay constant)';
+  else if(S.mode==='charles') el.innerHTML='<b>Charles\'s Law — V ∝ T</b> (P, N fixed)<br>V/T = <span class="big">'+((k.V*1e27)/S.T).toFixed(3)+'</span> &nbsp;(heat it — the V–T line points at −273 °C)';
+  else if(S.mode==='gaylussac') el.innerHTML='<b>Gay-Lussac\'s Law — P ∝ T</b> (V, N fixed)<br>P/T = <span class="big">'+(Patm/S.T).toFixed(4)+'</span> &nbsp;atm/K (heat it — pressure rises in step with T)';
+  else if(S.mode==='effusion') el.innerHTML='<b>Graham\'s Law — rate ∝ 1/√M</b><br>Escaped: <span style="color:'+GASES[S.gas].col+'">'+GASES[S.gas].name+' '+escaped.a+'</span> · <span style="color:'+GASES[S.gas2].col+'">'+GASES[S.gas2].name+' '+escaped.b+'</span> &nbsp;(lighter escapes faster)';
+  else if(S.mode==='diffusion'){ const m=mixHistory.length?mixHistory[mixHistory.length-1]:0; el.innerHTML='<b>Diffusion & the Second Law</b><br>Mixing: <span class="big">'+(m*100).toFixed(0)+'%</span> &nbsp;(release the partition — entropy only ever increases)'; }
+  else if(S.mode==='realgas') el.innerHTML='<b>Real gas — van der Waals</b> &nbsp;(a, b ≠ 0)<br>PV/NkT = <span class="big">'+idealRatio().toFixed(3)+'</span> &nbsp;(cool it down to watch it condense)';
+  else if(S.mode==='brownian') el.innerHTML='<b>Brownian Motion</b><br>The big grain is pushed at random by unseen fast molecules — Einstein\'s 1905 proof that atoms are real.';
+  else if(S.mode==='mb') el.innerHTML='<b>Maxwell–Boltzmann</b> — two gases, same T.<br>Lighter gas → broader, faster curve. Same average energy, different speeds.';
+  else el.innerHTML='<b>PV = NkT = nRT</b> — the ideal gas law. Every gas law is this one equation with something held fixed.';
+}
+
+// ============================================================================
+// MODES + UI
+// ============================================================================
+const MODES = [
+  {id:'sandbox',   label:'Ideal Gas',      tag:'free play'},
+  {id:'boyle',     label:"Boyle",          tag:'P–V'},
+  {id:'charles',   label:'Charles',        tag:'V–T'},
+  {id:'gaylussac', label:'Gay-Lussac',     tag:'P–T'},
+  {id:'mb',        label:'Maxwell–Boltzmann', tag:'speeds'},
+  {id:'diffusion', label:'Diffusion',      tag:'entropy'},
+  {id:'effusion',  label:'Effusion',       tag:'Graham'},
+  {id:'realgas',   label:'Real Gas',       tag:'van der Waals'},
+  {id:'brownian',  label:'Brownian',       tag:'1905'}
+];
+
+function buildModeBar(){
+  const bar=$('mode-bar'); bar.innerHTML='';
+  MODES.forEach(m=>{
+    const b=document.createElement('button'); b.className='mode-tab'+(m.id===S.mode?' active':'');
+    b.innerHTML=m.label+' <span class="mode-tag">'+m.tag+'</span>';
+    b.onclick=()=>setMode(m.id); bar.appendChild(b);
+  });
+}
+function buildGasBtns(){
+  const g=$('gas-btns'); g.innerHTML='';
+  Object.keys(GASES).forEach(key=>{
+    const b=document.createElement('button'); b.className='minibtn'+(key===S.gas?' active':'');
+    b.innerHTML='<span style="color:'+GASES[key].col+'">●</span> '+key;
+    b.onclick=()=>{ S.gas=key; buildGasBtns(); spawn(); }; g.appendChild(b);
+  });
+}
+const TOGGLES=[['speedcol','colour by speed'],['vectors','velocity arrows'],['trails','tagged trail'],['tagged','tag one molecule'],['flash','wall flashes']];
+function buildToggles(){
+  const t=$('toggle-row'); t.innerHTML='';
+  TOGGLES.forEach(([k,lbl])=>{
+    const c=document.createElement('div'); c.className='toggle-chip'+(S.show[k]?' on':'');
+    c.textContent=lbl; c.onclick=()=>{ S.show[k]=!S.show[k];
+      if(k==='tagged'){ parts.forEach((p,i)=>p.tagged=(S.show[k]&&i===0&&!p.big)); }
+      buildToggles(); }; t.appendChild(c);
+  });
+}
+function buildModeActions(){
+  const a=$('mode-actions'); a.innerHTML='';
+  function act(label,fn){ const b=document.createElement('button'); b.className='minibtn'; b.textContent=label; b.onclick=fn; a.appendChild(b); }
+  if(S.mode==='diffusion') act('▶ Release partition',()=>{ S.partition=false; });
+  if(S.mode==='effusion') act('↺ Reset escapes',()=>{ escaped={a:0,b:0}; });
+  if(['boyle','charles','gaylussac'].includes(S.mode)) act('Clear graph',()=>{ graphData=[]; });
+  if(S.mode==='realgas') act('❄ Cool to condense',()=>{ setT(60); });
+}
+
+// ============================================================================
+// VOICE NARRATION (scripted intro per mode; on/off toggle)
+// ============================================================================
+let voiceOn=false, sceneToken=0;
+const MODE_SCRIPT = {
+  sandbox:"This is an ideal gas — many tiny molecules flying around at random inside a box. Temperature is simply how fast they move, and pressure is the constant drumming of molecules against the walls. Try dragging the piston to squeeze them, and watch the pressure rise.",
+  boyle:"Boyle's Law. We hold the temperature fixed and change the volume. Push the piston inward and the molecules hit the walls more often, so the pressure climbs. Pressure times volume stays constant.",
+  charles:"Charles's Law. We keep the pressure steady and heat the gas. As the temperature rises, the gas expands to make room for the faster molecules. Trace the line backward and it points to minus 273 degrees Celsius — absolute zero.",
+  gaylussac:"Gay-Lussac's Law. The volume is locked. Heat the gas and the pressure rises in step with temperature, because hotter molecules strike the walls harder and more often.",
+  mb:"The Maxwell–Boltzmann distribution. Molecules do not all move at the same speed — they share out a whole range. A lighter gas moves faster and spreads wider. Same temperature, very different speeds.",
+  diffusion:"Diffusion. Two gases start on opposite sides. Release the partition and they slowly mix all by themselves — and never un-mix. This one-way spreading is the second law of thermodynamics: disorder always grows.",
+  effusion:"Effusion. A tiny hole lets molecules escape one by one. The lighter gas escapes faster, because at the same temperature it is moving more quickly. This is Graham's Law.",
+  realgas:"A real gas. Now the molecules take up space and gently pull on one another. Cool the gas down and that attraction wins — the molecules clump together, and the gas condenses into a liquid.",
+  brownian:"Brownian motion. The big golden grain is shoved around by countless tiny molecules you can barely see. Einstein used exactly this random dance, in 1905, to prove that atoms and molecules are real."
+};
+function speak(text){
+  if(!voiceOn || !text || typeof speechSynthesis==='undefined') return;
+  const my = ++sceneToken;
+  try{ speechSynthesis.cancel(); }catch(e){}
+  setTimeout(()=>{
+    if(my!==sceneToken || !voiceOn) return;
+    try{ const u=new SpeechSynthesisUtterance(text); u.rate=0.97; u.pitch=1.0; speechSynthesis.speak(u); }catch(e){}
+  }, 80);
+}
+function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined') speechSynthesis.cancel(); }catch(e){} }
+function speakMode(){ if(voiceOn) speak(MODE_SCRIPT[S.mode]); }
+function updateVoiceBtn(){ const v=$('voice-switcher'); if(!v) return; v.textContent = voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color = voiceOn?'var(--cyan)':''; }
+
+function setMode(id){
+  stopSpeech();
+  S.mode=id;
+  S.realgas=(id==='realgas'); S.partition=false; S.hole=false; S.brownian=(id==='brownian');
+  // sensible defaults per mode
+  if(id==='boyle'||id==='charles'||id==='gaylussac'){ S.gas='Ar'; }
+  if(id==='charles'){ S.T=150; syncT(); }
+  if(id==='realgas'){ S.T=300; syncT(); }
+  buildModeBar(); buildGasBtns(); buildModeActions();
+  $('box-hint').textContent = id==='diffusion'?'gases start separated — release the partition':
+                              id==='effusion'?'light gas escapes through the hole faster':
+                              id==='brownian'?'watch the big grain get jostled':'drag the piston ⟺ to change volume';
+  $('aux-title').firstChild.textContent = ['boyle','charles','gaylussac'].includes(id)? 'Gas-Law Graph ' : 'Speed Distribution ';
+  spawn(); buildToggles();
+  speakMode();
+}
+
+// ============================================================================
+// CONTROLS
+// ============================================================================
+function syncT(){ $('sl-t').value=S.T; $('t-v').textContent=S.T.toFixed(0)+' K'; $('t-sub').textContent=(S.T-273.15).toFixed(0)+' °C'+(S.T===0?' · absolute zero':S.T<273?' · cold':S.T>600?' · hot':' · room temperature'); }
+function setT(v){ S.T=v; syncT(); }
+
+function bindControls(){
+  gasbox=$('gasbox'); gctx=gasbox.getContext('2d');
+  aux=$('aux'); actx=aux.getContext('2d');
+  fitCanvases();
+  window.addEventListener('resize', ()=>{ fitCanvases(); innerBounds(); });
+
+  $('dimswitch').querySelectorAll('button').forEach(b=>{
+    b.onclick=()=>{ S.dim=+b.dataset.dim; $('dimswitch').querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));
+      $('dim-sub').textContent = S.dim===3?'Particles always move in 2D for clarity. Readouts computed for a real 3D gas.':'True 2D gas: ⟨KE⟩ = kT, v_rms = √(2kT/m). The honest statistics of the box you see.';
+      spawn(); };
+  });
+  $('sl-t').oninput=function(){ setT(+this.value); };
+  $('sl-n').oninput=function(){ S.N=+this.value; $('n-v').textContent=S.N; spawn(); };
+  $('sl-vol').oninput=function(){ S.volPct=+this.value; $('vol-v').textContent=S.volPct+'%'; innerBounds(); };
+  $('sl-spd').oninput=function(){ S.speed=+this.value; $('spd-v').textContent=S.speed.toFixed(1)+'×'; };
+  $('btn-pause').onclick=function(){ S.paused=!S.paused; this.textContent=S.paused?'▶ Play':'⏸ Pause'; this.classList.toggle('active',S.paused); };
+  $('btn-reset').onclick=()=>spawn();
+
+  // drag piston
+  let dragging=false;
+  function px(e){ const r=gasbox.getBoundingClientRect(); const cx=e.touches?e.touches[0].clientX:e.clientX; return (cx-r.left)*(BOXW/r.width); }
+  function startDrag(e){ if(Math.abs(px(e)-pistonX)<22 && !S.partition && !S.hole){ dragging=true; e.preventDefault?.(); } }
+  function moveDrag(e){ if(!dragging)return; let x=px(e); x=Math.max(leftWall+60,Math.min(BOXW-MARGIN,x));
+    S.volPct=Math.round((x-leftWall)/((BOXW-MARGIN)-leftWall)*100); S.volPct=Math.max(30,Math.min(100,S.volPct));
+    $('sl-vol').value=S.volPct; $('vol-v').textContent=S.volPct+'%'; innerBounds(); e.preventDefault?.(); }
+  function endDrag(){ dragging=false; }
+  gasbox.addEventListener('mousedown',startDrag); window.addEventListener('mousemove',moveDrag); window.addEventListener('mouseup',endDrag);
+  gasbox.addEventListener('touchstart',startDrag,{passive:false}); window.addEventListener('touchmove',moveDrag,{passive:false}); window.addEventListener('touchend',endDrag);
+
+  // theme
+  const ts=$('theme-switcher');
+  try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{ localStorage.setItem('theme', document.body.classList.contains('light-theme')?'light':'dark'); }catch(e){} };
+
+  // voice
+  const vs=$('voice-switcher');
+  try{ if(localStorage.getItem('kt-voice')==='on') voiceOn=true; }catch(e){}
+  updateVoiceBtn();
+  vs.onclick=()=>{ voiceOn=!voiceOn; try{ localStorage.setItem('kt-voice', voiceOn?'on':'off'); }catch(e){}
+    updateVoiceBtn(); if(voiceOn) speakMode(); else stopSpeech(); };
+  // stop narration when tab hidden
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) stopSpeech(); });
+}
+function fitCanvases(){
+  // keep internal resolution, CSS scales width; height tracks via attribute ratio
+  const wrapW = gasbox.parentElement.clientWidth;
+  BOXW = 520; BOXH = 420;       // fixed internal resolution
+  gasbox.width=BOXW; gasbox.height=BOXH; aux.width=BOXW; aux.height=AUXH;
+  recalcScales(); innerBounds();
+}
+
+// ============================================================================
+// THEORY
+// ============================================================================
+function buildTheory(){
+  $('theory').innerHTML = `
+  <div class="theory-hdr">Theory — The Kinetic Theory of Gases</div>
+  <h3>The Big Idea</h3>
+  <p>A gas is nothing but a swarm of tiny molecules in ceaseless, random motion, colliding with each other and the walls. Everything you can measure about a gas — its <em>temperature</em>, its <em>pressure</em>, the <em>gas laws</em> — is just the bulk average of this invisible molecular chaos. This simulation runs that chaos honestly and lets the large-scale physics emerge before your eyes.</p>
+  <div class="hbox hb-gold">
+    <strong>The postulates of kinetic theory:</strong><br>
+    1. A gas is made of a huge number of identical molecules in constant random motion.<br>
+    2. Molecules are tiny compared with the spaces between them (a gas is mostly empty).<br>
+    3. Collisions (molecule–molecule and molecule–wall) are perfectly elastic — no kinetic energy is lost.<br>
+    4. Between collisions, molecules move in straight lines (no forces act — except in a real gas).<br>
+    5. The average kinetic energy of the molecules depends only on the temperature.
+  </div>
+
+  <h3>Temperature IS Molecular Motion</h3>
+  <p>Temperature is not a substance — it is a <em>measure of average kinetic energy</em>. Raise the temperature slider and the molecules visibly speed up; drop it toward absolute zero and they freeze.</p>
+  <div class="eq">½ m⟨v²⟩ = (d/2) k<sub>B</sub> T
+    <div class="vars">d = degrees of freedom of motion (2 in the flat view, 3 for a real gas). k<sub>B</sub> = 1.38×10⁻²³ J/K (Boltzmann's constant). This is the <em>equipartition theorem</em>: each degree of freedom carries ½k<sub>B</sub>T of energy.</div>
+  </div>
+
+  <h3>Pressure IS Molecular Drumming</h3>
+  <p>Pressure isn't a mysterious push — it is the combined hammering of countless molecules bouncing off the walls. Each impact delivers a tiny impulse; billions per second add up to a steady force per unit area. Turn on wall flashes to see every impact.</p>
+  <div class="eq">P = (1/3)·(N/V)·m⟨v²⟩ = N k<sub>B</sub> T / V
+    <div class="vars">Shrink the box (push the piston) and the same molecules hit the walls more often over a smaller area — pressure rises. This is the kinetic origin of Boyle's Law.</div>
+  </div>
+
+  <h3>The Ideal Gas Law — One Equation to Rule Them All</h3>
+  <div class="eq">P V = N k<sub>B</sub> T = n R T
+    <div class="vars">N = number of molecules, n = moles, R = N<sub>A</sub>k<sub>B</sub> = 8.314 J/mol·K. The three classic gas laws are just this equation with one variable pinned:</div>
+  </div>
+  <table class="ctable">
+    <tr><th>Law</th><th>Held constant</th><th>Relationship</th><th>Discovered</th></tr>
+    <tr><td>Boyle's</td><td>T, N</td><td>P ∝ 1/V &nbsp;(PV = const)</td><td>1662</td></tr>
+    <tr><td>Charles's</td><td>P, N</td><td>V ∝ T</td><td>1787</td></tr>
+    <tr><td>Gay-Lussac's</td><td>V, N</td><td>P ∝ T</td><td>1808</td></tr>
+    <tr><td>Avogadro's</td><td>P, T</td><td>V ∝ N</td><td>1811</td></tr>
+  </table>
+  <p>Run the Boyle, Charles and Gay-Lussac modes to plot each one live. The Charles and Gay-Lussac graphs extrapolate to a single point: <strong>−273.15 °C</strong>, absolute zero — where molecular motion (and volume, and pressure) would vanish. You discover absolute zero from the graph, exactly as scientists first did.</p>
+
+  <h3>Molecular Speeds — Three Different Averages</h3>
+  <p>Molecules don't all move at the same speed; they share out a range described by the <em>Maxwell–Boltzmann distribution</em>. Three characteristic speeds matter, and they always sit in the same order:</p>
+  <div class="hbox hb-cyan">
+    <strong>v<sub>p</sub> &lt; v<sub>avg</sub> &lt; v<sub>rms</sub></strong> &nbsp; (most-probable &lt; average &lt; root-mean-square)<br>
+    v<sub>rms</sub> = √(3k<sub>B</sub>T/m) &nbsp;·&nbsp; v<sub>avg</sub> = √(8k<sub>B</sub>T/πm) &nbsp;·&nbsp; v<sub>p</sub> = √(2k<sub>B</sub>T/m) &nbsp;(3D)
+  </div>
+  <p>Heat the gas and the whole distribution broadens and slides to higher speeds. Pick a heavier gas and it narrows and shifts down — at the same temperature, heavier molecules move more slowly (which is why hydrogen and helium have leaked out of Earth's atmosphere). The Maxwell–Boltzmann mode lets you overlay two gases and compare.</p>
+
+  <h3>Degrees of Freedom &amp; Internal Energy</h3>
+  <p>A single atom can only move along three axes — 3 translational degrees of freedom. A molecule can also rotate, storing more energy. The number of active degrees of freedom <em>f</em> sets the gas's heat capacity and the ratio γ = C<sub>p</sub>/C<sub>v</sub>:</p>
+  <table class="ctable">
+    <tr><th>Type</th><th>Example</th><th>f</th><th>C<sub>v</sub></th><th>γ = C<sub>p</sub>/C<sub>v</sub></th></tr>
+    <tr><td>Monatomic</td><td>He, Ne, Ar</td><td>3</td><td>(3/2)R</td><td>1.67</td></tr>
+    <tr><td>Diatomic</td><td>N₂, O₂</td><td>5</td><td>(5/2)R</td><td>1.40</td></tr>
+    <tr><td>Polyatomic</td><td>CO₂</td><td>6</td><td>3R</td><td>1.33</td></tr>
+  </table>
+  <p>Internal energy U = (f/2) N k<sub>B</sub> T. More degrees of freedom means a gas can soak up more heat for the same temperature rise.</p>
+
+  <h3>Mean Free Path &amp; Collisions</h3>
+  <p>Between collisions a molecule travels, on average, a distance called the <em>mean free path</em>:</p>
+  <div class="eq">λ = 1 / (√2 · n · π d²)
+    <div class="vars">n = N/V is the number density, d the molecular diameter. Denser gas → shorter free path → more collisions per second. At ordinary pressure a molecule suffers billions of collisions every second, yet travels only ~70 nm between them.</div>
+  </div>
+
+  <h3>Diffusion, Effusion &amp; the Second Law</h3>
+  <p><strong>Diffusion</strong> is mixing by random motion. Start two gases separated, release the partition, and they intermingle — and <em>never</em> spontaneously un-mix. That one-way march from order to disorder is the <em>second law of thermodynamics</em>: entropy always increases. <strong>Effusion</strong> is escape through a tiny hole; Graham's Law says the rate ∝ 1/√M, so lighter molecules escape faster — this is how uranium isotopes were once separated.</p>
+
+  <h3>Real Gases — Where the Ideal Law Breaks</h3>
+  <p>Real molecules take up space and weakly attract one another. The <em>van der Waals equation</em> corrects the ideal law for both:</p>
+  <div class="eq">(P + a n²/V²)(V − n b) = n R T
+    <div class="vars">a = strength of intermolecular attraction; b = volume excluded by the molecules' own size. The "ideal-gas check" readout PV/NkT drifts away from 1.00 at high density or low temperature. Cool a real gas enough and the attraction wins — the molecules clump together: <em>condensation into a liquid.</em></div>
+  </div>
+
+  <h3>Brownian Motion — Proof Atoms Are Real</h3>
+  <p>In 1827 botanist Robert Brown saw pollen grains jiggling in water with no apparent cause. In 1905 Einstein explained it: the grain is being bombarded from all sides by unseen, fast-moving molecules, and the imbalance at any instant kicks it on a random walk. Watching a large grain dance among invisible fast molecules was the first direct evidence that atoms and molecules genuinely exist. The Brownian mode shows exactly this.</p>
+  `;
+}
+
+// ============================================================================
+// MAIN LOOP (self-healing)
+// ============================================================================
+let readoutTimer=0;
+function loop(){
+  try{
+    if(!S.paused){ step(); }
+    drawBox(); drawAux();
+    readoutTimer++; if(readoutTimer>=6){ updateReadout(); readoutTimer=0; }
+  }catch(err){ console.error('loop error',err); }
+  requestAnimationFrame(loop);
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+function init(){
+  buildModeBar(); buildGasBtns(); buildToggles(); buildModeActions(); buildTheory();
+  bindControls();
+  syncT();
+  setMode('sandbox');
+  updateReadout();
+  requestAnimationFrame(loop);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
+</script>
+</body>
+</html>
