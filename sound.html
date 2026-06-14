@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound, Waves &amp; Resonance — Science Wonders</title>
+<meta name="description" content="An interactive sound and waves simulation you can actually hear. Explore pitch and wavelength, standing waves and harmonics on a string, beats, two-source interference, resonance, and how harmonics build the timbre of every instrument — with real Web-Audio sound.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#0a1220;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none;}
+canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
+.aux-small canvas#aux{max-height:260px;}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:9px;left:9px;color:var(--gold);}
+.sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+/* play bar */
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.play-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.play-btn{font-family:monospace;font-size:13px;letter-spacing:1px;padding:10px 20px;border-radius:7px;border:1px solid var(--gold);background:rgba(240,192,96,.1);color:var(--gold-bright);cursor:pointer;transition:all .15s;font-weight:bold;}
+body.light-theme .play-btn{color:var(--gold);}
+.play-btn:hover{background:rgba(240,192,96,.2);}
+.play-btn.playing{background:var(--gold);color:#000;}
+.vol-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:140px;}
+.vol-wrap span{font-family:monospace;font-size:10px;color:var(--text3);}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;margin-top:12px;}
+@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}.btn-grid.c4{grid-template-columns:repeat(4,1fr);}
+.minibtn{font-family:monospace;font-size:10.5px;padding:7px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+/* tuner game banner */
+.game-banner{background:linear-gradient(90deg,rgba(64,255,170,.06),rgba(32,208,255,.06));border:1px solid var(--border2);border-radius:8px;padding:12px 15px;margin-top:12px;font-family:monospace;display:none;}
+.game-banner.show{display:block;}
+.game-banner .g-title{font-size:10px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.game-banner .g-status{font-size:13px;color:var(--text-bright);}
+.game-banner .g-bar{height:10px;background:var(--bg);border:1px solid var(--border2);border-radius:6px;overflow:hidden;margin-top:8px;}
+.game-banner .g-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--gold),var(--green));transition:width .2s;}
+
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Sound, Waves &amp; Resonance</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="mode-bar" id="mode-bar"></div>
+
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+
+      <!-- MAIN VISUAL -->
+      <div class="card">
+        <div class="card-title" id="stage-title">Oscilloscope <span class="hint" id="stage-hint">press play to hear it</span></div>
+        <div class="stage-wrap">
+          <canvas id="stage" width="560" height="380"></canvas>
+          <div class="stage-badge sb-tl" id="badge-l">—</div>
+          <div class="stage-badge sb-tr" id="badge-r">—</div>
+        </div>
+      </div>
+
+      <!-- PLAY + CONTROLS -->
+      <div class="play-bar">
+        <div class="play-row">
+          <button class="play-btn" id="play-btn">▶ Play sound</button>
+          <div class="vol-wrap">
+            <span>VOL</span>
+            <input type="range" id="sl-vol" min="0" max="100" step="1" value="35">
+            <span id="vol-v">35%</span>
+          </div>
+        </div>
+        <div class="sb-controls" id="mode-controls"></div>
+      </div>
+
+    </div>
+
+    <div class="right-col">
+
+      <!-- AUX: spectrum / secondary -->
+      <div class="card aux-small">
+        <div class="card-title" id="aux-title">Frequency Spectrum <span class="hint" id="aux-hint">which pure tones are present</span></div>
+        <div class="stage-wrap"><canvas id="aux" width="560" height="300"></canvas></div>
+      </div>
+
+      <!-- SETUP -->
+      <div class="card">
+        <div class="card-title">Setup</div>
+        <div class="card-pad" id="setup-panel">
+          <div class="section-label">Show on screen</div>
+          <div class="toggle-row" id="toggle-row"></div>
+          <div id="setup-extra"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- READOUTS -->
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Live Readout <span class="hint">real acoustics</span></div>
+    <div class="card-pad">
+      <div class="readout-grid" id="readout-grid"></div>
+      <div class="law-strip" id="law-strip"></div>
+      <div class="game-banner" id="game-banner">
+        <div class="g-title">🎯 Tuner Challenge</div>
+        <div class="g-status" id="game-status">Tune your string to silence the beats.</div>
+        <div class="g-bar"><div class="g-fill" id="game-fill"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+// ============================================================================
+// SOUND, WAVES & RESONANCE — engine (real Web-Audio)
+// ============================================================================
+const V_SOUND = 343;          // speed of sound in air @20°C (m/s)
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+function noteName(f){
+  if(f<=0) return '—';
+  const n = Math.round(69 + 12*Math.log2(f/440));
+  const exact = 440*Math.pow(2,(n-69)/12);
+  const cents = Math.round(1200*Math.log2(f/exact));
+  const nm = NOTE_NAMES[((n%12)+12)%12] + (Math.floor(n/12)-1);
+  return nm + (cents? (' '+(cents>0?'+':'')+cents+'¢') : '');
+}
+
+let W=560, H=380, AUXW=560, AUXH=300;
+
+const S = {
+  mode:'tone',
+  playing:false,
+  vol:0.35,
+  show:{ grid:true, ruler:true, particles:false },
+  // tone
+  freq:440, wave:'sine',
+  // string
+  harm:1, length:0.65, tension:80, mu:0.005,
+  // beats
+  f1:440, f2:443,
+  // interference
+  ifFreq:500, sep:1.2, lx:0.74, ly:0.5,   // listener normalised 0..1
+  // resonance
+  drive:3.0, f0:5.0, damp:0.5, amp:0, vel:0, phase:0,
+  // timbre
+  harmAmp:[1,0,0,0,0,0,0,0], preset:'sine',
+  // tuner game
+  game:false, target:440, won:false, bestCents:999
+};
+
+// ============================================================================
+// AUDIO CORE
+// ============================================================================
+let AC=null, master=null, voices=[];
+function ensureAudio(){
+  if(AC) return true;
+  try{
+    AC = new (window.AudioContext||window.webkitAudioContext)();
+    master = AC.createGain();
+    master.gain.value = 0;
+    master.connect(AC.destination);
+    return true;
+  }catch(e){ console.error('audio init failed',e); return false; }
+}
+function rampMaster(target){
+  if(!AC) return;
+  try{ master.gain.setTargetAtTime(target, AC.currentTime, 0.03); }catch(e){ master.gain.value=target; }
+}
+function clearVoices(){
+  voices.forEach(v=>{ try{ v.osc.stop(); }catch(e){} try{ v.osc.disconnect(); v.gain.disconnect(); }catch(e){} });
+  voices=[];
+}
+function addVoice(freq,type){
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.type=type||'sine'; o.frequency.value=freq; g.gain.value=0.0001;
+  o.connect(g); g.connect(master); o.start();
+  const v={osc:o,gain:g}; voices.push(v); return v;
+}
+function setFreq(v,f){ try{ v.osc.frequency.setTargetAtTime(Math.max(20,f), AC.currentTime, 0.012); }catch(e){ v.osc.frequency.value=f; } }
+function setGain(v,g){ try{ v.gain.gain.setTargetAtTime(g, AC.currentTime, 0.02); }catch(e){ v.gain.gain.value=g; } }
+
+const AUDIO_VOICES = { tone:1, string:1, beats:2, interference:1, resonance:1, timbre:1 };
+
+function buildAudioForMode(){
+  if(!AC) return;
+  clearVoices();
+  const n=AUDIO_VOICES[S.mode]||1;
+  for(let i=0;i<n;i++) addVoice(440, S.mode==='tone'?S.wave:'sine');
+  if(S.mode==='timbre') applyTimbreWave();
+  updateAudio();
+}
+function applyTimbreWave(){
+  if(!AC || !voices[0]) return;
+  const N=S.harmAmp.length+1;
+  const real=new Float32Array(N), imag=new Float32Array(N);
+  for(let i=1;i<N;i++) imag[i]=S.harmAmp[i-1];
+  try{ const wv=AC.createPeriodicWave(real,imag,{disableNormalization:false}); voices[0].osc.setPeriodicWave(wv); }catch(e){}
+}
+
+// string standing-wave frequency
+function stringV(){ return Math.sqrt(S.tension/S.mu); }
+function stringF1(){ return stringV()/(2*S.length); }
+function stringFn(){ return S.harm*stringF1(); }
+
+// interference: amplitude factor (0..1) at listener from two in-phase sources
+function interfAmp(){
+  // sources at x=0, y at sep/2 above & below centre; field area ~ 2.4m x 1.6m
+  const FW=2.4, FH=1.6;
+  const sx=0.12*FW;                       // sources near left
+  const s1y=FH/2 - S.sep/2, s2y=FH/2 + S.sep/2;
+  const lx=S.lx*FW, ly=S.ly*FH;
+  const r1=Math.hypot(lx-sx, ly-s1y), r2=Math.hypot(lx-sx, ly-s2y);
+  const lam=V_SOUND/S.ifFreq;
+  const phase=2*Math.PI*(r2-r1)/lam;
+  return Math.abs(Math.cos(phase/2));     // |cos(Δφ/2)|, 1=constructive 0=destructive
+}
+
+function updateAudio(){
+  if(!AC || !voices.length) return;
+  if(S.mode==='tone'){ voices[0].osc.type=S.wave; setFreq(voices[0],S.freq); setGain(voices[0],0.9); }
+  else if(S.mode==='string'){ setFreq(voices[0],stringFn()); setGain(voices[0],0.9); }
+  else if(S.mode==='beats'){ setFreq(voices[0],S.f1); setFreq(voices[1],S.f2); setGain(voices[0],0.5); setGain(voices[1],0.5); }
+  else if(S.mode==='interference'){ setFreq(voices[0],S.ifFreq); setGain(voices[0],0.9*interfAmp()); }
+  else if(S.mode==='resonance'){ setFreq(voices[0], 180 + S.f0*40); setGain(voices[0], Math.min(1, S.amp*0.9)); }
+  else if(S.mode==='timbre'){ setFreq(voices[0],S.freq); setGain(voices[0],0.7); }
+}
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+let stage, sctx, aux, actx, tNow=0;
+function cssv(n){ return getComputedStyle(document.body).getPropertyValue(n).trim() || '#fff'; }
+function clearC(ctx,w,h){ ctx.clearRect(0,0,w,h); ctx.fillStyle=cssv('--stage-bg'); ctx.fillRect(0,0,w,h); }
+function grid(ctx,w,h,midline){
+  if(!S.show.grid) return;
+  ctx.strokeStyle=cssv('--grid-stroke'); ctx.lineWidth=1;
+  for(let x=0;x<=w;x+=w/12){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+  for(let y=0;y<=h;y+=h/8){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+  if(midline){ ctx.strokeStyle=cssv('--border2'); ctx.beginPath(); ctx.moveTo(0,h/2); ctx.lineTo(w,h/2); ctx.stroke(); }
+}
+function waveSample(type,ph){
+  ph = ph - Math.floor(ph);
+  switch(type){
+    case 'square': return ph<0.5?1:-1;
+    case 'sawtooth': return 2*ph-1;
+    case 'triangle': return ph<0.5? (4*ph-1) : (3-4*ph);
+    default: return Math.sin(2*Math.PI*ph);
+  }
+}
+
+function drawStage(){
+  if(!sctx) return;
+  clearC(sctx,W,H);
+  switch(S.mode){
+    case 'tone': drawTone(); break;
+    case 'string': drawString(); break;
+    case 'beats': drawBeats(); break;
+    case 'interference': drawInterference(); break;
+    case 'resonance': drawResonance(); break;
+    case 'timbre': drawTimbre(); break;
+  }
+}
+
+// --- Pure tone oscilloscope ---
+function drawTone(){
+  grid(sctx,W,H,true);
+  const cyclesShown=3.2, amp=H*0.36;
+  const scroll = S.playing ? tNow*S.freq*0.0016 : 0;
+  sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2.4; sctx.beginPath();
+  for(let px=0;px<=W;px++){
+    const ph = (px/W)*cyclesShown + scroll;
+    const y = H/2 - waveSample(S.wave,ph)*amp;
+    px===0?sctx.moveTo(px,y):sctx.lineTo(px,y);
+  }
+  sctx.stroke();
+  // wavelength ruler (one period)
+  if(S.show.ruler){
+    const periodPx = W/cyclesShown;
+    sctx.strokeStyle=cssv('--gold'); sctx.setLineDash([4,3]); sctx.lineWidth=1;
+    sctx.beginPath(); sctx.moveTo(20,H-22); sctx.lineTo(20+periodPx,H-22); sctx.stroke(); sctx.setLineDash([]);
+    sctx.fillStyle=cssv('--gold'); sctx.font='11px monospace';
+    sctx.fillText('one period = '+(1000/S.freq).toFixed(2)+' ms  ·  λ(air) = '+(V_SOUND/S.freq).toFixed(2)+' m', 20, H-30);
+  }
+}
+
+// --- Standing wave on a string ---
+function drawString(){
+  grid(sctx,W,H,false);
+  const x0=40, x1=W-40, mid=H/2, A=H*0.30, n=S.harm;
+  const f1=stringF1(), env = A;
+  // fixed ends posts
+  sctx.strokeStyle=cssv('--text2'); sctx.lineWidth=3;
+  sctx.beginPath(); sctx.moveTo(x0,mid-A-14); sctx.lineTo(x0,mid+A+14); sctx.stroke();
+  sctx.beginPath(); sctx.moveTo(x1,mid-A-14); sctx.lineTo(x1,mid+A+14); sctx.stroke();
+  const osc = S.playing? Math.sin(2*Math.PI*Math.min(stringFn(),6)*tNow*0.001 + tNow*0.004) : Math.sin(tNow*0.004);
+  // envelope (both extremes)
+  sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=1; sctx.setLineDash([3,4]);
+  for(const s of [1,-1]){ sctx.beginPath();
+    for(let px=x0;px<=x1;px++){ const u=(px-x0)/(x1-x0); const y=mid - s*env*Math.sin(n*Math.PI*u); px===x0?sctx.moveTo(px,y):sctx.lineTo(px,y);} sctx.stroke(); }
+  sctx.setLineDash([]);
+  // live string
+  sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2.6; sctx.beginPath();
+  for(let px=x0;px<=x1;px++){ const u=(px-x0)/(x1-x0); const y=mid - env*Math.sin(n*Math.PI*u)*osc; px===x0?sctx.moveTo(px,y):sctx.lineTo(px,y); }
+  sctx.stroke();
+  // nodes (red) & antinodes (gold)
+  for(let k=0;k<=n;k++){ const u=k/n, px=x0+u*(x1-x0);
+    sctx.fillStyle=cssv('--red'); sctx.beginPath(); sctx.arc(px,mid,4,0,7); sctx.fill(); }
+  for(let k=0;k<n;k++){ const u=(k+0.5)/n, px=x0+u*(x1-x0);
+    sctx.fillStyle=cssv('--gold'); sctx.globalAlpha=.8; sctx.beginPath(); sctx.arc(px,mid-env*osc,3.5,0,7); sctx.fill(); sctx.globalAlpha=1; }
+  sctx.fillStyle=cssv('--text2'); sctx.font='11px monospace';
+  sctx.fillText('harmonic n='+n+'   '+(n===1?'(fundamental)':(n+'×f₁'))+'   '+(n+1)+' nodes · '+n+' antinodes', x0, H-16);
+}
+
+// --- Beats ---
+function drawBeats(){
+  grid(sctx,W,H,true);
+  const A=H*0.16, mid=H*0.34, t=tNow*0.001;
+  const w1=2*Math.PI*S.f1, w2=2*Math.PI*S.f2;
+  const tscale=0.02; // compress time so beats visible
+  // two component waves (faint)
+  [['--violet',S.f1],['--pink',S.f2]].forEach(([c,f],i)=>{
+    sctx.strokeStyle=cssv(c); sctx.globalAlpha=.5; sctx.lineWidth=1.3; sctx.beginPath();
+    for(let px=0;px<=W;px++){ const tt=(px/W)*tscale + (S.playing?t:0); const y=mid - A*Math.sin(2*Math.PI*f*tt); px===0?sctx.moveTo(px,y):sctx.lineTo(px,y);} sctx.stroke();
+  });
+  sctx.globalAlpha=1;
+  // sum wave with beat envelope
+  const midS=H*0.72, AS=H*0.20;
+  sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2.2; sctx.beginPath();
+  for(let px=0;px<=W;px++){ const tt=(px/W)*tscale + (S.playing?t:0);
+    const y=midS - AS*(Math.sin(2*Math.PI*S.f1*tt)+Math.sin(2*Math.PI*S.f2*tt))/2; px===0?sctx.moveTo(px,y):sctx.lineTo(px,y);} sctx.stroke();
+  // envelope
+  const fb=Math.abs(S.f1-S.f2);
+  sctx.strokeStyle=cssv('--gold'); sctx.setLineDash([5,4]); sctx.lineWidth=1.4;
+  for(const s of [1,-1]){ sctx.beginPath();
+    for(let px=0;px<=W;px++){ const tt=(px/W)*tscale + (S.playing?t:0); const e=Math.abs(Math.cos(Math.PI*fb*tt)); const y=midS - s*AS*e; px===0?sctx.moveTo(px,y):sctx.lineTo(px,y);} sctx.stroke(); }
+  sctx.setLineDash([]);
+  sctx.fillStyle=cssv('--text3'); sctx.font='10px monospace';
+  sctx.fillText('f₁ + f₂ (two tones)', 12, 16); sctx.fillText('their sum → beats at '+fb.toFixed(1)+' Hz', 12, mid+A+30);
+}
+
+// --- Two-source interference (ripple field) ---
+function drawInterference(){
+  const FW=2.4, FH=1.6;
+  const sx=0.12*W;
+  const s1y=(FH/2 - S.sep/2)/FH*H, s2y=(FH/2 + S.sep/2)/FH*H;
+  const lam=V_SOUND/S.ifFreq, lamPx=lam/FW*W;
+  const t = S.playing? tNow*0.004 : 0;
+  // field: sample on a grid, colour by summed amplitude
+  const step=5;
+  for(let py=0;py<H;py+=step){
+    for(let px=0;px<W;px+=step){
+      const r1=Math.hypot(px-sx,py-s1y), r2=Math.hypot(px-sx,py-s2y);
+      const a = Math.sin(2*Math.PI*r1/lamPx - t) + Math.sin(2*Math.PI*r2/lamPx - t);
+      const v=(a+2)/4; // 0..1
+      const c=Math.round(v*255);
+      sctx.fillStyle='rgb('+Math.round(20+v*40)+','+Math.round(v*150+30)+','+Math.round(60+v*195)+')';
+      sctx.fillRect(px,py,step,step);
+    }
+  }
+  // nodal lines hint (destructive) — overlay faint
+  // sources
+  [s1y,s2y].forEach(sy=>{ sctx.fillStyle=cssv('--gold'); sctx.beginPath(); sctx.arc(sx,sy,6,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(255,255,255,.5)'; sctx.lineWidth=1; sctx.beginPath(); sctx.arc(sx,sy,6,0,7); sctx.stroke(); });
+  // listener
+  const lxp=S.lx*W, lyp=S.ly*H, amp=interfAmp();
+  sctx.strokeStyle= amp>0.6?cssv('--green'):amp<0.25?cssv('--red'):cssv('--gold');
+  sctx.lineWidth=2.5; sctx.beginPath(); sctx.arc(lxp,lyp,11,0,7); sctx.stroke();
+  sctx.fillStyle=sctx.strokeStyle; sctx.font='10px monospace';
+  sctx.fillText(amp>0.6?'LOUD':amp<0.25?'QUIET':'mid', lxp+15, lyp+4);
+  sctx.fillStyle=cssv('--text2'); sctx.font='11px monospace';
+  sctx.fillText('drag the listener ◎ — bright bands = constructive, dark = destructive', 12, H-14);
+}
+
+// --- Resonance (driven oscillator) ---
+function drawResonance(){
+  grid(sctx,W,H,false);
+  // left: a mass on a spring driven; right: resonance curve
+  const cx=W*0.26, topY=40, restY=H*0.5, A=H*0.30;
+  const y = restY + S.amp*A*Math.sin(S.phase);
+  // spring
+  sctx.strokeStyle=cssv('--text2'); sctx.lineWidth=1.5; sctx.beginPath(); sctx.moveTo(cx,topY);
+  const coils=12; for(let i=0;i<=coils;i++){ const yy=topY+(y-topY)*(i/coils); const xx=cx+(i%2?14:-14)*(i>0&&i<coils?1:0); sctx.lineTo(xx,yy);} sctx.stroke();
+  // mass
+  sctx.fillStyle=cssv('--gold'); sctx.globalAlpha=.85; sctx.fillRect(cx-26,y-18,52,36); sctx.globalAlpha=1;
+  sctx.strokeStyle=cssv('--gold-bright'); sctx.lineWidth=1.5; sctx.strokeRect(cx-26,y-18,52,36);
+  sctx.fillStyle=cssv('--text3'); sctx.font='10px monospace'; sctx.fillText('driver: '+S.drive.toFixed(2)+' Hz', cx-34, H-16);
+  // resonance curve (right)
+  const gx0=W*0.5, gx1=W-30, gy0=H-40, gh=H-80;
+  sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=1; sctx.beginPath(); sctx.moveTo(gx0,40); sctx.lineTo(gx0,gy0); sctx.lineTo(gx1,gy0); sctx.stroke();
+  sctx.fillStyle=cssv('--text3'); sctx.font='10px monospace'; sctx.fillText('amplitude vs drive freq', gx0, 28);
+  const fmax=10; let peak=0;
+  function resp(fd){ const w=2*Math.PI*fd, w0=2*Math.PI*S.f0, g=2*Math.PI*S.damp; return 1/Math.sqrt((w0*w0-w*w)**2+(g*w)**2); }
+  for(let fd=0.2;fd<=fmax;fd+=0.1) peak=Math.max(peak,resp(fd));
+  sctx.strokeStyle=cssv('--violet'); sctx.lineWidth=2; sctx.beginPath();
+  for(let fd=0.2;fd<=fmax;fd+=0.1){ const x=gx0+(fd/fmax)*(gx1-gx0); const yy=gy0-(resp(fd)/peak)*gh; fd<=0.2?sctx.moveTo(x,yy):sctx.lineTo(x,yy);} sctx.stroke();
+  // markers: natural freq + current drive
+  const nx=gx0+(S.f0/fmax)*(gx1-gx0); sctx.strokeStyle=cssv('--green'); sctx.setLineDash([4,3]); sctx.beginPath(); sctx.moveTo(nx,40); sctx.lineTo(nx,gy0); sctx.stroke(); sctx.setLineDash([]);
+  sctx.fillStyle=cssv('--green'); sctx.fillText('f₀', nx-6, 50);
+  const dx=gx0+(S.drive/fmax)*(gx1-gx0), dyy=gy0-(resp(S.drive)/peak)*gh;
+  sctx.fillStyle=cssv('--gold'); sctx.beginPath(); sctx.arc(dx,dyy,5,0,7); sctx.fill();
+}
+
+// --- Timbre / Fourier ---
+function drawTimbre(){
+  grid(sctx,W,H,true);
+  const A=H*0.34, scroll=S.playing? tNow*0.0016*S.freq*0.2 : 0;
+  sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2.4; sctx.beginPath();
+  for(let px=0;px<=W;px++){ const ph=(px/W)*2 + scroll; let v=0;
+    for(let h=0;h<S.harmAmp.length;h++) v+=S.harmAmp[h]*Math.sin(2*Math.PI*(h+1)*ph);
+    const y=H/2 - (v/2.2)*A; px===0?sctx.moveTo(px,y):sctx.lineTo(px,y);}
+  sctx.stroke();
+  sctx.fillStyle=cssv('--text2'); sctx.font='11px monospace';
+  sctx.fillText('resulting waveform — sum of '+S.harmAmp.filter(a=>a>0.01).length+' harmonics', 16, H-16);
+}
+
+// ============================================================================
+// AUX PANEL — spectrum / cross-section / curve
+// ============================================================================
+function drawAux(){
+  if(!actx) return;
+  clearC(actx,AUXW,AUXH);
+  if(S.mode==='resonance'){ drawAuxText('resonance curve shown on main stage →'); return; }
+  if(S.mode==='interference'){ drawAuxText('bright = loud, dark = quiet'); return; }
+  // spectrum bars
+  const bars=[];
+  if(S.mode==='tone') bars.push([S.freq,1,cssv('--cyan')]);
+  else if(S.mode==='string'){ for(let h=1;h<=6;h++) bars.push([h*stringF1(), h===S.harm?1:0.0, h===S.harm?cssv('--cyan'):cssv('--text3')]); bars.length=0; bars.push([stringFn(),1,cssv('--cyan')]); }
+  else if(S.mode==='beats'){ bars.push([S.f1,1,cssv('--violet')]); bars.push([S.f2,1,cssv('--pink')]); }
+  else if(S.mode==='timbre'){ for(let h=0;h<S.harmAmp.length;h++) if(S.harmAmp[h]>0.01) bars.push([(h+1)*S.freq, S.harmAmp[h], cssv('--cyan')]); }
+  drawSpectrum(bars);
+}
+function drawAuxText(t){ actx.fillStyle=cssv('--text3'); actx.font='12px monospace'; actx.fillText(t, 16, AUXH/2); }
+function drawSpectrum(bars){
+  const pad=40, x0=pad, y0=AUXH-30, w=AUXW-pad-16, h=AUXH-60;
+  const fmax = S.mode==='timbre'? (S.harmAmp.length+1)*S.freq : Math.max(1000, ...bars.map(b=>b[0]*1.3));
+  actx.strokeStyle=cssv('--border2'); actx.beginPath(); actx.moveTo(x0,20); actx.lineTo(x0,y0); actx.lineTo(x0+w,y0); actx.stroke();
+  actx.fillStyle=cssv('--text3'); actx.font='10px monospace'; actx.fillText('frequency (Hz) →', x0+w-100, y0+20);
+  for(let f=0;f<=fmax;f+=Math.ceil(fmax/4/100)*100){ const x=x0+(f/fmax)*w; actx.fillStyle=cssv('--text3'); actx.fillText(f, x-8, y0+15); }
+  bars.forEach(b=>{ const x=x0+(b[0]/fmax)*w; const bh=Math.max(2,b[1]*h); actx.fillStyle=b[2];
+    actx.fillRect(x-4, y0-bh, 8, bh);
+    actx.fillStyle=cssv('--text2'); actx.font='9px monospace'; actx.fillText(Math.round(b[0]), x-12, y0-bh-5); });
+}
+
+// ============================================================================
+// RESONANCE PHYSICS (driven damped oscillator, builds up over time)
+// ============================================================================
+function stepResonance(dt){
+  const w0=2*Math.PI*S.f0, g=2*Math.PI*S.damp, wd=2*Math.PI*S.drive;
+  const resp=1/Math.sqrt((w0*w0-wd*wd)**2+(g*wd)**2);
+  const peak=1/(g*w0);
+  const targetN=Math.min(1.15, resp/peak);
+  const k=1-Math.exp(-g*dt);
+  S.amp += (targetN - S.amp)*k;
+  S.phase += wd*dt;
+}
+
+// ============================================================================
+// DYNAMIC CONTROLS
+// ============================================================================
+function el(tag,cls,html){ const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+function addSlider(parent,{label,min,max,step,val,fmt,mini,oninput}){
+  const c=el('div','ctl');
+  const row=el('div','param-row'); const lab=el('span',null,label); const vv=el('span','param-val',fmt(val)); row.append(lab,vv);
+  const inp=el('input'); inp.type='range'; inp.min=min; inp.max=max; inp.step=step; inp.value=val;
+  const m=el('div','sb-mini',mini||'');
+  inp.oninput=()=>{ const v=+inp.value; vv.textContent=fmt(v); oninput(v,m); };
+  c.append(row,inp,m); parent.appendChild(c); return inp;
+}
+function buildControls(){
+  const p=$('mode-controls'); p.innerHTML='';
+  if(S.mode==='tone'){
+    addSlider(p,{label:'🎵 Frequency',min:50,max:2000,step:1,val:S.freq,fmt:v=>Math.round(v)+' Hz',
+      mini:'pitch — higher = sharper',oninput:v=>{S.freq=v;updateAudio();}});
+  }
+  else if(S.mode==='string'){
+    addSlider(p,{label:'➰ Harmonic n',min:1,max:6,step:1,val:S.harm,fmt:v=>'n = '+v,
+      mini:'number of loops',oninput:v=>{S.harm=v;updateAudio();}});
+    addSlider(p,{label:'📏 Length',min:0.3,max:1.2,step:0.01,val:S.length,fmt:v=>v.toFixed(2)+' m',
+      mini:'longer string → lower pitch',oninput:v=>{S.length=v;updateAudio();}});
+    addSlider(p,{label:'💪 Tension',min:10,max:300,step:1,val:S.tension,fmt:v=>Math.round(v)+' N',
+      mini:'tighter → higher pitch',oninput:v=>{S.tension=v;updateAudio();}});
+  }
+  else if(S.mode==='beats'){
+    if(!S.game) addSlider(p,{label:'🔵 Tone 1',min:420,max:460,step:0.5,val:S.f1,fmt:v=>v.toFixed(1)+' Hz',
+      mini:'reference',oninput:v=>{S.f1=v;updateAudio();}});
+    addSlider(p,{label:S.game?'🎚 Your tone':'🔴 Tone 2',min:420,max:460,step:0.1,val:S.f2,fmt:v=>v.toFixed(1)+' Hz',
+      mini:S.game?'tune until the beats vanish':'beat = |f₁−f₂|',oninput:v=>{S.f2=v;updateAudio();}});
+  }
+  else if(S.mode==='interference'){
+    addSlider(p,{label:'🎵 Frequency',min:200,max:1500,step:1,val:S.ifFreq,fmt:v=>Math.round(v)+' Hz',
+      mini:'higher → finer bands',oninput:v=>{S.ifFreq=v;updateAudio();}});
+    addSlider(p,{label:'↕ Source spacing',min:0.3,max:1.4,step:0.01,val:S.sep,fmt:v=>v.toFixed(2)+' m',
+      mini:'wider → more bands',oninput:v=>{S.sep=v;updateAudio();}});
+  }
+  else if(S.mode==='resonance'){
+    addSlider(p,{label:'🔁 Drive frequency',min:0.5,max:10,step:0.05,val:S.drive,fmt:v=>v.toFixed(2)+' Hz',
+      mini:'match f₀ to resonate',oninput:v=>{S.drive=v;updateAudio();}});
+    addSlider(p,{label:'🎯 Natural f₀',min:2,max:8,step:0.1,val:S.f0,fmt:v=>v.toFixed(1)+' Hz',
+      mini:'the system\u2019s own frequency',oninput:v=>{S.f0=v;}});
+    addSlider(p,{label:'🪶 Damping',min:0.1,max:2,step:0.05,val:S.damp,fmt:v=>v.toFixed(2),
+      mini:'less damping → taller, sharper peak',oninput:v=>{S.damp=v;}});
+  }
+  else if(S.mode==='timbre'){
+    addSlider(p,{label:'🎵 Pitch',min:80,max:600,step:1,val:S.freq,fmt:v=>Math.round(v)+' Hz',
+      mini:'fundamental',oninput:v=>{S.freq=v;updateAudio();}});
+    // harmonic mini-sliders
+    const hc=el('div','ctl'); hc.style.gridColumn='span 2';
+    hc.append(el('div','section-label','Harmonic amplitudes'));
+    const grid=el('div'); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(4,1fr)'; grid.style.gap='6px';
+    S.harmAmp.forEach((a,i)=>{
+      const w=el('div'); w.style.textAlign='center';
+      const lab=el('div',null,(i+1)+(i===0?' (f)':'')); lab.style.cssText='font-family:monospace;font-size:8px;color:var(--text3);margin-bottom:2px;';
+      const inp=el('input'); inp.type='range'; inp.min=0;inp.max=1;inp.step=0.05;inp.value=a; inp.style.writingMode='vertical-lr'; inp.style.direction='rtl'; inp.style.height='54px'; inp.style.width='14px';
+      inp.oninput=()=>{ S.harmAmp[i]=+inp.value; S.preset='custom'; applyTimbreWave(); };
+      w.append(lab,inp); grid.appendChild(w);
+    });
+    hc.appendChild(grid); p.appendChild(hc);
+  }
+  buildSetupExtra();
+}
+function buildSetupExtra(){
+  const ex=$('setup-extra'); ex.innerHTML='';
+  if(S.mode==='tone'){
+    ex.append(el('div','section-label','Waveform'));
+    const g=el('div','btn-grid c4');
+    ['sine','square','sawtooth','triangle'].forEach(w=>{ const b=el('button','minibtn'+(S.wave===w?' active':''),w==='sawtooth'?'saw':w);
+      b.onclick=()=>{S.wave=w;buildSetupExtra();if(voices[0]&&AC)voices[0].osc.type=w;}; g.appendChild(b); });
+    ex.appendChild(g);
+  }
+  else if(S.mode==='timbre'){
+    ex.append(el('div','section-label','Instrument presets'));
+    const g=el('div','btn-grid c2');
+    const presets={ 'Pure (sine)':[1,0,0,0,0,0,0,0],'Square':[1,0,.33,0,.2,0,.14,0],'Sawtooth':[1,.5,.33,.25,.2,.16,.14,.12],'Triangle':[1,0,.11,0,.04,0,.02,0],'Clarinet':[1,.1,.7,.1,.3,.05,.1,.02],'Organ':[1,.6,.4,.7,.2,.3,.1,.2] };
+    Object.entries(presets).forEach(([n,v])=>{ const b=el('button','minibtn',n); b.onclick=()=>{ S.harmAmp=v.slice(); S.preset=n; applyTimbreWave(); buildControls(); }; g.appendChild(b); });
+    ex.appendChild(g);
+  }
+  else if(S.mode==='beats'){
+    ex.append(el('div','section-label','Tuner challenge'));
+    const g=el('div','btn-grid c2');
+    const b1=el('button','minibtn'+(S.game?' active':''), S.game?'■ Stop game':'🎯 Start game');
+    b1.onclick=()=>{ S.game=!S.game; if(S.game){ newTarget(); } else { $('game-banner').classList.remove('show'); } buildControls(); };
+    const b2=el('button','minibtn','🎲 New target'); b2.onclick=()=>{ if(!S.game){S.game=true;buildControls();} newTarget(); };
+    g.append(b1,b2); ex.appendChild(g);
+  }
+  else { /* nothing extra */ }
+}
+function newTarget(){ S.f1 = Math.round((435+Math.random()*10)*2)/2; S.won=false; S.bestCents=999; $('game-banner').classList.add('show'); updateAudio(); }
+
+// ============================================================================
+// READOUTS
+// ============================================================================
+function $(id){ return document.getElementById(id); }
+function rcell(label,value,sub,cls){ return '<div class="rcell"><div class="r-label">'+label+'</div><div class="r-value '+(cls||'sm')+'">'+value+'</div><div class="r-sub">'+(sub||'')+'</div></div>'; }
+
+function updateReadout(){
+  const g=$('readout-grid'); let html=''; let law='';
+  if(S.mode==='tone'){
+    html+=rcell('Frequency',Math.round(S.freq)+' Hz','pitch','cyan');
+    html+=rcell('Period',(1000/S.freq).toFixed(2)+' ms','T = 1/f');
+    html+=rcell('Wavelength (air)',(V_SOUND/S.freq).toFixed(3)+' m','λ = v/f','gold');
+    html+=rcell('Nearest note',noteName(S.freq),'equal temperament','violet');
+    setBadges(noteName(S.freq), Math.round(S.freq)+' Hz');
+    law='<b>v = f λ</b> — for sound in air v ≈ 343 m/s, so wavelength λ = '+(V_SOUND/S.freq).toFixed(2)+' m. Double the frequency and you raise the pitch by one octave.';
+  }
+  else if(S.mode==='string'){
+    const f1=stringF1(), fn=stringFn(), v=stringV();
+    html+=rcell('Frequency f<sub>'+S.harm+'</sub>',Math.round(fn)+' Hz',S.harm+'×f₁','cyan');
+    html+=rcell('Fundamental f₁',Math.round(f1)+' Hz','lowest mode','gold');
+    html+=rcell('Wave speed',v.toFixed(0)+' m/s','√(T/μ)');
+    html+=rcell('Wavelength λ<sub>'+S.harm+'</sub>',(2*S.length/S.harm).toFixed(3)+' m','2L/n');
+    html+=rcell('Nodes · Antinodes',(S.harm+1)+' · '+S.harm,'fixed ends are nodes');
+    html+=rcell('Nearest note',noteName(fn),'','violet');
+    setBadges('n = '+S.harm, Math.round(fn)+' Hz');
+    law='<b>f<sub>n</sub> = n·v/2L = n·f₁</b> — only whole-number multiples of the fundamental fit a string fixed at both ends. That ladder of frequencies is the <b>harmonic series</b>.';
+  }
+  else if(S.mode==='beats'){
+    const fb=Math.abs(S.f1-S.f2);
+    if(!S.game) html+=rcell('Tone 1',S.f1.toFixed(1)+' Hz','','violet');
+    html+=rcell(S.game?'Your tone':'Tone 2',S.f2.toFixed(1)+' Hz','','pink');
+    html+=rcell('Beat frequency',fb.toFixed(2)+' Hz','|f₁ − f₂|','gold');
+    html+=rcell('Beat period',fb>0.05?(1/fb).toFixed(2)+' s':'∞','one throb','cyan');
+    setBadges('beats', fb.toFixed(1)+' Hz');
+    law='<b>f<sub>beat</sub> = |f₁ − f₂|</b> — two close tones drift in and out of step, and the loudness throbs at their frequency difference. Piano tuners listen for exactly this.';
+    if(S.game) updateGame(fb);
+  }
+  else if(S.mode==='interference'){
+    const amp=interfAmp(), lam=V_SOUND/S.ifFreq;
+    html+=rcell('Frequency',Math.round(S.ifFreq)+' Hz','','cyan');
+    html+=rcell('Wavelength',lam.toFixed(3)+' m','λ = v/f','gold');
+    html+=rcell('At listener',amp>0.6?'LOUD':amp<0.25?'QUIET':'medium',(amp*100).toFixed(0)+'% amplitude', amp>0.6?'green':amp<0.25?'pink':'sm');
+    html+=rcell('Condition',amp>0.7?'constructive':amp<0.3?'destructive':'in between','path difference','violet');
+    setBadges('λ = '+lam.toFixed(2)+' m', (amp*100).toFixed(0)+'%');
+    law='<b>Constructive</b> when paths differ by a whole λ (crests meet crests); <b>destructive</b> when they differ by a half λ (crest meets trough → silence). Same waves, opposite results.';
+  }
+  else if(S.mode==='resonance'){
+    const Q=Math.PI*S.f0/S.damp;
+    html+=rcell('Drive frequency',S.drive.toFixed(2)+' Hz','','cyan');
+    html+=rcell('Natural f₀',S.f0.toFixed(1)+' Hz','system\u2019s own','gold');
+    html+=rcell('Amplitude',(S.amp*100).toFixed(0)+'%',Math.abs(S.drive-S.f0)<0.3?'at resonance!':'off resonance', Math.abs(S.drive-S.f0)<0.3?'green':'sm');
+    html+=rcell('Sharpness Q',Q.toFixed(1),'higher = sharper peak','violet');
+    setBadges('f₀ = '+S.f0.toFixed(1)+' Hz', (S.amp*100).toFixed(0)+'%');
+    law='<b>Resonance</b> — push a system at its natural frequency f₀ and the amplitude grows enormously. A swing, a wine glass shattering, a bridge in the wind: all the same physics.';
+  }
+  else if(S.mode==='timbre'){
+    const nH=S.harmAmp.filter(a=>a>0.01).length;
+    let bright=0,tot=0; S.harmAmp.forEach((a,i)=>{bright+=a*(i+1);tot+=a;});
+    html+=rcell('Pitch',Math.round(S.freq)+' Hz',noteName(S.freq),'cyan');
+    html+=rcell('Preset',S.preset,'','gold');
+    html+=rcell('Harmonics present',nH,'pure tone = 1','violet');
+    html+=rcell('Brightness',tot?(bright/tot).toFixed(1):'0','higher harmonics → brighter');
+    setBadges(S.preset, Math.round(S.freq)+' Hz');
+    law='<b>Any sound = a sum of pure sine tones</b> (Fourier). The pitch is set by the fundamental; the <em>mix of harmonics</em> is the timbre — why a violin and a flute playing the same note sound different.';
+  }
+  g.innerHTML=html;
+  $('law-strip').innerHTML=law;
+}
+function setBadges(l,r){ $('badge-l').textContent=l; $('badge-r').textContent=r; }
+
+function updateGame(fb){
+  const fill=$('game-fill'), st=$('game-status');
+  const closeness=Math.max(0,Math.min(100,100*(1-fb/12)));
+  fill.style.width=closeness.toFixed(0)+'%';
+  const cents=Math.abs(1200*Math.log2(S.f2/S.f1));
+  if(fb<0.4){ st.innerHTML='🎉 <b style="color:var(--green)">In tune!</b> Beats gone. Try 🎲 New target.'; S.won=true; }
+  else if(fb<1.5) st.innerHTML='So close — '+fb.toFixed(2)+' Hz of beats left ('+cents.toFixed(0)+'¢ off).';
+  else if(fb<5) st.innerHTML='Getting warmer — '+fb.toFixed(1)+' Hz beats. Slow the throb down.';
+  else st.innerHTML='Listen to the throbbing — '+fb.toFixed(1)+' Hz beats. Move your tone closer.';
+}
+
+// ============================================================================
+// MODES + VOICE
+// ============================================================================
+const MODES=[
+  {id:'tone',label:'Pure Tone',tag:'pitch'},
+  {id:'string',label:'Standing Waves',tag:'harmonics'},
+  {id:'beats',label:'Beats',tag:'+ tuner game'},
+  {id:'interference',label:'Interference',tag:'two sources'},
+  {id:'resonance',label:'Resonance',tag:'build-up'},
+  {id:'timbre',label:'Harmonics',tag:'timbre'}
+];
+const STAGE_TITLE={tone:'Oscilloscope',string:'String — Standing Wave',beats:'Beats',interference:'Interference Field',resonance:'Driven Oscillator',timbre:'Waveform'};
+const STAGE_HINT={tone:'the shape of the sound wave',string:'fixed at both ends',beats:'two close tones throbbing',interference:'drag the listener ◎',resonance:'sweep the drive frequency',timbre:'add harmonics to sculpt the tone'};
+const AUX_TITLE={tone:'Frequency Spectrum',string:'Frequency Spectrum',beats:'Frequency Spectrum',interference:'Interference',resonance:'Resonance',timbre:'Frequency Spectrum'};
+
+let voiceOn=false, sceneToken=0;
+const SCRIPT={
+  tone:"A pure tone — a single sine wave. The faster it wiggles, the higher the pitch you hear. Drag the frequency up and listen to the note climb. Double the frequency, and you jump exactly one octave.",
+  string:"A string fixed at both ends, like a guitar string. Only certain shapes fit — one loop, two loops, three — and each gives a pure musical note. These are the harmonics, and their frequencies are simple whole-number multiples of the lowest one.",
+  beats:"Beats. Play two tones very close in frequency and they drift in and out of step, making the loudness throb. The throbbing rate equals the difference in their frequencies. Try the tuner game — tune your tone until the beats fall silent.",
+  interference:"Two loudspeakers playing the same note. Where their crests meet, the sound is loud — constructive interference. Where a crest meets a trough, they cancel and you get silence. Drag the listener around and hear the loud and quiet bands.",
+  resonance:"Resonance. Every object has a natural frequency it likes to vibrate at. Push it at exactly that frequency and the swings grow bigger and bigger. It is how a swing builds height, how an opera singer shatters a glass, and how a bridge can tear itself apart in the wind.",
+  timbre:"Timbre. Any sound at all is just a stack of pure sine tones added together. The lowest one sets the pitch; the recipe of higher harmonics is what makes a violin sound different from a flute. Slide the harmonics and sculpt your own instrument."
+};
+function speak(t){ if(!voiceOn||!t||typeof speechSynthesis==='undefined')return; const my=++sceneToken; try{speechSynthesis.cancel();}catch(e){}
+  setTimeout(()=>{ if(my!==sceneToken||!voiceOn)return; try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){} },80); }
+function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel(); }catch(e){} }
+function updateVoiceBtn(){ const v=$('voice-switcher'); v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color=voiceOn?'var(--cyan)':''; }
+
+function buildModeBar(){ const b=$('mode-bar'); b.innerHTML=''; MODES.forEach(m=>{ const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.label+' <span class="mode-tag">'+m.tag+'</span>'); t.onclick=()=>setMode(m.id); b.appendChild(t); }); }
+function buildToggles(){ const t=$('toggle-row'); t.innerHTML=''; [['grid','grid'],['ruler','labels']].forEach(([k,l])=>{ const c=el('div','toggle-chip'+(S.show[k]?' on':''),l); c.onclick=()=>{S.show[k]=!S.show[k];buildToggles();}; t.appendChild(c); }); }
+
+function setMode(id){
+  stopSpeech();
+  S.mode=id; S.game=false; $('game-banner').classList.remove('show');
+  $('stage-title').firstChild.textContent=STAGE_TITLE[id]+' ';
+  $('stage-hint').textContent=STAGE_HINT[id];
+  $('aux-title').firstChild.textContent=AUX_TITLE[id]+' ';
+  buildModeBar(); buildControls(); buildToggles();
+  if(S.playing){ buildAudioForMode(); }
+  updateReadout(); speak(SCRIPT[id]);
+}
+
+// ============================================================================
+// INTERACTIONS
+// ============================================================================
+function bindUI(){
+  stage=$('stage'); sctx=stage.getContext('2d'); aux=$('aux'); actx=aux.getContext('2d');
+  fitCanvases(); window.addEventListener('resize',fitCanvases);
+
+  $('play-btn').onclick=()=>{ togglePlay(); };
+  $('sl-vol').oninput=function(){ S.vol=+this.value/100; $('vol-v').textContent=this.value+'%'; if(S.playing)rampMaster(S.vol); };
+
+  // listener drag (interference)
+  let drag=false;
+  function pos(e){ const r=stage.getBoundingClientRect(); const cx=(e.touches?e.touches[0].clientX:e.clientX); const cy=(e.touches?e.touches[0].clientY:e.clientY); return {x:(cx-r.left)/r.width, y:(cy-r.top)/r.height}; }
+  function down(e){ if(S.mode!=='interference')return; const p=pos(e); S.lx=clamp(p.x,0,1); S.ly=clamp(p.y,0,1); drag=true; updateAudio(); e.preventDefault&&e.preventDefault(); }
+  function move(e){ if(!drag||S.mode!=='interference')return; const p=pos(e); S.lx=clamp(p.x,0,1); S.ly=clamp(p.y,0,1); updateAudio(); e.preventDefault&&e.preventDefault(); }
+  function up(){ drag=false; }
+  stage.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+  stage.addEventListener('touchstart',down,{passive:false}); window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',up);
+
+  // theme
+  const ts=$('theme-switcher');
+  try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){} };
+  // voice
+  const vs=$('voice-switcher');
+  try{ if(localStorage.getItem('snd-voice')==='on')voiceOn=true; }catch(e){}
+  updateVoiceBtn();
+  vs.onclick=()=>{ voiceOn=!voiceOn; try{localStorage.setItem('snd-voice',voiceOn?'on':'off');}catch(e){} updateVoiceBtn(); if(voiceOn)speak(SCRIPT[S.mode]); else stopSpeech(); };
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden){ stopSpeech(); if(S.playing)togglePlay(); } });
+}
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function fitCanvases(){ W=560;H=380;AUXW=560;AUXH=300; stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH; }
+
+function togglePlay(){
+  const btn=$('play-btn');
+  if(!S.playing){
+    if(!ensureAudio()){ btn.textContent='⚠ audio blocked'; return; }
+    if(AC.state==='suspended'){ AC.resume(); }
+    S.playing=true; buildAudioForMode(); rampMaster(S.vol);
+    btn.textContent='⏸ Stop sound'; btn.classList.add('playing');
+  } else {
+    S.playing=false; rampMaster(0);
+    setTimeout(()=>{ if(!S.playing) clearVoices(); },120);
+    btn.textContent='▶ Play sound'; btn.classList.remove('playing');
+  }
+}
+
+// ============================================================================
+// THEORY
+// ============================================================================
+function buildTheory(){
+  $('theory').innerHTML=`
+  <div class="theory-hdr">Theory — Sound, Waves &amp; Resonance</div>
+  <h3>What a Wave Is</h3>
+  <p>A wave carries <em>energy</em> from place to place without carrying matter along with it. Sound is a <strong>longitudinal</strong> wave: the air molecules jiggle back and forth along the same direction the sound travels, squashing together (compressions) and spreading apart (rarefactions). A wave on a string is <strong>transverse</strong>: the string moves up and down while the wave runs sideways.</p>
+  <div class="eq">v = f λ
+    <div class="vars">v = wave speed, f = frequency (Hz = wiggles per second), λ = wavelength. In air, sound travels at about 343 m/s at room temperature. Frequency sets the <em>pitch</em>; amplitude sets the <em>loudness</em>.</div>
+  </div>
+
+  <h3>Superposition — Waves Add Up</h3>
+  <p>When two waves overlap, the displacements simply add. This single rule — <em>superposition</em> — explains beats, interference and standing waves all at once.</p>
+  <div class="hbox hb-cyan"><strong>Constructive:</strong> crest meets crest → bigger wave (louder).<br><strong>Destructive:</strong> crest meets trough → they cancel (quieter, even silent).</div>
+
+  <h3>Standing Waves &amp; Harmonics</h3>
+  <p>Trap a wave between two fixed ends and the reflections interfere with the incoming wave. At most frequencies the result is a jumble — but at special frequencies a steady, stationary pattern locks in: a <em>standing wave</em>. Points that never move are <strong>nodes</strong>; points that swing the most are <strong>antinodes</strong>.</p>
+  <div class="eq">f<sub>n</sub> = n · v / 2L = n · f₁ &nbsp;&nbsp;(n = 1, 2, 3 …)
+    <div class="vars">Only whole numbers of half-wavelengths fit, so a string sounds a fundamental f₁ plus a ladder of overtones at 2f₁, 3f₁, 4f₁… — the <em>harmonic series</em>. The string's wave speed is v = √(T/μ): tighter tension T or lighter string (mass per length μ) → higher pitch.</div>
+  </div>
+  <table class="ctable">
+    <tr><th>Harmonic</th><th>Loops</th><th>Frequency</th><th>Name</th></tr>
+    <tr><td>n = 1</td><td>1</td><td>f₁</td><td>fundamental</td></tr>
+    <tr><td>n = 2</td><td>2</td><td>2 f₁</td><td>octave above</td></tr>
+    <tr><td>n = 3</td><td>3</td><td>3 f₁</td><td>octave + fifth</td></tr>
+  </table>
+
+  <h3>Beats</h3>
+  <p>Sound two tones whose frequencies are close, and they slip in and out of step. The combined loudness rises and falls — <em>beats</em> — at a rate equal to the difference in their frequencies.</p>
+  <div class="eq">f<sub>beat</sub> = | f₁ − f₂ |
+    <div class="vars">When the beat rate falls to zero, the two tones are identical — exactly how musicians tune by ear. That is the goal of the Tuner Challenge.</div>
+  </div>
+
+  <h3>Interference in Space</h3>
+  <p>Two loudspeakers playing the same note create a fixed pattern of loud and quiet regions. Whether a point is loud or quiet depends only on the <em>difference in distance</em> to the two speakers:</p>
+  <div class="hbox hb-gold"><strong>Path difference = whole number of λ</strong> → constructive (loud).<br><strong>Path difference = odd number of half-λ</strong> → destructive (quiet).</div>
+  <p>This is the very same physics as the double-slit experiment for light — interference is a hallmark of all waves.</p>
+
+  <h3>Resonance</h3>
+  <p>Every object has natural frequencies it "wants" to vibrate at. Drive it at one of those frequencies and each push adds to the last, so the amplitude builds up dramatically — that is <em>resonance</em>.</p>
+  <div class="eq">A(f) = F₀ / √[ (f₀² − f²)² + (γf)² ]
+    <div class="vars">The amplitude A peaks sharply when the drive frequency f matches the natural frequency f₀. Lower damping γ → a taller, narrower peak (a higher quality factor Q). Resonance is how a child pumps a swing, how MRI machines image atoms, how a wine glass shatters at the right note — and why soldiers break step crossing a bridge.</div>
+  </div>
+
+  <h3>Timbre — the Fourier Idea</h3>
+  <p>One of the most beautiful results in physics: <em>any</em> repeating sound, however complex, can be built by adding together pure sine waves at the harmonic frequencies. This is <strong>Fourier's theorem</strong>.</p>
+  <div class="hbox hb-violet">Same fundamental → same <strong>pitch</strong>. Different recipe of harmonics → different <strong>timbre</strong>. That recipe is why a violin, a flute and your voice singing the same note are instantly distinguishable.</div>
+  <p>A pure sine is a single harmonic. Add odd harmonics and you approach a square wave (hollow, clarinet-like); add every harmonic and you get a bright, buzzy sawtooth. Sculpt your own in the Harmonics mode.</p>
+  `;
+}
+
+// ============================================================================
+// MAIN LOOP
+// ============================================================================
+let rt=0, lastT=0;
+function loop(now){
+  try{
+    if(!lastT) lastT=now;
+    const dt=Math.min(0.05,(now-lastT)/1000); lastT=now; tNow=now;
+    if(S.mode==='resonance') stepResonance(dt);
+    if(S.playing && (S.mode==='interference'||S.mode==='resonance')) updateAudio();
+    drawStage(); drawAux();
+    if(rt++%5===0) updateReadout();
+  }catch(e){ console.error('loop error',e); }
+  requestAnimationFrame(loop);
+}
+
+// ============================================================================
+// INIT
+// ============================================================================
+function init(){
+  buildModeBar(); bindUI(); buildToggles(); buildTheory();
+  setMode('tone');
+  requestAnimationFrame(loop);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
+</script>
+</body>
+</html>

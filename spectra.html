@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atomic Spectra &amp; the Bohr Model — Science Wonders</title>
+<meta name="description" content="An interactive Bohr-model and atomic-spectra simulation. Excite a hydrogen atom and watch electrons leap between energy levels and emit coloured photons, explore the spectral fingerprints of real elements, see the Balmer series, and play stellar detective — reading a star's composition from its absorption lines.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#05080f;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:pointer;touch-action:none;}
+canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
+.aux-small canvas#aux{max-height:300px;}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:9px;left:9px;color:var(--gold);}
+.sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
+@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
+.minibtn{font-family:monospace;font-size:10px;padding:7px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.minibtn.good{border-color:var(--green);color:var(--green);background:rgba(64,255,170,.08);}
+.minibtn.bad{border-color:var(--red);color:var(--red);background:rgba(255,79,96,.08);}
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+.verdict{margin-top:12px;padding:11px 15px;border-radius:8px;font-family:monospace;font-size:12px;display:none;}
+.verdict.show{display:block;}
+.verdict.go{background:rgba(64,255,170,.06);border:1px solid rgba(64,255,170,.3);color:#8effc8;}
+body.light-theme .verdict.go{color:var(--green);}
+.verdict.no{background:rgba(255,157,79,.06);border:1px solid rgba(255,157,79,.3);color:#ffc89a;}
+body.light-theme .verdict.no{color:var(--orange);}
+
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Atomic Spectra &amp; the Bohr Model</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="mode-bar" id="mode-bar"></div>
+
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+
+      <div class="card">
+        <div class="card-title" id="stage-title">The Atom <span class="hint" id="stage-hint">click a level to excite the electron</span></div>
+        <div class="stage-wrap">
+          <canvas id="stage" width="560" height="400"></canvas>
+          <div class="stage-badge sb-tl" id="badge-l">—</div>
+          <div class="stage-badge sb-tr" id="badge-r">—</div>
+        </div>
+      </div>
+
+      <div class="play-bar">
+        <div class="sb-controls" id="mode-controls"></div>
+      </div>
+
+    </div>
+
+    <div class="right-col">
+
+      <div class="card aux-small">
+        <div class="card-title" id="aux-title">Energy Levels <span class="hint" id="aux-hint">the electron's ladder</span></div>
+        <div class="stage-wrap"><canvas id="aux" width="560" height="320"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Setup</div>
+        <div class="card-pad" id="setup-panel">
+          <div id="setup-extra"></div>
+          <div class="section-label" style="margin-top:6px;">Show on screen</div>
+          <div class="toggle-row" id="toggle-row"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Live Readout <span class="hint">real spectroscopy</span></div>
+    <div class="card-pad">
+      <div class="readout-grid" id="readout-grid"></div>
+      <div class="law-strip" id="law-strip"></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+// ============================================================================
+// ATOMIC SPECTRA & THE BOHR MODEL — engine
+// ============================================================================
+const HC = 1239.84;             // eV·nm
+const RY = 13.6057;             // eV (hydrogen)
+const RYD = 1.0967758e7;        // Rydberg constant /m
+
+let W=560,H=400,AUXW=560,AUXH=320;
+
+// ---- hydrogen Bohr levels ----
+function En(n){ return -RY/(n*n); }                       // eV
+function transitionNm(ni,nf){ return HC/Math.abs(En(ni)-En(nf)); }  // nm
+const SERIES={ Lyman:{nf:1,band:'ultraviolet',col:'--violet'}, Balmer:{nf:2,band:'visible',col:'--cyan'}, Paschen:{nf:3,band:'infrared',col:'--red'} };
+
+// ---- real prominent emission lines: [wavelength nm, relative intensity] ----
+const ELEMENTS={
+  H:  { name:'Hydrogen', glow:'#ff6072', lines:[[656.3,1],[486.1,.55],[434.0,.4],[410.2,.3]] },
+  He: { name:'Helium',   glow:'#ffd277', lines:[[667.8,.5],[587.6,1],[501.6,.5],[492.2,.3],[471.3,.3],[447.1,.6],[388.9,.4]] },
+  Na: { name:'Sodium',   glow:'#ffcf3a', lines:[[589.0,1],[589.6,.95],[568.8,.2],[615.4,.2]] },
+  Ne: { name:'Neon',     glow:'#ff7340', lines:[[640.2,1],[614.3,.7],[621.7,.6],[626.6,.7],[633.4,.5],[640.2,.9],[650.7,.7],[659.9,.6],[692.9,.5],[703.2,.4],[585.2,.5],[588.2,.5],[594.5,.6],[603.0,.6]] },
+  Hg: { name:'Mercury',  glow:'#9fd4ff', lines:[[404.7,.5],[435.8,1],[546.1,1],[577.0,.5],[579.1,.5]] },
+  Li: { name:'Lithium',  glow:'#ff526e', lines:[[670.8,1],[610.4,.45]] }
+};
+const SPEC_MIN=380, SPEC_MAX=720;  // visible strip range (nm)
+
+const S = {
+  mode:'bohr',
+  n:1,                 // current electron level
+  targetN:1,
+  dwell:0,
+  autoExcite:false,
+  exciting:false,
+  photons:[],
+  litLines:[],         // {nm, t} recently emitted lines for the strip
+  // emission
+  element:'H',
+  // series
+  series:'Balmer',
+  // star detective
+  starSet:[], guessSet:[], solved:false, starN:2
+};
+
+// ---- wavelength → RGB colour (visible; UV/IR shaded) ----
+function wlColor(nm){
+  if(nm<380){ const t=Math.max(0,(nm-180)/200); return 'rgb('+Math.round(120+40*t)+',40,'+Math.round(200+55*t)+')'; }
+  if(nm>720){ return 'rgb(92,8,8)'; }
+  let r=0,g=0,b=0;
+  if(nm<440){ r=-(nm-440)/60; b=1; }
+  else if(nm<490){ g=(nm-440)/50; b=1; }
+  else if(nm<510){ g=1; b=-(nm-510)/20; }
+  else if(nm<580){ r=(nm-510)/70; g=1; }
+  else if(nm<645){ r=1; g=-(nm-645)/65; }
+  else { r=1; }
+  let f=1; if(nm>700)f=0.3+0.7*(720-nm)/20; else if(nm<420)f=0.3+0.7*(nm-380)/40;
+  return 'rgb('+Math.round(r*255*f)+','+Math.round(g*255*f)+','+Math.round(b*255*f)+')';
+}
+function band(nm){ return nm<380?'UV':nm>700?'IR':'visible'; }
+
+// ---- atom geometry ----
+const CX=200, CY=205;
+function orbitR(n){ return 18*Math.pow(n,1.3); }
+
+// ---- photons ----
+let tNow=0;
+function emitPhoton(nm,fromR){
+  const ang=Math.random()*Math.PI*2;
+  S.photons.push({ x:CX+Math.cos(ang)*(fromR||orbitR(S.n)), y:CY+Math.sin(ang)*(fromR||orbitR(S.n)),
+    vx:Math.cos(ang)*2.6, vy:Math.sin(ang)*2.6, nm, col:wlColor(nm), life:0 });
+  S.litLines.push({nm, t:1});
+  if(S.litLines.length>40) S.litLines.shift();
+}
+
+// ---- excite / decay logic (Bohr mode) ----
+function exciteTo(n){
+  if(n<=S.n) { S.n=n; S.targetN=n; return; }
+  S.targetN=n; S.n=n; S.dwell=0; S.exciting=true;   // absorbed up to n
+}
+function stepAtom(dt){
+  // recently-lit lines fade
+  for(const L of S.litLines) L.t-=0.01*dt;
+  S.litLines=S.litLines.filter(L=>L.t>0);
+  // photons move
+  for(const p of S.photons){ p.x+=p.vx*dt; p.y+=p.vy*dt; p.life+=dt; }
+  S.photons=S.photons.filter(p=>p.x>-20&&p.x<W+20&&p.y>-20&&p.y<H+20&&p.life<260);
+  // cascade decay
+  if(S.mode!=='bohr') return;
+  S.dwell+=dt;
+  if(S.n>1 && S.dwell>40){
+    S.dwell=0;
+    const nf = 1 + Math.floor(Math.random()*(S.n-1));  // random lower level
+    emitPhoton(transitionNm(S.n,nf), orbitR(S.n));
+    S.n=nf; S.targetN=nf;
+  }
+  if(S.n===1 && S.autoExcite && S.dwell>30){
+    S.dwell=0; exciteTo(2+Math.floor(Math.random()*5));
+  }
+}
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+let stage,sctx,aux,actx;
+function cssv(n){ return getComputedStyle(document.body).getPropertyValue(n).trim()||'#fff'; }
+function clearC(ctx,w,h){ ctx.clearRect(0,0,w,h); ctx.fillStyle=cssv('--stage-bg'); ctx.fillRect(0,0,w,h); }
+function nmX(nm,x,w){ return x + (nm-SPEC_MIN)/(SPEC_MAX-SPEC_MIN)*w; }
+
+// reusable spectrum strip
+function spectrumStrip(ctx,x,y,w,h,opts){
+  opts=opts||{};
+  // background
+  if(opts.rainbow){ for(let px=0;px<w;px++){ const nm=SPEC_MIN+(px/w)*(SPEC_MAX-SPEC_MIN); ctx.fillStyle=wlColor(nm); ctx.fillRect(x+px,y,1.5,h); } }
+  else { ctx.fillStyle='#000'; ctx.fillRect(x,y,w,h); }
+  // axis ticks
+  ctx.fillStyle=cssv('--text3'); ctx.font='9px monospace';
+  for(let nm=400;nm<=700;nm+=100){ const px=nmX(nm,x,w); ctx.fillRect(px,y+h,1,4); ctx.fillText(nm,px-9,y+h+15); }
+  ctx.fillText('nm',x+w-14,y+h+15);
+  // lines
+  (opts.lines||[]).forEach(L=>{
+    const nm=L[0], inten=L[1]==null?1:L[1];
+    if(nm<SPEC_MIN||nm>SPEC_MAX) return;
+    const px=nmX(nm,x,w);
+    if(opts.dark){ ctx.strokeStyle='rgba(0,0,0,'+(0.55+0.45*inten)+')'; ctx.lineWidth=1.5+inten*1.5; ctx.beginPath(); ctx.moveTo(px,y); ctx.lineTo(px,y+h); ctx.stroke(); }
+    else { ctx.strokeStyle=wlColor(nm); ctx.globalAlpha=0.35+0.65*inten; ctx.lineWidth=1+inten*2; ctx.beginPath(); ctx.moveTo(px,y); ctx.lineTo(px,y+h); ctx.stroke(); ctx.globalAlpha=1; }
+  });
+  // overlay ticks (guesses)
+  (opts.ticks||[]).forEach(t=>{ const px=nmX(t.nm,x,w); ctx.strokeStyle=t.col; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(px,y-5); ctx.lineTo(px,y-1); ctx.stroke(); });
+  ctx.strokeStyle=cssv('--border2'); ctx.lineWidth=1; ctx.strokeRect(x,y,w,h);
+}
+
+function drawStage(){
+  if(!sctx)return; clearC(sctx,W,H);
+  if(S.mode==='bohr') drawBohr();
+  else if(S.mode==='emission') drawEmission();
+  else if(S.mode==='series') drawSeries();
+  else if(S.mode==='star') drawStar();
+}
+
+// --- Bohr atom ---
+function drawBohr(){
+  // orbits
+  for(let n=1;n<=6;n++){ const r=orbitR(n);
+    sctx.strokeStyle = n===S.n?cssv('--gold'):cssv('--border2'); sctx.globalAlpha=n===S.n?0.9:0.5; sctx.lineWidth=n===S.n?2:1;
+    sctx.beginPath(); sctx.arc(CX,CY,r,0,7); sctx.stroke(); sctx.globalAlpha=1;
+    sctx.fillStyle=n===S.n?cssv('--gold'):cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('n='+n, CX+r-14, CY-3);
+  }
+  // nucleus
+  sctx.fillStyle=cssv('--pink'); sctx.globalAlpha=0.25; sctx.beginPath(); sctx.arc(CX,CY,16,0,7); sctx.fill(); sctx.globalAlpha=1;
+  sctx.fillStyle=cssv('--red'); sctx.beginPath(); sctx.arc(CX,CY,8,0,7); sctx.fill();
+  sctx.fillStyle=cssv('--text3'); sctx.font='8px monospace'; sctx.fillText('+', CX-2, CY+3);
+  // electron
+  const r=orbitR(S.n), ang=tNow*0.02/Math.sqrt(S.n);
+  const ex=CX+Math.cos(ang)*r, ey=CY+Math.sin(ang)*r;
+  sctx.fillStyle=cssv('--cyan'); sctx.globalAlpha=0.3; sctx.beginPath(); sctx.arc(ex,ey,9,0,7); sctx.fill(); sctx.globalAlpha=1;
+  sctx.beginPath(); sctx.arc(ex,ey,5,0,7); sctx.fill();
+  sctx.fillStyle='#fff'; sctx.font='8px monospace'; sctx.fillText('e⁻', ex-6, ey-9);
+  // photons
+  for(const p of S.photons){ sctx.strokeStyle=p.col; sctx.lineWidth=2; sctx.globalAlpha=Math.max(0,1-p.life/260);
+    sctx.beginPath(); sctx.moveTo(p.x,p.y); sctx.lineTo(p.x-p.vx*4,p.y-p.vy*4); sctx.stroke(); sctx.globalAlpha=1; }
+  // hint text
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace';
+  sctx.fillText(S.n>1?'electron cascading down — emitting light':'click a level (here or on the ladder →) to excite', 300, 40);
+  // spectrum strip at bottom: hydrogen lines, lit ones glow
+  const lit = S.litLines.map(L=>[L.nm, L.t]);
+  const baseLines = [transitionNm(3,2),transitionNm(4,2),transitionNm(5,2),transitionNm(6,2)].map(nm=>[nm,0.12]);
+  spectrumStrip(sctx, 30, H-54, W-60, 30, {lines: baseLines.concat(lit)});
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('emitted light (hydrogen visible lines)', 30, H-60);
+}
+
+// --- Emission fingerprints ---
+function drawEmission(){
+  const E=ELEMENTS[S.element];
+  // discharge tube
+  const ty=70, th=46, tx=70, tw=W-140;
+  sctx.fillStyle=E.glow; sctx.globalAlpha=0.18; sctx.fillRect(tx,ty,tw,th); sctx.globalAlpha=1;
+  sctx.strokeStyle=E.glow; sctx.lineWidth=2; sctx.strokeRect(tx,ty,tw,th);
+  // electrodes
+  sctx.fillStyle=cssv('--text2'); sctx.fillRect(tx-12,ty+th/2-8,12,16); sctx.fillRect(tx+tw,ty+th/2-8,12,16);
+  sctx.fillStyle=E.glow; sctx.font='bold 15px monospace'; sctx.textAlign='center';
+  sctx.fillText(E.name+' gas — glowing', W/2, ty+th/2+5); sctx.textAlign='left';
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('a hot gas emits only its own private set of colours →', tx, ty-10);
+  // big spectrum
+  spectrumStrip(sctx, 40, 170, W-80, 70, {lines:E.lines});
+  sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace'; sctx.fillText(E.name+'\u2019s emission spectrum — its fingerprint', 40, 160);
+  // count
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace';
+  sctx.fillText('No two elements share the same pattern. Switch elements and compare.', 40, 270);
+}
+
+// --- Spectral series ---
+function drawSeries(){
+  const ser=SERIES[S.series], nf=ser.nf;
+  // energy ladder with transitions
+  const x0=60, top=40, bot=250, eMin=-13.6, eMax=0;
+  function Y(E){ return bot - (E-eMin)/(eMax-eMin)*(bot-top); }
+  sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=1;
+  for(let n=1;n<=7;n++){ const y=Y(En(n)); sctx.globalAlpha=0.6; sctx.beginPath(); sctx.moveTo(x0,y); sctx.lineTo(x0+150,y); sctx.stroke(); sctx.globalAlpha=1;
+    sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('n='+n, x0+154, y+3); }
+  // transitions to nf
+  for(let ni=nf+1;ni<=7;ni++){ const nm=transitionNm(ni,nf); sctx.strokeStyle=wlColor(nm); sctx.globalAlpha=0.9; sctx.lineWidth=1.6;
+    sctx.beginPath(); sctx.moveTo(x0+20+ni*8, Y(En(ni))); sctx.lineTo(x0+20+ni*8, Y(En(nf))); sctx.stroke();
+    // arrowhead
+    sctx.beginPath(); sctx.moveTo(x0+20+ni*8, Y(En(nf))); sctx.lineTo(x0+16+ni*8, Y(En(nf))-6); sctx.lineTo(x0+24+ni*8, Y(En(nf))-6); sctx.fill(); sctx.globalAlpha=1; }
+  sctx.fillStyle=cssv('--gold'); sctx.font='10px monospace'; sctx.fillText(S.series+' series → n='+nf, x0, top-12);
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('all jumps that LAND on n='+nf, x0, bot+22);
+  // spectrum strip of the series
+  const lines=[]; for(let ni=nf+1;ni<=8;ni++) lines.push([transitionNm(ni,nf), 1-(ni-nf)*0.12]);
+  spectrumStrip(sctx, 40, 300, W-80, 56, {lines});
+  sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace';
+  const anyVis=lines.some(l=>l[0]>=SPEC_MIN&&l[0]<=SPEC_MAX);
+  sctx.fillText(S.series+' lines — '+ser.band+(anyVis?'':' (outside the visible strip)'), 40, 290);
+}
+
+// --- Star detective ---
+function drawStar(){
+  // star
+  sctx.fillStyle=cssv('--gold'); sctx.globalAlpha=0.25; sctx.beginPath(); sctx.arc(70,80,40,0,7); sctx.fill(); sctx.globalAlpha=1;
+  sctx.fillStyle='#fff5d0'; sctx.beginPath(); sctx.arc(70,80,26,0,7); sctx.fill();
+  sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace'; sctx.fillText('starlight', 44, 135);
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('Cool gas in the star\u2019s atmosphere steals exact colours, leaving dark lines.', 130, 60);
+  // absorption spectrum: rainbow with dark lines from starSet
+  const starLines=[]; S.starSet.forEach(el=>ELEMENTS[el].lines.forEach(L=>starLines.push(L)));
+  // guesses overlay ticks
+  const ticks=[]; S.guessSet.forEach(el=>ELEMENTS[el].lines.forEach(L=>{ if(L[0]>=SPEC_MIN&&L[0]<=SPEC_MAX) ticks.push({nm:L[0],col:ELEMENTS[el].glow}); }));
+  spectrumStrip(sctx, 40, 150, W-80, 80, {rainbow:true, lines:starLines, dark:true, ticks});
+  sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace'; sctx.fillText('the star\u2019s absorption spectrum — match the dark lines', 40, 142);
+  sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace';
+  sctx.fillText('Toggle elements (in Setup →). Your guesses appear as ticks above the strip.', 40, 250);
+  if(S.solved){ sctx.fillStyle=cssv('--green'); sctx.font='bold 14px monospace'; sctx.fillText('★ COMPOSITION IDENTIFIED ★', W/2-110, 290); }
+}
+
+// ============================================================================
+// AUX
+// ============================================================================
+function drawAux(){
+  if(!actx)return; clearC(actx,AUXW,AUXH);
+  if(S.mode==='bohr') drawEnergyLadder();
+  else if(S.mode==='emission') drawElementCompare();
+  else if(S.mode==='series') drawSeriesTable();
+  else if(S.mode==='star') drawStarHelp();
+}
+let ladderHit=[]; // clickable level zones {n,y}
+function drawEnergyLadder(){
+  const x0=70, top=30, bot=AUXH-30, eMin=-13.6, eMax=0;
+  function Y(E){ return bot - (E-eMin)/(eMax-eMin)*(bot-top); }
+  actx.fillStyle=cssv('--text3'); actx.font='9px monospace'; actx.fillText('energy (eV)',6,16);
+  actx.strokeStyle=cssv('--border2'); actx.beginPath(); actx.moveTo(x0-8,top); actx.lineTo(x0-8,bot); actx.stroke();
+  ladderHit=[];
+  for(let n=1;n<=6;n++){ const y=Y(En(n)); ladderHit.push({n,y});
+    actx.strokeStyle = n===S.n?cssv('--gold'):cssv('--border2'); actx.lineWidth=n===S.n?2.4:1.2;
+    actx.beginPath(); actx.moveTo(x0,y); actx.lineTo(AUXW-30,y); actx.stroke();
+    actx.fillStyle = n===S.n?cssv('--gold'):cssv('--text2'); actx.font='10px monospace';
+    actx.fillText('n='+n, x0-44, y+3); actx.fillText(En(n).toFixed(2)+' eV', AUXW-72, y-4);
+  }
+  // ionization line
+  actx.strokeStyle=cssv('--violet'); actx.setLineDash([4,3]); actx.beginPath(); actx.moveTo(x0,Y(0)); actx.lineTo(AUXW-30,Y(0)); actx.stroke(); actx.setLineDash([]);
+  actx.fillStyle=cssv('--violet'); actx.fillText('n=∞ (ionised, 0 eV)', x0, Y(0)-5);
+  // electron dot
+  const y=Y(En(S.n)); actx.fillStyle=cssv('--cyan'); actx.beginPath(); actx.arc(x0+30,y,6,0,7); actx.fill();
+  // last emitted transition arrow
+  if(S.litLines.length){ const last=S.litLines[S.litLines.length-1]; actx.fillStyle=cssv('--text3'); actx.font='9px monospace';
+    actx.fillText('last photon: '+last.nm.toFixed(0)+' nm', x0, bot+18); }
+  else actx.fillText('click a level to send the electron up', x0, bot+18);
+}
+function drawElementCompare(){
+  const els=Object.keys(ELEMENTS); const rowH=(AUXH-30)/els.length;
+  actx.fillStyle=cssv('--text3'); actx.font='9px monospace'; actx.fillText('every element\u2019s fingerprint:',8,16);
+  els.forEach((el,i)=>{ const y=24+i*rowH;
+    actx.fillStyle = el===S.element?cssv('--gold'):cssv('--text3'); actx.font='9px monospace'; actx.fillText(el, 8, y+rowH/2+3);
+    spectrumStrip(actx, 30, y+4, AUXW-46, rowH-12, {lines:ELEMENTS[el].lines});
+    if(el===S.element){ actx.strokeStyle=cssv('--gold'); actx.lineWidth=1.5; actx.strokeRect(30,y+4,AUXW-46,rowH-12); }
+  });
+}
+function drawSeriesTable(){
+  const ser=SERIES[S.series], nf=ser.nf;
+  actx.fillStyle=cssv('--text2'); actx.font='11px monospace'; actx.fillText(S.series+' series wavelengths',14,24);
+  actx.font='10px monospace';
+  let y=50;
+  for(let ni=nf+1;ni<=8;ni++){ const nm=transitionNm(ni,nf);
+    actx.fillStyle=cssv('--text3'); actx.fillText('n='+ni+' → '+nf, 18, y);
+    actx.fillStyle=wlColor(nm); actx.fillRect(110,y-9,14,11);
+    actx.fillStyle=cssv('--text'); actx.fillText(nm.toFixed(1)+' nm  ('+band(nm)+')', 134, y); y+=24; }
+  actx.fillStyle=cssv('--gold'); actx.font='9px monospace'; actx.fillText('Balmer (n→2) is the only series mostly in', 14, y+6);
+  actx.fillText('visible light — the lines you can see.', 14, y+18);
+}
+function drawStarHelp(){
+  actx.fillStyle=cssv('--text2'); actx.font='10px monospace'; actx.fillText('Candidate fingerprints to match:',12,20);
+  const els=Object.keys(ELEMENTS); const rowH=(AUXH-40)/els.length;
+  els.forEach((el,i)=>{ const y=30+i*rowH; const on=S.guessSet.includes(el);
+    actx.fillStyle= on?cssv('--green'):cssv('--text3'); actx.font='9px monospace'; actx.fillText((on?'✓ ':'  ')+el, 8, y+rowH/2+3);
+    actx.globalAlpha=on?1:0.4; spectrumStrip(actx, 34, y+3, AUXW-50, rowH-10, {lines:ELEMENTS[el].lines}); actx.globalAlpha=1;
+  });
+}
+
+// ============================================================================
+// CONTROLS
+// ============================================================================
+function $(id){ return document.getElementById(id); }
+function el(t,c,h){ const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; }
+
+function buildControls(){
+  const p=$('mode-controls'); p.innerHTML='';
+  if(S.mode==='bohr'){
+    const wrap=el('div'); wrap.style.gridColumn='span 2';
+    wrap.append(el('div','section-label','Excite the electron to level n'));
+    const g=el('div','btn-grid c3');
+    for(let n=2;n<=6;n++){ const b=el('button','minibtn','n = '+n); b.onclick=()=>exciteTo(n); g.appendChild(b); }
+    const rnd=el('button','minibtn','🎲 Random'); rnd.onclick=()=>exciteTo(2+Math.floor(Math.random()*5)); g.appendChild(rnd);
+    wrap.appendChild(g);
+    const g2=el('div','btn-grid c2'); g2.style.marginTop='6px';
+    const auto=el('button','minibtn'+(S.autoExcite?' active':''), S.autoExcite?'⏸ Stop auto':'♻ Auto-excite');
+    auto.onclick=()=>{ S.autoExcite=!S.autoExcite; buildControls(); };
+    const grd=el('button','minibtn','⤓ Back to ground'); grd.onclick=()=>{ S.n=1;S.targetN=1;S.autoExcite=false;buildControls(); };
+    g2.append(auto,grd); wrap.appendChild(g2); p.appendChild(wrap);
+  }
+  else if(S.mode==='emission'){
+    const wrap=el('div'); wrap.style.gridColumn='span 2';
+    wrap.append(el('div','section-label','Choose an element'));
+    const g=el('div','btn-grid c3');
+    Object.entries(ELEMENTS).forEach(([k,e])=>{ const b=el('button','minibtn'+(k===S.element?' active':''),
+      '<span style="color:'+e.glow+'">●</span> '+e.name); b.onclick=()=>{S.element=k;buildControls();}; g.appendChild(b); });
+    wrap.appendChild(g); p.appendChild(wrap);
+  }
+  else if(S.mode==='series'){
+    const wrap=el('div'); wrap.style.gridColumn='span 2';
+    wrap.append(el('div','section-label','Choose a hydrogen series'));
+    const g=el('div','btn-grid c3');
+    Object.keys(SERIES).forEach(k=>{ const b=el('button','minibtn'+(k===S.series?' active':''), k+'<br><span style="font-size:8px;color:var(--text3)">→ n='+SERIES[k].nf+'</span>');
+      b.onclick=()=>{S.series=k;buildControls();}; g.appendChild(b); });
+    wrap.appendChild(g); p.appendChild(wrap);
+  }
+  else if(S.mode==='star'){
+    const wrap=el('div'); wrap.style.gridColumn='span 2';
+    wrap.append(el('div','section-label','Which elements are in this star? (toggle)'));
+    const g=el('div','btn-grid c3');
+    Object.entries(ELEMENTS).forEach(([k,e])=>{ const on=S.guessSet.includes(k);
+      const correct=S.solved; const b=el('button','minibtn'+(on?(correct?' good':' active'):''),
+      '<span style="color:'+e.glow+'">●</span> '+e.name);
+      b.onclick=()=>{ if(S.solved)return; const i=S.guessSet.indexOf(k); if(i<0)S.guessSet.push(k); else S.guessSet.splice(i,1); checkStar(); buildControls(); };
+      g.appendChild(b); });
+    wrap.appendChild(g);
+    const g2=el('div','btn-grid c2'); g2.style.marginTop='6px';
+    const ns=el('button','minibtn','✦ New star'); ns.onclick=()=>{ newStar(); buildControls(); };
+    const hint=el('button','minibtn','💡 Hint'); hint.onclick=()=>{ alert('This star contains '+S.starSet.length+' element'+(S.starSet.length>1?'s':'')+'. Match every dark line to a fingerprint.'); };
+    g2.append(ns,hint); wrap.appendChild(g2); p.appendChild(wrap);
+  }
+}
+function buildToggles(){ const t=$('toggle-row'); t.innerHTML=''; if(S.mode!=='bohr'){ t.innerHTML='<span style="font-family:monospace;font-size:9px;color:var(--text3)">—</span>'; return; }
+  [['orbits','orbits'],['photons','photons']].forEach(([k,l])=>{ const c=el('div','toggle-chip on',l); c.style.opacity=.6; t.appendChild(c); });
+}
+
+// ============================================================================
+// STAR DETECTIVE
+// ============================================================================
+function newStar(){
+  const keys=Object.keys(ELEMENTS); const k=2+Math.floor(Math.random()*2); // 2 or 3 elements
+  const shuffled=keys.slice().sort(()=>Math.random()-0.5);
+  S.starSet=shuffled.slice(0,k).sort(); S.guessSet=[]; S.solved=false;
+}
+function checkStar(){
+  const a=S.guessSet.slice().sort().join(','), b=S.starSet.slice().sort().join(',');
+  S.solved = a===b && a.length>0;
+}
+
+// ============================================================================
+// READOUTS
+// ============================================================================
+function rcell(l,v,s,c){ return '<div class="rcell"><div class="r-label">'+l+'</div><div class="r-value '+(c||'sm')+'">'+v+'</div><div class="r-sub">'+(s||'')+'</div></div>'; }
+function updateReadout(){
+  const g=$('readout-grid'); let html='', law=''; const vd=$('verdict'); vd.className='verdict';
+  if(S.mode==='bohr'){
+    const last=S.litLines.length?S.litLines[S.litLines.length-1].nm:null;
+    html=rcell('Electron level','n = '+S.n, S.n===1?'ground state':'excited','gold')
+      + rcell('Energy E', En(S.n).toFixed(2)+' eV','−13.6/n²','cyan')
+      + rcell('Last photon', last?last.toFixed(1)+' nm':'—', last?band(last)+' · '+(HC/last).toFixed(2)+' eV':'excite to emit', last?'violet':'sm')
+      + rcell('Its colour', last?'':'', last?'':'', 'sm')
+      + rcell('Ionisation energy','13.6 eV','to free the electron (n→∞)')
+      + rcell('Photons emitted', S.photons.length,'flying outward');
+    // colour swatch in 'Its colour'
+    setBadges('n = '+S.n+'  ('+En(S.n).toFixed(2)+' eV)', last?last.toFixed(0)+' nm':'ground');
+    law='<b>ΔE = E<sub>i</sub> − E<sub>f</sub> = hf</b> — an electron dropping between levels emits one photon whose colour is fixed by the energy gap. Quantised levels → a sharp set of exact colours, never a smear.';
+  }
+  else if(S.mode==='emission'){
+    const E=ELEMENTS[S.element]; const strong=E.lines.slice().sort((a,b)=>b[1]-a[1])[0];
+    html=rcell('Element',E.name,'hot gas','gold')
+      + rcell('Bright lines', E.lines.length,'in this view')
+      + rcell('Strongest line', strong[0].toFixed(1)+' nm', band(strong[0])+' · '+(HC/strong[0]).toFixed(2)+' eV','cyan')
+      + rcell('Characteristic glow', '■', '', 'sm')
+      + rcell('Why unique','energy levels','each element\u2019s ladder differs','violet')
+      + rcell('Used for','identifying matter','flames, stars, neon signs');
+    setBadges(E.name, E.lines.length+' lines');
+    law='<b>Each element has its own energy-level ladder</b>, so it emits its own private set of wavelengths — a barcode that identifies it anywhere in the universe. Sodium\u2019s yellow, neon\u2019s orange-red, mercury\u2019s blue-green.';
+  }
+  else if(S.mode==='series'){
+    const ser=SERIES[S.series], nf=ser.nf; const first=transitionNm(nf+1,nf), limit=transitionNm(1e6,nf);
+    html=rcell('Series',S.series,'lands on n='+nf,'gold')
+      + rcell('Spectral band', ser.band,'where it appears','cyan')
+      + rcell('Longest λ (n='+(nf+1)+'→'+nf+')', first.toFixed(1)+' nm','first line')
+      + rcell('Series limit (∞→'+nf+')', limit.toFixed(1)+' nm','converges here','violet')
+      + rcell('Discovered', S.series==='Balmer'?'1885':(S.series==='Lyman'?'1906':'1908'),'')
+      + rcell('Visible?', ser.band==='visible'?'yes — you can see it':'no','');
+    setBadges(S.series+' → n='+nf, ser.band);
+    law='<b>1/λ = R(1/n_f² − 1/n_i²)</b> — Rydberg\u2019s formula. Group every jump by its landing level and you get a family of lines. <b>Balmer (n→2)</b> happens to fall in visible light — the colours of glowing hydrogen.';
+  }
+  else if(S.mode==='star'){
+    const matched=S.guessSet.filter(e=>S.starSet.includes(e)).length;
+    const wrong=S.guessSet.filter(e=>!S.starSet.includes(e)).length;
+    html=rcell('Elements present', S.starSet.length,'hidden in the star','gold')
+      + rcell('Your guesses', S.guessSet.length,'toggled','cyan')
+      + rcell('Correct so far', matched,'in the star','green')
+      + rcell('Wrong picks', wrong, wrong?'not in this star':'none','+wrong'?(wrong?'red':'sm'):'sm');
+    setBadges('star: '+S.starSet.length+' elements', S.solved?'SOLVED':'guessing');
+    law='<b>Absorption spectroscopy</b> — cool gas absorbs exactly the colours it would emit, leaving dark lines in starlight. Match those lines to fingerprints and you read a star\u2019s chemistry from light-years away. This is how we know the cosmos\u2019 composition.';
+    vd.className='verdict show '+(S.solved?'go':'no');
+    if(S.solved) vd.innerHTML='★ <b>Identified!</b> This star contains: '+S.starSet.map(e=>ELEMENTS[e].name).join(', ')+'. Every dark line matched. Try a New star.';
+    else vd.innerHTML='Matched '+matched+' of '+S.starSet.length+(wrong?', but '+wrong+' pick'+(wrong>1?'s are':' is')+' wrong.':'.')+' Compare your ticks with the dark lines.';
+  }
+  g.innerHTML=html; $('law-strip').innerHTML=law;
+  // paint colour swatches
+  if(S.mode==='bohr'){ const c=g.querySelectorAll('.rcell')[3]; const last=S.litLines.length?S.litLines[S.litLines.length-1].nm:null;
+    if(c){ c.querySelector('.r-label').textContent='Its colour'; c.querySelector('.r-value').innerHTML = last?'<span style="color:'+wlColor(last)+'">██████</span>':'—'; c.querySelector('.r-sub').textContent=last?band(last):''; } }
+  if(S.mode==='emission'){ const c=g.querySelectorAll('.rcell')[3]; if(c) c.querySelector('.r-value').innerHTML='<span style="color:'+ELEMENTS[S.element].glow+'">██████</span>'; }
+}
+function setBadges(l,r){ $('badge-l').textContent=l; $('badge-r').textContent=r; }
+
+// ============================================================================
+// MODES + VOICE
+// ============================================================================
+const MODES=[
+  {id:'bohr',label:'Bohr Atom',tag:'excite & emit'},
+  {id:'emission',label:'Emission Lines',tag:'fingerprints'},
+  {id:'series',label:'Spectral Series',tag:'Balmer & co.'},
+  {id:'star',label:'Star Detective',tag:'game'}
+];
+const TITLE={bohr:'The Hydrogen Atom',emission:'Discharge Tube',series:'Hydrogen Spectral Series',star:'Stellar Spectroscopy'};
+const HINT={bohr:'click a level to excite the electron',emission:'each element glows its own colours',series:'jumps grouped by landing level',star:'identify the star\u2019s elements'};
+const AUXT={bohr:'Energy Levels',emission:'All Fingerprints',series:'Wavelength Table',star:'Candidate Fingerprints'};
+const AUXH_={bohr:'click a rung to excite',emission:'compare the barcodes',series:'n→n_f transitions',star:'match these to the dark lines'};
+let voiceOn=false, sceneToken=0;
+const SCRIPT={
+  bohr:"The Bohr model. An electron can only orbit at certain fixed energy levels, like rungs on a ladder — never in between. Give it energy and it jumps up to a higher rung. Moments later it falls back down, and the energy it loses is released as a single particle of light, a photon, whose colour is set exactly by the size of the jump.",
+  emission:"Heat any element until it glows and it gives off light — but only at very specific colours, never a smooth rainbow. Each element has its own unique set of bright lines, a fingerprint as distinctive as a barcode. Switch between elements and watch the pattern change completely.",
+  series:"Sort hydrogen\u2019s jumps by the level they land on and you get families of lines, each named after its discoverer. Jumps landing on level two — the Balmer series — happen to fall in visible light, which is why glowing hydrogen shows those beautiful red, cyan and violet lines.",
+  star:"Now the payoff. Starlight passes through cooler gas that absorbs exactly the colours it would normally emit, punching dark lines into the spectrum. Match those dark lines to the fingerprints of the elements, and you can read what a distant star is made of. This is genuinely how we know the composition of the universe."
+};
+function speak(t){ if(!voiceOn||!t||typeof speechSynthesis==='undefined')return; const my=++sceneToken; try{speechSynthesis.cancel();}catch(e){}
+  setTimeout(()=>{ if(my!==sceneToken||!voiceOn)return; try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){} },80); }
+function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel(); }catch(e){} }
+function updateVoiceBtn(){ const v=$('voice-switcher'); v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color=voiceOn?'var(--cyan)':''; }
+function buildModeBar(){ const b=$('mode-bar'); b.innerHTML=''; MODES.forEach(m=>{ const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.label+' <span class="mode-tag">'+m.tag+'</span>'); t.onclick=()=>setMode(m.id); b.appendChild(t); }); }
+function setMode(id){
+  stopSpeech(); S.mode=id; S.autoExcite=false;
+  if(id==='star' && !S.starSet.length) newStar();
+  $('stage-title').firstChild.textContent=TITLE[id]+' '; $('stage-hint').textContent=HINT[id];
+  $('aux-title').firstChild.textContent=AUXT[id]+' '; $('aux-hint').textContent=AUXH_[id];
+  buildModeBar(); buildControls(); buildToggles(); updateReadout(); speak(SCRIPT[id]);
+}
+
+// ============================================================================
+// INTERACTIONS — click to excite
+// ============================================================================
+function bindUI(){
+  stage=$('stage'); sctx=stage.getContext('2d'); aux=$('aux'); actx=aux.getContext('2d');
+  fitCanvases(); window.addEventListener('resize',fitCanvases);
+  // click atom orbits
+  stage.addEventListener('click',e=>{ if(S.mode!=='bohr')return; const r=stage.getBoundingClientRect();
+    const x=(e.clientX-r.left)*(W/r.width), y=(e.clientY-r.top)*(H/r.height);
+    const d=Math.hypot(x-CX,y-CY); let best=1,bd=1e9; for(let n=1;n<=6;n++){ const dd=Math.abs(orbitR(n)-d); if(dd<bd){bd=dd;best=n;} }
+    if(bd<26) exciteTo(best); });
+  // click energy ladder (aux)
+  aux.addEventListener('click',e=>{ if(S.mode!=='bohr')return; const r=aux.getBoundingClientRect();
+    const y=(e.clientY-r.top)*(AUXH/r.height); let best=1,bd=1e9; ladderHit.forEach(h=>{ const dd=Math.abs(h.y-y); if(dd<bd){bd=dd;best=h.n;} });
+    if(bd<20) exciteTo(best); });
+  // theme
+  const ts=$('theme-switcher');
+  try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){} };
+  // voice
+  const vs=$('voice-switcher');
+  try{ if(localStorage.getItem('sp-voice')==='on')voiceOn=true; }catch(e){}
+  updateVoiceBtn();
+  vs.onclick=()=>{ voiceOn=!voiceOn; try{localStorage.setItem('sp-voice',voiceOn?'on':'off');}catch(e){} updateVoiceBtn(); if(voiceOn)speak(SCRIPT[S.mode]); else stopSpeech(); };
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden)stopSpeech(); });
+}
+function fitCanvases(){ W=560;H=400;AUXW=560;AUXH=320; stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH; }
+
+// ============================================================================
+// THEORY
+// ============================================================================
+function buildTheory(){
+  $('theory').innerHTML=`
+  <div class="theory-hdr">Theory — Atomic Spectra &amp; the Bohr Model</div>
+  <h3>The Quantum Leap</h3>
+  <p>In 1913 Niels Bohr made a radical proposal: an electron in an atom cannot orbit at just any distance. It is restricted to certain special orbits, each with a fixed <em>energy level</em>. The electron can sit on one rung of this ladder or another — but never in between, and never spiralling smoothly inward as classical physics demanded.</p>
+  <div class="eq">E<sub>n</sub> = −13.6 / n² &nbsp;eV &nbsp;&nbsp;(n = 1, 2, 3 …)
+    <div class="vars">n is the principal quantum number. n=1 is the ground state (lowest, most bound). The levels crowd together as n grows, converging on 0 eV — the point where the electron breaks free and the atom is ionised (which takes 13.6 eV from the ground state).</div>
+  </div>
+
+  <h3>Why Atoms Emit Sharp Colours</h3>
+  <p>Give an electron energy — heat, a spark, a collision — and it leaps to a higher level. It cannot stay there; within nanoseconds it falls back down. The energy it loses is carried off by a single <em>photon</em>, and the photon\u2019s colour is fixed exactly by the size of the jump:</p>
+  <div class="eq">ΔE = E<sub>i</sub> − E<sub>f</sub> = h f = h c / λ
+    <div class="vars">Because only certain energy gaps exist, only certain photon energies — certain colours — can come out. That is why a glowing gas produces a handful of razor-sharp lines, not a continuous rainbow. The set of lines is unique to each element.</div>
+  </div>
+
+  <h3>The Hydrogen Series &amp; the Rydberg Formula</h3>
+  <p>Group hydrogen\u2019s transitions by the level they land on and each family forms a <em>series</em>, neatly described by a formula Johannes Rydberg found empirically — decades before Bohr explained <em>why</em> it worked:</p>
+  <div class="eq">1/λ = R ( 1/n<sub>f</sub>² − 1/n<sub>i</sub>² )
+    <div class="vars">R = 1.097×10⁷ m⁻¹ is the Rydberg constant. n_f is the landing level, n_i the starting level.</div>
+  </div>
+  <table class="ctable">
+    <tr><th>Series</th><th>Lands on</th><th>Band</th><th>Example line</th></tr>
+    <tr><td>Lyman</td><td>n = 1</td><td>ultraviolet</td><td>122 nm</td></tr>
+    <tr><td>Balmer</td><td>n = 2</td><td>visible</td><td>656 nm (red, H-α)</td></tr>
+    <tr><td>Paschen</td><td>n = 3</td><td>infrared</td><td>1875 nm</td></tr>
+  </table>
+  <p>Only the <strong>Balmer series</strong> lands mostly in visible light — which is why the lines you can actually see from glowing hydrogen are red, cyan and violet.</p>
+
+  <h3>Fingerprints of the Elements</h3>
+  <p>Every element has a different ladder of energy levels, so every element emits a different set of wavelengths — a spectral <em>fingerprint</em> as unique as a barcode. Sodium\u2019s intense yellow doublet, neon\u2019s orange-red glow, mercury\u2019s blue-green lines: each is unmistakable. Spectroscopy turns light into a chemical identity test that works in a flame on a lab bench or in a galaxy billions of light-years away.</p>
+
+  <h3>Reading the Stars</h3>
+  <p>When white light passes through a cooler gas, the gas absorbs exactly the wavelengths it would otherwise emit, stamping <em>dark absorption lines</em> into the spectrum. The Sun\u2019s spectrum is crossed by thousands of these (Fraunhofer lines). By matching them to laboratory fingerprints, astronomers read the composition, temperature and motion of stars they will never visit.</p>
+  <div class="hbox hb-gold">Helium was discovered in the Sun\u2019s spectrum in 1868 — and named after Helios, the Sun — nearly 30 years before it was found on Earth. Light alone told us a brand-new element existed.</div>
+  <p>Bohr\u2019s simple model isn\u2019t the final word — full quantum mechanics refines it, and multi-electron atoms need more — but its core insight stands: energy in atoms is quantised, and the light they emit is a coded message about their structure.</p>
+  `;
+}
+
+// ============================================================================
+// LOOP + INIT
+// ============================================================================
+let rt=0,lastT=0;
+function loop(now){
+  try{
+    if(!lastT)lastT=now; const dt=Math.min(3,(now-lastT)/16.67); lastT=now; tNow=now;
+    stepAtom(dt);
+    drawStage(); drawAux();
+    if(rt++%5===0) updateReadout();
+  }catch(e){ console.error('loop',e); }
+  requestAnimationFrame(loop);
+}
+function init(){
+  buildModeBar(); bindUI(); buildToggles(); buildTheory();
+  setMode('bohr');
+  requestAnimationFrame(loop);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
+</script>
+</body>
+</html>

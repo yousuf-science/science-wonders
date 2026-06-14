@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projectile &amp; Orbital Motion — Science Wonders</title>
+<meta name="description" content="An interactive projectile and orbital motion simulator that teaches you to calculate trajectories step by step. Launch a ball, see the live worksheet plug real numbers into the range, height and time-of-flight formulas, solve everyday worked examples, and follow Newton's cannonball all the way up into orbit.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#071018;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:crosshair;touch-action:none;}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:9px;left:9px;color:var(--gold);}
+.sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.play-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.play-btn{font-family:monospace;font-size:12px;letter-spacing:1px;padding:9px 16px;border-radius:7px;border:1px solid var(--gold);background:rgba(240,192,96,.1);color:var(--gold-bright);cursor:pointer;transition:all .15s;font-weight:bold;}
+body.light-theme .play-btn{color:var(--gold);}
+.play-btn:hover{background:rgba(240,192,96,.2);}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
+@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
+.minibtn{font-family:monospace;font-size:10px;padding:8px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;line-height:1.3;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+/* CALCULATION WORKSHEET */
+.wsheet{font-family:'SF Mono',Menlo,monospace;font-size:11px;line-height:1.55;}
+.ws-given{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 11px;margin-bottom:12px;color:var(--text);}
+.ws-given b{color:var(--gold);}
+.ws-step{margin-bottom:11px;padding-bottom:11px;border-bottom:1px dashed var(--border);}
+.ws-step:last-child{border-bottom:none;margin-bottom:0;}
+.ws-num{color:var(--text3);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;}
+.ws-label{color:var(--text2);margin:2px 0;}
+.ws-formula{color:var(--gold-bright);font-size:11.5px;}
+body.light-theme .ws-formula{color:var(--gold);}
+.ws-sub{color:var(--text);font-size:11px;word-break:break-word;}
+.ws-result{color:var(--cyan);font-weight:bold;font-size:13px;margin-top:2px;}
+.ws-note{color:var(--text3);font-size:9.5px;font-style:italic;margin-top:3px;}
+.ws-story{font-family:'Georgia',serif;font-size:12px;color:var(--text2);font-style:italic;line-height:1.6;margin-bottom:12px;padding-left:10px;border-left:2px solid var(--gold);}
+
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Projectile &amp; Orbital Motion</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="mode-bar" id="mode-bar"></div>
+
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+
+      <div class="card">
+        <div class="card-title" id="stage-title">Launch Pad <span class="hint" id="stage-hint">drag from the launcher to aim &amp; fire</span></div>
+        <div class="stage-wrap">
+          <canvas id="stage" width="560" height="400"></canvas>
+          <div class="stage-badge sb-tl" id="badge-l">—</div>
+          <div class="stage-badge sb-tr" id="badge-r">—</div>
+        </div>
+      </div>
+
+      <div class="play-bar">
+        <div class="play-row">
+          <button class="play-btn" id="fire-btn">▶ Launch</button>
+          <button class="minibtn" id="replay-btn" style="flex:0 0 auto;padding:9px 14px;">↺ Replay</button>
+        </div>
+        <div class="sb-controls" id="mode-controls"></div>
+      </div>
+
+    </div>
+
+    <div class="right-col">
+
+      <div class="card">
+        <div class="card-title" id="ws-title">Live Calculation <span class="hint">numbers plugged in</span></div>
+        <div class="card-pad"><div class="wsheet" id="worksheet"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Setup</div>
+        <div class="card-pad" id="setup-panel">
+          <div id="setup-extra"></div>
+          <div class="section-label" style="margin-top:6px;">Show on screen</div>
+          <div class="toggle-row" id="toggle-row"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Results <span class="hint">the answers</span></div>
+    <div class="card-pad">
+      <div class="readout-grid" id="readout-grid"></div>
+      <div class="law-strip" id="law-strip"></div>
+    </div>
+  </div>
+</div>
+
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+// ============================================================================
+// PROJECTILE & ORBITAL MOTION — engine
+// ============================================================================
+let W=560,H=400;
+const G_EARTH=6.674e-11, M_EARTH=5.972e24, R_EARTH=6.371e6;
+
+const S = {
+  mode:'launch',
+  v0:20, angle:45, h:0, g:9.8,    // launch params
+  t:0, flying:false, trail:[],     // animation
+  example:0,
+  // central gravity (cannonball / orbit)
+  cspeed:0.6,                       // fraction of surface orbital speed (cannonball)
+  oAlt:0.6, oSpeed:1.0,             // orbit: altitude frac, speed frac of circular
+  body:null, otrail:[], crashed:false, escaped:false
+};
+
+// ---- projectile physics (uniform g) ----
+function vx(){ return S.v0*Math.cos(S.angle*Math.PI/180); }
+function vy0(){ return S.v0*Math.sin(S.angle*Math.PI/180); }
+function flightTime(){ const u=vy0(); return (u+Math.sqrt(u*u+2*S.g*Math.max(0,S.h)))/S.g; }
+function range(){ return vx()*flightTime(); }
+function peakAboveLaunch(){ return vy0()*vy0()/(2*S.g); }
+function peakHeight(){ return S.h+peakAboveLaunch(); }
+function timeToPeak(){ return vy0()/S.g; }
+function posAt(t){ return { x:vx()*t, y:S.h+vy0()*t-0.5*S.g*t*t }; }
+function velAt(t){ const vyy=vy0()-S.g*t; return { vx:vx(), vy:vyy, sp:Math.hypot(vx(),vyy) }; }
+function impactSpeed(){ return velAt(flightTime()).sp; }
+
+// ---- everyday worked examples ----
+const EXAMPLES=[
+  {emoji:'⚽',name:'Soccer free kick',v:25,angle:30,h:0,story:'A player strikes a free kick at 25 m/s, angled 30° above the grass. How far does the ball travel and how high does it climb?'},
+  {emoji:'🏀',name:'Basketball shot',v:9,angle:52,h:2.0,story:'A player releases the ball at 9 m/s, 52° upward, from 2 m above the floor. Watch the high arc that drops the ball down into the hoop.'},
+  {emoji:'💣',name:'Cannonball',v:80,angle:40,h:0,story:'An old cannon fires a ball at 80 m/s, 40° above level ground. Cannonballs travel surprisingly far — let us see exactly how far.'},
+  {emoji:'⛲',name:'Water fountain',v:12,angle:75,h:0,story:'A fountain jet leaves the nozzle at 12 m/s, almost straight up at 75°. A steep angle trades distance for height.'},
+  {emoji:'🏃',name:'Cliff jump (horizontal)',v:8,angle:0,h:20,story:'A cliff diver runs off a 20 m ledge at 8 m/s, perfectly horizontal. With no upward speed, gravity alone decides the fall time.'},
+  {emoji:'🎯',name:'Javelin throw',v:29,angle:36,h:1.8,story:'An athlete launches a javelin at 29 m/s, 36°, released from shoulder height ~1.8 m. World-class throws push past 90 m.'},
+  {emoji:'🏏',name:'Cricket six',v:32,angle:35,h:1.0,story:'A batter middles the ball at 32 m/s, 35°, struck about 1 m up. Will it clear the boundary rope?'},
+  {emoji:'🏈',name:'Football punt',v:28,angle:55,h:0.6,story:'A punter boots the ball at 28 m/s, a high 55° to maximise hang-time so team-mates can sprint downfield.'}
+];
+
+// ---- central-gravity (cannonball / orbit) ----
+const ECX=280, ECY=205, RPX=66;       // Earth on canvas
+const VORB_SURF=2.55;                  // px/frame orbital speed at surface (display)
+const GM = VORB_SURF*VORB_SURF*RPX;    // scaled
+function vOrbAt(r){ return Math.sqrt(GM/r); }
+function pxToKms(vpx){ return vpx/VORB_SURF*7.91; }   // map to real km/s
+
+function resetBody(){
+  S.crashed=false; S.escaped=false; S.otrail=[];
+  if(S.mode==='cannonball'){
+    // fire horizontally from a mountain just above surface
+    const r=RPX+10; const x=ECX, y=ECY-r;            // top of Earth
+    const v=S.cspeed*VORB_SURF;
+    S.body={ x, y, vx:v, vy:0 };
+  } else if(S.mode==='orbit'){
+    const r=RPX+10 + S.oAlt*180;
+    const vcirc=vOrbAt(r);
+    S.body={ x:ECX+r, y:ECY, vx:0, vy:-vcirc*S.oSpeed };
+  }
+}
+function stepGravity(steps){
+  if(!S.body || S.crashed || S.escaped) return;
+  const sub=4;
+  for(let s=0;s<steps*sub;s++){
+    const b=S.body;
+    const dx=b.x-ECX, dy=b.y-ECY; const r2=dx*dx+dy*dy; const r=Math.sqrt(r2);
+    if(r<=RPX){ S.crashed=true; b.x=ECX+dx/r*RPX; b.y=ECY+dy/r*RPX; return; }
+    if(r>1400){ S.escaped=true; return; }
+    const a=-GM/(r2*r);
+    b.vx+=a*dx/sub; b.vy+=a*dy/sub;
+    b.x+=b.vx/sub; b.y+=b.vy/sub;
+  }
+  S.otrail.push([S.body.x,S.body.y]); if(S.otrail.length>900) S.otrail.shift();
+}
+
+// ============================================================================
+// THE LIVE WORKSHEET  (numbers plugged in, step by step)
+// ============================================================================
+function n(x,d){ return (Math.round(x*Math.pow(10,d==null?1:d))/Math.pow(10,d==null?1:d)); }
+function wsStep(num,label,formula,sub,result,note){
+  return '<div class="ws-step"><div class="ws-num">'+num+'</div><div class="ws-label">'+label+'</div>'
+    +'<div class="ws-formula">'+formula+'</div>'
+    +(sub?'<div class="ws-sub">= '+sub+'</div>':'')
+    +(result!=null?'<div class="ws-result">→ '+result+'</div>':'')
+    +(note?'<div class="ws-note">'+note+'</div>':'')+'</div>';
+}
+function buildWorksheet(){
+  const ws=document.getElementById('worksheet'); if(!ws) return;
+  if(S.mode==='cannonball'||S.mode==='orbit'){ ws.innerHTML=orbitWorksheet(); return; }
+  const th=S.angle, vc=vx(), vu=vy0(), T=flightTime(), Hh=peakAboveLaunch(), Rr=range();
+  let story=''; if(S.mode==='examples'){ const ex=EXAMPLES[S.example]; story='<div class="ws-story">'+ex.emoji+' '+ex.story+'</div>'; }
+  let html=story;
+  html+='<div class="ws-given"><b>What we know:</b><br>launch speed v₀ = '+S.v0+' m/s &nbsp; angle θ = '+th+'° &nbsp; gravity g = '+S.g+' m/s²'+(S.h>0?'<br>launch height h = '+S.h+' m':'')+'</div>';
+  html+=wsStep('Step 1','Split the launch into sideways &amp; upward speed',
+    'vₓ = v₀·cos θ &nbsp;&nbsp; v_y = v₀·sin θ',
+    th===0? (S.v0+'·cos0 = '+n(vc)+',  '+S.v0+'·sin0 = 0') : (S.v0+'·cos'+th+'° , '+S.v0+'·sin'+th+'°'),
+    'vₓ = '+n(vc,1)+' m/s,  v_y = '+n(vu,1)+' m/s',
+    'Sideways speed never changes. Only the upward part feels gravity.');
+  if(S.h>0){
+    html+=wsStep('Step 2','Time in the air (it starts '+S.h+' m up)',
+      'T = ( v_y + √(v_y² + 2gh) ) / g',
+      '( '+n(vu,1)+' + √('+n(vu*vu,1)+' + '+n(2*S.g*S.h,1)+') ) / '+S.g,
+      'T = '+n(T,2)+' s');
+  } else {
+    html+=wsStep('Step 2','Time in the air (up, then back down)',
+      'T = 2·v_y / g',
+      '2 × '+n(vu,1)+' / '+S.g,
+      'T = '+n(T,2)+' s');
+  }
+  html+=wsStep('Step 3','How high it climbs (above the launch point)',
+    'H = v_y² / (2g)',
+    n(vu,1)+'² / (2×'+S.g+')',
+    'H = '+n(Hh,2)+' m'+(S.h>0?'   (peak '+n(peakHeight(),2)+' m above ground)':''),
+    'At the top the upward speed is momentarily zero.');
+  html+=wsStep('Step 4','How far it travels (the range)',
+    'R = vₓ · T'+(S.h===0?'  =  v₀²·sin(2θ)/g':''),
+    n(vc,1)+' × '+n(T,2),
+    'R = '+n(Rr,2)+' m');
+  ws.innerHTML=html;
+}
+function orbitWorksheet(){
+  const realV = S.mode==='cannonball' ? pxToKms(S.cspeed*VORB_SURF) : (()=>{ const r=RPX+10+S.oAlt*180; return pxToKms(vOrbAt(r)*S.oSpeed); })();
+  const vEsc=7.91*Math.SQRT2;
+  let html='<div class="ws-given"><b>Earth\u2019s numbers:</b><br>g = 9.8 m/s² &nbsp; radius R = 6 371 km &nbsp; GM = 3.99×10¹⁴</div>';
+  html+=wsStep('Idea','An orbit is just falling — and missing the ground',
+    'fall toward Earth, but move sideways fast enough that the ground curves away just as fast','','',
+    'Newton\u2019s insight: a fast-enough cannonball never lands.');
+  html+=wsStep('Orbital speed','to circle just above the surface',
+    'v = √(GM / R)',
+    '√(3.99×10¹⁴ / 6.37×10⁶)',
+    'v ≈ 7.9 km/s   (about 28 000 km/h)');
+  html+=wsStep('Escape speed','to leave Earth for good',
+    'v_esc = √2 · v_orbit',
+    '√2 × 7.9',
+    'v_esc ≈ '+n(vEsc,1)+' km/s');
+  html+=wsStep('Your launch','current speed',
+    'v_now ≈ '+n(realV,2)+' km/s','',
+    realV<7.7?'too slow → falls back (sub-orbital)':realV<11.1?'orbits the Earth ✓':'escapes Earth →',
+    'Compare with 7.9 (circle) and 11.2 (escape).');
+  return html;
+}
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+let stage,sctx;
+function cssv(nm){ return getComputedStyle(document.body).getPropertyValue(nm).trim()||'#fff'; }
+function clearC(){ sctx.clearRect(0,0,W,H); sctx.fillStyle=cssv('--stage-bg'); sctx.fillRect(0,0,W,H); }
+let aim=null; // {angle,speed} while dragging
+
+function drawStage(){
+  if(!sctx)return; clearC();
+  if(S.mode==='cannonball'||S.mode==='orbit') drawGravity();
+  else drawProjectile();
+}
+
+// ---- projectile ----
+function drawProjectile(){
+  const T=flightTime(), Rr=range(), Hpk=peakHeight();
+  const curX = S.flying? posAt(Math.min(S.t,T)).x : 0;
+  const maxX=Math.max(Rr, curX, 5)*1.12, maxY=Math.max(Hpk,2)*1.25;
+  const padL=42, padR=20, padT=24, groundY=H-34;
+  const sc=Math.min((W-padL-padR)/maxX, (groundY-padT)/maxY);
+  const oX=padL, oY=groundY;
+  const X=x=>oX+x*sc, Y=y=>oY-y*sc;
+  // ground
+  sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=1.5; sctx.beginPath(); sctx.moveTo(0,groundY); sctx.lineTo(W,groundY); sctx.stroke();
+  sctx.fillStyle=cssv('--text3'); sctx.font='8px monospace';
+  // distance ticks
+  const stepX=niceStep(maxX,5);
+  for(let d=stepX; d<maxX; d+=stepX){ sctx.globalAlpha=.5; sctx.strokeStyle=cssv('--grid-stroke'); sctx.beginPath(); sctx.moveTo(X(d),padT); sctx.lineTo(X(d),groundY); sctx.stroke(); sctx.globalAlpha=1; sctx.fillStyle=cssv('--text3'); sctx.fillText(d+'m', X(d)-7, groundY+12); }
+  // height ticks
+  const stepY=niceStep(maxY,3);
+  for(let hh=stepY; hh<maxY; hh+=stepY){ sctx.fillStyle=cssv('--text3'); sctx.fillText(hh+'m', 4, Y(hh)+3); }
+  // launch platform (height)
+  if(S.h>0){ sctx.fillStyle=cssv('--border2'); sctx.fillRect(oX-10, Y(S.h), 14, oY-Y(S.h)); }
+  // predicted full trajectory (dashed)
+  sctx.strokeStyle=cssv('--text3'); sctx.globalAlpha=.55; sctx.setLineDash([4,4]); sctx.lineWidth=1.3; sctx.beginPath();
+  for(let i=0;i<=100;i++){ const t=T*i/100; const p=posAt(t); i===0?sctx.moveTo(X(p.x),Y(p.y)):sctx.lineTo(X(p.x),Y(p.y)); }
+  sctx.stroke(); sctx.setLineDash([]); sctx.globalAlpha=1;
+  // max-height marker
+  sctx.strokeStyle=cssv('--violet'); sctx.globalAlpha=.6; sctx.setLineDash([3,3]); sctx.beginPath(); sctx.moveTo(X(0),Y(Hpk)); sctx.lineTo(W-padR,Y(Hpk)); sctx.stroke(); sctx.setLineDash([]); sctx.globalAlpha=1;
+  sctx.fillStyle=cssv('--violet'); sctx.fillText('peak '+n(Hpk,1)+' m', W-padR-70, Y(Hpk)-4);
+  // range marker
+  sctx.strokeStyle=cssv('--gold'); sctx.globalAlpha=.7; sctx.beginPath(); sctx.moveTo(X(Rr),groundY); sctx.lineTo(X(Rr),groundY+6); sctx.stroke(); sctx.globalAlpha=1;
+  sctx.fillStyle=cssv('--gold'); sctx.fillText('range '+n(Rr,1)+' m', X(Rr)-30, groundY+22);
+  // launcher
+  sctx.fillStyle=cssv('--text2'); sctx.save(); sctx.translate(X(0),Y(S.h)); sctx.rotate(-S.angle*Math.PI/180); sctx.fillRect(0,-3,16,6); sctx.restore();
+  // aim arrow
+  if(aim){ const ax=Math.cos(aim.angle*Math.PI/180), ay=Math.sin(aim.angle*Math.PI/180); const len=aim.speed*sc*0.5;
+    sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2; sctx.beginPath(); sctx.moveTo(X(0),Y(S.h)); sctx.lineTo(X(0)+ax*len,Y(S.h)-ay*len); sctx.stroke();
+    sctx.fillStyle=cssv('--cyan'); sctx.font='10px monospace'; sctx.fillText(n(aim.speed,0)+' m/s @ '+n(aim.angle,0)+'°', X(0)+ax*len+4, Y(S.h)-ay*len); }
+  // flying ball + trail + vectors
+  if(S.flying){ const tt=Math.min(S.t,T); const p=posAt(tt), v=velAt(tt);
+    sctx.strokeStyle=cssv('--cyan'); sctx.globalAlpha=.5; sctx.lineWidth=2; sctx.beginPath();
+    S.trail.forEach((q,i)=>{ i===0?sctx.moveTo(X(q.x),Y(q.y)):sctx.lineTo(X(q.x),Y(q.y)); }); sctx.stroke(); sctx.globalAlpha=1;
+    // velocity components
+    const bx=X(p.x), by=Y(p.y);
+    if(document.getElementById('toggle-row') && S.showVec){
+      arrow(bx,by,bx+v.vx*sc*0.5,by,cssv('--gold'),'vₓ');
+      arrow(bx,by,bx,by-v.vy*sc*0.5,cssv('--pink'),'v_y');
+      arrow(bx,by,bx+v.vx*sc*0.5,by-v.vy*sc*0.5,cssv('--cyan'),'');
+    }
+    sctx.fillStyle=cssv('--gold'); sctx.beginPath(); sctx.arc(bx,by,6,0,7); sctx.fill();
+    sctx.strokeStyle='#fff'; sctx.lineWidth=1; sctx.stroke();
+    // live time/pos badge
+    sctx.fillStyle=cssv('--text2'); sctx.font='9px monospace';
+    sctx.fillText('t='+n(tt,2)+'s  x='+n(p.x,1)+'m  y='+n(p.y,1)+'m', bx+10, by-8);
+  } else {
+    sctx.fillStyle=cssv('--gold'); sctx.beginPath(); sctx.arc(X(0),Y(S.h),6,0,7); sctx.fill();
+    sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('drag to aim, or press Launch', X(0)+12, Y(S.h)-8);
+  }
+}
+function arrow(x1,y1,x2,y2,col,lab){ sctx.strokeStyle=col; sctx.lineWidth=2; sctx.beginPath(); sctx.moveTo(x1,y1); sctx.lineTo(x2,y2); sctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1); sctx.beginPath(); sctx.moveTo(x2,y2); sctx.lineTo(x2-7*Math.cos(a-0.4),y2-7*Math.sin(a-0.4)); sctx.lineTo(x2-7*Math.cos(a+0.4),y2-7*Math.sin(a+0.4)); sctx.closePath(); sctx.fillStyle=col; sctx.fill();
+  if(lab){ sctx.fillStyle=col; sctx.font='9px monospace'; sctx.fillText(lab,(x1+x2)/2+3,(y1+y2)/2-2); } }
+function niceStep(range,target){ const raw=range/target; const mag=Math.pow(10,Math.floor(Math.log10(raw))); const r=raw/mag; const s=r<1.5?1:r<3.5?2:r<7.5?5:10; return s*mag; }
+
+// ---- central gravity ----
+function drawGravity(){
+  // starfield
+  sctx.fillStyle=cssv('--text3'); for(let i=0;i<40;i++){ const x=(i*137)%W, y=(i*89)%H; sctx.globalAlpha=.3; sctx.fillRect(x,y,1,1); } sctx.globalAlpha=1;
+  // earth
+  sctx.fillStyle=cssv('--accent'); sctx.globalAlpha=.18; sctx.beginPath(); sctx.arc(ECX,ECY,RPX+12,0,7); sctx.fill(); sctx.globalAlpha=1;
+  sctx.fillStyle='#1a4a7a'; sctx.beginPath(); sctx.arc(ECX,ECY,RPX,0,7); sctx.fill();
+  sctx.fillStyle='#2e7d4f'; sctx.globalAlpha=.7; sctx.beginPath(); sctx.arc(ECX-18,ECY-12,20,0,7); sctx.arc(ECX+22,ECY+18,16,0,7); sctx.fill(); sctx.globalAlpha=1;
+  sctx.strokeStyle=cssv('--accent'); sctx.lineWidth=1; sctx.beginPath(); sctx.arc(ECX,ECY,RPX,0,7); sctx.stroke();
+  sctx.fillStyle=cssv('--text2'); sctx.font='9px monospace'; sctx.fillText('Earth', ECX-15, ECY+3);
+  // circular reference orbit (orbit mode)
+  if(S.mode==='orbit'){ const r=RPX+10+S.oAlt*180; sctx.strokeStyle=cssv('--border2'); sctx.setLineDash([3,4]); sctx.globalAlpha=.5; sctx.beginPath(); sctx.arc(ECX,ECY,r,0,7); sctx.stroke(); sctx.setLineDash([]); sctx.globalAlpha=1; }
+  // mountain (cannonball)
+  if(S.mode==='cannonball'){ sctx.fillStyle=cssv('--text2'); sctx.beginPath(); sctx.moveTo(ECX-8,ECY-RPX); sctx.lineTo(ECX,ECY-RPX-14); sctx.lineTo(ECX+8,ECY-RPX); sctx.fill();
+    sctx.fillStyle=cssv('--text3'); sctx.font='8px monospace'; sctx.fillText('cannon', ECX+12, ECY-RPX-6); }
+  // trajectory trail
+  if(S.otrail.length>1){ sctx.strokeStyle=cssv('--cyan'); sctx.globalAlpha=.6; sctx.lineWidth=1.6; sctx.beginPath(); S.otrail.forEach((p,i)=>{ i===0?sctx.moveTo(p[0],p[1]):sctx.lineTo(p[0],p[1]); }); sctx.stroke(); sctx.globalAlpha=1; }
+  // body
+  if(S.body){ sctx.fillStyle=cssv('--gold'); sctx.beginPath(); sctx.arc(S.body.x,S.body.y,5,0,7); sctx.fill();
+    sctx.strokeStyle='#fff'; sctx.lineWidth=1; sctx.stroke();
+    // velocity vector
+    const sp=Math.hypot(S.body.vx,S.body.vy); if(sp>0){ arrow(S.body.x,S.body.y,S.body.x+S.body.vx/sp*22,S.body.y+S.body.vy/sp*22,cssv('--pink'),''); } }
+  // status
+  sctx.font='11px monospace';
+  if(S.crashed){ sctx.fillStyle=cssv('--red'); sctx.fillText('💥 fell back to Earth — not fast enough', 20, 28); }
+  else if(S.escaped){ sctx.fillStyle=cssv('--green'); sctx.fillText('🚀 escaped Earth\u2019s gravity!', 20, 28); }
+  else if(S.body){ sctx.fillStyle=cssv('--cyan'); sctx.fillText('in flight — '+(S.mode==='cannonball'?'faster = flatter = farther':'orbiting'), 20, 28); }
+  else { sctx.fillStyle=cssv('--text3'); sctx.fillText('press Launch to fire', 20, 28); }
+}
+
+// ============================================================================
+// CONTROLS
+// ============================================================================
+function $(id){ return document.getElementById(id); }
+function el(t,c,h){ const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; }
+function addSlider(parent,{label,min,max,step,val,fmt,mini,oninput}){
+  const c=el('div','ctl'); const row=el('div','param-row'); row.append(el('span',null,label),el('span','param-val',fmt(val)));
+  const inp=el('input'); inp.type='range'; inp.min=min;inp.max=max;inp.step=step;inp.value=val;
+  const m=el('div','sb-mini',mini||'');
+  inp.oninput=()=>{ row.children[1].textContent=fmt(+inp.value); oninput(+inp.value); buildWorksheet(); updateReadout(); };
+  c.append(row,inp,m); parent.appendChild(c); return inp;
+}
+S.showVec=true;
+function buildControls(){
+  const p=$('mode-controls'); p.innerHTML='';
+  if(S.mode==='launch'){
+    addSlider(p,{label:'🚀 Launch speed v₀',min:2,max:60,step:1,val:S.v0,fmt:v=>v+' m/s',mini:'how hard you throw',oninput:v=>{S.v0=v;}});
+    addSlider(p,{label:'📐 Angle θ',min:0,max:90,step:1,val:S.angle,fmt:v=>v+'°',mini:'45° gives the longest range',oninput:v=>{S.angle=v;}});
+    addSlider(p,{label:'⛰ Launch height',min:0,max:50,step:1,val:S.h,fmt:v=>v+' m',mini:'start off the ground',oninput:v=>{S.h=v;}});
+    addSlider(p,{label:'🌍 Gravity g',min:1.6,max:24.8,step:0.1,val:S.g,fmt:v=>v.toFixed(1)+' m/s²',mini:'Earth 9.8 · Moon 1.6 · Jupiter 24.8',oninput:v=>{S.g=v;}});
+  }
+  else if(S.mode==='examples'){
+    const wrap=el('div'); wrap.style.gridColumn='span 2';
+    wrap.append(el('div','section-label','Pick a real-world example'));
+    const g=el('div','btn-grid c2');
+    EXAMPLES.forEach((ex,i)=>{ const b=el('button','minibtn'+(i===S.example?' active':''), ex.emoji+' '+ex.name); b.onclick=()=>loadExample(i); g.appendChild(b); });
+    wrap.appendChild(g); p.appendChild(wrap);
+  }
+  else if(S.mode==='cannonball'){
+    addSlider(p,{label:'💥 Cannon speed',min:0.3,max:1.6,step:0.01,val:S.cspeed,fmt:v=>n(pxToKms(v*VORB_SURF),1)+' km/s',mini:'7.9 = orbit · 11.2 = escape',oninput:v=>{S.cspeed=v;resetBody();}});
+  }
+  else if(S.mode==='orbit'){
+    addSlider(p,{label:'🛰 Altitude',min:0,max:1,step:0.01,val:S.oAlt,fmt:v=>n(v*2500,0)+' km',mini:'how high the satellite sits',oninput:v=>{S.oAlt=v;resetBody();}});
+    addSlider(p,{label:'⚡ Speed',min:0.5,max:1.45,step:0.01,val:S.oSpeed,fmt:v=>Math.round(v*100)+'% of circular',mini:'<100% dips · >100% climbs · 141% escapes',oninput:v=>{S.oSpeed=v;resetBody();}});
+  }
+  buildSetupExtra();
+}
+function buildSetupExtra(){
+  const ex=$('setup-extra'); ex.innerHTML='';
+  if(S.mode==='launch'){
+    ex.append(el('div','section-label','Gravity presets'));
+    const g=el('div','btn-grid c2');
+    [['🌙 Moon',1.62],['🔴 Mars',3.72],['🌍 Earth',9.8],['🪐 Jupiter',24.8]].forEach(([nm,gg])=>{ const b=el('button','minibtn',nm); b.onclick=()=>{S.g=gg;buildControls();buildWorksheet();updateReadout();}; g.appendChild(b); });
+    ex.appendChild(g);
+  }
+}
+function buildToggles(){ const t=$('toggle-row'); t.innerHTML='';
+  if(S.mode==='launch'||S.mode==='examples'){ const c=el('div','toggle-chip'+(S.showVec?' on':''),'velocity arrows'); c.onclick=()=>{S.showVec=!S.showVec;buildToggles();}; t.appendChild(c); }
+  else t.innerHTML='<span style="font-family:monospace;font-size:9px;color:var(--text3)">—</span>';
+}
+function loadExample(i){ S.example=i; const ex=EXAMPLES[i]; S.v0=ex.v; S.angle=ex.angle; S.h=ex.h; S.g=9.8; buildControls(); buildWorksheet(); updateReadout(); launch(); }
+
+// ============================================================================
+// READOUTS
+// ============================================================================
+function rcell(l,v,s,c){ return '<div class="rcell"><div class="r-label">'+l+'</div><div class="r-value '+(c||'sm')+'">'+v+'</div><div class="r-sub">'+(s||'')+'</div></div>'; }
+function updateReadout(){
+  const g=$('readout-grid'); let html='', law='';
+  if(S.mode==='launch'||S.mode==='examples'){
+    html=rcell('Range','R = '+n(range(),1)+' m','how far','gold')
+      + rcell('Max height','H = '+n(peakHeight(),1)+' m','highest point','violet')
+      + rcell('Time of flight','T = '+n(flightTime(),2)+' s','time aloft','cyan')
+      + rcell('Sideways speed','vₓ = '+n(vx(),1)+' m/s','stays constant')
+      + rcell('Upward speed','v_y = '+n(vy0(),1)+' m/s','at launch')
+      + rcell('Impact speed', n(impactSpeed(),1)+' m/s','when it lands','pink');
+    setBadges('v₀ '+S.v0+' m/s @ '+S.angle+'°', 'R '+n(range(),1)+' m');
+    const opt = S.h===0 ? 'On level ground, <b>45° always gives the longest range</b> for a given speed.' : 'Launched from a height, the best angle for range drops below 45°.';
+    law='<b>R = v₀²·sin(2θ)/g</b> &nbsp; '+opt+' Notice vₓ never changes — gravity only pulls on the vertical motion.';
+  }
+  else if(S.mode==='cannonball'){
+    const v=pxToKms(S.cspeed*VORB_SURF);
+    html=rcell('Your speed', n(v,2)+' km/s','at the cannon','gold')
+      + rcell('Orbital speed','7.9 km/s','to circle Earth','cyan')
+      + rcell('Escape speed','11.2 km/s','to leave forever','violet')
+      + rcell('Outcome', S.crashed?'falls back':S.escaped?'escapes':v<7.7?'sub-orbital':v<11.1?'in orbit':'escaping', '', S.escaped?'green':S.crashed?'red':'sm');
+    setBadges(n(v,2)+' km/s', S.crashed?'crashed':S.escaped?'escaped':'flying');
+    law='<b>Newton\u2019s cannonball:</b> fire it faster and it lands farther — until it is going so fast (≈7.9 km/s) that Earth curves away beneath it as fast as it falls. Now it never lands: <b>that is an orbit.</b>';
+  }
+  else if(S.mode==='orbit'){
+    const altKm=S.oAlt*2500, r=R_EARTH+altKm*1000, vc=Math.sqrt(G_EARTH*M_EARTH/r), per=2*Math.PI*r/vc/60;
+    html=rcell('Altitude', n(altKm,0)+' km','above surface','gold')
+      + rcell('Circular speed', n(vc/1000,2)+' km/s','√(GM/r)','cyan')
+      + rcell('Orbit period', n(per,1)+' min','one lap','violet')
+      + rcell('Your speed', Math.round(S.oSpeed*100)+'%', S.oSpeed<0.99?'ellipse (dips in)':S.oSpeed>1.42?'escape':S.oSpeed>1.01?'ellipse (swings out)':'circular', 'pink');
+    setBadges(n(altKm,0)+' km', n(per,1)+' min');
+    law='<b>v = √(GM/r)</b> — higher orbits move slower and take longer. At exactly circular speed the path is a perfect circle; a bit less and it dips into an ellipse, a bit more and it swings out, and at √2× it escapes.';
+  }
+  g.innerHTML=html; $('law-strip').innerHTML=law;
+}
+function setBadges(l,r){ $('badge-l').textContent=l; $('badge-r').textContent=r; }
+
+// ============================================================================
+// MODES + VOICE
+// ============================================================================
+const MODES=[
+  {id:'launch',label:'Launcher',tag:'play & calc'},
+  {id:'examples',label:'Worked Examples',tag:'real life'},
+  {id:'cannonball',label:"Newton's Cannonball",tag:'→ orbit'},
+  {id:'orbit',label:'Orbits',tag:'satellites'}
+];
+const TITLE={launch:'Launch Pad',examples:'Worked Example',cannonball:'Newton\u2019s Cannonball',orbit:'Orbital Motion'};
+const HINT={launch:'drag to aim, or use the sliders',examples:'pick a scenario — see it solved',cannonball:'fire faster until it orbits',orbit:'set the satellite\u2019s altitude & speed'};
+let voiceOn=false, sceneToken=0;
+const SCRIPT={
+  launch:"Projectile motion is just two simple motions happening at once. Sideways, the object glides at a steady speed. Up and down, gravity slows it, stops it, then pulls it back. Split your launch into those two parts and the rest is arithmetic. Watch the worksheet fill in every number as you change the speed and angle.",
+  examples:"Here are everyday throws and kicks, each one solved step by step. Pick a soccer kick, a basketball shot, a cliff jump. The worksheet shows exactly how to find how far it goes, how high it climbs, and how long it stays in the air — the same four steps every time.",
+  cannonball:"Imagine a cannon on a mountain so tall it pokes above the air. Fire gently and the ball arcs down and lands. Fire harder and it lands farther. Fire hard enough, about eight kilometres per second, and the ground curves away beneath it as fast as it falls — so it never lands. That is an orbit, and it is exactly how Newton imagined it.",
+  orbit:"A satellite in orbit is in constant free fall — forever falling toward Earth and forever missing. Higher orbits travel slower and take longer to go around. Give it just the right sideways speed and the path is a circle; a little more or less and it stretches into an ellipse; enough, and it escapes into space."
+};
+function speak(t){ if(!voiceOn||!t||typeof speechSynthesis==='undefined')return; const my=++sceneToken; try{speechSynthesis.cancel();}catch(e){}
+  setTimeout(()=>{ if(my!==sceneToken||!voiceOn)return; try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){} },80); }
+function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel(); }catch(e){} }
+function updateVoiceBtn(){ const v=$('voice-switcher'); v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color=voiceOn?'var(--cyan)':''; }
+function buildModeBar(){ const b=$('mode-bar'); b.innerHTML=''; MODES.forEach(m=>{ const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.label+' <span class="mode-tag">'+m.tag+'</span>'); t.onclick=()=>setMode(m.id); b.appendChild(t); }); }
+function setMode(id){
+  stopSpeech(); S.mode=id; S.flying=false; S.body=null; S.otrail=[]; S.crashed=false; S.escaped=false;
+  $('stage-title').firstChild.textContent=TITLE[id]+' '; $('stage-hint').textContent=HINT[id];
+  $('ws-title').firstChild.textContent = (id==='cannonball'||id==='orbit')?'How Orbits Work ':'Live Calculation ';
+  if(id==='examples') loadExample(S.example);
+  if(id==='cannonball'||id==='orbit') resetBody();
+  buildModeBar(); buildControls(); buildToggles(); buildWorksheet(); updateReadout(); speak(SCRIPT[id]);
+}
+
+// ============================================================================
+// INTERACTIONS
+// ============================================================================
+function launch(){
+  if(S.mode==='launch'||S.mode==='examples'){ S.flying=true; S.t=0; S.trail=[]; }
+  else { resetBody(); }
+}
+function bindUI(){
+  stage=$('stage'); sctx=stage.getContext('2d'); fitCanvas(); window.addEventListener('resize',fitCanvas);
+  $('fire-btn').onclick=launch; $('replay-btn').onclick=launch;
+  // drag to aim (projectile modes)
+  let dragging=false, originPx=null;
+  function pt(e){ const r=stage.getBoundingClientRect(); const cx=(e.touches?e.touches[0].clientX:e.clientX), cy=(e.touches?e.touches[0].clientY:e.clientY); return {x:(cx-r.left)*(W/r.width), y:(cy-r.top)*(H/r.height)}; }
+  function down(e){ if(S.mode!=='launch')return; dragging=true; originPx={x:42, y:H-34}; move(e); e.preventDefault&&e.preventDefault(); }
+  function move(e){ if(!dragging)return; const p=pt(e); const dx=p.x-originPx.x, dy=originPx.y-p.y;
+    let ang=Math.atan2(dy,dx)*180/Math.PI; ang=Math.max(0,Math.min(90,ang));
+    let sp=Math.min(60,Math.max(2, Math.hypot(dx,dy)*0.16));
+    aim={angle:ang,speed:sp}; e.preventDefault&&e.preventDefault(); }
+  function up(){ if(!dragging)return; dragging=false; if(aim){ S.angle=Math.round(aim.angle); S.v0=Math.round(aim.speed); aim=null; buildControls(); buildWorksheet(); updateReadout(); launch(); } }
+  stage.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+  stage.addEventListener('touchstart',down,{passive:false}); window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',up);
+  // theme + voice
+  const ts=$('theme-switcher'); try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){} };
+  const vs=$('voice-switcher'); try{ if(localStorage.getItem('pj-voice')==='on')voiceOn=true; }catch(e){}
+  updateVoiceBtn(); vs.onclick=()=>{ voiceOn=!voiceOn; try{localStorage.setItem('pj-voice',voiceOn?'on':'off');}catch(e){} updateVoiceBtn(); if(voiceOn)speak(SCRIPT[S.mode]); else stopSpeech(); };
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden)stopSpeech(); });
+}
+function fitCanvas(){ W=560;H=400; stage.width=W;stage.height=H; }
+
+// ============================================================================
+// THEORY
+// ============================================================================
+function buildTheory(){
+  $('theory').innerHTML=`
+  <div class="theory-hdr">Theory — Projectile &amp; Orbital Motion</div>
+  <h3>One Motion, Two Directions</h3>
+  <p>The single most useful idea in projectile motion: the sideways motion and the up-down motion are <em>completely independent</em>. Gravity pulls only downward, so it never touches the horizontal speed. Solve the two directions separately, then put the answers together. That is the whole trick.</p>
+  <div class="hbox hb-cyan">
+    <strong>Horizontal:</strong> steady speed, no force. &nbsp; x = vₓ·t<br>
+    <strong>Vertical:</strong> constant pull of gravity. &nbsp; y = v_y·t − ½g·t²
+  </div>
+
+  <h3>The Four Numbers You Usually Want</h3>
+  <p>Split the launch speed first: <strong>vₓ = v₀·cos θ</strong> (sideways) and <strong>v_y = v₀·sin θ</strong> (upward). Then everything follows:</p>
+  <div class="eq">Time of flight &nbsp; T = 2·v_y / g
+    <div class="vars">(level ground) — time to go up and come back. From a height h, use T = (v_y + √(v_y² + 2gh)) / g.</div>
+  </div>
+  <div class="eq">Maximum height &nbsp; H = v_y² / (2g)
+    <div class="vars">At the very top the upward speed is zero for an instant.</div>
+  </div>
+  <div class="eq">Range &nbsp; R = vₓ · T = v₀²·sin(2θ) / g
+    <div class="vars">On level ground this is largest at θ = 45°, where sin(2θ) = 1. Equal angles either side of 45° (say 30° and 60°) give the <em>same</em> range.</div>
+  </div>
+
+  <h3>A Worked Example, Start to Finish</h3>
+  <p>Kick a ball at v₀ = 20 m/s and θ = 45° (take g = 9.8):</p>
+  <table class="ctable">
+    <tr><th>Step</th><th>Formula</th><th>Numbers</th><th>Answer</th></tr>
+    <tr><td>Components</td><td>v₀cosθ, v₀sinθ</td><td>20×0.707</td><td>vₓ = v_y = 14.1 m/s</td></tr>
+    <tr><td>Time</td><td>2v_y/g</td><td>2×14.1/9.8</td><td>T = 2.9 s</td></tr>
+    <tr><td>Height</td><td>v_y²/2g</td><td>14.1²/19.6</td><td>H = 10.2 m</td></tr>
+    <tr><td>Range</td><td>vₓ·T</td><td>14.1×2.9</td><td>R = 40.8 m</td></tr>
+  </table>
+  <p>Every example in this simulator uses these same four steps — change the numbers, follow the worksheet, and you can solve any projectile problem.</p>
+
+  <h3>From a Throw to an Orbit</h3>
+  <p>Newton asked a brilliant question: what if you threw something <em>really</em> hard? Imagine a cannon on a mountaintop above the air. A slow shot arcs down and lands. A faster shot lands farther because Earth\u2019s surface has started to curve away. Fire fast enough — about <strong>7.9 km/s</strong> — and the ground curves away exactly as fast as the ball falls. It keeps falling and keeps missing: it is now in <em>orbit</em>.</p>
+  <div class="eq">Orbital speed &nbsp; v = √(G·M / r) &nbsp;·&nbsp; Escape speed &nbsp; v_esc = √2 · v
+    <div class="vars">G = 6.67×10⁻¹¹, M = Earth\u2019s mass, r = distance from Earth\u2019s centre. Higher orbits are slower. At √2 times orbital speed (≈11.2 km/s) the object escapes Earth entirely.</div>
+  </div>
+
+  <h3>What We Left Out</h3>
+  <p>These clean formulas ignore <em>air resistance</em>, which in real life shortens the range, lowers the best angle below 45°, and makes the path lopsided. They also treat gravity as constant — fine near the ground, but for orbits g weakens with distance, which is why the orbital formulas use the full law of gravitation. The ideas, though, are exactly the ones rocket engineers and ballisticians start from.</p>
+  `;
+}
+
+// ============================================================================
+// LOOP + INIT
+// ============================================================================
+let rt=0,lastT=0;
+function loop(now){
+  try{
+    if(!lastT)lastT=now; const dt=Math.min(3,(now-lastT)/16.67); lastT=now;
+    if(S.flying){ S.t+=dt/60*1.0; const T=flightTime(); const p=posAt(Math.min(S.t,T)); S.trail.push(p); if(S.trail.length>400)S.trail.shift();
+      if(S.t>=T){ S.flying=false; S.t=T; } }
+    if((S.mode==='cannonball'||S.mode==='orbit')&&S.body) stepGravity(dt);
+    drawStage();
+    if(rt++%6===0) updateReadout();
+  }catch(e){ console.error('loop',e); }
+  requestAnimationFrame(loop);
+}
+function init(){
+  buildModeBar(); bindUI(); buildToggles(); buildTheory();
+  setMode('launch');
+  requestAnimationFrame(loop);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
+</script>
+</body>
+</html>
