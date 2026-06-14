@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buoyancy &amp; Density — Science Wonders</title>
+<meta name="description" content="An interactive buoyancy and density simulation. Drop objects into different fluids and watch them float, sink, or hover. Discover Archimedes' principle, see why ships float and icebergs hide, and pilot a submarine to neutral buoyancy.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#0a1220;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
+canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
+.aux-small canvas#aux{max-height:280px;}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:9px;left:9px;color:var(--gold);}
+.sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
+@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.wl-slider{height:14px;border-radius:7px;-webkit-appearance:none;appearance:none;outline:none;}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
+.minibtn{font-family:monospace;font-size:10px;padding:7px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+.verdict{margin-top:12px;padding:11px 15px;border-radius:8px;font-family:monospace;font-size:12px;display:none;}
+.verdict.show{display:block;}
+.verdict.go{background:rgba(64,255,170,.06);border:1px solid rgba(64,255,170,.3);color:#8effc8;}
+body.light-theme .verdict.go{color:var(--green);}
+.verdict.no{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.3);color:#ff9aa6;}
+body.light-theme .verdict.no{color:var(--red);}
+
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Buoyancy &amp; Density</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+<div class="mode-bar" id="mode-bar"></div>
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+      <div class="card">
+        <div class="card-title" id="stage-title">The Tank <span class="hint" id="stage-hint">drag the block</span></div>
+        <div class="stage-wrap">
+          <canvas id="stage" width="560" height="400"></canvas>
+          <div class="stage-badge sb-tl" id="badge-l">—</div>
+          <div class="stage-badge sb-tr" id="badge-r">—</div>
+        </div>
+      </div>
+      <div class="play-bar"><div class="sb-controls" id="mode-controls"></div></div>
+    </div>
+    <div class="right-col">
+      <div class="card aux-small">
+        <div class="card-title">Density &amp; Forces <span class="hint">why it floats or sinks</span></div>
+        <div class="stage-wrap"><canvas id="aux" width="560" height="300"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Live Readout <span class="hint">Archimedes</span></div>
+        <div class="card-pad">
+          <div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">The Principle</div>
+    <div class="card-pad"><div class="law-strip" id="law-strip" style="margin-top:0;"></div></div>
+  </div>
+</div>
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+<script>
+'use strict';
+// ============================================================================
+// BUOYANCY & DENSITY — engine
+// ============================================================================
+let W=560,H=400,AUXW=560,AUXH=300;
+const G=9.81;
+
+const FLUIDS={
+  Water:{rho:1000,col:'#2a6fb0',name:'Water'},
+  'Salt water':{rho:1025,col:'#2f7a9a',name:'Salt water'},
+  Oil:{rho:920,col:'#9a7d2e',name:'Cooking oil'},
+  Gasoline:{rho:750,col:'#9a8a3e',name:'Gasoline'},
+  Honey:{rho:1420,col:'#b8801e',name:'Honey'},
+  Mercury:{rho:13534,col:'#9aa0a8',name:'Mercury'}
+};
+const OBJECTS={
+  Styrofoam:{rho:50,col:'#eef2f6'},
+  Cork:{rho:240,col:'#c9a36b'},
+  Pine:{rho:500,col:'#d2a667'},
+  Ice:{rho:917,col:'#bfe6ff'},
+  Oak:{rho:750,col:'#9a6b3a'},
+  Plastic:{rho:970,col:'#5fb0c0'},
+  Rubber:{rho:1100,col:'#444b55'},
+  Aluminium:{rho:2700,col:'#c7ccd2'},
+  Iron:{rho:7870,col:'#8a8f98'},
+  Gold:{rho:19300,col:'#f0c040'}
+};
+
+const S={
+  mode:'play',
+  obj:'Ice', fluid:'Water',
+  rhoObj:917, rhoFl:1000, objCol:'#bfe6ff',
+  customName:'Ice',
+  volumeL:8,             // litres (for the worksheet numbers)
+  example:0,
+  // submarine game
+  ballast:1100, won:false,
+  // object physics (px)
+  y:60, vy:0, dragging:false
+};
+
+// tank geometry
+let TX0=30,TX1=W-30,TY0=30,TY1=H-26, SURFACE;
+let OW=92, OH=92, OX;
+function layout(){ TX0=30;TX1=W-30;TY0=30;TY1=H-26; SURFACE=TY0+96; OX=(TX0+TX1)/2 - OW/2; }
+
+function setObject(key){ S.obj=key; S.rhoObj=OBJECTS[key].rho; S.objCol=OBJECTS[key].col; S.customName=key; drop(); }
+function setFluid(key){ S.fluid=key; S.rhoFl=FLUIDS[key].rho; }
+function effRho(){ return S.mode==='sub' ? S.ballast : S.rhoObj; }
+function drop(){ S.y=TY0+10; S.vy=0; }
+
+// submerged fraction of the object's height (0..1)
+function subFrac(){
+  const top=S.y, bot=S.y+OH;
+  const sub = Math.max(0, Math.min(bot, TY1) - Math.max(top, SURFACE));
+  return Math.max(0, Math.min(1, sub/OH));
+}
+function stepPhysics(dt){
+  if(S.dragging) { S.vy=0; return; }
+  const ro=effRho(), rf=S.rhoFl;
+  const f=subFrac();
+  // acceleration (px/frame²): g*(1 - rf*f/ro)  (down positive)
+  const a = 0.45*(1 - (rf*f)/ro);
+  S.vy += a*dt;
+  // drag: heavy in fluid, light in air
+  const inFluid=f>0.02;
+  S.vy *= inFluid? 0.86 : 0.985;
+  S.y += S.vy*dt*2.2;
+  // constrain to tank
+  if(S.y<TY0+2){ S.y=TY0+2; if(S.vy<0)S.vy=0; }
+  if(S.y+OH>TY1-2){ S.y=TY1-2-OH; if(S.vy>0)S.vy*=-0.3; }
+}
+function verdict(){
+  const ro=effRho(), rf=S.rhoFl;
+  if(Math.abs(ro-rf)<rf*0.012) return 'hover';
+  return ro<rf? 'float':'sink';
+}
+function floatFrac(){ return Math.min(1, effRho()/S.rhoFl); }   // theoretical submerged fraction if floating
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+let stage,sctx,aux,actx,tNow=0;
+function cssv(n){ return getComputedStyle(document.body).getPropertyValue(n).trim()||'#fff'; }
+function clearC(ctx,w,h){ ctx.clearRect(0,0,w,h); ctx.fillStyle=cssv('--stage-bg'); ctx.fillRect(0,0,w,h); }
+
+function drawStage(){
+  if(!sctx)return; clearC(sctx,W,H); layout();
+  // tank walls
+  sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=2; sctx.strokeRect(TX0,TY0,TX1-TX0,TY1-TY0);
+  // fluid
+  const fl=FLUIDS[S.fluid];
+  sctx.fillStyle=fl.col; sctx.globalAlpha=0.42; sctx.fillRect(TX0+1,SURFACE,TX1-TX0-2,TY1-SURFACE-1); sctx.globalAlpha=1;
+  // surface line + ripples
+  sctx.strokeStyle=fl.col; sctx.lineWidth=2; sctx.globalAlpha=0.9; sctx.beginPath();
+  for(let x=TX0+1;x<=TX1-1;x+=6){ const yy=SURFACE+Math.sin(x*0.12+tNow*0.003)*1.6; x===TX0+1?sctx.moveTo(x,yy):sctx.lineTo(x,yy); } sctx.stroke(); sctx.globalAlpha=1;
+  sctx.fillStyle=cssv('--text2'); sctx.font='9px monospace'; sctx.fillText(fl.name+'  ρ = '+S.rhoFl+' kg/m³', TX0+8, TY1-8);
+  // object
+  drawObject();
+  // labels
+  const v=verdict();
+  sctx.font='bold 13px monospace';
+  sctx.fillStyle = v==='float'?cssv('--green'):v==='sink'?cssv('--red'):cssv('--gold');
+  sctx.fillText(v==='float'?'⬆ FLOATS':v==='sink'?'⬇ SINKS':'⟷ HOVERS (neutral)', TX0+8, TY0-9);
+  if(v==='float'){ const above=(1-floatFrac())*100; sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace'; sctx.fillText(above.toFixed(0)+'% pokes above the surface', TX1-180, TY0-9); }
+}
+function drawObject(){
+  const name = S.mode==='sub'?'sub':S.customName;
+  const col = S.mode==='sub'? '#d0d6dc' : S.objCol;
+  // shadow
+  sctx.fillStyle='rgba(0,0,0,0.25)'; sctx.fillRect(OX+4,S.y+4,OW,OH);
+  sctx.fillStyle=col; sctx.fillRect(OX,S.y,OW,OH);
+  sctx.strokeStyle='rgba(255,255,255,0.4)'; sctx.lineWidth=1.5; sctx.strokeRect(OX,S.y,OW,OH);
+  sctx.fillStyle='#0a0e16'; sctx.font='bold 11px monospace'; sctx.textAlign='center';
+  sctx.fillText(name, OX+OW/2, S.y+OH/2-2);
+  sctx.font='9px monospace'; sctx.fillText(effRho()+' kg/m³', OX+OW/2, S.y+OH/2+12); sctx.textAlign='left';
+  if(S.dragging){ sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2; sctx.strokeRect(OX-2,S.y-2,OW+4,OH+4); }
+}
+
+// ============================================================================
+// AUX: the force / density comparison
+// ============================================================================
+function drawAux(){
+  if(!actx)return; clearC(actx,AUXW,AUXH);
+  // density bar comparison
+  const x0=70, w=AUXW-x0-20, y0=70, bh=34;
+  const maxR=Math.max(S.rhoFl,effRho(),1)*1.15;
+  actx.fillStyle=cssv('--text3'); actx.font='9px monospace'; actx.fillText('density (kg/m³) — heavier sinks',x0,26);
+  function bar(y,rho,col,lab){ const bw=Math.min(w, rho/maxR*w);
+    actx.fillStyle=col; actx.globalAlpha=.55; actx.fillRect(x0,y,bw,bh); actx.globalAlpha=1; actx.strokeStyle=col; actx.strokeRect(x0,y,bw,bh);
+    actx.fillStyle=cssv('--text'); actx.font='10px monospace'; actx.fillText(lab,x0-58,y+bh/2+3); actx.fillText(rho+'',x0+bw+6,y+bh/2+3); }
+  bar(y0, effRho(), cssv('--gold'), 'object'); bar(y0+50, S.rhoFl, cssv('--cyan'), 'fluid');
+  // verdict arrow
+  const v=verdict();
+  actx.fillStyle= v==='float'?cssv('--green'):v==='sink'?cssv('--red'):cssv('--gold');
+  actx.font='12px monospace';
+  actx.fillText(v==='float'?'object lighter than fluid → FLOATS':v==='sink'?'object denser than fluid → SINKS':'equal density → HOVERS', x0, y0+120);
+  // force balance
+  const f= verdict()==='float'? floatFrac() : 1;
+  const V=S.volumeL/1000;
+  const Fb=S.rhoFl*V*(verdict()==='float'?floatFrac():1)*G, Wt=effRho()*V*G;
+  actx.fillStyle=cssv('--text2'); actx.font='10px monospace';
+  actx.fillText('weight  W = ρ_obj·V·g = '+Wt.toFixed(1)+' N', x0, y0+150);
+  actx.fillStyle=cssv('--cyan');
+  actx.fillText('buoyancy  F_b = ρ_fluid·V_sub·g = '+Fb.toFixed(1)+' N', x0, y0+168);
+}
+
+// ============================================================================
+// EXAMPLES + EXTRA FLUID
+// ============================================================================
+FLUIDS['Dead Sea']={rho:1240,col:'#3a8a8f',name:'Dead Sea brine'};
+const EXAMPLES=[
+  {emoji:'🧊',name:'Iceberg',rho:917,col:'#bfe6ff',label:'Iceberg',fluid:'Salt water',story:'Sea ice is only a touch less dense than salt water, so about 90% of an iceberg hides below the surface — only the tip shows.'},
+  {emoji:'🚢',name:'Steel ship',rho:300,col:'#8a8f98',label:'Hull',fluid:'Water',story:'Solid steel sinks — but a ship is mostly hollow. Its AVERAGE density (steel + air) is far less than water, so it floats. Shape beats material.'},
+  {emoji:'🏊',name:'Dead Sea swimmer',rho:985,col:'#e8c39a',label:'Person',fluid:'Dead Sea',story:'A human body barely floats in fresh water. The Dead Sea is so salty (ρ≈1240) that you bob like a cork and can read a newspaper.'},
+  {emoji:'🛢️',name:'Ice in oil',rho:917,col:'#bfe6ff',label:'Ice',fluid:'Oil',story:'Ice (917) is just barely lighter than cooking oil (920), so it floats with almost the entire cube submerged — a knife-edge balance.'},
+  {emoji:'✨',name:'Gold panning',rho:19300,col:'#f0c040',label:'Gold',fluid:'Water',story:'Gold is nearly 20× denser than water, so it sinks instantly and sits dead at the bottom — which is exactly how panning separates it from light sand.'},
+  {emoji:'🍯',name:'Cork in honey',rho:240,col:'#c9a36b',label:'Cork',fluid:'Honey',story:'Honey is denser than water (1420), so cork floats sky-high on it — only a sliver dips below the surface.'}
+];
+function loadExample(i){ S.example=i; const e=EXAMPLES[i]; S.rhoObj=e.rho; S.objCol=e.col; S.customName=e.label; setFluid(e.fluid); drop(); buildControls(); }
+
+// ============================================================================
+// CONTROLS / READOUTS / MODES
+// ============================================================================
+function $(id){ return document.getElementById(id); }
+function el(t,c,h){ const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; }
+function addSlider(parent,{label,min,max,step,val,fmt,mini,oninput}){
+  const c=el('div','ctl'); const row=el('div','param-row'); row.append(el('span',null,label),el('span','param-val',fmt(val)));
+  const inp=el('input'); inp.type='range'; inp.min=min;inp.max=max;inp.step=step;inp.value=val;
+  const m=el('div','sb-mini',mini||''); inp.oninput=()=>{ row.children[1].textContent=fmt(+inp.value); oninput(+inp.value); };
+  c.append(row,inp,m); parent.appendChild(c); return inp;
+}
+function buildControls(){
+  const p=$('mode-controls'); p.innerHTML='';
+  if(S.mode==='play'){
+    const w1=el('div'); w1.style.gridColumn='span 2'; w1.append(el('div','section-label','Object material'));
+    const g=el('div','btn-grid c3'); Object.keys(OBJECTS).forEach(k=>{ const b=el('button','minibtn'+(k===S.obj?' active':''),'<span style="color:'+OBJECTS[k].col+'">■</span> '+k+'<br><span style="font-size:8px;color:var(--text3)">'+OBJECTS[k].rho+'</span>'); b.onclick=()=>{setObject(k);buildControls();}; g.appendChild(b); }); w1.appendChild(g); p.appendChild(w1);
+    const w2=el('div'); w2.style.gridColumn='span 2'; w2.append(el('div','section-label','Fluid'));
+    const g2=el('div','btn-grid c3'); Object.keys(FLUIDS).forEach(k=>{ const b=el('button','minibtn'+(k===S.fluid?' active':''),'<span style="color:'+FLUIDS[k].col+'">●</span> '+k+'<br><span style="font-size:8px;color:var(--text3)">'+FLUIDS[k].rho+'</span>'); b.onclick=()=>{setFluid(k);drop();buildControls();}; g2.appendChild(b); }); w2.appendChild(g2); p.appendChild(w2);
+  }
+  else if(S.mode==='examples'){
+    const w=el('div'); w.style.gridColumn='span 2'; w.append(el('div','section-label','Real-world examples'));
+    const g=el('div','btn-grid c3'); EXAMPLES.forEach((e,i)=>{ const b=el('button','minibtn'+(i===S.example?' active':''),e.emoji+' '+e.name); b.onclick=()=>loadExample(i); g.appendChild(b); }); w.appendChild(g); p.appendChild(w);
+  }
+  else { // submarine game
+    addSlider(p,{label:'🤿 Ballast (sub density)',min:200,max:2000,step:5,val:S.ballast,fmt:v=>v+' kg/m³',mini:'flood tanks to sink, blow them to rise',oninput:v=>{S.ballast=v;}});
+    const w=el('div'); w.style.gridColumn='span 2'; w.append(el('div','section-label','Fluid'));
+    const g=el('div','btn-grid c3'); ['Water','Salt water','Dead Sea'].forEach(k=>{ const b=el('button','minibtn'+(k===S.fluid?' active':''),k+' '+FLUIDS[k].rho); b.onclick=()=>{setFluid(k);buildControls();}; g.appendChild(b); }); w.appendChild(g); p.appendChild(w);
+  }
+  updateReadout();
+}
+function rcell(l,v,s,c){ return '<div class="rcell"><div class="r-label">'+l+'</div><div class="r-value '+(c||'sm')+'">'+v+'</div><div class="r-sub">'+(s||'')+'</div></div>'; }
+function updateReadout(){
+  const g=$('readout-grid'); const v=verdict(), V=S.volumeL/1000, ro=effRho(), rf=S.rhoFl;
+  const sub = v==='float'? floatFrac() : 1;
+  const Fb=rf*V*sub*G, Wt=ro*V*G, app=Math.max(0,Wt-rf*V*G);
+  let html='',law='';
+  if(S.mode==='play'||S.mode==='examples'){
+    html=rcell('Object density', ro+' kg/m³', S.customName, 'gold')
+      + rcell('Fluid density', rf+' kg/m³', FLUIDS[S.fluid].name,'cyan')
+      + rcell('Verdict', v==='float'?'floats':v==='sink'?'sinks':'hovers', v==='float'?'ρ_obj < ρ_fluid':v==='sink'?'ρ_obj > ρ_fluid':'ρ_obj = ρ_fluid', v==='float'?'green':v==='sink'?'red':'gold')
+      + rcell('Submerged', v==='float'?(sub*100).toFixed(0)+'%':'100%', v==='float'?((1-sub)*100).toFixed(0)+'% above water':'fully under','violet')
+      + rcell('Buoyant force', Fb.toFixed(1)+' N','ρ_fluid·V_sub·g','cyan')
+      + rcell('Weight', Wt.toFixed(1)+' N','ρ_obj·V·g')
+      + rcell('Apparent weight', v==='sink'?app.toFixed(1)+' N':'0 N', v==='sink'?'feels lighter underwater':'fully supported','pink')
+      + rcell('Object volume', S.volumeL+' L','assumed for forces');
+    if(S.mode==='examples'){ $('law-strip').dataset.story=''; }
+    law= v==='float'
+      ? '<b>Archimedes:</b> a floating object sinks until it pushes aside its own weight of fluid. Fraction underwater = ρ_obj / ρ_fluid = <b>'+(sub*100).toFixed(0)+'%</b>. Density alone decides it — size doesn\u2019t matter.'
+      : v==='sink'
+      ? '<b>F_buoyant = ρ_fluid · V · g</b> is less than the weight, so it sinks — but it still feels '+(Fb).toFixed(1)+' N lighter underwater. That missing weight is the buoyant force.'
+      : '<b>Neutral buoyancy:</b> object and fluid densities match, so weight and buoyancy cancel and it hovers at any depth — like a fish or a submarine.';
+    setBadges(S.customName+' '+ro, v.toUpperCase());
+  } else {
+    const net=(rf-ro); S.won = Math.abs(ro-rf)<rf*0.012;
+    html=rcell('Ballast density', ro+' kg/m³','your setting','gold')
+      + rcell('Fluid density', rf+' kg/m³', FLUIDS[S.fluid].name,'cyan')
+      + rcell('Net buoyancy', (net>0?'+':'')+(net*V*G).toFixed(1)+' N', net>0?'rising':net<0?'sinking':'balanced', Math.abs(net)<rf*0.012?'green':'pink')
+      + rcell('Status', S.won?'★ HOVERING':net>0?'floating up':'sinking', S.won?'neutral buoyancy!':'tune the ballast', S.won?'green':'sm');
+    law= S.won? '★ <b>Neutral buoyancy achieved!</b> Ballast density matches the water, so the sub hovers. Real submarines do exactly this — flooding or emptying tanks to fine-tune their density.'
+              : '<b>Match the sub\u2019s density to the water</b> ('+rf+' kg/m³) to make it hover. Too dense → it sinks; too light → it pops up. Submarines pump water in and out to control this.';
+    setBadges('ballast '+ro, S.won?'HOVERING':'tuning');
+  }
+  g.innerHTML=html; $('law-strip').innerHTML=law;
+}
+function setBadges(l,r){ $('badge-l').textContent=l; $('badge-r').textContent=r; }
+
+const MODES=[ {id:'play',label:'Float or Sink',tag:'playground'},{id:'examples',label:'Real Examples',tag:'why ships float'},{id:'sub',label:'Submarine',tag:'hover game'} ];
+const TITLE={play:'The Tank',examples:'Real-World Buoyancy',sub:'Submarine — Neutral Buoyancy'};
+const HINT={play:'pick a material & fluid · drag the block',examples:'pick a scenario',sub:'tune the ballast to hover'};
+let voiceOn=false,sceneToken=0;
+const SCRIPT={
+  play:"Whether something floats or sinks comes down to one thing: density. Drop in an object lighter than the fluid and it floats; heavier, and it sinks. And here is Archimedes\u2019 beautiful rule — a floating object settles until the fluid it pushes aside weighs exactly as much as the object. Try iron in water, then cork in honey, and watch the difference.",
+  examples:"Why does a steel ship float when a steel nail sinks? Why does most of an iceberg hide below the waves? These everyday wonders are all the same physics. Pick a scenario and see how density and Archimedes\u2019 principle explain each one.",
+  sub:"A submarine controls its depth by changing its own density. Flood its tanks with water and it grows denser and sinks; blow the water out with air and it rises. Match its density exactly to the water around it and it hovers, weightless. See if you can find that balance."
+};
+function speak(t){ if(!voiceOn||!t||typeof speechSynthesis==='undefined')return; const my=++sceneToken; try{speechSynthesis.cancel();}catch(e){}
+  setTimeout(()=>{ if(my!==sceneToken||!voiceOn)return; try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){} },80); }
+function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel(); }catch(e){} }
+function updateVoiceBtn(){ const v=$('voice-switcher'); v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color=voiceOn?'var(--cyan)':''; }
+function buildModeBar(){ const b=$('mode-bar'); b.innerHTML=''; MODES.forEach(m=>{ const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.label+' <span class="mode-tag">'+m.tag+'</span>'); t.onclick=()=>setMode(m.id); b.appendChild(t); }); }
+function setMode(id){
+  stopSpeech(); S.mode=id;
+  $('stage-title').firstChild.textContent=TITLE[id]+' '; $('stage-hint').textContent=HINT[id];
+  if(id==='examples') loadExample(S.example); else drop();
+  if(id==='sub'){ S.fluid='Water'; S.rhoFl=1000; S.ballast=1100; }
+  buildModeBar(); buildControls(); speak(SCRIPT[id]);
+}
+
+function bindUI(){
+  stage=$('stage'); sctx=stage.getContext('2d'); aux=$('aux'); actx=aux.getContext('2d');
+  fitCanvas(); window.addEventListener('resize',fitCanvas);
+  // drag the object up/down
+  function pt(e){ const r=stage.getBoundingClientRect(); const cx=(e.touches?e.touches[0].clientX:e.clientX), cy=(e.touches?e.touches[0].clientY:e.clientY); return {x:(cx-r.left)*(W/r.width), y:(cy-r.top)*(H/r.height)}; }
+  let offY=0;
+  function down(e){ const p=pt(e); if(p.x>OX-6&&p.x<OX+OW+6&&p.y>S.y-6&&p.y<S.y+OH+6){ S.dragging=true; offY=p.y-S.y; e.preventDefault&&e.preventDefault(); } }
+  function move(e){ if(!S.dragging)return; const p=pt(e); S.y=Math.max(TY0+2,Math.min(TY1-OH-2,p.y-offY)); S.vy=0; e.preventDefault&&e.preventDefault(); }
+  function up(){ S.dragging=false; }
+  stage.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+  stage.addEventListener('touchstart',down,{passive:false}); window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',up);
+  const ts=$('theme-switcher'); try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){} };
+  const vs=$('voice-switcher'); try{ if(localStorage.getItem('bu-voice')==='on')voiceOn=true; }catch(e){}
+  updateVoiceBtn(); vs.onclick=()=>{ voiceOn=!voiceOn; try{localStorage.setItem('bu-voice',voiceOn?'on':'off');}catch(e){} updateVoiceBtn(); if(voiceOn)speak(SCRIPT[S.mode]); else stopSpeech(); };
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden)stopSpeech(); });
+}
+function fitCanvas(){ W=560;H=400;AUXW=560;AUXH=300; stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH; layout(); }
+
+function buildTheory(){
+  $('theory').innerHTML=`
+  <div class="theory-hdr">Theory — Buoyancy &amp; Density</div>
+  <h3>Density Decides Everything</h3>
+  <p>Density is how much mass is packed into a given volume (ρ = mass / volume). Whether an object floats or sinks in a fluid depends on a single comparison: is the object more or less dense than the fluid?</p>
+  <div class="hbox hb-cyan">ρ<sub>object</sub> &lt; ρ<sub>fluid</sub> → <strong>floats</strong> &nbsp;·&nbsp; ρ<sub>object</sub> &gt; ρ<sub>fluid</sub> → <strong>sinks</strong> &nbsp;·&nbsp; equal → <strong>hovers</strong></div>
+  <p>Notice what is <em>missing</em>: size and weight. A tiny steel ball-bearing and a giant steel girder both sink; a huge log and a small cork both float. Only density matters.</p>
+
+  <h3>Archimedes\u2019 Principle</h3>
+  <p>Over 2,000 years ago Archimedes realised why. Any object in a fluid is pushed up by a <em>buoyant force</em> equal to the weight of the fluid it pushes out of the way:</p>
+  <div class="eq">F<sub>buoyant</sub> = ρ<sub>fluid</sub> · V<sub>displaced</sub> · g
+    <div class="vars">ρ_fluid = fluid density, V_displaced = volume of fluid pushed aside, g = 9.81 m/s². If this upward push beats the object\u2019s weight, it rises; if not, it sinks.</div>
+  </div>
+
+  <h3>How Much Sticks Out?</h3>
+  <p>A floating object sinks just far enough that the fluid it displaces weighs exactly as much as the whole object. That gives a wonderfully simple result for the fraction underwater:</p>
+  <div class="eq">fraction submerged = ρ<sub>object</sub> / ρ<sub>fluid</sub>
+    <div class="vars">Ice (917) in water (1000) → 917/1000 = 92% submerged, so only 8% shows. That 8% is the entire "tip of the iceberg."</div>
+  </div>
+
+  <h3>Why a Steel Ship Floats</h3>
+  <p>Solid steel (7850 kg/m³) sinks like a stone. But a ship is a hollow shell full of air. Its <em>average</em> density — steel hull plus all that enclosed air — is far less than water, so it floats. Overload it and the average density rises; cross water\u2019s density and it goes down. Shape, not material, is the trick — and it is exactly how submarines work, pumping water in and out to tune their density and hover at any depth.</p>
+
+  <h3>Buoyancy in Air, Too</h3>
+  <p>Fluids include gases. A helium or hot-air balloon rises because it is less dense than the surrounding air, displacing a weight of air greater than its own. The very same principle that floats a boat lifts a balloon into the sky.</p>
+  `;
+}
+
+let lastT=0,rt=0;
+function loop(now){
+  try{
+    if(!lastT)lastT=now; const dt=Math.max(0,Math.min(2.5,(now-lastT)/16.67)); lastT=now; tNow=now;
+    stepPhysics(dt);
+    drawStage(); drawAux();
+    if(rt++%5===0) updateReadout();
+  }catch(e){ console.error('loop',e); }
+  requestAnimationFrame(loop);
+}
+function init(){ buildModeBar(); bindUI(); buildTheory(); setMode('play'); requestAnimationFrame(loop); }
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
+</script>
+</body>
+</html>

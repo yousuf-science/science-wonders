@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bernoulli &amp; Flow — Why Planes Fly — Science Wonders</title>
+<meta name="description" content="Fly a plane on real aerodynamics and discover why wings lift. Throttle up, take off, and avoid the stall; watch streamlines and Bernoulli's principle over a wing; and explore the lift equation L = half rho v squared S CL with the four forces of flight.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#0a1220;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
+canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
+.aux-small canvas#aux{max-height:280px;}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:9px;left:9px;color:var(--gold);}
+.sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
+@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.wl-slider{height:14px;border-radius:7px;-webkit-appearance:none;appearance:none;outline:none;}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
+.minibtn{font-family:monospace;font-size:10px;padding:7px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+.verdict{margin-top:12px;padding:11px 15px;border-radius:8px;font-family:monospace;font-size:12px;display:none;}
+.verdict.show{display:block;}
+.verdict.go{background:rgba(64,255,170,.06);border:1px solid rgba(64,255,170,.3);color:#8effc8;}
+body.light-theme .verdict.go{color:var(--green);}
+.verdict.no{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.3);color:#ff9aa6;}
+body.light-theme .verdict.no{color:var(--red);}
+
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Bernoulli &amp; Flow — Why Planes Fly</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+<div class="mode-bar" id="mode-bar"></div>
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+      <div class="card">
+        <div class="card-title" id="stage-title">Take Off! <span class="hint" id="stage-hint">throttle up</span></div>
+        <div class="stage-wrap">
+          <canvas id="stage" width="560" height="400"></canvas>
+          <div class="stage-badge sb-tl" id="badge-l">—</div>
+          <div class="stage-badge sb-tr" id="badge-r">—</div>
+        </div>
+      </div>
+      <div class="play-bar"><div class="sb-controls" id="mode-controls"></div></div>
+    </div>
+    <div class="right-col">
+      <div class="card aux-small">
+        <div class="card-title">Flight Data <span class="hint">live</span></div>
+        <div class="stage-wrap"><canvas id="aux" width="560" height="300"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Readout</div>
+        <div class="card-pad"><div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">The Physics</div>
+    <div class="card-pad"><div class="law-strip" id="law-strip" style="margin-top:0;"></div></div>
+  </div>
+</div>
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+<script>
+'use strict';
+// ============================================================================
+// BERNOULLI & FLOW — WHY PLANES FLY — engine
+// ============================================================================
+let W=560,H=400,AUXW=560,AUXH=300;
+const g=9.81;
+
+// ---- aerodynamics ----
+const AERO={ rho0:1.225, S:24, m:4000, AR:8, e:0.8, CD0:0.020, Tmax:15000 };
+AERO.W = AERO.m*g;
+AERO.k = 1/(Math.PI*AERO.e*AERO.AR);
+function rhoAt(h){ return AERO.rho0*Math.exp(-Math.max(0,h)/8500); }
+function CL(a){ if(a<=15) return 0.10+0.10*a; if(a<=20) return 1.60-(a-15)*0.13; return Math.max(0.25,1.00-(a-20)*0.05); }
+function CD(a){ const cl=CL(a); return AERO.CD0 + AERO.k*cl*cl; }
+function lift(v,a,h,S){ return 0.5*rhoAt(h)*v*v*(S||AERO.S)*CL(a); }
+function drag(v,a,h,S){ return 0.5*rhoAt(h)*v*v*(S||AERO.S)*CD(a); }
+function stallSpeed(h){ return Math.sqrt(2*AERO.W/(rhoAt(h)*AERO.S*1.60)); }
+const STALL_A=15;
+
+const S = {
+  mode:'fly',
+  // flight game
+  v:0, h:0, vh:0, x:0, pitch:2, throttle:0, flaps:0,
+  crashed:false, maxAlt:0,
+  // wing mode
+  wAlpha:6, wSpeed:55,
+  // lift lab
+  lSpeed:55, lAlpha:4, lArea:16, lAlt:0
+};
+
+function resetFlight(){ S.v=0;S.h=0;S.vh=0;S.x=0;S.pitch=2;S.throttle=0;S.flaps=0;S.crashed=false;S.maxAlt=0; }
+
+function stepFlight(dt){
+  if(S.crashed) return;
+  const a=S.pitch, v=Math.max(0,S.v), h=S.h;
+  const T=S.throttle*AERO.Tmax;
+  const fCL=S.flaps*0.30, fCD=S.flaps*0.014;     // flaps: more lift, more drag
+  const q=0.5*rhoAt(h)*v*v*AERO.S;
+  const D=q*(CD(a)+fCD), L=q*(CL(a)+fCL);
+  const onGround = h<=0.01;
+  // airspeed
+  let dv=(T - D)/AERO.m;
+  if(onGround) dv -= (v>0?0.02*g:0);              // rolling friction
+  else dv -= g*Math.sin(Math.atan2(S.vh,Math.max(v,1)))*0.6; // gravity along climb
+  S.v=Math.max(0, v + dv*dt);
+  // vertical
+  const net = L - AERO.W;
+  if(onGround && net<=0){ S.vh=0; S.h=0; }
+  else { S.vh += (net/AERO.m)*dt; S.vh *= 0.985; S.h += S.vh*dt; }  // damping = controllable climb
+  if(S.h<0){ S.h=0; if(S.vh<-6) {/* hard landing */ S.v*=0.5;} S.vh=0; }
+  S.x += S.v*dt;
+  S.maxAlt=Math.max(S.maxAlt,S.h);
+}
+function flightStatus(){
+  if(S.h<=0.01){ return S.v<2?'on the runway':(S.v<stallSpeed(0)?'rolling — build speed':'ready — pitch up to climb'); }
+  if(S.pitch>STALL_A || (S.v<stallSpeed(S.h)&&S.vh<0)) return 'STALL — drop the nose!';
+  if(S.vh>0.4) return 'climbing ✈';
+  if(S.vh<-0.4) return 'descending';
+  return 'cruising — level flight';
+}
+function isStalled(){ return S.pitch>STALL_A || (S.h>1 && S.v<stallSpeed(S.h)*0.96 && S.vh<-0.2); }
+
+// ============================================================================
+// RENDERING
+// ============================================================================
+let stage,sctx,aux,actx,tNow=0;
+function cssv(n){ return getComputedStyle(document.body).getPropertyValue(n).trim()||'#fff'; }
+function clearC(ctx,w,h){ ctx.clearRect(0,0,w,h); ctx.fillStyle=cssv('--stage-bg'); ctx.fillRect(0,0,w,h); }
+
+function drawStage(){ if(!sctx)return; clearC(sctx,W,H);
+  if(S.mode==='fly') drawFly(); else if(S.mode==='wing') drawWing(); else drawLift(); }
+
+// ---- fly game ----
+function drawFly(){
+  const horizon=H-46;
+  // sky gradient
+  const sky=sctx.createLinearGradient(0,0,0,horizon); sky.addColorStop(0,'#0a1a3a'); sky.addColorStop(1,'#3a6aa0');
+  sctx.fillStyle=sky; sctx.fillRect(0,0,W,horizon);
+  // clouds (parallax by x and altitude)
+  sctx.fillStyle='rgba(255,255,255,0.16)';
+  for(let i=0;i<6;i++){ const cx=((i*220 - S.x*0.4)%(W+200)+W+200)%(W+200)-100; const cy=40+((i*73)%120)+ (S.h*0.05)%80; cloud(cx,cy- (S.h*0.05)%80 +40); }
+  // ground + runway (scrolls with x; drops below as altitude rises)
+  const groundY=horizon + Math.min(120, S.h*0.6);
+  sctx.fillStyle='#2e5a35'; sctx.fillRect(0,groundY,W,H-groundY);
+  sctx.fillStyle='#3a3f48'; sctx.fillRect(0,groundY,W,10);
+  sctx.strokeStyle='#d8d8a0'; sctx.lineWidth=2; sctx.setLineDash([18,16]); sctx.beginPath();
+  const off=(-S.x*1.2)%34; sctx.moveTo(off,groundY+5); sctx.lineTo(W,groundY+5); sctx.stroke(); sctx.setLineDash([]);
+  // plane (fixed x, y maps altitude)
+  const px=W*0.32, py=horizon-6 - Math.min(horizon-70, S.h*0.6);
+  drawPlane(px,py,-S.pitch*0.6);
+  // speed lines
+  if(S.v>4){ sctx.strokeStyle='rgba(255,255,255,'+Math.min(.4,S.v/200)+')'; sctx.lineWidth=1; for(let i=0;i<6;i++){ const yy=py-20+i*8; sctx.beginPath(); sctx.moveTo(px-30-((tNow*0.3+i*40)%60),yy); sctx.lineTo(px-50-((tNow*0.3+i*40)%60),yy); sctx.stroke(); } }
+  // lift / weight arrows on plane
+  const Lf=lift(S.v,S.pitch,S.h)/AERO.W;
+  arrow(px,py-8,px,py-8-Math.min(60,Lf*34),cssv('--cyan'),'lift');
+  arrow(px,py+8,px,py+8+34,cssv('--gold'),'weight');
+  if(S.throttle>0.02) arrow(px-18,py,px-18-S.throttle*40,py,cssv('--green'),'thrust');
+  // HUD
+  sctx.fillStyle='rgba(1,6,16,0.7)'; sctx.fillRect(8,8,150,52);
+  sctx.fillStyle=cssv('--cyan'); sctx.font='11px monospace';
+  sctx.fillText('ALT  '+S.h.toFixed(0)+' m', 16, 26);
+  sctx.fillText('SPD  '+(S.v*3.6).toFixed(0)+' km/h', 16, 40);
+  sctx.fillStyle = isStalled()?cssv('--red'):cssv('--green'); sctx.fillText(flightStatus(), 16, 54);
+  if(isStalled()){ sctx.fillStyle=cssv('--red'); sctx.font='bold 15px monospace'; sctx.fillText('⚠ STALL', W/2-34, 30); }
+}
+function cloud(x,y){ sctx.beginPath(); sctx.arc(x,y,16,0,7); sctx.arc(x+18,y+4,13,0,7); sctx.arc(x-16,y+5,12,0,7); sctx.arc(x+4,y-8,12,0,7); sctx.fill(); }
+function drawPlane(x,y,rot){ sctx.save(); sctx.translate(x,y); sctx.rotate(rot*Math.PI/180);
+  sctx.fillStyle='#e8edf2'; // fuselage
+  sctx.beginPath(); sctx.moveTo(-26,0); sctx.quadraticCurveTo(0,-7,30,-2); sctx.quadraticCurveTo(34,0,30,3); sctx.quadraticCurveTo(0,6,-26,2); sctx.closePath(); sctx.fill();
+  sctx.fillStyle='#c0c8d2'; sctx.beginPath(); sctx.moveTo(-26,0); sctx.lineTo(-34,-12); sctx.lineTo(-22,-2); sctx.closePath(); sctx.fill(); // tail
+  sctx.fillStyle='#8fa8c8'; sctx.beginPath(); sctx.moveTo(-2,1); sctx.lineTo(14,16); sctx.lineTo(-12,16); sctx.closePath(); sctx.fill(); // wing
+  sctx.fillStyle='#20303f'; sctx.beginPath(); sctx.ellipse(14,-2,6,3,0,0,7); sctx.fill(); // cockpit
+  sctx.restore(); }
+function arrow(x1,y1,x2,y2,col,lab){ sctx.strokeStyle=col;sctx.lineWidth=2.5;sctx.beginPath();sctx.moveTo(x1,y1);sctx.lineTo(x2,y2);sctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1); sctx.beginPath();sctx.moveTo(x2,y2);sctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4));sctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4));sctx.closePath();sctx.fillStyle=col;sctx.fill();
+  if(lab){sctx.fillStyle=col;sctx.font='9px monospace';sctx.fillText(lab,x2+3,(y1+y2)/2);} }
+
+// ---- wing airflow (Bernoulli) ----
+function drawWing(){
+  const cx=W/2, cy=H/2, ch=Math.cos(-S.wAlpha*Math.PI/180), sh=Math.sin(-S.wAlpha*Math.PI/180);
+  const stalled=S.wAlpha>STALL_A;
+  // streamlines
+  const nL=11;
+  for(let i=0;i<nL;i++){ const y0=70+i*((H-140)/(nL-1)); const top = y0<cy;
+    sctx.strokeStyle = stalled&&top? 'rgba(255,90,90,0.5)' : (top?'rgba(120,210,255,0.8)':'rgba(120,160,255,0.55)');
+    sctx.lineWidth=1.6; sctx.beginPath();
+    for(let x=10;x<=W-10;x+=6){ const d=Math.abs(x-cx); let y=y0; const infl=Math.max(0,1-d/150);
+      const bend = (top? -1:1)*infl*(18+S.wAlpha*1.2)*(top?1:0.5);
+      y=y0+bend - (top?0:0);
+      if(top&&stalled&&x>cx){ y+=Math.sin(x*0.3+tNow*0.02)*10*infl; } // separation turbulence
+      x===10?sctx.moveTo(x,y):sctx.lineTo(x,y); }
+    sctx.stroke();
+  }
+  // airfoil
+  sctx.save(); sctx.translate(cx,cy); sctx.rotate(-S.wAlpha*Math.PI/180);
+  sctx.fillStyle='#1a2230'; sctx.strokeStyle='#9fb4cc'; sctx.lineWidth=2;
+  sctx.beginPath(); sctx.moveTo(-90,4); sctx.bezierCurveTo(-40,-22,40,-16,90,2); sctx.bezierCurveTo(40,10,-40,12,-90,4); sctx.closePath(); sctx.fill(); sctx.stroke();
+  sctx.restore();
+  // pressure labels
+  sctx.fillStyle=stalled?cssv('--red'):cssv('--cyan'); sctx.font='11px monospace';
+  sctx.fillText(stalled?'flow separates → lift lost':'fast air · LOW pressure', cx-70, cy-58);
+  sctx.fillStyle=cssv('--gold'); sctx.fillText('slow air · HIGH pressure', cx-66, cy+72);
+  // lift arrow
+  const Lrel = lift(S.wSpeed,S.wAlpha,0)/AERO.W;
+  arrow(cx+120,cy, cx+120, cy-Math.min(80,Lrel*30), stalled?cssv('--red'):cssv('--cyan'),'LIFT');
+  sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace';
+  sctx.fillText('angle of attack '+S.wAlpha.toFixed(0)+'°   airspeed '+(S.wSpeed*3.6).toFixed(0)+' km/h', 14, H-16);
+}
+
+// ---- lift lab: four forces ----
+function drawLift(){
+  const cx=W/2, cy=H/2-10;
+  drawPlane(cx,cy,0); sctx.save();
+  const L=lift(S.lSpeed,S.lAlpha,S.lAlt,S.lArea), D=drag(S.lSpeed,S.lAlpha,S.lAlt,S.lArea), Wt=AERO.W, T=D;
+  arrow(cx,cy-10,cx,cy-10-Math.min(110,L/AERO.W*34),cssv('--cyan'),''); sctx.fillStyle=cssv('--cyan'); sctx.font='11px monospace'; sctx.fillText('LIFT '+(L/1000).toFixed(1)+' kN',cx+6,cy-70);
+  arrow(cx,cy+10,cx,cy+10+34,cssv('--gold'),''); sctx.fillStyle=cssv('--gold'); sctx.fillText('WEIGHT '+(Wt/1000).toFixed(1)+' kN',cx+6,cy+54);
+  arrow(cx+20,cy,cx+20+Math.min(90,T/200),cy,cssv('--green'),''); sctx.fillStyle=cssv('--green'); sctx.fillText('THRUST',cx+24,cy-6);
+  arrow(cx-20,cy,cx-20-Math.min(90,D/200),cy,cssv('--orange'),''); sctx.fillStyle=cssv('--orange'); sctx.fillText('DRAG '+(D/1000).toFixed(1)+'kN',cx-90,cy-6);
+  sctx.restore();
+  sctx.fillStyle = L>Wt?cssv('--green'):cssv('--red'); sctx.font='bold 13px monospace';
+  sctx.fillText(L>Wt?'LIFT > WEIGHT → climbs':'LIFT < WEIGHT → sinks', cx-90, H-50);
+  sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace';
+  sctx.fillText('L = ½ · ρ · v² · S · C_L = ½ · '+rhoAt(S.lAlt).toFixed(2)+' · '+S.lSpeed+'² · '+S.lArea+' · '+CL(S.lAlpha).toFixed(2), cx-200, H-26);
+}
+
+// ============================================================================
+// AUX
+// ============================================================================
+function drawAux(){ if(!actx)return; clearC(actx,AUXW,AUXH);
+  if(S.mode==='fly') auxFly(); else if(S.mode==='wing') auxCLcurve(); else auxLiftCurve(); }
+function axes(xl,yl){ actx.strokeStyle=cssv('--border2'); actx.beginPath(); actx.moveTo(44,16); actx.lineTo(44,AUXH-28); actx.lineTo(AUXW-14,AUXH-28); actx.stroke();
+  actx.fillStyle=cssv('--text3'); actx.font='9px monospace'; actx.fillText(yl,6,13); actx.fillText(xl,AUXW-90,AUXH-12); }
+function auxCLcurve(){ axes('angle of attack →','C_L'); const x0=44,y0=AUXH-28,w=AUXW-58,h=AUXH-46;
+  actx.strokeStyle=cssv('--cyan'); actx.lineWidth=2; actx.beginPath();
+  for(let a=-6;a<=26;a+=0.5){ const px=x0+((a+6)/32)*w, py=y0-(CL(a)/2)*h; a===-6?actx.moveTo(px,py):actx.lineTo(px,py); } actx.stroke();
+  // stall marker
+  const sx=x0+((STALL_A+6)/32)*w; actx.strokeStyle=cssv('--red'); actx.setLineDash([3,3]); actx.beginPath(); actx.moveTo(sx,16); actx.lineTo(sx,y0); actx.stroke(); actx.setLineDash([]);
+  actx.fillStyle=cssv('--red'); actx.font='9px monospace'; actx.fillText('stall',sx-12,26);
+  const cxp=x0+((S.wAlpha+6)/32)*w, cyp=y0-(CL(S.wAlpha)/2)*h; actx.fillStyle=cssv('--gold'); actx.beginPath(); actx.arc(cxp,cyp,5,0,7); actx.fill();
+  actx.fillStyle=cssv('--text2'); actx.font='10px monospace'; actx.fillText('lift rises with angle — until the wing stalls',54,AUXH-8);
+}
+function auxLiftCurve(){ axes('airspeed (km/h) →','lift'); const x0=44,y0=AUXH-28,w=AUXW-58,h=AUXH-46, vmax=100;
+  actx.strokeStyle=cssv('--cyan'); actx.lineWidth=2; actx.beginPath();
+  for(let v=0;v<=vmax;v+=2){ const Lv=lift(v,S.lAlpha,S.lAlt,S.lArea); const px=x0+(v/vmax)*w, py=y0-Math.min(1,Lv/(3*AERO.W))*h; v===0?actx.moveTo(px,py):actx.lineTo(px,py);} actx.stroke();
+  // weight line
+  const wy=y0-Math.min(1,AERO.W/(3*AERO.W))*h; actx.strokeStyle=cssv('--gold'); actx.setLineDash([4,4]); actx.beginPath(); actx.moveTo(x0,wy); actx.lineTo(x0+w,wy); actx.stroke(); actx.setLineDash([]);
+  actx.fillStyle=cssv('--gold'); actx.font='9px monospace'; actx.fillText('weight',x0+6,wy-4);
+  const cxp=x0+(S.lSpeed/vmax)*w, cyp=y0-Math.min(1,lift(S.lSpeed,S.lAlpha,S.lAlt,S.lArea)/(3*AERO.W))*h; actx.fillStyle=cssv('--cyan'); actx.beginPath(); actx.arc(cxp,cyp,5,0,7); actx.fill();
+  actx.fillStyle=cssv('--text2'); actx.font='10px monospace'; actx.fillText('lift grows with the SQUARE of speed',54,AUXH-8);
+}
+function auxFly(){ axes('','');
+  actx.fillStyle=cssv('--text2'); actx.font='11px monospace';
+  const lines=[['Altitude', S.h.toFixed(0)+' m'],['Airspeed', (S.v*3.6).toFixed(0)+' km/h  (stall '+(stallSpeed(S.h)*3.6).toFixed(0)+')'],['Climb rate', (S.vh).toFixed(1)+' m/s'],['Angle of attack', S.pitch.toFixed(0)+'°'],['Throttle', (S.throttle*100).toFixed(0)+'%'],['Lift / Weight', (lift(S.v,S.pitch,S.h)/AERO.W).toFixed(2)],['Distance flown', (S.x/1000).toFixed(2)+' km'],['Max altitude', S.maxAlt.toFixed(0)+' m']];
+  lines.forEach((l,i)=>{ const y=40+i*28; actx.fillStyle=cssv('--text3'); actx.fillText(l[0],30,y); actx.fillStyle=cssv('--cyan'); actx.font='13px monospace'; actx.fillText(l[1],230,y); actx.font='11px monospace'; });
+  actx.fillStyle = isStalled()?cssv('--red'):cssv('--gold'); actx.font='11px monospace'; actx.fillText(flightStatus(),30,40+8*28);
+}
+
+// ============================================================================
+// CONTROLS / READOUTS / MODES
+// ============================================================================
+function $(id){ return document.getElementById(id); }
+function el(t,c,h){ const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e; }
+let throttleInp=null, pitchInp=null;
+function addSlider(parent,{label,min,max,step,val,fmt,mini,oninput,ref}){
+  const c=el('div','ctl'); const row=el('div','param-row'); row.append(el('span',null,label),el('span','param-val',fmt(val)));
+  const inp=el('input'); inp.type='range'; inp.min=min;inp.max=max;inp.step=step;inp.value=val;
+  const m=el('div','sb-mini',mini||''); inp.oninput=()=>{ row.children[1].textContent=fmt(+inp.value); oninput(+inp.value); };
+  inp._row=row; inp._fmt=fmt; c.append(row,inp,m); parent.appendChild(c); if(ref)window[ref]=inp; return inp;
+}
+function buildControls(){
+  const p=$('mode-controls'); p.innerHTML='';
+  if(S.mode==='fly'){
+    throttleInp=addSlider(p,{label:'🔥 Throttle',min:0,max:100,step:1,val:S.throttle*100,fmt:v=>v+'%',mini:'jet power (or ← → keys)',oninput:v=>{S.throttle=v/100;}});
+    pitchInp=addSlider(p,{label:'🛫 Pitch (angle of attack)',min:-6,max:18,step:0.5,val:S.pitch,fmt:v=>v+'°',mini:'nose up to climb · ease down when fast · >15° STALLS (↑ ↓ keys)',oninput:v=>{S.pitch=v;}});
+    addSlider(p,{label:'🛬 Flaps',min:0,max:2,step:1,val:S.flaps,fmt:v=>['up','½','full'][v],mini:'extra lift for takeoff & landing (also adds drag)',oninput:v=>{S.flaps=v;}});
+    const w=el('div'); w.style.gridColumn='span 2'; const grow=el('div','btn-grid c2');
+    const b1=el('button','minibtn','↺ Reset to runway'); b1.onclick=()=>{resetFlight();syncSliders();buildControls();};
+    const b2=el('button','minibtn','⚡ Quick takeoff'); b2.onclick=()=>{S.throttle=0.9;S.v=80;S.pitch=8;S.flaps=1;syncSliders();buildControls();};
+    grow.append(b1,b2); w.appendChild(grow); p.appendChild(w);
+  }
+  else if(S.mode==='wing'){
+    addSlider(p,{label:'Angle of attack',min:-4,max:22,step:1,val:S.wAlpha,fmt:v=>v+'°',mini:'tilt into the wind — watch it stall past 15°',oninput:v=>{S.wAlpha=v;}});
+    addSlider(p,{label:'Airspeed',min:20,max:90,step:1,val:S.wSpeed,fmt:v=>(v*3.6).toFixed(0)+' km/h',mini:'',oninput:v=>{S.wSpeed=v;}});
+  }
+  else {
+    addSlider(p,{label:'Airspeed v',min:0,max:100,step:1,val:S.lSpeed,fmt:v=>v+' m/s',mini:'lift ∝ v²',oninput:v=>{S.lSpeed=v;}});
+    addSlider(p,{label:'Angle of attack',min:-4,max:20,step:1,val:S.lAlpha,fmt:v=>v+'°',mini:'',oninput:v=>{S.lAlpha=v;}});
+    addSlider(p,{label:'Wing area S',min:6,max:30,step:1,val:S.lArea,fmt:v=>v+' m²',mini:'bigger wing = more lift',oninput:v=>{S.lArea=v;}});
+    addSlider(p,{label:'Altitude (air density)',min:0,max:11000,step:500,val:S.lAlt,fmt:v=>v+' m',mini:'thinner air = less lift',oninput:v=>{S.lAlt=v;}});
+  }
+  updateReadout();
+}
+function syncSliders(){ if(throttleInp){throttleInp.value=S.throttle*100; throttleInp._row.children[1].textContent=(S.throttle*100).toFixed(0)+'%';} if(pitchInp){pitchInp.value=S.pitch; pitchInp._row.children[1].textContent=S.pitch+'°';} }
+
+function rcell(l,v,s,c){ return '<div class="rcell"><div class="r-label">'+l+'</div><div class="r-value '+(c||'sm')+'">'+v+'</div><div class="r-sub">'+(s||'')+'</div></div>'; }
+function updateReadout(){
+  const g=$('readout-grid'); let html='',law='';
+  if(S.mode==='fly'){
+    const LW=lift(S.v,S.pitch,S.h)/AERO.W;
+    html=rcell('Altitude',S.h.toFixed(0)+' m','',(S.h>0?'cyan':'sm'))
+      + rcell('Airspeed',(S.v*3.6).toFixed(0)+' km/h','stall '+(stallSpeed(S.h)*3.6).toFixed(0)+' km/h',S.v<stallSpeed(S.h)&&S.h>1?'red':'gold')
+      + rcell('Lift vs weight',LW.toFixed(2)+'×',LW>1?'rising':'not enough',LW>1?'green':'pink')
+      + rcell('Status',flightStatus(),'',isStalled()?'red':'violet');
+    setBadges('ALT '+S.h.toFixed(0)+'m', (S.v*3.6).toFixed(0)+' km/h');
+    law='<b>Four forces:</b> thrust pulls you forward, drag holds you back; speed builds lift (½ρv²S·C_L) until it beats weight and you rise. Pull the nose up for more lift — but past ~15° the airflow tears away and the wing <b>stalls</b>.';
+  }
+  else if(S.mode==='wing'){
+    const cl=CL(S.wAlpha), L=lift(S.wSpeed,S.wAlpha,0), dp=L/AERO.S;
+    html=rcell('Lift coefficient',cl.toFixed(2),'C_L','cyan')
+      + rcell('Lift force',(L/1000).toFixed(1)+' kN','on a 24 m² wing','gold')
+      + rcell('Pressure drop','~'+dp.toFixed(0)+' Pa','top vs bottom','violet')
+      + rcell('Flow',S.wAlpha>STALL_A?'separated':'attached',S.wAlpha>STALL_A?'STALLED':'smooth',S.wAlpha>STALL_A?'red':'green');
+    setBadges('α '+S.wAlpha+'°', S.wAlpha>STALL_A?'STALL':'flying');
+    law='<b>Bernoulli\u2019s principle:</b> the wing speeds the air over its curved top, and faster air has lower pressure. Higher pressure below + lower above = a net upward push: <b>lift</b>. (The wing also flings air downward — Newton\u2019s 3rd law gives the same answer.)';
+  }
+  else {
+    const L=lift(S.lSpeed,S.lAlpha,S.lAlt,S.lArea), D=drag(S.lSpeed,S.lAlpha,S.lAlt,S.lArea);
+    html=rcell('Lift',(L/1000).toFixed(1)+' kN','½ρv²S·C_L','cyan')
+      + rcell('Drag',(D/1000).toFixed(2)+' kN','½ρv²S·C_D','orange')
+      + rcell('Lift / Drag',(L/Math.max(1,D)).toFixed(1),'efficiency','gold')
+      + rcell('vs Weight '+(AERO.W/1000).toFixed(1)+'kN',L>AERO.W?'climbs':'sinks','',L>AERO.W?'green':'pink');
+    setBadges('v '+S.lSpeed+' m/s', (L/1000).toFixed(1)+' kN');
+    law='<b>L = ½ · ρ · v² · S · C_L.</b> Lift grows with the square of speed, with wing area S, with air density ρ (so planes need more runway in thin mountain air), and with the lift coefficient C_L set by the wing\u2019s shape and angle.';
+  }
+  g.innerHTML=html; $('law-strip').innerHTML=law;
+}
+function setBadges(l,r){ $('badge-l').textContent=l; $('badge-r').textContent=r; }
+
+const MODES=[ {id:'fly',label:'Fly the Plane',tag:'game'},{id:'wing',label:'Wing Airflow',tag:'Bernoulli'},{id:'lift',label:'Lift Lab',tag:'the equation'} ];
+const TITLE={fly:'Take Off!',wing:'Airflow Over a Wing',lift:'The Four Forces'};
+const HINT={fly:'throttle up, then pitch the nose up to climb',wing:'tilt the wing — watch the streamlines',lift:'tune the lift equation'};
+let voiceOn=false,sceneToken=0;
+const SCRIPT={
+  fly:"Welcome aboard. Push the throttle forward to pick up speed down the runway — lift grows with the square of your airspeed. Once you are fast enough, ease the nose up and the wings will carry you into the sky. But keep an eye on that angle: pitch up too steeply and the air peels off the wing, lift collapses, and you stall. Smooth and steady — happy flying.",
+  wing:"Here is the secret of flight. A wing is shaped so the air rushing over its curved top has to move faster than the air beneath. And here is Bernoulli\u2019s principle: faster-moving air has lower pressure. So there is less pressure pushing down from above than pushing up from below — and that difference lifts the wing. Tilt it too far, though, and the smooth flow breaks away into churning turbulence. That is a stall.",
+  lift:"How much lift does a wing make? The lift equation tells you: one half, times the air density, times your speed squared, times the wing area, times the lift coefficient. Speed matters most because it is squared — double your speed and you quadruple your lift. Air density matters too, which is why planes need longer runways high in the thin mountain air."
+};
+function speak(t){ if(!voiceOn||!t||typeof speechSynthesis==='undefined')return; const my=++sceneToken; try{speechSynthesis.cancel();}catch(e){}
+  setTimeout(()=>{ if(my!==sceneToken||!voiceOn)return; try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){} },80); }
+function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel(); }catch(e){} }
+function updateVoiceBtn(){ const v=$('voice-switcher'); v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color=voiceOn?'var(--cyan)':''; }
+function buildModeBar(){ const b=$('mode-bar'); b.innerHTML=''; MODES.forEach(m=>{ const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.label+' <span class="mode-tag">'+m.tag+'</span>'); t.onclick=()=>setMode(m.id); b.appendChild(t); }); }
+function setMode(id){ stopSpeech(); S.mode=id;
+  $('stage-title').firstChild.textContent=TITLE[id]+' '; $('stage-hint').textContent=HINT[id];
+  if(id==='fly') resetFlight();
+  buildModeBar(); buildControls(); speak(SCRIPT[id]); }
+
+function bindUI(){
+  stage=$('stage'); sctx=stage.getContext('2d'); aux=$('aux'); actx=aux.getContext('2d'); fitCanvas(); window.addEventListener('resize',fitCanvas);
+  // keyboard flying
+  const keys={};
+  window.addEventListener('keydown',e=>{ if(S.mode!=='fly')return; keys[e.key]=true;
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault(); });
+  window.addEventListener('keyup',e=>{ keys[e.key]=false; });
+  S._keys=keys;
+  const ts=$('theme-switcher'); try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){} };
+  const vs=$('voice-switcher'); try{ if(localStorage.getItem('fly-voice')==='on')voiceOn=true; }catch(e){}
+  updateVoiceBtn(); vs.onclick=()=>{ voiceOn=!voiceOn; try{localStorage.setItem('fly-voice',voiceOn?'on':'off');}catch(e){} updateVoiceBtn(); if(voiceOn)speak(SCRIPT[S.mode]); else stopSpeech(); };
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden)stopSpeech(); });
+}
+function fitCanvas(){ W=560;H=400;AUXW=560;AUXH=300; stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH; }
+
+function buildTheory(){
+  $('theory').innerHTML=`
+  <div class="theory-hdr">Theory — Bernoulli, Flow &amp; Flight</div>
+  <h3>Bernoulli\u2019s Principle</h3>
+  <p>In a smoothly flowing fluid, where the fluid moves <em>faster</em>, its pressure is <em>lower</em>. It is a consequence of energy conservation: a parcel of air has a fixed budget of energy, and speeding it up spends some of its pressure.</p>
+  <div class="eq">p + ½·ρ·v² = constant
+    <div class="vars">p = pressure, ρ = density, v = speed. Speed up the flow (raise ½ρv²) and the pressure p must drop to keep the total fixed.</div>
+  </div>
+
+  <h3>Why a Wing Lifts</h3>
+  <p>A wing (airfoil) is curved on top and flatter below, and it meets the air at a slight upward tilt — the <em>angle of attack</em>. Air going over the top speeds up; by Bernoulli, that means lower pressure above the wing. The higher pressure below then pushes the wing up. The result is <strong>lift</strong>.</p>
+  <p>There is an equally correct way to see it: the wing deflects a great river of air <em>downward</em>, and by Newton\u2019s third law the air pushes the wing <em>up</em> in reaction. Bernoulli and Newton are two views of the same thing — real lift needs both pressure and the downward turning of the flow.</p>
+
+  <h3>The Lift Equation</h3>
+  <div class="eq">L = ½ · ρ · v² · S · C<sub>L</sub>
+    <div class="vars">ρ = air density, v = airspeed, S = wing area, C_L = lift coefficient (set by airfoil shape and angle of attack). Because v is squared, <strong>speed is the most powerful lever</strong>: double your speed, quadruple your lift.</div>
+  </div>
+
+  <h3>The Four Forces of Flight</h3>
+  <p>Every aircraft is a tug-of-war between four forces: <em>lift</em> up versus <em>weight</em> down, and <em>thrust</em> forward versus <em>drag</em> back. Speed up and lift exceeds weight, so you climb; when lift and weight balance, you cruise level. Drag always resists motion — and part of it (induced drag) is the unavoidable price of making lift.</p>
+
+  <h3>Stall — When Lift Quits</h3>
+  <p>More angle of attack means more lift… up to a point. Past about 15°, the airflow can no longer hug the top of the wing: it separates into turbulent eddies, the low-pressure region collapses, and lift falls off a cliff. This is a <strong>stall</strong>. The cure is counter-intuitive but vital: lower the nose to let the air reattach and speed build back up. Every stall in the simulator is fixed the same way.</p>
+
+  <h3>Thin Air, Long Runways</h3>
+  <p>Lift depends on air density ρ, which drops with altitude. High-elevation airports (think Denver or La Paz) have thinner air, so planes must reach a higher speed — and use a longer runway — to generate the same lift. The same physics explains why helicopters struggle near the tops of mountains.</p>
+  `;
+}
+
+let lastT=0,rt=0;
+function loop(now){
+  try{
+    if(!lastT)lastT=now; const dt=Math.max(0,Math.min(2.5,(now-lastT)/16.67)); lastT=now; tNow=now;
+    if(S.mode==='fly'){
+      const k=S._keys||{};
+      if(k['ArrowUp'])S.pitch=Math.min(18,S.pitch+0.18*dt); if(k['ArrowDown'])S.pitch=Math.max(-5,S.pitch-0.18*dt);
+      if(k['ArrowRight'])S.throttle=Math.min(1,S.throttle+0.012*dt); if(k['ArrowLeft'])S.throttle=Math.max(0,S.throttle-0.012*dt);
+      stepFlight(dt/60*2.2);
+      if(rt%4===0) syncSliders();
+    }
+    drawStage(); drawAux();
+    if(rt++%4===0) updateReadout();
+  }catch(e){ console.error('loop',e); }
+  requestAnimationFrame(loop);
+}
+function init(){ buildModeBar(); bindUI(); buildTheory(); setMode('fly'); requestAnimationFrame(loop); }
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+
+</script>
+</body>
+</html>
