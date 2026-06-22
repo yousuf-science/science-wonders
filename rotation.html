@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-32ZMW31TWT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotational Mechanics Lab — Science Wonders</title>
+<meta name="description" content="A full interactive lab for Class 11 NCERT rotational motion: centre of mass placement and parabola, build a moment of inertia, torque and the lever, conservation of angular momentum on a turntable, and rolling motion.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020a16;
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#0a1220;
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.55;min-height:100vh;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:30;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1180px;margin:18px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:760px){.mode-bar{grid-template-columns:repeat(2,1fr);}}
+.mode-tab{font-family:monospace;font-size:10px;letter-spacing:1.5px;padding:11px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;text-align:center;line-height:1.4;}
+.mode-tab .ic{display:block;font-size:18px;margin-bottom:4px;}
+.mode-tab .nm{display:block;color:var(--text);font-weight:bold;letter-spacing:1.2px;font-size:10.5px;}
+.mode-tab .sub{display:block;font-size:8.5px;color:var(--text3);letter-spacing:.6px;font-family:'Georgia',serif;font-style:italic;margin-top:2px;}
+.mode-tab:hover{border-color:var(--accent);color:var(--text);}
+.mode-tab.active{border-color:var(--gold);background:rgba(240,192,96,.06);}
+.mode-tab.active .nm{color:var(--gold);}
+
+.wrap{max-width:1180px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1fr 300px;gap:12px;align-items:start;}
+@media(max-width:880px){.top-grid{display:flex;flex-direction:column;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:3px;color:var(--text2);text-transform:uppercase;padding:12px 16px 9px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
+.stage-badge{position:absolute;font-family:monospace;font-size:10px;background:rgba(1,6,16,.92);padding:5px 10px;border-radius:4px;pointer-events:none;letter-spacing:1.5px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:10px;left:14px;color:var(--gold);}
+.sb-tr{top:10px;right:14px;color:var(--cyan);}
+
+.side-panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:14px 0 7px;}
+.section-label:first-child{margin-top:0;}
+.param{margin-bottom:10px;}
+.param-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--text);margin-bottom:4px;}
+.param-val{font-family:monospace;font-size:11.5px;font-weight:bold;color:var(--gold);}
+.param-sub{font-size:10.5px;color:var(--text3);margin-top:3px;font-style:italic;line-height:1.4;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:24px;}
+
+.btn-row{display:grid;gap:5px;}
+.btn-row.c2{grid-template-columns:1fr 1fr;}
+.btn-row.c3{grid-template-columns:repeat(3,1fr);}
+.btn-row button{font-family:'Georgia',serif;font-size:12px;padding:8px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text);cursor:pointer;text-align:center;line-height:1.25;}
+.btn-row button:hover{background:var(--bg3);border-color:var(--accent);}
+.btn-row button.active{border-color:var(--gold);background:rgba(240,192,96,.08);color:var(--gold);}
+
+.readout-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;}
+.rcell.wide{grid-column:span 2;}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
+.r-value{font-family:monospace;font-size:13px;color:var(--text-bright);}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}.r-value.orange{color:var(--orange);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:12px;font-family:monospace;font-size:11.5px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .formula{display:inline-block;background:var(--bg2);padding:3px 8px;border-radius:4px;color:var(--cyan);font-weight:bold;margin:0 2px;}
+
+.theory-wrap{max-width:1180px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:26px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);font-weight:bold;}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}
+@media(max-width:600px){header{padding:11px 14px;gap:10px;}.page-subtitle{display:none;}}
+</style></head><body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Rotational Mechanics Lab</div>
+  <div class="header-spacer"></div>
+  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
+  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<div class="mode-bar" id="mode-bar">
+  <button class="mode-tab active" data-mode="com">
+    <span class="ic">🎯</span><span class="nm">CENTRE OF MASS</span><span class="sub">drag, throw, trace the parabola</span>
+  </button>
+  <button class="mode-tab" data-mode="inertia">
+    <span class="ic">⚙️</span><span class="nm">MOMENT OF INERTIA</span><span class="sub">build it · parallel axis · K</span>
+  </button>
+  <button class="mode-tab" data-mode="torque">
+    <span class="ic">⚖️</span><span class="nm">TORQUE &amp; LEVER</span><span class="sub">drag masses to balance</span>
+  </button>
+  <button class="mode-tab" data-mode="angmom">
+    <span class="ic">💫</span><span class="nm">ANGULAR MOMENTUM</span><span class="sub">L = Iω, conserved</span>
+  </button>
+  <button class="mode-tab" data-mode="rolling">
+    <span class="ic">🎳</span><span class="nm">ROLLING MOTION</span><span class="sub">race · energy · v=ωR</span>
+  </button>
+</div>
+
+<div class="wrap"><div class="top-grid">
+  <div class="card">
+    <div class="card-title" id="stage-title">Centre of Mass <span class="hint" id="stage-hint">drag masses · then throw</span></div>
+    <div class="stage-wrap">
+      <canvas id="stage" width="720" height="480"></canvas>
+      <div class="stage-badge sb-tl" id="badge-l">—</div>
+      <div class="stage-badge sb-tr" id="badge-r">—</div>
+    </div>
+    <div class="card-pad" style="padding:14px 18px;">
+      <div class="law-strip" id="law-strip"></div>
+    </div>
+  </div>
+  <div class="side-panel">
+    <div id="controls"></div>
+    <div class="section-label">Readout</div>
+    <div class="readout-grid" id="readout"></div>
+  </div>
+</div></div>
+
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">Theory — System of Particles &amp; Rotational Motion (NCERT Class 11, Ch. 7)</div>
+
+  <h3>1. Centre of Mass</h3>
+  <p>Any system of particles — however oddly shaped, however many parts — has one special point that behaves as though all the mass were concentrated there. That point is the <em>centre of mass</em>. External forces move it as if they were acting on a single particle of total mass.</p>
+  <div class="eq">R<sub>cm</sub> = (m₁r₁ + m₂r₂ + …) / (m₁ + m₂ + …)
+    <div class="vars">For a uniform sphere, cube, cylinder — the CoM sits at the geometric centre. For a ring, it sits at the centre — where there is no mass. The CoM does not need to lie inside the body.</div>
+  </div>
+  <p>This is why a thrown wrench, however wildly it tumbles, has its centre of mass tracing a clean parabola. Gravity acts as if it were pulling that single point.</p>
+
+  <h3>2. Moment of Inertia</h3>
+  <p>Mass resists being sped up; <em>moment of inertia</em> resists being spun up. Crucially, it depends on <strong>where</strong> the mass sits relative to the axis. Same mass, further from the axis → much larger I, much harder to spin.</p>
+  <div class="eq">I = Σ mᵢrᵢ²
+    <div class="vars">Standard shapes (mass M, radius R): Ring MR² · Disc / cylinder ½MR² · Solid sphere ⅖MR² · Hollow sphere ⅔MR² · Thin rod about centre (length L) ML²/12</div>
+  </div>
+
+  <h3>3. Radius of Gyration</h3>
+  <p>The radius of gyration <strong>K</strong> is the distance at which all the mass could be collapsed into a point (or a ring) without changing the moment of inertia.</p>
+  <div class="eq">I = M·K²
+    <div class="vars">For a disc K = R/√2 ≈ 0.71R. For a ring K = R exactly — all the mass is already at the rim.</div>
+  </div>
+
+  <h3>4. Parallel Axis Theorem</h3>
+  <p>If you know the moment of inertia about an axis through the centre of mass, the moment about <em>any parallel axis</em> a distance d away is easy:</p>
+  <div class="eq">I = I<sub>cm</sub> + M·d²
+    <div class="vars">A disc about its centre: ½MR². About the rim (d = R): ½MR² + MR² = 3/2 MR² — three times harder to spin. This is why spinning a hammer by the handle is so different from spinning it by the head.</div>
+  </div>
+
+  <h3>5. Torque &amp; the Rotational F = ma</h3>
+  <p>Torque is the rotational version of force — a push times its lever-arm. It produces angular acceleration just as force produces linear acceleration.</p>
+  <div class="eq">τ = r × F = I·α
+    <div class="vars">A see-saw balances when the torques cancel: m₁d₁ = m₂d₂. A small mass far out can balance a big mass close in — the principle of every lever, wrench, and door handle.</div>
+  </div>
+
+  <h3>6. Angular Momentum &amp; its Conservation</h3>
+  <p>For a rotating body, <em>angular momentum</em> L = I·ω. When no external torque acts on the system, L stays constant. Pull the mass in (lower I), and ω must rise to compensate — exactly how a skater spins up, how a diver tucks, and how a collapsing star spins up into a pulsar.</p>
+  <div class="eq">L = I·ω = constant &nbsp;&nbsp; (when τ<sub>ext</sub> = 0)</div>
+
+  <h3>7. Rolling Motion</h3>
+  <p>A rolling wheel does two things at once — translates and rotates. For rolling <em>without slipping</em>:</p>
+  <div class="eq">v = ω·R
+    <div class="vars">An important consequence: the instantaneous speed of the contact point is zero. The wheel rotates about it for an instant. NCERT 7.32(b) — a True/False question that catches half the class.</div>
+  </div>
+  <p>The total KE splits between translation and rotation. The more energy hides in rotation, the slower the body accelerates down a ramp:</p>
+  <div class="eq">a = g·sinθ / (1 + I/MR²)
+    <div class="vars">Mass and radius cancel out — only the shape matters. Solid sphere always wins. Ring always loses.</div>
+  </div>
+
+  <h3>Translation vs Rotation — the analogy</h3>
+  <table class="ctable">
+    <tr><th>Translation</th><th>Rotation</th></tr>
+    <tr><td>Mass m</td><td>Moment of inertia I</td></tr>
+    <tr><td>Velocity v</td><td>Angular velocity ω</td></tr>
+    <tr><td>Momentum p = mv</td><td>Angular momentum L = Iω</td></tr>
+    <tr><td>Force F = ma</td><td>Torque τ = Iα</td></tr>
+    <tr><td>KE = ½mv²</td><td>KE = ½Iω²</td></tr>
+  </table>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+const W=720, H=480, CX=W/2, CY=H/2;
+const g=9.81;
+let stage, sctx, clock=0;
+
+// ============================== STATE ==============================
+const M = {
+  mode:'com',
+
+  // CoM mode: particles can be dragged. Throw initiates parabolic flight.
+  com:{
+    pts:[{x:200,y:260,m:2,col:'#20d0ff'},{x:380,y:330,m:3,col:'#ff6090'},{x:500,y:250,m:1,col:'#40ffaa'}],
+    flying:false, t:0, vx:170, vy:-260, om:1.6,
+    init:null, // saved positions for reset
+  },
+
+  // Moment of Inertia mode: ring of point masses around a rotation axis.
+  inertia:{
+    sub:'build',      // 'build' or 'parallel'
+    masses:[],        // {r, ang, m}
+    axisD:0,          // for parallel-axis sub-mode
+    spinAngle:0,
+    omega:0,
+    torque:0,
+    preset:null,
+  },
+
+  // Torque/lever
+  torque:{
+    plank:[
+      {m:3, d:-1.0, col:'#20d0ff', dragging:false},
+      {m:2, d:1.0, col:'#ff6090', dragging:false},
+    ],
+    tilt:0,
+  },
+
+  // Angular momentum
+  angmom:{
+    arm:0.7,           // 0=arms in, 1=arms out
+    L:18,              // conserved
+    bodyAngle:0,
+    sub:'skater',      // 'skater' or 'star'
+    starShrink:1.0,    // 0..1, 1=big star, 0=neutron star
+  },
+
+  // Rolling
+  rolling:{
+    sub:'race',        // 'race', 'energy', 'vwr'
+    angle:25,
+    racing:false, rt:0,
+    pos:[0,0,0,0], done:[0,0,0,0], times:[0,0,0,0], finishOrder:[], winner:-1,
+    vwrSpeed:1.0,      // for v=ωR demo
+    vwrRoll:0,
+    energySpeed:0.5,   // for energy split demo
+    energyShape:0,
+  },
+};
+M.com.init = JSON.parse(JSON.stringify(M.com.pts));
+
+const SHAPES=[
+  {n:'Solid sphere',k:0.4,col:'#20d0ff',I:'2/5 MR²'},
+  {n:'Disc',k:0.5,col:'#40ffaa',I:'½ MR²'},
+  {n:'Hollow sphere',k:2/3,col:'#f0c060',I:'2/3 MR²'},
+  {n:'Ring',k:1,col:'#ff6090',I:'MR²'}
+];
+
+function cv(n){ return getComputedStyle(document.body).getPropertyValue(n).trim()||'#fff'; }
+
+// ============================== HELPERS ==============================
+function clrStage(){ sctx.fillStyle=cv('--stage-bg'); sctx.fillRect(0,0,W,H); }
+function backdrop(){
+  // subtle starfield
+  if(!backdrop._s){
+    const s=[]; let seed=7;
+    for(let i=0;i<60;i++){ seed=(seed*9301+49297)%233280; const a=seed/233280; seed=(seed*9301+49297)%233280; const b=seed/233280; s.push({x:a*W,y:b*H,r:0.4+a*0.8}); }
+    backdrop._s=s;
+  }
+  backdrop._s.forEach(s=>{
+    const tw=0.4+0.6*Math.sin(clock*0.03+s.x*0.01);
+    sctx.fillStyle=`rgba(255,255,255,${0.25*tw})`;
+    sctx.fillRect(s.x,s.y,s.r,s.r);
+  });
+}
+
+function arrow(x1,y1,x2,y2,col,w){
+  sctx.strokeStyle=col; sctx.lineWidth=w||1.5;
+  sctx.beginPath(); sctx.moveTo(x1,y1); sctx.lineTo(x2,y2); sctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  sctx.fillStyle=col;
+  sctx.beginPath();
+  sctx.moveTo(x2,y2);
+  sctx.lineTo(x2-Math.cos(ang-0.4)*9, y2-Math.sin(ang-0.4)*9);
+  sctx.lineTo(x2-Math.cos(ang+0.4)*9, y2-Math.sin(ang+0.4)*9);
+  sctx.closePath(); sctx.fill();
+}
+
+function ballShaded(x,y,R,col){
+  const g=sctx.createRadialGradient(x-R*0.35,y-R*0.4,R*0.05,x,y,R);
+  g.addColorStop(0,'#ffffff');
+  g.addColorStop(0.2,col);
+  g.addColorStop(0.85,col);
+  g.addColorStop(1,'#0a1828');
+  sctx.fillStyle=g;
+  sctx.beginPath(); sctx.arc(x,y,R,0,7); sctx.fill();
+  sctx.strokeStyle='rgba(0,0,0,0.55)'; sctx.lineWidth=1.2; sctx.stroke();
+}
+
+// ============================== CENTRE OF MASS ==============================
+function comCompute(){
+  const pts=M.com.pts;
+  let tx=0,ty=0,tm=0;
+  pts.forEach(p=>{ tx+=p.m*p.x; ty+=p.m*p.y; tm+=p.m; });
+  return {x:tx/tm, y:ty/tm, mTotal:tm};
+}
+function drawCom(){
+  clrStage(); backdrop();
+  setBadge('CENTRE OF MASS — drag the masses', '');
+
+  // ground line
+  sctx.strokeStyle='rgba(80,120,170,0.3)'; sctx.lineWidth=1; sctx.setLineDash([5,5]);
+  sctx.beginPath(); sctx.moveTo(0,H-40); sctx.lineTo(W,H-40); sctx.stroke(); sctx.setLineDash([]);
+
+  // axes labels (just hints in corners)
+  sctx.fillStyle=cv('--text3'); sctx.font='9px monospace';
+  sctx.fillText('drag the coloured circles — bigger circle = heavier mass', 14, 22);
+
+  if(M.com.flying){
+    // physics
+    const dt=0.016;
+    M.com.t+=dt;
+    M.com.pts.forEach((p,i)=>{
+      p.x += M.com.vx*dt + Math.cos(M.com.om*M.com.t+i*2.1)*0.6;
+      p.y += M.com.vy*dt;
+      // rotate about CoM
+    });
+    M.com.vy += g*30*dt;
+    // simpler: actually rotate each pt around the CoM
+    const c=comCompute();
+    M.com.pts.forEach((p,i)=>{
+      const dx=p.x-c.x, dy=p.y-c.y;
+      const a=M.com.om*dt;
+      const nx=dx*Math.cos(a)-dy*Math.sin(a);
+      const ny=dx*Math.sin(a)+dy*Math.cos(a);
+      p.x=c.x+nx; p.y=c.y+ny;
+    });
+    if(c.x>W+50 || c.y>H+50 || c.x<-50) M.com.flying=false;
+  }
+
+  // draw the CoM trajectory trail
+  if(!drawCom._trail) drawCom._trail=[];
+  if(M.com.flying){
+    const c=comCompute();
+    drawCom._trail.push({x:c.x,y:c.y});
+    if(drawCom._trail.length>400) drawCom._trail.shift();
+  } else if(!M.com.flying && drawCom._trail.length>0 && M.com.t===0){
+    drawCom._trail=[];
+  }
+  if(drawCom._trail.length>1){
+    sctx.strokeStyle='rgba(240,192,96,0.8)'; sctx.lineWidth=3;
+    sctx.beginPath();
+    drawCom._trail.forEach((p,i)=>{ if(i===0)sctx.moveTo(p.x,p.y); else sctx.lineTo(p.x,p.y); });
+    sctx.stroke();
+  }
+  // trail for ONE of the masses (the heaviest) to show its chaotic path
+  if(!drawCom._mtrail) drawCom._mtrail=[];
+  if(M.com.flying){
+    const heavyIdx = M.com.pts.reduce((bi,p,i,arr)=>p.m>arr[bi].m?i:bi,0);
+    drawCom._mtrail.push({x:M.com.pts[heavyIdx].x, y:M.com.pts[heavyIdx].y, col:M.com.pts[heavyIdx].col});
+    if(drawCom._mtrail.length>400) drawCom._mtrail.shift();
+  } else if(M.com.t===0) drawCom._mtrail=[];
+  if(drawCom._mtrail.length>1){
+    sctx.strokeStyle='rgba(255,96,144,0.45)'; sctx.lineWidth=1.5; sctx.setLineDash([3,3]);
+    sctx.beginPath();
+    drawCom._mtrail.forEach((p,i)=>{ if(i===0)sctx.moveTo(p.x,p.y); else sctx.lineTo(p.x,p.y); });
+    sctx.stroke(); sctx.setLineDash([]);
+  }
+
+  // Draw connecting rigid frame if not flying
+  const c=comCompute();
+  if(!M.com.flying){
+    sctx.strokeStyle='rgba(120,150,200,0.3)'; sctx.lineWidth=1; sctx.setLineDash([2,3]);
+    sctx.beginPath();
+    M.com.pts.forEach((p,i)=>{ if(i===0)sctx.moveTo(p.x,p.y); else sctx.lineTo(p.x,p.y); });
+    sctx.closePath(); sctx.stroke(); sctx.setLineDash([]);
+  }
+
+  // Mass particles
+  M.com.pts.forEach((p,i)=>{
+    const R=10+p.m*4;
+    ballShaded(p.x,p.y,R,p.col);
+    sctx.fillStyle='#fff'; sctx.font='bold 11px monospace';
+    sctx.textAlign='center';
+    sctx.fillText(p.m+' kg', p.x, p.y+4);
+    sctx.textAlign='left';
+    sctx.fillStyle=cv('--text3'); sctx.font='9px monospace';
+    sctx.fillText('m'+(i+1), p.x-R-12, p.y);
+  });
+
+  // CoM crosshair
+  sctx.strokeStyle='#f0c060'; sctx.lineWidth=2.5;
+  sctx.beginPath(); sctx.arc(c.x,c.y,11,0,7); sctx.stroke();
+  sctx.lineWidth=1.5;
+  sctx.beginPath(); sctx.moveTo(c.x-16,c.y); sctx.lineTo(c.x+16,c.y); sctx.moveTo(c.x,c.y-16); sctx.lineTo(c.x,c.y+16); sctx.stroke();
+  sctx.fillStyle='#f0c060'; sctx.font='bold 10px monospace';
+  sctx.fillText('CoM', c.x+18, c.y-12);
+
+  // Live formula display
+  const fy=H-90;
+  sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(14, fy, 420, 78);
+  sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.lineWidth=1; sctx.strokeRect(14, fy, 420, 78);
+  sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+  sctx.fillText('LIVE  R_cm = Σ mᵢ rᵢ / Σ mᵢ', 24, fy+18);
+  sctx.fillStyle=cv('--text'); sctx.font='10px monospace';
+  // build a substituted numeric expression for X coordinate (in arbitrary canvas units, but conceptual)
+  let numX='', numY='', denom='';
+  M.com.pts.forEach((p,i)=>{
+    if(i>0){numX+=' + '; numY+=' + '; denom+=' + ';}
+    numX += p.m+'×'+(p.x/50).toFixed(1);
+    numY += p.m+'×'+((H-p.y)/50).toFixed(1);
+    denom += p.m;
+  });
+  const totalM = M.com.pts.reduce((s,p)=>s+p.m,0);
+  sctx.fillText('X = ('+numX+') / ('+denom+')', 24, fy+36);
+  sctx.fillStyle=cv('--cyan');
+  sctx.fillText('    = '+(c.x/50).toFixed(2)+' m', 24, fy+50);
+  sctx.fillStyle=cv('--gold'); sctx.font='10px monospace';
+  sctx.fillText('Total mass M = '+totalM+' kg', 24, fy+66);
+}
+
+// ============================== MOMENT OF INERTIA ==============================
+function inertiaCompute(){
+  // For 'build' sub-mode: I = sum of m*r²
+  // For 'parallel' sub-mode: I = I_disc + M*d²  (disc of M=4 kg, R=1 m, I_cm=2)
+  if(M.inertia.sub==='build'){
+    let I=0, totalM=0;
+    M.inertia.masses.forEach(p=>{ I += p.m*p.r*p.r; totalM+=p.m; });
+    return {I, M:totalM, K: totalM>0?Math.sqrt(I/totalM):0};
+  } else {
+    const Md=4, R=1.0;
+    const Icm = 0.5*Md*R*R;
+    const I = Icm + Md*M.inertia.axisD*M.inertia.axisD;
+    return {I, Icm, Md2:Md*M.inertia.axisD*M.inertia.axisD, M:Md, K:Math.sqrt(I/Md)};
+  }
+}
+function drawInertia(){
+  clrStage(); backdrop();
+  setBadge('MOMENT OF INERTIA — I = Σmr²', M.inertia.sub==='parallel'?'PARALLEL AXIS':'BUILD MODE');
+
+  const cx=CX-30, cy=CY+10;
+
+  if(M.inertia.sub==='build'){
+    // Spin the assembly if torque applied
+    if(M.inertia.torque>0){
+      const info=inertiaCompute();
+      if(info.I>0){
+        const alpha = M.inertia.torque/info.I;
+        M.inertia.omega += alpha*0.016;
+      }
+    } else {
+      M.inertia.omega *= 0.99;
+    }
+    M.inertia.spinAngle += M.inertia.omega*0.016;
+
+    // axis (vertical line through cx, indicating rotation axis)
+    sctx.strokeStyle='rgba(240,192,96,0.5)'; sctx.lineWidth=2; sctx.setLineDash([6,4]);
+    sctx.beginPath(); sctx.moveTo(cx,40); sctx.lineTo(cx,H-40); sctx.stroke(); sctx.setLineDash([]);
+    sctx.fillStyle=cv('--gold'); sctx.font='10px monospace';
+    sctx.fillText('axis', cx-15, 35);
+
+    // radius of gyration K shown as a thin ring
+    const info=inertiaCompute();
+    if(info.K>0){
+      const Kpx = info.K * 100;  // 1m = 100px
+      sctx.strokeStyle='rgba(192,96,255,0.5)'; sctx.lineWidth=1.5; sctx.setLineDash([4,3]);
+      sctx.beginPath(); sctx.arc(cx,cy,Kpx,0,7); sctx.stroke(); sctx.setLineDash([]);
+      sctx.fillStyle=cv('--violet'); sctx.font='10px monospace';
+      sctx.fillText('K = '+info.K.toFixed(2)+' m  (radius of gyration)', cx+Kpx+8, cy-8);
+    }
+
+    // masses
+    sctx.save(); sctx.translate(cx,cy); sctx.rotate(M.inertia.spinAngle);
+    M.inertia.masses.forEach((p,i)=>{
+      const px = Math.cos(p.ang)*p.r*100;
+      const py = Math.sin(p.ang)*p.r*100;
+      // dashed radius
+      sctx.strokeStyle='rgba(80,140,200,0.4)'; sctx.lineWidth=1; sctx.setLineDash([3,3]);
+      sctx.beginPath(); sctx.moveTo(0,0); sctx.lineTo(px,py); sctx.stroke(); sctx.setLineDash([]);
+      // mass
+      const R=8+p.m*3;
+      ballShaded(px,py,R,'#20d0ff');
+      sctx.fillStyle='#fff'; sctx.font='bold 10px monospace'; sctx.textAlign='center';
+      sctx.fillText(p.m+'kg', px, py+3);
+      sctx.textAlign='left';
+      sctx.fillStyle=cv('--text3'); sctx.font='9px monospace';
+      sctx.fillText('r='+p.r.toFixed(1)+'m', px+R+4, py-R);
+    });
+    sctx.restore();
+
+    // hub
+    sctx.fillStyle=cv('--gold');
+    sctx.beginPath(); sctx.arc(cx,cy,5,0,7); sctx.fill();
+
+    // angular velocity arrow showing spin
+    if(Math.abs(M.inertia.omega)>0.1){
+      sctx.strokeStyle=cv('--green'); sctx.lineWidth=2;
+      const arcR=30;
+      sctx.beginPath();
+      sctx.arc(cx,cy,arcR,M.inertia.spinAngle, M.inertia.spinAngle+1.5);
+      sctx.stroke();
+      sctx.fillStyle=cv('--green'); sctx.font='10px monospace';
+      sctx.fillText('ω='+M.inertia.omega.toFixed(2), cx+arcR+5, cy);
+    }
+
+    // Hint
+    sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+    sctx.fillText('Click anywhere around the axis to add a mass. Use presets for standard shapes.', 14, H-14);
+
+    // Formula box (top-left)
+    sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(14, 45, 280, 120);
+    sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(14, 45, 280, 120);
+    sctx.fillStyle=cv('--gold'); sctx.font='bold 10px monospace';
+    sctx.fillText('I = m₁r₁² + m₂r₂² + …', 24, 62);
+    sctx.fillStyle=cv('--text'); sctx.font='9px monospace';
+    let y0=78, expr='', total=0;
+    M.inertia.masses.forEach((p,i)=>{
+      const t = p.m*p.r*p.r;
+      total+=t;
+      if(i<6){
+        sctx.fillText(' + '+p.m+'×'+p.r.toFixed(1)+'² = '+t.toFixed(2)+' kg·m²', 24, y0); y0+=12;
+      }
+    });
+    if(M.inertia.masses.length===0){ sctx.fillStyle=cv('--text3'); sctx.fillText('(no masses yet — click around the axis)', 24, y0); }
+    sctx.fillStyle=cv('--cyan'); sctx.font='bold 11px monospace';
+    sctx.fillText('I = '+total.toFixed(3)+' kg·m²', 24, 160);
+
+  } else {
+    // ============== PARALLEL AXIS sub-mode ==============
+    // A disc of radius R=1m centred at (CX, CY).
+    // User adjusts where rotation axis goes (distance d from centre, along +x).
+    const R_disc = 130;
+    M.inertia.spinAngle += M.inertia.omega*0.016;
+    if(M.inertia.torque>0){
+      const info=inertiaCompute();
+      const alpha = M.inertia.torque/info.I;
+      M.inertia.omega += alpha*0.016;
+    } else { M.inertia.omega *= 0.99; }
+
+    // Spin happens about the user-chosen axis
+    const axisX = cx + M.inertia.axisD*130;  // axis at distance d (in metres, scaled)
+    const axisY = cy;
+
+    sctx.save();
+    sctx.translate(axisX, axisY);
+    sctx.rotate(M.inertia.spinAngle);
+    sctx.translate(-(axisX-cx), -(axisY-cy));
+    // draw disc
+    const grd=sctx.createRadialGradient(cx-R_disc*0.3,cy-R_disc*0.3,5,cx,cy,R_disc);
+    grd.addColorStop(0,'#9ecfff'); grd.addColorStop(0.5,'#20d0ff'); grd.addColorStop(1,'#0a4068');
+    sctx.fillStyle=grd;
+    sctx.beginPath(); sctx.arc(cx,cy,R_disc,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(0,0,0,0.5)'; sctx.lineWidth=1.5; sctx.stroke();
+    // spokes
+    sctx.strokeStyle='rgba(0,0,0,0.4)'; sctx.lineWidth=1.5;
+    for(let s=0;s<6;s++){
+      const ang=s*Math.PI/3;
+      sctx.beginPath(); sctx.moveTo(cx,cy);
+      sctx.lineTo(cx+Math.cos(ang)*R_disc*0.92, cy+Math.sin(ang)*R_disc*0.92);
+      sctx.stroke();
+    }
+    sctx.fillStyle='#0a1828';
+    sctx.beginPath(); sctx.arc(cx,cy,R_disc*0.12,0,7); sctx.fill();
+    sctx.restore();
+
+    // mark the CoM of the disc
+    sctx.fillStyle=cv('--gold');
+    sctx.beginPath(); sctx.arc(cx,cy,4,0,7); sctx.fill();
+    sctx.font='10px monospace';
+    sctx.fillText('CoM', cx-6, cy-9);
+
+    // mark the rotation axis
+    sctx.strokeStyle=cv('--gold'); sctx.lineWidth=2; sctx.setLineDash([6,4]);
+    sctx.beginPath(); sctx.moveTo(axisX, cy-160); sctx.lineTo(axisX, cy+160); sctx.stroke(); sctx.setLineDash([]);
+    sctx.fillStyle=cv('--gold'); sctx.font='10px monospace';
+    sctx.fillText('rotation axis', axisX+6, cy-150);
+    // distance d arrow
+    if(Math.abs(M.inertia.axisD)>0.02){
+      arrow(cx, cy+R_disc+22, axisX, cy+R_disc+22, cv('--cyan'), 1.5);
+      sctx.fillStyle=cv('--cyan');
+      sctx.fillText('d = '+M.inertia.axisD.toFixed(2)+' m', (cx+axisX)/2 - 25, cy+R_disc+38);
+    }
+
+    // formula visualization (right side)
+    const info = inertiaCompute();
+    const bx=W-260, by=60, bw=240, bh=140;
+    sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(bx,by,bw,bh);
+    sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(bx,by,bw,bh);
+    sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+    sctx.fillText('I = I_cm + M·d²', bx+14, by+22);
+    // bars
+    const maxI = info.Icm + 4*1*1*1; // worst case d=1m, M=4
+    const barX=bx+14, barW=bw-28, barY=by+38;
+    // I_cm bar
+    sctx.fillStyle='rgba(64,255,170,0.7)';
+    sctx.fillRect(barX, barY, barW*(info.Icm/maxI), 16);
+    sctx.fillStyle='#0a1828'; sctx.font='bold 9px monospace';
+    sctx.fillText('I_cm = '+info.Icm.toFixed(2), barX+4, barY+12);
+    // Md² bar
+    sctx.fillStyle='rgba(255,96,144,0.7)';
+    sctx.fillRect(barX, barY+22, barW*(info.Md2/maxI), 16);
+    sctx.fillStyle='#0a1828';
+    sctx.fillText('M·d² = '+info.Md2.toFixed(2), barX+4, barY+34);
+    // Total bar
+    sctx.fillStyle='rgba(240,192,96,0.85)';
+    sctx.fillRect(barX, barY+50, barW*(info.I/maxI), 18);
+    sctx.fillStyle='#0a1828'; sctx.font='bold 10px monospace';
+    sctx.fillText('I = '+info.I.toFixed(2)+' kg·m²', barX+4, barY+64);
+
+    sctx.fillStyle=cv('--text3'); sctx.font='9px monospace';
+    sctx.fillText('Disc: M=4 kg, R=1m, I_cm=2 kg·m²', bx+14, by+128);
+
+    // angular velocity from torque
+    if(Math.abs(M.inertia.omega)>0.1){
+      sctx.fillStyle=cv('--green'); sctx.font='10px monospace';
+      sctx.fillText('ω = '+M.inertia.omega.toFixed(2)+' rad/s', 14, 60);
+      sctx.fillText('α = τ/I = '+(M.inertia.torque/info.I).toFixed(2)+' rad/s²', 14, 75);
+    }
+    sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+    sctx.fillText('Drag d-slider →  see how spinning a disc about the rim feels  3× harder than spinning about its centre.', 14, H-14);
+  }
+}
+
+// ============================== TORQUE ==============================
+function drawTorque(){
+  clrStage(); backdrop();
+  setBadge('TORQUE & THE LEVER', 'τ = r × F');
+
+  const pivotX=CX, pivotY=CY+30, beam=240, pxPerM=180;
+  // physics: net torque -> small tilt
+  const T=M.torque;
+  const tL = T.plank.filter(p=>p.d<0).reduce((s,p)=>s+(-p.d)*p.m*g,0);
+  const tR = T.plank.filter(p=>p.d>0).reduce((s,p)=>s+p.d*p.m*g,0);
+  const net = tL-tR;
+  const targetTilt = Math.max(-0.32,Math.min(0.32, net*0.015));
+  T.tilt += (targetTilt - T.tilt)*0.08;
+
+  // pivot triangle
+  const grd=sctx.createLinearGradient(pivotX-22,pivotY+10,pivotX+22,pivotY+90);
+  grd.addColorStop(0,'#8a5a2a'); grd.addColorStop(1,'#3a2410');
+  sctx.fillStyle=grd;
+  sctx.beginPath();
+  sctx.moveTo(pivotX-30, pivotY+90); sctx.lineTo(pivotX+30, pivotY+90); sctx.lineTo(pivotX, pivotY+8);
+  sctx.closePath(); sctx.fill();
+  sctx.strokeStyle='#1a0e05'; sctx.lineWidth=1.5; sctx.stroke();
+  // ground
+  sctx.strokeStyle='rgba(120,140,170,0.4)'; sctx.lineWidth=1;
+  sctx.beginPath(); sctx.moveTo(40,pivotY+90); sctx.lineTo(W-40,pivotY+90); sctx.stroke();
+
+  sctx.save();
+  sctx.translate(pivotX, pivotY);
+  sctx.rotate(T.tilt);
+  // wooden plank
+  const woodGrad=sctx.createLinearGradient(-beam,0,beam,0);
+  woodGrad.addColorStop(0,'#6a3e1c'); woodGrad.addColorStop(0.5,'#8a5a2a'); woodGrad.addColorStop(1,'#6a3e1c');
+  sctx.fillStyle=woodGrad;
+  sctx.fillRect(-beam, -8, beam*2, 16);
+  sctx.strokeStyle='#1a0e05'; sctx.lineWidth=1.5;
+  sctx.strokeRect(-beam, -8, beam*2, 16);
+  // wood grain
+  sctx.strokeStyle='rgba(40,22,8,0.4)'; sctx.lineWidth=0.8;
+  for(let x=-beam+10;x<beam;x+=14){
+    sctx.beginPath(); sctx.moveTo(x,-6); sctx.lineTo(x+6,6); sctx.stroke();
+  }
+
+  // distance markings on plank
+  sctx.fillStyle='rgba(255,232,160,0.5)'; sctx.font='8px monospace'; sctx.textAlign='center';
+  for(let d=-1.2;d<=1.2;d+=0.3){
+    const x = d*pxPerM;
+    sctx.fillRect(x-0.5, 8, 1, 5);
+    if(Math.abs(d)>0.1 && Math.abs(Math.round(d*10)/10 - d)<0.01){
+      sctx.fillText(d.toFixed(1), x, 26);
+    }
+  }
+  sctx.textAlign='left';
+
+  // weights
+  T.plank.forEach((p,i)=>{
+    const wx = p.d*pxPerM;
+    const size = 14+p.m*4;
+    // torque arrow (force * distance shown as a downward arrow + lever line back to pivot)
+    sctx.strokeStyle=p.col; sctx.lineWidth=1.5; sctx.globalAlpha=0.6;
+    sctx.beginPath(); sctx.moveTo(wx, -8); sctx.lineTo(wx, -8-30); sctx.stroke();
+    sctx.globalAlpha=1;
+    // weight box (3D-ish)
+    const grd2=sctx.createLinearGradient(wx-size/2, -size-8, wx+size/2, -8);
+    grd2.addColorStop(0,p.col);
+    grd2.addColorStop(0.5,'#ffffff');
+    grd2.addColorStop(1,p.col);
+    sctx.fillStyle=grd2;
+    sctx.fillRect(wx-size/2, -size-8, size, size);
+    sctx.strokeStyle='#0a1828'; sctx.lineWidth=1.5;
+    sctx.strokeRect(wx-size/2, -size-8, size, size);
+    sctx.fillStyle='#0a1828'; sctx.font='bold 10px monospace'; sctx.textAlign='center';
+    sctx.fillText(p.m+'kg', wx, -size/2-6);
+    sctx.textAlign='left';
+    // force arrow (mg) — small downward arrow under the weight
+    // (skipped because plank rotation already implies it)
+  });
+  sctx.restore();
+
+  // Torque bar visualization (top-left)
+  const bx=14, by=50, bw=300, bh=80;
+  sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(bx,by,bw,bh);
+  sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(bx,by,bw,bh);
+  sctx.fillStyle=cv('--gold'); sctx.font='bold 10px monospace';
+  sctx.fillText('τ = m·g·d  (force × distance from pivot)', bx+10, by+18);
+  const maxT = Math.max(tL, tR, 30);
+  // left bar
+  sctx.fillStyle='rgba(32,208,255,0.7)';
+  sctx.fillRect(bx+10, by+28, (bw-20)*(tL/maxT), 14);
+  sctx.fillStyle='#0a1828'; sctx.font='bold 9px monospace';
+  sctx.fillText('τ_left = '+tL.toFixed(1)+' N·m', bx+14, by+39);
+  // right bar
+  sctx.fillStyle='rgba(255,96,144,0.7)';
+  sctx.fillRect(bx+10, by+48, (bw-20)*(tR/maxT), 14);
+  sctx.fillStyle='#0a1828';
+  sctx.fillText('τ_right = '+tR.toFixed(1)+' N·m', bx+14, by+59);
+
+  // Verdict
+  const balanced = Math.abs(net)<0.5;
+  sctx.fillStyle = balanced ? cv('--green') : cv('--gold');
+  sctx.font='bold 14px monospace'; sctx.textAlign='center';
+  sctx.fillText(balanced?'⚖ BALANCED':(net>0?'tips LEFT':'tips RIGHT'), W/2, 40);
+  sctx.textAlign='left';
+
+  sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+  sctx.fillText('Drag the weights along the plank. Balance when m₁d₁ = m₂d₂.', 14, H-14);
+}
+
+// ============================== ANGULAR MOMENTUM ==============================
+function drawAngmom(){
+  clrStage(); backdrop();
+  const A=M.angmom;
+  if(A.sub==='skater'){
+    setBadge('L = I·ω  CONSERVED', 'TURNTABLE');
+
+    // top-down view of a turntable
+    const cx=CX-50, cy=CY+10;
+    const tableR=120;
+    // turntable
+    sctx.fillStyle='rgba(80,140,200,0.15)';
+    sctx.beginPath(); sctx.arc(cx,cy,tableR,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(80,140,200,0.5)'; sctx.lineWidth=2;
+    sctx.beginPath(); sctx.arc(cx,cy,tableR,0,7); sctx.stroke();
+    // tick marks around table
+    sctx.strokeStyle='rgba(80,140,200,0.4)'; sctx.lineWidth=1;
+    for(let i=0;i<24;i++){
+      const a=i*Math.PI*2/24;
+      sctx.beginPath();
+      sctx.moveTo(cx+Math.cos(a)*(tableR-6), cy+Math.sin(a)*(tableR-6));
+      sctx.lineTo(cx+Math.cos(a)*tableR, cy+Math.sin(a)*tableR);
+      sctx.stroke();
+    }
+
+    // compute I, omega from current arm extension
+    const I = 1.5 + A.arm*A.arm*4.5;   // 1.5 (arms in) to 6.0 (arms out)
+    const omega = A.L / I;
+    A.bodyAngle += omega*0.016;
+
+    // draw the figure on the table
+    sctx.save();
+    sctx.translate(cx,cy);
+    sctx.rotate(A.bodyAngle);
+    // body torso (top-down: oval)
+    sctx.fillStyle='#3a8fff';
+    sctx.beginPath(); sctx.ellipse(0,0,18,12,0,0,Math.PI*2); sctx.fill();
+    sctx.strokeStyle='#0a1828'; sctx.lineWidth=1.5; sctx.stroke();
+    // head
+    sctx.fillStyle=cv('--gold');
+    sctx.beginPath(); sctx.arc(0,0,10,0,7); sctx.fill();
+    sctx.strokeStyle='#0a1828'; sctx.stroke();
+    // arms: extend left and right based on A.arm
+    const armLen = 18 + A.arm*70;
+    sctx.strokeStyle='#40ffaa'; sctx.lineWidth=6; sctx.lineCap='round';
+    sctx.beginPath();
+    sctx.moveTo(-12,0); sctx.lineTo(-12-armLen, 0);
+    sctx.moveTo(12,0); sctx.lineTo(12+armLen, 0);
+    sctx.stroke();
+    sctx.lineCap='butt';
+    // hands (small weights)
+    sctx.fillStyle=cv('--green');
+    sctx.beginPath(); sctx.arc(-12-armLen, 0, 6, 0, 7); sctx.fill();
+    sctx.beginPath(); sctx.arc(12+armLen, 0, 6, 0, 7); sctx.fill();
+    sctx.strokeStyle='#0a1828'; sctx.lineWidth=1; sctx.stroke();
+    sctx.beginPath(); sctx.arc(-12-armLen, 0, 6, 0, 7); sctx.stroke();
+    sctx.restore();
+
+    // L vector (pointing out of the page, drawn as a circle with dot in centre)
+    // also draw it on the side as an arrow upward (constant length always)
+    const lvx = cx+tableR+50, lvy = cy;
+    sctx.fillStyle='rgba(240,192,96,0.15)';
+    sctx.fillRect(lvx-30, cy-100, 60, 200);
+    sctx.strokeStyle='rgba(240,192,96,0.4)';
+    sctx.strokeRect(lvx-30, cy-100, 60, 200);
+    arrow(lvx, cy+80, lvx, cy-80, cv('--gold'), 4);
+    sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace'; sctx.textAlign='center';
+    sctx.fillText('L', lvx, cy-95);
+    sctx.font='10px monospace';
+    sctx.fillText('CONSTANT', lvx, cy+98);
+    sctx.fillText(A.L.toFixed(0)+' kg·m²/s', lvx, cy+112);
+    sctx.textAlign='left';
+
+    // Live formula
+    sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(14, 50, 300, 100);
+    sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(14, 50, 300, 100);
+    sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+    sctx.fillText('L = I · ω  =  '+A.L.toFixed(1), 24, 70);
+    sctx.fillStyle=cv('--cyan'); sctx.font='10px monospace';
+    sctx.fillText('I = '+I.toFixed(2)+' kg·m²', 24, 92);
+    sctx.fillStyle=cv('--violet');
+    sctx.fillText('ω = L/I = '+omega.toFixed(2)+' rad/s', 24, 108);
+    sctx.fillStyle=cv('--green');
+    sctx.fillText('= '+(omega/(2*Math.PI)).toFixed(2)+' revolutions/sec', 24, 124);
+    sctx.fillStyle=cv('--orange');
+    sctx.fillText('KE_rot = ½Iω² = '+(0.5*I*omega*omega).toFixed(1)+' J', 24, 140);
+
+    sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+    sctx.fillText('Pull arms in → I drops → ω rockets up → KE rises (your muscles did work).', 14, H-14);
+
+  } else {
+    // ============== STAR collapse sub-mode ==============
+    setBadge('STELLAR COLLAPSE — L conserved', 'NEUTRON STAR');
+
+    const cx=CX, cy=CY;
+    // huge initial star → tiny dense star as slider moves
+    const s = A.starShrink;  // 1.0 = big, 0.05 = neutron star
+    const Rpx = 30 + s*180;
+    // I scales as R² for a uniform sphere with fixed mass
+    const Iratio = s*s;
+    const omegaRatio = 1/Iratio;
+    A.bodyAngle += omegaRatio * 0.005;  // proportional spin
+
+    // star body
+    const sgrad = sctx.createRadialGradient(cx-Rpx*0.3, cy-Rpx*0.3, Rpx*0.1, cx, cy, Rpx);
+    if(s>0.7){
+      sgrad.addColorStop(0,'#ffe080'); sgrad.addColorStop(0.4,'#ff8040'); sgrad.addColorStop(1,'#601810');
+    } else if(s>0.3){
+      sgrad.addColorStop(0,'#ffffff'); sgrad.addColorStop(0.3,'#a0e0ff'); sgrad.addColorStop(1,'#102060');
+    } else {
+      sgrad.addColorStop(0,'#ffffff'); sgrad.addColorStop(0.2,'#c0d0ff'); sgrad.addColorStop(1,'#000020');
+    }
+    sctx.fillStyle=sgrad;
+    sctx.beginPath(); sctx.arc(cx,cy,Rpx,0,7); sctx.fill();
+    // halo for neutron star
+    if(s<0.2){
+      sctx.strokeStyle='rgba(192,224,255,0.5)'; sctx.lineWidth=2;
+      sctx.beginPath(); sctx.arc(cx,cy,Rpx+15+Math.sin(clock*0.2)*5,0,7); sctx.stroke();
+      sctx.strokeStyle='rgba(192,224,255,0.3)';
+      sctx.beginPath(); sctx.arc(cx,cy,Rpx+30+Math.sin(clock*0.2+1)*5,0,7); sctx.stroke();
+    }
+
+    // spin marker
+    sctx.save(); sctx.translate(cx,cy); sctx.rotate(A.bodyAngle);
+    sctx.fillStyle='rgba(0,0,0,0.4)';
+    sctx.beginPath(); sctx.arc(0,-Rpx*0.7,4,0,7); sctx.fill();
+    sctx.restore();
+
+    // formula box
+    sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(14, 50, 290, 130);
+    sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(14, 50, 290, 130);
+    sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+    sctx.fillText('STELLAR COLLAPSE', 24, 70);
+    sctx.fillStyle=cv('--cyan'); sctx.font='10px monospace';
+    const realR = (700000 * s).toFixed(0);
+    sctx.fillText('Radius: '+(s>0.1?realR+' km':'~10 km (neutron star)'), 24, 92);
+    sctx.fillStyle=cv('--violet');
+    sctx.fillText('I_now / I_initial = '+Iratio.toFixed(4), 24, 108);
+    sctx.fillStyle=cv('--green');
+    sctx.fillText('ω_now / ω_initial = '+omegaRatio.toFixed(0)+'×', 24, 124);
+    sctx.fillStyle=cv('--orange');
+    sctx.fillText('Real neutron stars spin ~700 times/sec!', 24, 144);
+    sctx.fillStyle=cv('--text3'); sctx.font='9px monospace';
+    sctx.fillText('Mass conserved · L = I·ω conserved · so ω ∝ 1/R²', 24, 162);
+
+    sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+    sctx.fillText('Slide → watch a slow-spinning star shrink to neutron-star size and spin up 1000s of times faster.', 14, H-14);
+  }
+}
+
+// ============================== ROLLING ==============================
+function drawRolling(){
+  clrStage(); backdrop();
+  const R=M.rolling;
+  if(R.sub==='race') drawRollingRace();
+  else if(R.sub==='energy') drawRollingEnergy();
+  else drawRollingVwR();
+}
+
+function drawRollingRace(){
+  setBadge('ROLLING RACE — θ='+M.rolling.angle+'°', M.rolling.winner>=0?'🏁 FINISH':'');
+  const R=M.rolling;
+
+  // sky gradient + hills
+  const sky=sctx.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,'#0a1830'); sky.addColorStop(0.55,'#1a2a48'); sky.addColorStop(1,'#0c1828');
+  sctx.fillStyle=sky; sctx.fillRect(0,0,W,H);
+  sctx.fillStyle='#0a1a2c';
+  sctx.beginPath(); sctx.moveTo(0,260);
+  sctx.bezierCurveTo(120,240,180,280,280,265);
+  sctx.bezierCurveTo(380,250,460,290,560,270);
+  sctx.bezierCurveTo(640,255,700,275,W,265);
+  sctx.lineTo(W,H); sctx.lineTo(0,H); sctx.closePath(); sctx.fill();
+  sctx.fillStyle='#0e2438';
+  sctx.beginPath(); sctx.moveTo(0,300);
+  sctx.bezierCurveTo(100,285,200,320,320,300);
+  sctx.bezierCurveTo(420,283,520,310,640,295);
+  sctx.bezierCurveTo(700,288,720,300,W,302);
+  sctx.lineTo(W,H); sctx.lineTo(0,H); sctx.closePath(); sctx.fill();
+
+  // ground
+  const groundY=H-50;
+  const ground=sctx.createLinearGradient(0,groundY,0,H);
+  ground.addColorStop(0,'#2b1a10'); ground.addColorStop(1,'#170c06');
+  sctx.fillStyle=ground; sctx.fillRect(0,groundY,W,H-groundY);
+  sctx.strokeStyle='rgba(80,50,30,0.35)'; sctx.lineWidth=1;
+  for(let x=-40;x<W;x+=18){ sctx.beginPath(); sctx.moveTo(x,groundY+2); sctx.lineTo(x+12,H-4); sctx.stroke(); }
+
+  // ramp
+  const th=R.angle*Math.PI/180;
+  const x0=70, y0=100;
+  const len=Math.min(580, (W-150)/Math.cos(th));
+  const x1=x0+len*Math.cos(th), y1=y0+len*Math.sin(th);
+  const ux=Math.cos(th), uy=Math.sin(th);
+  const nx=-uy, ny=ux;
+  const rampThick=14;
+  // underside
+  sctx.fillStyle='#3a2410';
+  sctx.beginPath();
+  sctx.moveTo(x0, y0); sctx.lineTo(x1, y1);
+  sctx.lineTo(x1-nx*rampThick, y1-ny*rampThick);
+  sctx.lineTo(x0-nx*rampThick, y0-ny*rampThick);
+  sctx.closePath(); sctx.fill();
+  // top
+  const woodGrad=sctx.createLinearGradient(x0,y0,x1,y1);
+  woodGrad.addColorStop(0,'#7a4a22'); woodGrad.addColorStop(0.5,'#8a5a2a'); woodGrad.addColorStop(1,'#6a3e1c');
+  sctx.fillStyle=woodGrad;
+  sctx.beginPath();
+  sctx.moveTo(x0,y0); sctx.lineTo(x1,y1);
+  sctx.lineTo(x1+nx*4, y1+ny*4); sctx.lineTo(x0+nx*4, y0+ny*4);
+  sctx.closePath(); sctx.fill();
+  // grain
+  sctx.strokeStyle='rgba(40,22,8,0.45)'; sctx.lineWidth=0.8;
+  for(let s=0.05;s<1;s+=0.07){
+    const off=2+Math.sin(s*40)*1.5;
+    sctx.beginPath();
+    sctx.moveTo(x0+s*len*ux+nx*off, y0+s*len*uy+ny*off);
+    sctx.lineTo(x0+(s+0.06)*len*ux+nx*off, y0+(s+0.06)*len*uy+ny*off);
+    sctx.stroke();
+  }
+  // legs
+  function leg(px,py){
+    sctx.fillStyle='#3a2410';
+    sctx.beginPath();
+    sctx.moveTo(px-6,py); sctx.lineTo(px+6,py); sctx.lineTo(px+3,groundY); sctx.lineTo(px-3,groundY); sctx.closePath(); sctx.fill();
+    sctx.strokeStyle='#1a0e05'; sctx.lineWidth=1; sctx.stroke();
+  }
+  leg(x0+10-nx*rampThick*0.5, y0+10-ny*rampThick*0.5);
+  leg(x0+0.72*len*ux-nx*rampThick*0.5, y0+0.72*len*uy-ny*rampThick*0.5);
+
+  // angle arc
+  sctx.fillStyle='rgba(240,192,96,0.9)'; sctx.font='bold 12px monospace';
+  sctx.fillText(R.angle+'°', x0+22, y0-6);
+  sctx.strokeStyle='rgba(240,192,96,0.6)'; sctx.lineWidth=1.2;
+  sctx.beginPath(); sctx.arc(x0,y0,22,0,th); sctx.stroke();
+
+  // finish
+  const fpx=x1+nx*4, fpy=y1+ny*4;
+  sctx.strokeStyle='#f0c060'; sctx.lineWidth=2; sctx.setLineDash([4,4]);
+  sctx.beginPath(); sctx.moveTo(fpx+nx*60, fpy+ny*60); sctx.lineTo(fpx-nx*10, fpy-ny*10); sctx.stroke();
+  sctx.setLineDash([]);
+  const flagX=fpx+nx*60, flagY=fpy+ny*60;
+  for(let k=0;k<6;k++){
+    sctx.fillStyle=k%2?'#fff':'#1a1a1a';
+    sctx.fillRect(flagX+k*6, flagY-12, 6, 12);
+  }
+  sctx.fillStyle='#f0c060'; sctx.font='bold 11px monospace';
+  sctx.fillText('FINISH', flagX+2, flagY-18);
+
+  // shapes
+  const Rrad=18;
+  const laneOff=[-12,-4,4,12];
+  SHAPES.forEach((sh,i)=>{
+    const frac=Math.min(1, R.pos[i]/6);
+    const cxs=x0 + (len-30)*frac*ux;
+    const cys=y0 + (len-30)*frac*uy;
+    const cx=cxs + nx*(Rrad+laneOff[i]);
+    const cy=cys + ny*(Rrad+laneOff[i]);
+    // shadow
+    sctx.save();
+    sctx.translate(cxs+nx*2, cys+ny*2);
+    sctx.rotate(th);
+    sctx.fillStyle='rgba(0,0,0,0.45)';
+    sctx.beginPath(); sctx.ellipse(0,0,Rrad*0.85,Rrad*0.32,0,0,Math.PI*2); sctx.fill();
+    sctx.restore();
+    // trail
+    if(R.racing && R.pos[i]>0.1 && R.pos[i]<6){
+      sctx.strokeStyle=sh.col; sctx.globalAlpha=0.18; sctx.lineWidth=Rrad*0.9;
+      sctx.beginPath(); sctx.moveTo(cx-ux*12,cy-uy*12); sctx.lineTo(cx-ux*42,cy-uy*42); sctx.stroke();
+      sctx.globalAlpha=1;
+    }
+    drawRoller3D(cx, cy, Rrad, sh, R.pos[i]/Rrad*4);
+  });
+
+  // live standings
+  const order = SHAPES.map((s,i)=>({i,pos:R.pos[i]})).sort((a,b)=>b.pos-a.pos);
+  sctx.fillStyle='rgba(8,15,30,0.78)';
+  sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.lineWidth=1;
+  const rbX=W-180, rbY=14, rbW=170, rbH=84;
+  sctx.beginPath(); sctx.rect(rbX,rbY,rbW,rbH); sctx.fill(); sctx.stroke();
+  sctx.fillStyle='#5878a0'; sctx.font='9px monospace';
+  sctx.fillText('LIVE STANDING', rbX+8, rbY+13);
+  const medals=['🥇','🥈','🥉','4'];
+  order.forEach((o,idx)=>{
+    const y=rbY+28+idx*15;
+    sctx.fillStyle='#ddeeff'; sctx.font='10px monospace';
+    sctx.fillText(medals[idx], rbX+8, y);
+    sctx.fillStyle=SHAPES[o.i].col;
+    sctx.fillText(SHAPES[o.i].n.split(' ')[0], rbX+30, y);
+    sctx.fillStyle='#5878a0';
+    sctx.fillText((o.pos/6*100).toFixed(0)+'%', rbX+rbW-32, y);
+  });
+
+  // photo finish
+  if(R.winner>=0 && !R.racing){
+    sctx.fillStyle='rgba(2,9,18,0.86)';
+    sctx.fillRect(0, H-90, W, 90);
+    sctx.fillStyle='#f0c060'; sctx.font='bold 12px monospace';
+    sctx.fillText('🏁 PHOTO FINISH', 14, H-72);
+    const cellW=(W-28)/4;
+    R.finishOrder.forEach((idx,rank)=>{
+      const x=14+rank*cellW, y=H-58;
+      sctx.fillStyle=SHAPES[idx].col;
+      sctx.fillText(medals[rank], x, y);
+      sctx.fillStyle='#ddeeff'; sctx.font='bold 11px monospace';
+      sctx.fillText(SHAPES[idx].n.split(' ')[0], x+22, y);
+      sctx.fillStyle=SHAPES[idx].col; sctx.font='10px monospace';
+      sctx.fillText(R.times[idx].toFixed(2)+' s', x+22, y+13);
+      sctx.fillStyle='#5878a0';
+      const gap = rank===0?'leader':'+'+(R.times[idx]-R.times[R.finishOrder[0]]).toFixed(2)+' s';
+      sctx.fillText(gap, x+22, y+26);
+    });
+  } else {
+    sctx.fillStyle='rgba(184,206,236,0.85)'; sctx.font='10px monospace';
+    sctx.fillText('Same mass & radius. Solid sphere always wins — k = I/MR² is what matters.', 14, H-12);
+  }
+}
+
+function drawRoller3D(cx,cy,R,sh,roll){
+  sctx.save(); sctx.translate(cx,cy);
+  if(sh.k===0.4){
+    const g=sctx.createRadialGradient(-R*0.35,-R*0.4,R*0.05,0,0,R);
+    g.addColorStop(0,'#fff'); g.addColorStop(0.18,sh.col); g.addColorStop(0.7,sh.col); g.addColorStop(1,'#0a1828');
+    sctx.fillStyle=g; sctx.beginPath(); sctx.arc(0,0,R,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(0,0,0,0.6)'; sctx.lineWidth=1.2; sctx.stroke();
+    sctx.rotate(roll); sctx.fillStyle='rgba(0,0,0,0.6)';
+    sctx.beginPath(); sctx.arc(0,-R*0.7,2.2,0,7); sctx.fill();
+  } else if(sh.k===0.5){
+    sctx.fillStyle='rgba(0,0,0,0.35)';
+    sctx.beginPath(); sctx.ellipse(0,R*0.18,R,R*0.18,0,0,Math.PI*2); sctx.fill();
+    const fg=sctx.createRadialGradient(-R*0.25,-R*0.3,R*0.05,0,0,R);
+    fg.addColorStop(0,'#fff'); fg.addColorStop(0.2,sh.col); fg.addColorStop(0.85,sh.col); fg.addColorStop(1,'#0a1828');
+    sctx.fillStyle=fg; sctx.beginPath(); sctx.arc(0,0,R,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(0,0,0,0.55)'; sctx.lineWidth=1.4; sctx.stroke();
+    sctx.rotate(roll); sctx.strokeStyle='rgba(0,0,0,0.55)'; sctx.lineWidth=1.6;
+    for(let s=0;s<3;s++){
+      const a=s*Math.PI*2/3;
+      sctx.beginPath(); sctx.moveTo(0,0); sctx.lineTo(Math.cos(a)*R*0.82,Math.sin(a)*R*0.82); sctx.stroke();
+    }
+    sctx.fillStyle='#0a1828'; sctx.beginPath(); sctx.arc(0,0,R*0.16,0,7); sctx.fill();
+  } else if(sh.k>=0.65 && sh.k<0.9){
+    const g=sctx.createRadialGradient(-R*0.35,-R*0.4,R*0.05,0,0,R);
+    g.addColorStop(0,'#fff'); g.addColorStop(0.22,sh.col); g.addColorStop(0.78,sh.col); g.addColorStop(1,'#0a1828');
+    sctx.fillStyle=g; sctx.beginPath(); sctx.arc(0,0,R,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(0,0,0,0.55)'; sctx.lineWidth=1.2; sctx.stroke();
+    sctx.save(); sctx.rotate(roll);
+    sctx.fillStyle='rgba(8,16,28,0.85)';
+    sctx.beginPath(); sctx.moveTo(0,0); sctx.arc(0,0,R*0.92,-0.55,0.55); sctx.closePath(); sctx.fill();
+    sctx.strokeStyle='rgba(255,255,255,0.4)'; sctx.lineWidth=1.5;
+    sctx.beginPath(); sctx.arc(0,0,R*0.72,-0.55,0.55); sctx.stroke();
+    sctx.restore();
+  } else {
+    const og=sctx.createRadialGradient(-R*0.3,-R*0.4,R*0.05,0,0,R);
+    og.addColorStop(0,'#fff'); og.addColorStop(0.2,sh.col); og.addColorStop(0.85,sh.col); og.addColorStop(1,'#0a1828');
+    sctx.fillStyle=og; sctx.beginPath(); sctx.arc(0,0,R,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(0,0,0,0.55)'; sctx.lineWidth=1.2; sctx.stroke();
+    const ig=sctx.createRadialGradient(R*0.1,R*0.1,R*0.05,0,0,R*0.55);
+    ig.addColorStop(0,'#1a2a44'); ig.addColorStop(1,'#04080f');
+    sctx.fillStyle=ig; sctx.beginPath(); sctx.arc(0,0,R*0.55,0,7); sctx.fill();
+    sctx.strokeStyle='rgba(0,0,0,0.55)'; sctx.lineWidth=1.4;
+    sctx.beginPath(); sctx.arc(0,0,R*0.55,0,7); sctx.stroke();
+    sctx.save(); sctx.rotate(roll);
+    sctx.fillStyle='rgba(255,255,255,0.55)';
+    sctx.beginPath(); sctx.arc(0,-R*0.78,2,0,7); sctx.fill();
+    sctx.restore();
+  }
+  sctx.restore();
+}
+
+function drawRollingEnergy(){
+  clrStage(); backdrop();
+  setBadge('ROLLING ENERGY SPLIT', 'TRANS + ROT');
+
+  const sh = SHAPES[M.rolling.energyShape];
+  const v = M.rolling.energySpeed * 5;  // m/s
+  const mass=1, Rad=0.2;
+  const KEtrans = 0.5*mass*v*v;
+  const KErot = 0.5*sh.k*mass*v*v;  // for rolling without slipping
+  const KEtotal = KEtrans + KErot;
+
+  // big shape rolling across the canvas
+  const cx = 100 + ((clock*v*4)%(W-200));
+  const cy = H-100;
+  // shadow
+  sctx.fillStyle='rgba(0,0,0,0.4)';
+  sctx.beginPath(); sctx.ellipse(cx, cy+38, 36, 8, 0, 0, Math.PI*2); sctx.fill();
+  drawRoller3D(cx, cy, 36, sh, (clock*v*0.08));
+  // velocity arrow
+  arrow(cx, cy-50, cx+50, cy-50, cv('--cyan'), 2);
+  sctx.fillStyle=cv('--cyan'); sctx.font='bold 10px monospace';
+  sctx.fillText('v = '+v.toFixed(1)+' m/s', cx-30, cy-58);
+  // ω arc
+  sctx.strokeStyle=cv('--violet'); sctx.lineWidth=2;
+  sctx.beginPath(); sctx.arc(cx,cy,30, -1, 1.5); sctx.stroke();
+  sctx.fillStyle=cv('--violet'); sctx.font='10px monospace';
+  sctx.fillText('ω = v/R = '+(v/Rad).toFixed(1)+' rad/s', cx+40, cy);
+
+  // energy bars
+  const bx=40, by=60, bw=W-80, bh=70;
+  sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(bx,by,bw,bh+40);
+  sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(bx,by,bw,bh+40);
+  sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+  sctx.fillText('ENERGY BUDGET for '+sh.n+' (I = '+sh.I+', k='+sh.k.toFixed(2)+')', bx+10, by+18);
+
+  const maxKE = Math.max(KEtotal, 30);
+  // KE_trans bar
+  sctx.fillStyle='rgba(64,255,170,0.7)';
+  sctx.fillRect(bx+10, by+28, (bw-20)*(KEtrans/maxKE), 16);
+  sctx.fillStyle='#0a1828'; sctx.font='bold 10px monospace';
+  sctx.fillText('translation ½mv² = '+KEtrans.toFixed(2)+' J', bx+14, by+40);
+  // KE_rot bar
+  sctx.fillStyle='rgba(255,96,144,0.7)';
+  sctx.fillRect(bx+10, by+50, (bw-20)*(KErot/maxKE), 16);
+  sctx.fillStyle='#0a1828';
+  sctx.fillText('rotation ½Iω² = '+KErot.toFixed(2)+' J  ('+(100*KErot/KEtotal).toFixed(0)+'%)', bx+14, by+62);
+  // Total
+  sctx.fillStyle='rgba(240,192,96,0.85)';
+  sctx.fillRect(bx+10, by+72, (bw-20)*(KEtotal/maxKE), 18);
+  sctx.fillStyle='#0a1828'; sctx.font='bold 10px monospace';
+  sctx.fillText('TOTAL = '+KEtotal.toFixed(2)+' J', bx+14, by+86);
+
+  sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+  sctx.fillText('Try the ring vs the solid sphere. The ring locks half its energy into spin — that\'s why it loses every race.', 14, H-14);
+}
+
+function drawRollingVwR(){
+  clrStage(); backdrop();
+  setBadge('v = ω · R', 'ROLLING WITHOUT SLIPPING');
+
+  // ground
+  sctx.fillStyle='#3a2410';
+  sctx.fillRect(0, H-60, W, 60);
+  sctx.strokeStyle='rgba(255,232,160,0.4)'; sctx.lineWidth=1;
+  sctx.beginPath(); sctx.moveTo(0,H-60); sctx.lineTo(W,H-60); sctx.stroke();
+
+  const v = M.rolling.vwrSpeed * 3;
+  const Rad = 60;
+  const cx = 120 + ((clock*v*1.6)%(W-220));
+  const cy = H - 60 - Rad;
+  M.rolling.vwrRoll += v/Rad * 0.04;
+
+  // wheel
+  drawRoller3D(cx, cy, Rad, SHAPES[1], M.rolling.vwrRoll);
+
+  // three points on the wheel: top, centre, contact
+  const topX = cx, topY = cy-Rad;
+  const conX = cx, conY = cy+Rad;
+  // top point velocity = 2v
+  arrow(topX, topY, topX+80, topY, cv('--green'), 2.5);
+  sctx.fillStyle=cv('--green'); sctx.font='bold 11px monospace';
+  sctx.fillText('v_top = 2v = '+(v*2).toFixed(1)+' m/s', topX+8, topY-8);
+  // centre velocity = v
+  arrow(cx, cy, cx+40, cy, cv('--cyan'), 2.5);
+  sctx.fillStyle=cv('--cyan');
+  sctx.fillText('v_centre = v = '+v.toFixed(1)+' m/s', cx+45, cy-4);
+  // contact point velocity = 0 (this is THE point)
+  sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+  sctx.fillText('v_contact = 0  ← stays still for an instant!', conX+15, conY+5);
+  // mark contact point
+  sctx.strokeStyle=cv('--gold'); sctx.lineWidth=2;
+  sctx.beginPath(); sctx.arc(conX, conY, 6, 0, 7); sctx.stroke();
+  sctx.fillStyle=cv('--gold');
+  sctx.beginPath(); sctx.arc(conX, conY, 3, 0, 7); sctx.fill();
+
+  // physics box
+  sctx.fillStyle='rgba(8,18,30,0.85)'; sctx.fillRect(14, 50, 320, 120);
+  sctx.strokeStyle='rgba(80,120,180,0.4)'; sctx.strokeRect(14, 50, 320, 120);
+  sctx.fillStyle=cv('--gold'); sctx.font='bold 11px monospace';
+  sctx.fillText('ROLLING WITHOUT SLIPPING', 24, 70);
+  sctx.fillStyle=cv('--text'); sctx.font='10px monospace';
+  sctx.fillText('v = ω · R     (R = wheel radius)', 24, 90);
+  sctx.fillStyle=cv('--cyan');
+  sctx.fillText('Centre moves at v', 24, 108);
+  sctx.fillStyle=cv('--green');
+  sctx.fillText('Top moves at 2v (= v_centre + ω·R)', 24, 124);
+  sctx.fillStyle=cv('--gold');
+  sctx.fillText('CONTACT point has v = 0 instantaneously', 24, 140);
+  sctx.fillStyle=cv('--text3'); sctx.font='9px monospace';
+  sctx.fillText('(it briefly acts as a pivot for the spinning wheel)', 24, 156);
+
+  sctx.fillStyle=cv('--text3'); sctx.font='10px monospace';
+  sctx.fillText('NCERT Q7.32(b): "instantaneous speed of contact point is zero" — TRUE.', 14, H-14);
+}
+
+// ============================== STAGE DRIVER ==============================
+function drawStage(){
+  if(!sctx) return;
+  ({com:drawCom, inertia:drawInertia, torque:drawTorque, angmom:drawAngmom, rolling:drawRolling}[M.mode])();
+}
+
+function setBadge(l,r){
+  document.getElementById('badge-l').textContent=l;
+  document.getElementById('badge-r').textContent=r||'—';
+}
+
+// ============================== CONTROLS ==============================
+function $(id){return document.getElementById(id);}
+function buildControls(){
+  const c=$('controls');
+  c.innerHTML='';
+  if(M.mode==='com') controlsCom(c);
+  else if(M.mode==='inertia') controlsInertia(c);
+  else if(M.mode==='torque') controlsTorque(c);
+  else if(M.mode==='angmom') controlsAngmom(c);
+  else if(M.mode==='rolling') controlsRolling(c);
+  updateReadout();
+  updateLaw();
+}
+
+function controlsCom(c){
+  c.innerHTML = `
+    <div class="section-label">Playground</div>
+    <div class="param-sub">Drag the three coloured masses anywhere. The gold CoM updates live with substituted numbers.</div>
+    <div class="section-label">Quick setups</div>
+    <div class="btn-row c2">
+      <button id="com-hcl">HCl molecule</button>
+      <button id="com-equal">Equal masses</button>
+    </div>
+    <div class="btn-row c2" style="margin-top:5px;">
+      <button id="com-throw">🤾 Throw the assembly</button>
+      <button id="com-reset">↺ Reset</button>
+    </div>
+    <div class="param-sub" style="margin-top:8px;">When thrown: the gold trail (CoM) is a parabola; the pink trail (a single mass) wobbles wildly.</div>`;
+  $('com-hcl').onclick=()=>{
+    M.com.pts = [
+      {x:200,y:300,m:1,col:'#20d0ff'},
+      {x:500,y:300,m:35,col:'#ff6090'},
+    ];
+    M.com.init=JSON.parse(JSON.stringify(M.com.pts));
+    M.com.flying=false; M.com.t=0; drawCom._trail=[]; drawCom._mtrail=[];
+  };
+  $('com-equal').onclick=()=>{
+    M.com.pts = [
+      {x:200,y:280,m:2,col:'#20d0ff'},
+      {x:400,y:280,m:2,col:'#40ffaa'},
+      {x:520,y:280,m:2,col:'#ff6090'},
+    ];
+    M.com.init=JSON.parse(JSON.stringify(M.com.pts));
+    M.com.flying=false; M.com.t=0; drawCom._trail=[]; drawCom._mtrail=[];
+  };
+  $('com-throw').onclick=()=>{
+    M.com.init=JSON.parse(JSON.stringify(M.com.pts));
+    M.com.flying=true; M.com.t=0; M.com.vx=170; M.com.vy=-260;
+    drawCom._trail=[]; drawCom._mtrail=[];
+  };
+  $('com-reset').onclick=()=>{
+    M.com.pts = JSON.parse(JSON.stringify(M.com.init));
+    M.com.flying=false; M.com.t=0; drawCom._trail=[]; drawCom._mtrail=[];
+  };
+}
+
+function controlsInertia(c){
+  c.innerHTML = `
+    <div class="section-label">Sub-mode</div>
+    <div class="btn-row c2">
+      <button id="in-build" class="${M.inertia.sub==='build'?'active':''}">Build I</button>
+      <button id="in-par" class="${M.inertia.sub==='parallel'?'active':''}">Parallel Axis</button>
+    </div>
+    ${M.inertia.sub==='build'?`
+      <div class="section-label">Build a moment of inertia</div>
+      <div class="param-sub">Click anywhere around the gold axis to drop a mass. Move masses near or far to see I change.</div>
+      <div class="section-label">Standard shapes</div>
+      <div class="btn-row c2">
+        <button id="pre-ring">Ring (MR²)</button>
+        <button id="pre-disc">Disc (½MR²)</button>
+      </div>
+      <div class="btn-row c2" style="margin-top:5px;">
+        <button id="pre-sphere">Solid sphere</button>
+        <button id="pre-clear">Clear</button>
+      </div>
+      <div class="section-label">Apply torque</div>
+      <div class="param">
+        <div class="param-row"><span>τ applied</span><span class="param-val" id="t-out">${M.inertia.torque.toFixed(1)} N·m</span></div>
+        <input type="range" id="t-sl" min="0" max="20" step="0.5" value="${M.inertia.torque}">
+        <div class="param-sub">α = τ / I. The same torque spins a small-I object faster.</div>
+      </div>
+    `:`
+      <div class="section-label">Parallel-axis demo</div>
+      <div class="param-sub">A disc (M=4 kg, R=1 m). Drag d → see I = I_cm + Md².</div>
+      <div class="param">
+        <div class="param-row"><span>Axis distance d</span><span class="param-val" id="d-out">${M.inertia.axisD.toFixed(2)} m</span></div>
+        <input type="range" id="d-sl" min="0" max="1" step="0.05" value="${M.inertia.axisD}">
+      </div>
+      <div class="param">
+        <div class="param-row"><span>τ applied</span><span class="param-val" id="t-out">${M.inertia.torque.toFixed(1)} N·m</span></div>
+        <input type="range" id="t-sl" min="0" max="20" step="0.5" value="${M.inertia.torque}">
+      </div>
+    `}`;
+
+  $('in-build').onclick=()=>{ M.inertia.sub='build'; M.inertia.omega=0; buildControls(); };
+  $('in-par').onclick=()=>{ M.inertia.sub='parallel'; M.inertia.omega=0; buildControls(); };
+
+  if(M.inertia.sub==='build'){
+    $('pre-ring').onclick=()=>{
+      M.inertia.masses=[];
+      for(let i=0;i<10;i++){
+        M.inertia.masses.push({m:0.4, r:1.0, ang:i*Math.PI/5});
+      }
+      M.inertia.omega=0;
+    };
+    $('pre-disc').onclick=()=>{
+      M.inertia.masses=[];
+      for(let ring=0;ring<4;ring++){
+        const r = 0.25 + ring*0.25;
+        const n = 4+ring*2;
+        for(let i=0;i<n;i++){
+          M.inertia.masses.push({m:0.5/n, r, ang:i*2*Math.PI/n});
+        }
+      }
+      M.inertia.omega=0;
+    };
+    $('pre-sphere').onclick=()=>{
+      M.inertia.masses=[];
+      for(let i=0;i<24;i++){
+        const r=0.2+Math.random()*0.6;
+        M.inertia.masses.push({m:0.2, r, ang:Math.random()*Math.PI*2});
+      }
+      M.inertia.omega=0;
+    };
+    $('pre-clear').onclick=()=>{ M.inertia.masses=[]; M.inertia.omega=0; };
+    $('t-sl').oninput=function(){ M.inertia.torque=+this.value; $('t-out').textContent=M.inertia.torque.toFixed(1)+' N·m'; };
+  } else {
+    $('d-sl').oninput=function(){ M.inertia.axisD=+this.value; $('d-out').textContent=M.inertia.axisD.toFixed(2)+' m'; };
+    $('t-sl').oninput=function(){ M.inertia.torque=+this.value; $('t-out').textContent=M.inertia.torque.toFixed(1)+' N·m'; };
+  }
+}
+
+function controlsTorque(c){
+  c.innerHTML=`
+    <div class="section-label">Playground</div>
+    <div class="param-sub">Drag the weights left/right along the plank. Balance when m₁d₁ = m₂d₂.</div>
+    <div class="section-label">Left weight</div>
+    <div class="param">
+      <div class="param-row"><span>Mass</span><span class="param-val" id="mL-out">${M.torque.plank[0].m} kg</span></div>
+      <input type="range" id="mL" min="1" max="8" step="1" value="${M.torque.plank[0].m}">
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Distance</span><span class="param-val" id="dL-out">${(-M.torque.plank[0].d).toFixed(2)} m</span></div>
+      <input type="range" id="dL" min="0.1" max="1.3" step="0.05" value="${-M.torque.plank[0].d}">
+    </div>
+    <div class="section-label">Right weight</div>
+    <div class="param">
+      <div class="param-row"><span>Mass</span><span class="param-val" id="mR-out">${M.torque.plank[1].m} kg</span></div>
+      <input type="range" id="mR" min="1" max="8" step="1" value="${M.torque.plank[1].m}">
+    </div>
+    <div class="param">
+      <div class="param-row"><span>Distance</span><span class="param-val" id="dR-out">${M.torque.plank[1].d.toFixed(2)} m</span></div>
+      <input type="range" id="dR" min="0.1" max="1.3" step="0.05" value="${M.torque.plank[1].d}">
+    </div>
+    <div class="section-label">Challenge</div>
+    <div class="btn-row c2">
+      <button id="tq-random">🎲 Random setup</button>
+      <button id="tq-solve">Balance it!</button>
+    </div>`;
+  $('mL').oninput=function(){ M.torque.plank[0].m=+this.value; $('mL-out').textContent=this.value+' kg'; };
+  $('dL').oninput=function(){ M.torque.plank[0].d=-(+this.value); $('dL-out').textContent=(+this.value).toFixed(2)+' m'; };
+  $('mR').oninput=function(){ M.torque.plank[1].m=+this.value; $('mR-out').textContent=this.value+' kg'; };
+  $('dR').oninput=function(){ M.torque.plank[1].d=+this.value; $('dR-out').textContent=(+this.value).toFixed(2)+' m'; };
+  $('tq-random').onclick=()=>{
+    M.torque.plank[0].m=1+Math.floor(Math.random()*6);
+    M.torque.plank[0].d=-(0.3+Math.random()*0.9);
+    M.torque.plank[1].m=1+Math.floor(Math.random()*6);
+    M.torque.plank[1].d=0.3+Math.random()*0.9;
+    buildControls();
+  };
+  $('tq-solve').onclick=()=>{
+    // adjust right distance to balance left torque
+    const dr = (M.torque.plank[0].m*(-M.torque.plank[0].d))/M.torque.plank[1].m;
+    M.torque.plank[1].d = Math.max(0.1, Math.min(1.3, dr));
+    buildControls();
+  };
+}
+
+function controlsAngmom(c){
+  c.innerHTML=`
+    <div class="section-label">Sub-mode</div>
+    <div class="btn-row c2">
+      <button id="am-skater" class="${M.angmom.sub==='skater'?'active':''}">Skater</button>
+      <button id="am-star" class="${M.angmom.sub==='star'?'active':''}">Star collapse</button>
+    </div>
+    ${M.angmom.sub==='skater'?`
+      <div class="section-label">Arm extension</div>
+      <div class="param">
+        <div class="param-row"><span>Arms position</span><span class="param-val" id="arm-out">${M.angmom.arm>0.6?'OUT':M.angmom.arm<0.35?'IN':'mid'}</span></div>
+        <input type="range" id="arm-sl" min="0" max="1" step="0.01" value="${M.angmom.arm}">
+        <div class="param-sub">Pull arms IN → I drops → ω jumps. L stays constant.</div>
+      </div>
+    `:`
+      <div class="section-label">Stellar collapse</div>
+      <div class="param">
+        <div class="param-row"><span>Star size</span><span class="param-val" id="sh-out">${(M.angmom.starShrink*100).toFixed(0)}%</span></div>
+        <input type="range" id="sh-sl" min="0.05" max="1" step="0.01" value="${M.angmom.starShrink}">
+        <div class="param-sub">Shrink the star → ω explodes upward. (Real neutron stars: 1000s of rev/sec!)</div>
+      </div>
+    `}`;
+  $('am-skater').onclick=()=>{ M.angmom.sub='skater'; buildControls(); };
+  $('am-star').onclick=()=>{ M.angmom.sub='star'; buildControls(); };
+  if(M.angmom.sub==='skater'){
+    $('arm-sl').oninput=function(){ M.angmom.arm=+this.value; $('arm-out').textContent=M.angmom.arm>0.6?'OUT':M.angmom.arm<0.35?'IN':'mid'; };
+  } else {
+    $('sh-sl').oninput=function(){ M.angmom.starShrink=+this.value; $('sh-out').textContent=(M.angmom.starShrink*100).toFixed(0)+'%'; };
+  }
+}
+
+function controlsRolling(c){
+  c.innerHTML=`
+    <div class="section-label">Sub-mode</div>
+    <div class="btn-row c3">
+      <button id="rl-race" class="${M.rolling.sub==='race'?'active':''}">Race</button>
+      <button id="rl-energy" class="${M.rolling.sub==='energy'?'active':''}">Energy</button>
+      <button id="rl-vwr" class="${M.rolling.sub==='vwr'?'active':''}">v = ωR</button>
+    </div>
+    ${M.rolling.sub==='race'?`
+      <div class="section-label">Race setup</div>
+      <div class="param">
+        <div class="param-row"><span>Ramp angle θ</span><span class="param-val" id="ang-out">${M.rolling.angle}°</span></div>
+        <input type="range" id="ang-sl" min="10" max="40" step="1" value="${M.rolling.angle}">
+        <div class="param-sub">Steeper → faster. Order stays the same.</div>
+      </div>
+      <div class="btn-row c2" style="margin-top:8px;">
+        <button id="rl-go">🏁 Race!</button>
+        <button id="rl-rs">↺ Reset</button>
+      </div>
+    `:M.rolling.sub==='energy'?`
+      <div class="section-label">Energy split demo</div>
+      <div class="param">
+        <div class="param-row"><span>Speed</span><span class="param-val" id="sp-out">${M.rolling.energySpeed.toFixed(2)}</span></div>
+        <input type="range" id="sp-sl" min="0.2" max="1.5" step="0.05" value="${M.rolling.energySpeed}">
+      </div>
+      <div class="section-label">Shape</div>
+      <div class="btn-row c2" id="shape-btns"></div>
+    `:`
+      <div class="section-label">v = ω · R demo</div>
+      <div class="param">
+        <div class="param-row"><span>Speed</span><span class="param-val" id="vw-out">${M.rolling.vwrSpeed.toFixed(2)}</span></div>
+        <input type="range" id="vw-sl" min="0.2" max="2" step="0.05" value="${M.rolling.vwrSpeed}">
+        <div class="param-sub">Watch the contact-point arrow stay at zero, while the top moves at 2v.</div>
+      </div>
+    `}`;
+  $('rl-race').onclick=()=>{ M.rolling.sub='race'; buildControls(); };
+  $('rl-energy').onclick=()=>{ M.rolling.sub='energy'; buildControls(); };
+  $('rl-vwr').onclick=()=>{ M.rolling.sub='vwr'; buildControls(); };
+  if(M.rolling.sub==='race'){
+    $('ang-sl').oninput=function(){ M.rolling.angle=+this.value; $('ang-out').textContent=this.value+'°'; };
+    $('rl-go').onclick=()=>{
+      M.rolling.racing=true; M.rolling.rt=0; M.rolling.pos=[0,0,0,0]; M.rolling.done=[0,0,0,0]; M.rolling.times=[0,0,0,0]; M.rolling.finishOrder=[]; M.rolling.winner=-1;
+    };
+    $('rl-rs').onclick=()=>{
+      M.rolling.racing=false; M.rolling.rt=0; M.rolling.pos=[0,0,0,0]; M.rolling.done=[0,0,0,0]; M.rolling.times=[0,0,0,0]; M.rolling.finishOrder=[]; M.rolling.winner=-1;
+    };
+  } else if(M.rolling.sub==='energy'){
+    $('sp-sl').oninput=function(){ M.rolling.energySpeed=+this.value; $('sp-out').textContent=(+this.value).toFixed(2); };
+    const sb=$('shape-btns');
+    SHAPES.forEach((sh,i)=>{
+      const b=document.createElement('button');
+      b.textContent=sh.n.split(' ')[0];
+      if(i===M.rolling.energyShape) b.classList.add('active');
+      b.onclick=()=>{ M.rolling.energyShape=i; buildControls(); };
+      sb.appendChild(b);
+    });
+  } else {
+    $('vw-sl').oninput=function(){ M.rolling.vwrSpeed=+this.value; $('vw-out').textContent=(+this.value).toFixed(2); };
+  }
+}
+
+// ============================== READOUT + LAW ==============================
+function rc(label,val,sub,col){
+  return `<div class="rcell"><div class="r-label">${label}</div><div class="r-value ${col||''}">${val}</div>${sub?'<div class="r-sub">'+sub+'</div>':''}</div>`;
+}
+function updateReadout(){
+  const r=$('readout');
+  let h='';
+  if(M.mode==='com'){
+    const c=comCompute();
+    h = rc('Total mass M','Σm = '+c.mTotal+' kg','','gold')
+      + rc('CoM (x in m)',(c.x/50).toFixed(2),'scaled units','cyan')
+      + rc('CoM (y in m)',((H-c.y)/50).toFixed(2),'','green')
+      + rc('Particles', M.com.pts.length,'','violet');
+  } else if(M.mode==='inertia'){
+    const info=inertiaCompute();
+    if(M.inertia.sub==='build'){
+      h = rc('I total', info.I.toFixed(3)+' kg·m²','','gold')
+        + rc('Total mass', info.M.toFixed(2)+' kg','','cyan')
+        + rc('Radius of gyration K', info.K.toFixed(3)+' m','I = M·K²','violet')
+        + rc('ω', M.inertia.omega.toFixed(2)+' rad/s','τ/I','green');
+    } else {
+      h = rc('I_cm', info.Icm.toFixed(2)+' kg·m²','disc about centre','cyan')
+        + rc('M·d²', info.Md2.toFixed(2)+' kg·m²','shift correction','pink')
+        + rc('I total', info.I.toFixed(2)+' kg·m²','','gold')
+        + rc('Ratio I/I_cm', (info.I/info.Icm).toFixed(2)+'×','','violet');
+    }
+  } else if(M.mode==='torque'){
+    const T=M.torque;
+    const tL=T.plank[0].m*(-T.plank[0].d)*g;
+    const tR=T.plank[1].m*T.plank[1].d*g;
+    h = rc('τ left', tL.toFixed(1)+' N·m','m·g·d','cyan')
+      + rc('τ right', tR.toFixed(1)+' N·m','m·g·d','pink')
+      + rc('Net τ', (tL-tR).toFixed(1)+' N·m', Math.abs(tL-tR)<0.5?'balanced':'rotates','gold')
+      + rc('State', Math.abs(tL-tR)<0.5?'⚖ BALANCED':(tL>tR?'tips L':'tips R'),'',Math.abs(tL-tR)<0.5?'green':'red');
+  } else if(M.mode==='angmom'){
+    const A=M.angmom;
+    if(A.sub==='skater'){
+      const I = 1.5 + A.arm*A.arm*4.5;
+      const omega = A.L/I;
+      h = rc('I', I.toFixed(2)+' kg·m²', 'arms '+(A.arm>0.6?'out':A.arm<0.35?'in':'mid'),'cyan')
+        + rc('ω', omega.toFixed(2)+' rad/s', (omega/6.28).toFixed(2)+' rev/s','violet')
+        + rc('L = I·ω', A.L.toFixed(1),'CONSTANT','gold')
+        + rc('KE_rot', (0.5*I*omega*omega).toFixed(1)+' J','½Iω²','orange');
+    } else {
+      h = rc('Star size', (A.starShrink*100).toFixed(0)+'%','radius factor','cyan')
+        + rc('I ratio', (A.starShrink*A.starShrink).toFixed(4),'I ∝ R²','violet')
+        + rc('ω ratio', (1/(A.starShrink*A.starShrink)).toFixed(0)+'×','spin-up','gold')
+        + rc('L', 'CONSTANT','τ_ext = 0','green');
+    }
+  } else if(M.mode==='rolling'){
+    const R=M.rolling;
+    if(R.sub==='race'){
+      h='';
+      SHAPES.forEach(s=>{
+        const a = g*Math.sin(R.angle*Math.PI/180)/(1+s.k);
+        h += rc(s.n.split(' ')[0], a.toFixed(2)+' m/s²','k='+s.k.toFixed(2), s.k===0.4?'cyan':s.k===0.5?'green':s.k===1?'pink':'gold');
+      });
+    } else if(R.sub==='energy'){
+      const sh=SHAPES[R.energyShape];
+      const v=R.energySpeed*5;
+      const tr=0.5*1*v*v, ro=0.5*sh.k*1*v*v;
+      h = rc('Shape', sh.n.split(' ')[0], 'k='+sh.k.toFixed(2),'cyan')
+        + rc('Speed v', v.toFixed(2)+' m/s','','green')
+        + rc('KE_trans', tr.toFixed(2)+' J','½mv²','gold')
+        + rc('KE_rot', ro.toFixed(2)+' J', (100*ro/(tr+ro)).toFixed(0)+'%','pink');
+    } else {
+      const v=R.vwrSpeed*3;
+      h = rc('v_centre', v.toFixed(2)+' m/s','centre of wheel','cyan')
+        + rc('v_top', (v*2).toFixed(2)+' m/s','= 2v','green')
+        + rc('v_contact', '0.00 m/s','momentarily','gold')
+        + rc('ω', (v/0.2).toFixed(2)+' rad/s','v/R','violet');
+    }
+  }
+  r.innerHTML=h;
+}
+
+function updateLaw(){
+  const el=$('law-strip');
+  let t='';
+  if(M.mode==='com') t = '<b>R_cm = Σmᵢrᵢ / Σmᵢ.</b> The centre of mass behaves like a single particle of total mass — gravity moves it as if everything were concentrated there. Throw a wrench; its CoM glides on a clean parabola while every other point tumbles wildly.';
+  else if(M.mode==='inertia'){
+    if(M.inertia.sub==='build') t = '<b>I = Σ mᵢrᵢ².</b> Move a mass twice as far from the axis and it counts <b>4× as much</b>. Same total mass, very different I depending on where the mass sits. The dashed violet ring shows the radius of gyration <b>K</b>, where I = M·K².';
+    else t = '<b>I = I_cm + M·d² (parallel-axis theorem).</b> Move the rotation axis a distance d away from the centre of mass and the moment of inertia grows by M·d². Spinning a hammer about its end is far harder than spinning it about its centre.';
+  }
+  else if(M.mode==='torque') t = '<b>τ = m·g·d.</b> A small mass far out can balance a big mass close in — the principle of every lever. The plank is in <b>rotational equilibrium</b> when m₁d₁ = m₂d₂.';
+  else if(M.mode==='angmom'){
+    if(M.angmom.sub==='skater') t = '<b>L = I·ω = constant</b> when no external torque acts. The vertical gold arrow stays at the same length — L never changes — but pull the arms in and ω must shoot up to compensate.';
+    else t = '<b>Conservation of L during collapse.</b> A massive star shrinks under its own gravity. Mass stays the same, but I ∝ R² drops drastically. So ω must rise by R²: shrink the radius 1000× and the star spins 10⁶× faster. Real neutron stars rotate up to 700 times per second.';
+  }
+  else if(M.mode==='rolling'){
+    if(M.rolling.sub==='race') t = '<b>a = g·sinθ / (1 + I/MR²).</b> Mass and radius cancel — only the shape constant k matters. Solid sphere (k=0.4) wins, ring (k=1) loses. Always, every time.';
+    else if(M.rolling.sub==='energy') t = '<b>Total KE = ½mv² + ½Iω².</b> A rolling body locks part of its energy into rotation. The bigger that share, the slower it accelerates down a ramp.';
+    else t = '<b>v = ω·R</b> for rolling without slipping. The contact point is <b>momentarily at rest</b> (the wheel spins about it for an instant); the top moves at 2v. This is the answer to NCERT 7.32(b).';
+  }
+  el.innerHTML=t;
+}
+
+// ============================== INPUT ==============================
+function bindCanvasInput(){
+  const c=stage;
+  function pos(e){
+    const rect=c.getBoundingClientRect();
+    const cl=e.touches?e.touches[0]:e;
+    return {x:(cl.clientX-rect.left)*(W/rect.width), y:(cl.clientY-rect.top)*(H/rect.height)};
+  }
+  let dragging=null;  // {type, idx}
+  function down(e){
+    const p=pos(e);
+    if(M.mode==='com' && !M.com.flying){
+      // hit-test masses
+      for(let i=M.com.pts.length-1;i>=0;i--){
+        const m=M.com.pts[i];
+        const R=10+m.m*4;
+        if(Math.hypot(p.x-m.x,p.y-m.y)<R+4){ dragging={type:'com',idx:i}; e.preventDefault(); return; }
+      }
+    } else if(M.mode==='inertia' && M.inertia.sub==='build'){
+      // add a new mass at click position (relative to axis cx=CX-30, cy=CY+10)
+      const ax=CX-30, ay=CY+10;
+      const dx=p.x-ax, dy=p.y-ay;
+      const r=Math.hypot(dx,dy)/100;
+      if(r>0.1 && r<2.0){
+        M.inertia.masses.push({m:1, r, ang:Math.atan2(dy,dx)-M.inertia.spinAngle});
+      }
+    } else if(M.mode==='torque'){
+      // hit-test weights on the plank
+      const pivotX=CX, pivotY=CY+30, beam=240, pxPerM=180;
+      M.torque.plank.forEach((w,i)=>{
+        // weight position in world
+        const wx = pivotX + Math.cos(M.torque.tilt)*w.d*pxPerM;
+        const wy = pivotY + Math.sin(M.torque.tilt)*w.d*pxPerM - 16;
+        if(Math.abs(p.x-wx)<25 && Math.abs(p.y-wy)<25){ dragging={type:'torque',idx:i}; e.preventDefault(); return; }
+      });
+    }
+  }
+  function move(e){
+    if(!dragging) return;
+    const p=pos(e);
+    if(dragging.type==='com'){
+      M.com.pts[dragging.idx].x=p.x;
+      M.com.pts[dragging.idx].y=p.y;
+    } else if(dragging.type==='torque'){
+      const pivotX=CX, pxPerM=180;
+      let d=(p.x-pivotX)/pxPerM;
+      d=Math.max(-1.3,Math.min(1.3,d));
+      M.torque.plank[dragging.idx].d=d;
+      if(dragging.idx===0){
+        $('dL-out').textContent=Math.abs(d).toFixed(2)+' m';
+        $('dL').value=Math.abs(d);
+      } else {
+        $('dR-out').textContent=Math.abs(d).toFixed(2)+' m';
+        $('dR').value=Math.abs(d);
+      }
+    }
+    e.preventDefault();
+  }
+  function up(){ dragging=null; }
+  c.addEventListener('mousedown',down);
+  c.addEventListener('mousemove',move);
+  c.addEventListener('mouseup',up);
+  c.addEventListener('mouseleave',up);
+  c.addEventListener('touchstart',down,{passive:false});
+  c.addEventListener('touchmove',move,{passive:false});
+  c.addEventListener('touchend',up);
+}
+
+// ============================== TABS ==============================
+function setMode(m){
+  M.mode=m;
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.toggle('active', t.dataset.mode===m));
+  const titles={com:'Centre of Mass', inertia:'Moment of Inertia', torque:'Torque & the Lever', angmom:'Angular Momentum L = Iω', rolling:'Rolling Motion'};
+  const hints={com:'drag masses · then throw', inertia:'build it · parallel axis · K', torque:'drag masses to balance', angmom:'L = Iω, conserved', rolling:'race · energy · v=ωR'};
+  $('stage-title').firstChild.textContent = titles[m]+' ';
+  // update hint span (it's the second child)
+  const hintSpan=$('stage-title').querySelector('.hint');
+  if(hintSpan) hintSpan.textContent=hints[m];
+  buildControls();
+}
+
+// ============================== VOICE ==============================
+let voiceOn=false, vTok=0;
+const SC = {
+  com:'Every object has a special point — the centre of mass — that behaves as if all the mass were concentrated there. Drag the coloured circles and watch the gold cross update. Then throw the whole assembly: the centre of mass traces a clean parabola while each individual mass wobbles around it.',
+  inertia:'Moment of inertia tells you how mass resists being spun. The key is not how much mass you have, but where it sits. Click around the axis to build your own object. Notice — move a mass twice as far, and it counts four times as much.',
+  torque:'A see-saw balances not when the masses are equal, but when the torques are. Torque is force times distance from the pivot. Drag the weights and find the balance point.',
+  angmom:'Angular momentum, L equals I times omega, is conserved when no outside torque acts. Pull a skater\'s arms in, the moment of inertia drops, and omega rockets up. Same principle makes a collapsing star spin up into a neutron star.',
+  rolling:'A rolling body splits its energy between sliding and spinning. The more energy locked into rotation, the slower it rolls. That is why a solid sphere always beats a ring down the ramp, no matter what their masses are.'
+};
+function speak(t){
+  if(!voiceOn||!t||typeof speechSynthesis==='undefined') return;
+  const my=++vTok;
+  try{speechSynthesis.cancel();}catch(e){}
+  setTimeout(()=>{
+    if(my!==vTok||!voiceOn) return;
+    try{ const u=new SpeechSynthesisUtterance(t); u.rate=0.97; speechSynthesis.speak(u); }catch(e){}
+  },80);
+}
+function stopV(){ vTok++; try{ if(typeof speechSynthesis!=='undefined') speechSynthesis.cancel(); }catch(e){} }
+function updateVoiceBtn(){
+  const v=$('voice-switcher');
+  v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off';
+  v.style.color=voiceOn?'var(--cyan)':'';
+}
+
+// ============================== BOOT ==============================
+function init(){
+  stage=$('stage');
+  sctx=stage.getContext('2d');
+  document.querySelectorAll('.mode-tab').forEach(b=>{
+    b.addEventListener('click',()=>{ stopV(); setMode(b.dataset.mode); if(voiceOn) speak(SC[b.dataset.mode]); });
+  });
+  $('theme-switcher').onclick=()=>{
+    document.body.classList.toggle('light-theme');
+    try{ localStorage.setItem('sw-theme', document.body.classList.contains('light-theme')?'light':'dark'); }catch(e){}
+  };
+  try{ if(localStorage.getItem('sw-theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
+  try{ if(localStorage.getItem('rot-voice')==='on') voiceOn=true; }catch(e){}
+  updateVoiceBtn();
+  $('voice-switcher').onclick=()=>{
+    voiceOn=!voiceOn;
+    try{ localStorage.setItem('rot-voice', voiceOn?'on':'off'); }catch(e){}
+    updateVoiceBtn();
+    if(voiceOn) speak(SC[M.mode]); else stopV();
+  };
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) stopV(); });
+  bindCanvasInput();
+  buildControls();
+  setMode('com');
+  requestAnimationFrame(loop);
+}
+
+let lt=0, frCnt=0;
+function loop(now){
+  try{
+    if(!lt) lt=now;
+    const dt=Math.max(0,Math.min(2.5,(now-lt)/16.67));
+    lt=now; clock++;
+    // race physics
+    if(M.mode==='rolling' && M.rolling.sub==='race' && M.rolling.racing){
+      M.rolling.rt += dt/60;
+      SHAPES.forEach((s,i)=>{
+        const a=g*Math.sin(M.rolling.angle*Math.PI/180)/(1+s.k);
+        M.rolling.pos[i]=Math.min(6, 0.5*a*M.rolling.rt*M.rolling.rt);
+        if(M.rolling.pos[i]>=6 && !M.rolling.done[i]){
+          M.rolling.done[i]=1; M.rolling.times[i]=M.rolling.rt; M.rolling.finishOrder.push(i);
+          if(M.rolling.winner<0) M.rolling.winner=i;
+        }
+      });
+      if(SHAPES.every((s,i)=>M.rolling.pos[i]>=6)) M.rolling.racing=false;
+    }
+    drawStage();
+    if(frCnt++%5===0) updateReadout();
+  }catch(e){ console.error(e); }
+  requestAnimationFrame(loop);
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+</script></body></html>
