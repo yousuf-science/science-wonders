@@ -1,0 +1,376 @@
+<!DOCTYPE html><html lang="en"><head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-32ZMW31TWT');</script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hydraulics — Pascal\u2019s Law — Science Wonders</title><meta name="description" content="Multiply a small force into a huge one with a hydraulic press, and see why fluid pressure grows with depth (P = rho g h) — the physics of car jacks, brakes and dam walls.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+  --stage-bg:#020912;
+  --grid-stroke:rgba(30,50,80,.22);
+}
+body.light-theme{
+  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
+  --border:#d0d7de;--border2:#b6c2d1;
+  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
+  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
+  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
+  --stage-bg:#0a1220;
+  --grid-stroke:rgba(9,105,218,0.06);
+}
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
+
+header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+body.light-theme header{background:rgba(255,255,255,.96);}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.mode-tab:hover{color:var(--text);border-color:var(--accent);}
+.mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
+.mode-tag{font-size:8px;opacity:.7;}
+
+.wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+@media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
+.card-pad{padding:16px 18px;}
+.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+
+.stage-wrap{position:relative;background:var(--stage-bg);}
+canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
+canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
+.aux-small canvas#aux{max-height:280px;}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
+body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.sb-tl{top:9px;left:9px;color:var(--gold);}
+.sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
+@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
+.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.wl-slider{height:14px;border-radius:7px;-webkit-appearance:none;appearance:none;outline:none;}
+
+.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.btn-grid{display:grid;gap:6px;}
+.btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
+.minibtn{font-family:monospace;font-size:10px;padding:7px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
+.minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
+.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
+.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
+
+.readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
+.rcell.wide{grid-column:span 2;}
+@media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
+.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
+.r-value.sm{font-size:12px;}
+.r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}
+.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip b{color:var(--gold-bright);}
+body.light-theme .law-strip b{color:var(--gold);}
+.law-strip .big{font-size:13px;color:var(--cyan);}
+
+.verdict{margin-top:12px;padding:11px 15px;border-radius:8px;font-family:monospace;font-size:12px;display:none;}
+.verdict.show{display:block;}
+.verdict.go{background:rgba(64,255,170,.06);border:1px solid rgba(64,255,170,.3);color:#8effc8;}
+body.light-theme .verdict.go{color:var(--green);}
+.verdict.no{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.3);color:#ff9aa6;}
+body.light-theme .verdict.no{color:var(--red);}
+
+.theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+body.light-theme .theory em{color:var(--gold);}
+.theory strong{color:var(--text);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
+body.light-theme .theory .eq{color:var(--gold);}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
+.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
+body.light-theme .hb-cyan{color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
+body.light-theme .hb-gold{color:var(--gold);}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
+body.light-theme .hb-violet{color:var(--violet);}
+.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
+.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
+.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
+.ctable td:first-child{color:var(--gold-bright);}
+body.light-theme .ctable td:first-child{color:var(--gold);}
+.ctable tr:last-child td{border-bottom:none;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
+</style></head><body>
+<header><div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+<div class="page-subtitle">Hydraulics &amp; Pascal</div><div class="header-spacer"></div>
+<a class="header-link" id="voice-switcher">🔇 Voice off</a><a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+<a class="header-link" href="index.html">← All Simulations</a></header>
+<div class="mode-bar" id="mode-bar"></div>
+<div class="wrap"><div class="top-grid">
+<div class="left-col"><div class="card"><div class="card-title" id="stage-title">Hydraulic Press <span class="hint" id="stage-hint">multiply a small force — then pump!</span></div>
+<div class="stage-wrap"><canvas id="stage" width="560" height="400"></canvas><div class="stage-badge sb-tl" id="badge-l">—</div><div class="stage-badge sb-tr" id="badge-r">—</div></div></div>
+<div class="play-bar"><div class="sb-controls" id="mode-controls"></div></div></div>
+<div class="right-col"><div class="card aux-small"><div class="card-title">Forces <span class="hint">live</span></div>
+<div class="stage-wrap"><canvas id="aux" width="560" height="300"></canvas></div></div>
+<div class="card"><div class="card-title">Readout</div><div class="card-pad"><div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div></div></div></div></div>
+<div class="card" style="margin-top:12px;"><div class="card-title">The Principle</div><div class="card-pad"><div class="law-strip" id="law-strip" style="margin-top:0;"></div></div></div></div>
+<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+<script>
+'use strict';
+// HYDRAULICS & PASCAL — upgraded
+let W=560,H=400,AUXW=560,AUXH=300;
+const g=9.81;
+const S={mode:'press',F1:150,A1:5,A2:120,load:300,lift:0,strokes:0,pumpPhase:0,
+  depth:8,rho:1000, leakLevel:0.85, vWater:0.6};
+function MA(){return S.A2/S.A1;}
+function F2(){return S.F1*MA();}
+function canLift(){return F2()>=S.load*g;}
+
+let stage,sctx,aux,actx,tNow=0;
+function cv(n){return getComputedStyle(document.body).getPropertyValue(n).trim()||'#fff';}
+function clr(c,w,h){c.clearRect(0,0,w,h);c.fillStyle=cv('--stage-bg');c.fillRect(0,0,w,h);}
+function rr(x,y,w,h,r){sctx.beginPath();sctx.moveTo(x+r,y);sctx.arcTo(x+w,y,x+w,y+h,r);sctx.arcTo(x+w,y+h,x,y+h,r);sctx.arcTo(x,y+h,x,y,r);sctx.arcTo(x,y,x+w,y,r);sctx.closePath();}
+function fluidGrad(x,y,h,c){const grad=sctx.createLinearGradient(0,y,0,y+h);grad.addColorStop(0,c+'cc');grad.addColorStop(1,c+'ff');return grad;}
+function waveTop(x0,x1,y,amp,col){sctx.strokeStyle=col;sctx.lineWidth=2;sctx.beginPath();for(let x=x0;x<=x1;x+=4){const yy=y+Math.sin(x*0.18+tNow*0.004)*amp;x===x0?sctx.moveTo(x,yy):sctx.lineTo(x,yy);}sctx.stroke();}
+function arrow(x1,y1,x2,y2,col,wid){sctx.strokeStyle=col;sctx.lineWidth=wid||3;sctx.beginPath();sctx.moveTo(x1,y1);sctx.lineTo(x2,y2);sctx.stroke();const a=Math.atan2(y2-y1,x2-x1);sctx.beginPath();sctx.moveTo(x2,y2);sctx.lineTo(x2-9*Math.cos(a-0.4),y2-9*Math.sin(a-0.4));sctx.lineTo(x2-9*Math.cos(a+0.4),y2-9*Math.sin(a+0.4));sctx.closePath();sctx.fillStyle=col;sctx.fill();}
+function drawCar(cx,cy,sc){sc=sc||1;const w=84*sc,h=22*sc;
+  sctx.fillStyle='#e0556a';rr(cx-w/2,cy-h,w,h,6);sctx.fill();
+  sctx.beginPath();sctx.moveTo(cx-w*0.26,cy-h);sctx.lineTo(cx-w*0.14,cy-h-15*sc);sctx.lineTo(cx+w*0.16,cy-h-15*sc);sctx.lineTo(cx+w*0.28,cy-h);sctx.closePath();sctx.fillStyle='#ef7d8c';sctx.fill();
+  sctx.fillStyle='#bfe6ff';sctx.fillRect(cx-w*0.18,cy-h-12*sc,w*0.14,10*sc);sctx.fillRect(cx+w*0.02,cy-h-12*sc,w*0.14,10*sc);
+  sctx.fillStyle='#ffd34d';sctx.beginPath();sctx.arc(cx+w/2-3,cy-h*0.5,2.5,0,7);sctx.fill();
+  sctx.fillStyle='#161b22';sctx.beginPath();sctx.arc(cx-w*0.26,cy,8*sc,0,7);sctx.arc(cx+w*0.26,cy,8*sc,0,7);sctx.fill();
+  sctx.fillStyle='#8a9099';sctx.beginPath();sctx.arc(cx-w*0.26,cy,3.4*sc,0,7);sctx.arc(cx+w*0.26,cy,3.4*sc,0,7);sctx.fill();}
+
+function drawStage(){if(!sctx)return;clr(sctx,W,H);({press:dPress,depth:dDepth,leak:dLeak,vessels:dVessels}[S.mode])();}
+
+// ---------- PRESS ----------
+function dPress(){
+  const baseY=348,pipeY=baseY,x1=120,x2=400,w1=34,w2=Math.min(150,40*Math.sqrt(MA()));
+  const liftPx=canLift()?S.lift:0;
+  const fluidCol='#1f7ad4';
+  // cylinders
+  sctx.fillStyle=cv('--bg3');sctx.fillRect(x1-w1/2-3,baseY-150,w1+6,150);sctx.fillRect(x2-w2/2-3,baseY-160,w2+6,160);
+  // fluid (U-tube): connect bottoms
+  sctx.fillStyle=fluidGrad(0,baseY-130,130,fluidCol);
+  const fl1=baseY-90-liftPx*0.15, fl2=baseY-92-liftPx;
+  sctx.fillRect(x1-w1/2,fl1,w1,baseY-fl1);
+  sctx.fillRect(x2-w2/2,fl2,w2,baseY-fl2);
+  sctx.fillRect(x1,baseY-20,x2-x1,18);
+  // cylinder outlines
+  sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;sctx.strokeRect(x1-w1/2,baseY-150,w1,150);sctx.strokeRect(x2-w2/2,baseY-160,w2,160);
+  // pistons
+  const pumpDip=Math.sin(S.pumpPhase)*10*Math.max(0,S.pumpPhase>0?1:0);
+  const py1=fl1-8+(S.pumpPhase>0?Math.max(0,Math.sin(S.pumpPhase))*16:0), py2=fl2-9;
+  sctx.fillStyle=cv('--cyan');rr(x1-w1/2-2,py1,w1+4,9,2);sctx.fill();
+  sctx.fillStyle=cv('--gold');rr(x2-w2/2-2,py2,w2+4,10,2);sctx.fill();
+  // piston rod + handle on input
+  sctx.strokeStyle=cv('--text2');sctx.lineWidth=4;sctx.beginPath();sctx.moveTo(x1,py1);sctx.lineTo(x1,py1-40);sctx.stroke();
+  sctx.fillStyle=cv('--text2');rr(x1-16,py1-46,32,8,3);sctx.fill();
+  // input force arrow
+  arrow(x1,py1-78,x1,py1-50,cv('--cyan'),3);
+  // car on output
+  drawCar(x2,py2-1,Math.min(1.2,w2/80+0.2));
+  // labels (bright + bigger)
+  sctx.font='12px monospace';sctx.fillStyle=cv('--cyan');sctx.fillText('push '+S.F1+' N',x1-30,py1-84);sctx.fillText('A\u2081 = '+S.A1+' cm\u00b2',x1-30,baseY+18);
+  sctx.fillStyle=cv('--gold');sctx.fillText('output '+(F2()/1000).toFixed(1)+' kN',x2-38,baseY+18);sctx.fillText('A\u2082 = '+S.A2+' cm\u00b2',x2-38,baseY+34);
+  sctx.fillStyle=cv('--pink');sctx.fillText(S.load+' kg car',x2-30,py2-32*Math.min(1.2,w2/80+0.2)-6);
+  // verdict + pump info
+  sctx.font='bold 14px monospace';sctx.fillStyle=canLift()?cv('--green'):cv('--red');
+  sctx.fillText(canLift()?('\u2713 lifts the car  \u00d7'+MA().toFixed(0)+' force'):'\u2717 push harder or widen A\u2082',24,30);
+  sctx.font='12px monospace';sctx.fillStyle=cv('--text');
+  sctx.fillText('pressure is equal everywhere:  P = F\u2081/A\u2081 = F\u2082/A\u2082 = '+(S.F1/(S.A1/10000)/1000).toFixed(0)+' kPa',24,H-16);
+  if(canLift()){sctx.fillStyle=cv('--text2');sctx.font='11px monospace';sctx.fillText('pumps: '+S.strokes+'   car raised: '+(S.lift/8).toFixed(1)+' cm',300,30);}
+}
+
+// ---------- DEPTH ----------
+function dDepth(){const tx=70,tw=300,topY=64,botY=360;
+  // water
+  sctx.fillStyle=fluidGrad(0,topY,botY-topY,'#1f7ad4');sctx.globalAlpha=.9;sctx.fillRect(tx,topY,tw,botY-topY);sctx.globalAlpha=1;
+  waveTop(tx,tx+tw,topY,2.5,'#7fc8ff');
+  sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;sctx.beginPath();sctx.moveTo(tx,topY-6);sctx.lineTo(tx,botY);sctx.lineTo(tx+tw,botY);sctx.lineTo(tx+tw,topY-6);sctx.stroke();
+  // dam wall (thick at base) on the right, outside water
+  sctx.fillStyle=cv('--text3');sctx.beginPath();sctx.moveTo(tx+tw,topY);sctx.lineTo(tx+tw+18,topY);sctx.lineTo(tx+tw+46,botY);sctx.lineTo(tx+tw,botY);sctx.closePath();sctx.fill();
+  sctx.fillStyle=cv('--text2');sctx.font='11px monospace';sctx.fillText('dam',tx+tw+20,(topY+botY)/2);
+  // pressure arrows on left wall + gauges
+  sctx.font='12px monospace';
+  for(let i=1;i<=4;i++){const dh=S.depth*i/4;const y=topY+(botY-topY)*i/4;const P=(101325+S.rho*g*dh)/1000;
+    const len=12+i*11;arrow(tx-2,y,tx+len,y,cv('--gold'),2);
+    sctx.fillStyle=cv('--cyan');sctx.beginPath();sctx.arc(tx+tw+2,y,3,0,7);sctx.fill();
+    sctx.fillText(dh.toFixed(1)+' m  \u2192  '+P.toFixed(0)+' kPa',tx+tw+52,y+4);}
+  // diver
+  const dy=topY+(botY-topY)*0.7;sctx.fillStyle='#ffd34d';sctx.beginPath();sctx.arc(tx+tw*0.4,dy,6,0,7);sctx.fill();sctx.strokeStyle='#ffd34d';sctx.lineWidth=2;sctx.beginPath();sctx.moveTo(tx+tw*0.4,dy+6);sctx.lineTo(tx+tw*0.4,dy+18);sctx.stroke();
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText('pressure grows with depth:  P = P\u2080 + \u03c1gh',tx-6,42);
+  sctx.fillStyle=cv('--gold');sctx.font='11px monospace';sctx.fillText('\u2192 deeper = harder push \u2192 dams are thick at the base',tx-6,H-14);}
+
+// ---------- LEAKING TANK (Torricelli) ----------
+function dLeak(){const tx=70,tw=170,topY=50,botY=358,wallX=tx+tw,groundY=372;
+  const surf=botY-(botY-topY)*S.leakLevel;
+  sctx.fillStyle=fluidGrad(0,surf,botY-surf,'#1f7ad4');sctx.fillRect(tx,surf,tw,botY-surf);
+  waveTop(tx,tx+tw,surf,2.2,'#7fc8ff');
+  sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;sctx.beginPath();sctx.moveTo(tx,topY);sctx.lineTo(tx,botY);sctx.lineTo(wallX,botY);sctx.lineTo(wallX,topY);sctx.stroke();
+  sctx.strokeStyle=cv('--text3');sctx.lineWidth=2;sctx.beginPath();sctx.moveTo(0,groundY);sctx.lineTo(W,groundY);sctx.stroke();
+  const holes=[0.25,0.5,0.75];const cols=['#7fc8ff','#40ffaa','#ffd34d'];
+  sctx.font='11px monospace';
+  holes.forEach((f,i)=>{const hy=botY-(botY-topY)*0.92*f - 10;
+    if(hy<=surf)return;
+    const depthPx=hy-surf;
+    const dM=(depthPx/(botY-topY))*S.depthScale();
+    const v=Math.sqrt(2*g*Math.max(0.01,dM));
+    // jet parabola
+    sctx.strokeStyle=cols[i];sctx.lineWidth=2.5;sctx.beginPath();sctx.moveTo(wallX,hy);
+    const vScale=7;let landed=0;
+    for(let t=0;t<3;t+=0.04){const x=wallX+v*vScale*t;const y=hy+0.5*g*vScale*vScale*t*t*1.0;if(y>=groundY){landed=x;break;}sctx.lineTo(x,y);}
+    sctx.stroke();
+    sctx.fillStyle=cols[i];sctx.beginPath();sctx.arc(wallX,hy,3.5,0,7);sctx.fill();
+    if(landed){sctx.fillStyle=cols[i];sctx.fillText('v='+v.toFixed(1)+' m/s',wallX+12,hy-4);}
+  });
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText('Torricelli:  jet speed v = \u221a(2gh)',tx-4,36);
+  sctx.fillStyle=cv('--gold');sctx.font='11px monospace';sctx.fillText('the deeper the hole, the faster & farther the water shoots',tx-4,H-12);}
+S.depthScale=function(){return 6;}; // metres for full tank height
+
+// ---------- COMMUNICATING VESSELS ----------
+function dVessels(){const baseY=350,topLim=70,manifoldY=baseY;
+  const level=baseY-(baseY-topLim)*S.vWater;
+  const tubes=[{x:90,w:24,shape:'straight'},{x:170,w:54,shape:'cone'},{x:270,w:22,shape:'bulb'},{x:360,w:34,shape:'slant'},{x:450,w:46,shape:'straight'}];
+  // base manifold
+  sctx.fillStyle='#1f7ad4';sctx.fillRect(70,baseY,400,16);
+  sctx.fillStyle=cv('--bg3');
+  tubes.forEach(t=>{sctx.fillStyle=cv('--bg3');sctx.fillRect(t.x-t.w/2,topLim,t.w,baseY-topLim);});
+  // water in each up to common level
+  tubes.forEach(t=>{sctx.fillStyle='#1f7ad4';
+    if(t.shape==='cone'){sctx.beginPath();sctx.moveTo(t.x-8,baseY);sctx.lineTo(t.x+8,baseY);sctx.lineTo(t.x+t.w/2,level);sctx.lineTo(t.x-t.w/2,level);sctx.closePath();sctx.fill();}
+    else if(t.shape==='bulb'){sctx.fillRect(t.x-t.w/2,Math.max(level,baseY-70),t.w,baseY-Math.max(level,baseY-70));if(level<baseY-70){sctx.beginPath();sctx.arc(t.x,baseY-95,26,0,7);sctx.fill();sctx.fillRect(t.x-t.w/2,level,t.w,(baseY-70)-level);}}
+    else {sctx.fillRect(t.x-t.w/2,level,t.w,baseY-level);} });
+  waveTop(70,470,level,1.6,'#7fc8ff');
+  // outlines
+  sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;tubes.forEach(t=>{if(t.shape==='bulb'){sctx.strokeRect(t.x-t.w/2,baseY-70,t.w,70);sctx.beginPath();sctx.arc(t.x,baseY-95,26,0,7);sctx.stroke();}else if(t.shape==='cone'){sctx.beginPath();sctx.moveTo(t.x-8,baseY);sctx.lineTo(t.x-t.w/2,topLim);sctx.moveTo(t.x+8,baseY);sctx.lineTo(t.x+t.w/2,topLim);sctx.stroke();}else sctx.strokeRect(t.x-t.w/2,topLim,t.w,baseY-topLim);});
+  sctx.strokeStyle=cv('--border2');sctx.strokeRect(70,baseY,400,16);
+  // common level line
+  sctx.strokeStyle=cv('--gold');sctx.setLineDash([6,5]);sctx.lineWidth=1.5;sctx.beginPath();sctx.moveTo(60,level);sctx.lineTo(480,level);sctx.stroke();sctx.setLineDash([]);
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText('water finds the SAME level in every shape',96,42);
+  sctx.fillStyle=cv('--gold');sctx.font='11px monospace';sctx.fillText('pressure depends only on depth — not the shape or amount of water',60,H-12);}
+
+// ---------- AUX ----------
+function drawAux(){if(!actx)return;clr(actx,AUXW,AUXH);({press:aPress,depth:aDepth,leak:aLeak,vessels:aVessels}[S.mode])();}
+function bar(y,frac,col,lab,val){const x=160,w=AUXW-190;actx.fillStyle=cv('--bg3');actx.fillRect(x,y,w,26);actx.fillStyle=col;actx.globalAlpha=.72;actx.fillRect(x,y,w*Math.max(0,Math.min(1,frac)),26);actx.globalAlpha=1;actx.strokeStyle=col;actx.strokeRect(x,y,w,26);actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText(lab,18,y+17);actx.fillStyle=col;actx.fillText(val,x+8,y+17);}
+function aPress(){actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('Pascal: pressure transmitted equally',18,22);
+  bar(40,S.F1/3000,cv('--cyan'),'input force',S.F1+' N');
+  bar(78,F2()/3000,cv('--gold'),'output force',(F2()/1000).toFixed(1)+' kN');
+  actx.fillStyle=cv('--text');actx.font='13px monospace';actx.fillText('Mechanical advantage  A\u2082/A\u2081 = '+MA().toFixed(0)+'\u00d7',18,140);
+  actx.fillStyle=cv('--text2');actx.font='11px monospace';
+  actx.fillText('but the small piston travels '+MA().toFixed(0)+'\u00d7 farther,',18,166);
+  actx.fillText('so work in = work out. No free energy.',18,186);
+  actx.fillStyle=cv('--gold');actx.font='11px monospace';actx.fillText('that is why a jack needs many small pumps.',18,212);}
+function aDepth(){actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('P = P\u2080 + \u03c1gh   (\u03c1 = '+S.rho+' kg/m\u00b3)',18,24);
+  for(let i=1;i<=5;i++){const dh=S.depth*i/5;const P=S.rho*g*dh/1000;bar(40+(i-1)*34,P/((S.rho*g*S.depth/1000)||1),cv('--accent'),dh.toFixed(1)+' m deep',P.toFixed(0)+' kPa');}
+  actx.fillStyle=cv('--text2');actx.font='11px monospace';actx.fillText('double the depth \u2192 double the gauge pressure',18,AUXH-12);}
+function aLeak(){actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('Torricelli\u2019s law',18,26);
+  actx.font='12px monospace';actx.fillStyle=cv('--gold');actx.fillText('v = \u221a(2gh)',18,58);
+  actx.fillStyle=cv('--text2');actx.font='11px monospace';
+  ['The water at a hole is pushed out by the','pressure of all the water above it.','Deeper hole \u2192 more pressure \u2192 faster jet.','','It is the very same \u221a(2gh) as an object','dropped from height h — pressure energy','turning straight into speed.'].forEach((t,i)=>actx.fillText(t,18,86+i*22));}
+function aVessels(){actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('The hydrostatic paradox',18,26);
+  actx.fillStyle=cv('--text2');actx.font='11px monospace';
+  ['Connect containers of any width or shape.','Pour in water and it settles to one level','in all of them — wide, narrow, bent, bulged.','','Pressure at the bottom depends only on the','depth of water, never on how much water or','what shape holds it. This is why a tiny tube','can balance a huge tank (Pascal\u2019s vases).'].forEach((t,i)=>actx.fillText(t,18,52+i*22));}
+
+// ---------- UI ----------
+function $(i){return document.getElementById(i);}
+function el(t,c,h){const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+function sld(p,o){const c=el('div','ctl');const r=el('div','param-row');r.append(el('span',null,o.label),el('span','param-val',o.fmt(o.val)));const inp=el('input');inp.type='range';inp.min=o.min;inp.max=o.max;inp.step=o.step;inp.value=o.val;const m=el('div','sb-mini',o.mini||'');inp.oninput=()=>{r.children[1].textContent=o.fmt(+inp.value);o.oninput(+inp.value);upd();};c.append(r,inp,m);p.appendChild(c);}
+function btn(p,arr){const w=el('div');w.style.gridColumn='span 2';const gg=el('div','btn-grid c'+Math.min(3,arr.length));arr.forEach(b=>{const x=el('button','minibtn',b.l);x.onclick=b.f;gg.appendChild(x);});w.appendChild(gg);p.appendChild(w);}
+function buildControls(){const p=$('mode-controls');p.innerHTML='';
+  if(S.mode==='press'){ sld(p,{label:'Input force F\u2081',min:20,max:600,step:10,val:S.F1,fmt:v=>v+' N',mini:'a gentle push',oninput:v=>{S.F1=v;}});
+    sld(p,{label:'Small piston A\u2081',min:2,max:20,step:1,val:S.A1,fmt:v=>v+' cm\u00b2',oninput:v=>{S.A1=v;}});
+    sld(p,{label:'Big piston A\u2082',min:40,max:300,step:10,val:S.A2,fmt:v=>v+' cm\u00b2',mini:'wider = more force, less travel',oninput:v=>{S.A2=v;}});
+    sld(p,{label:'Car to lift',min:50,max:1200,step:25,val:S.load,fmt:v=>v+' kg',oninput:v=>{S.load=v;}});
+    btn(p,[{l:'\u2b06 Pump!',f:pump},{l:'\u21ba Reset',f:()=>{S.lift=0;S.strokes=0;upd();}}]); }
+  else if(S.mode==='depth'){ sld(p,{label:'Tank depth',min:2,max:15,step:1,val:S.depth,fmt:v=>v+' m',oninput:v=>{S.depth=v;}});
+    sld(p,{label:'Fluid density',min:700,max:13600,step:100,val:S.rho,fmt:v=>v+' kg/m\u00b3',mini:'water 1000 \u00b7 sea 1025 \u00b7 mercury 13600',oninput:v=>{S.rho=v;}}); }
+  else if(S.mode==='leak'){ sld(p,{label:'Water level',min:0.3,max:1,step:0.01,val:S.leakLevel,fmt:v=>Math.round(v*100)+'%',mini:'higher water \u2192 faster jets',oninput:v=>{S.leakLevel=v;}}); }
+  else { sld(p,{label:'Water poured in',min:0.15,max:0.95,step:0.01,val:S.vWater,fmt:v=>Math.round(v*100)+'%',mini:'fills every tube to the same height',oninput:v=>{S.vWater=v;}}); }
+  upd();}
+function pump(){if(!canLift()){return;}S.strokes++;S.pumpPhase=Math.PI;const step=Math.min(60,(S.A1/S.A2)*60);S.lift=Math.min(120,S.lift+step);upd();}
+function rc(l,v,s,c){return '<div class="rcell"><div class="r-label">'+l+'</div><div class="r-value '+(c||'sm')+'">'+v+'</div><div class="r-sub">'+(s||'')+'</div></div>';}
+function upd(){const gd=$('readout-grid');let h,law;
+  if(S.mode==='press'){const need=S.load*g;h=rc('Output force',(F2()/1000).toFixed(1)+' kN','F\u2081\u00b7A\u2082/A\u2081','gold')+rc('Force \u00d7',MA().toFixed(0)+'\u00d7','mechanical advantage','cyan')+rc('Car weight',(need/1000).toFixed(1)+' kN','','violet')+rc('Result',canLift()?'lifts \u2713':'too weak','',canLift()?'green':'red');
+    setB('F\u2082 '+(F2()/1000).toFixed(1)+'kN','\u00d7'+MA().toFixed(0));
+    law='<b>Pascal\u2019s law:</b> pressure applied to a confined fluid is transmitted undiminished everywhere, so P = F\u2081/A\u2081 = F\u2082/A\u2082. A big output piston multiplies your push by A\u2082/A\u2081. The trade-off: it moves that many times <b>less far</b>, so work in = work out — which is why a jack lifts a car one small pump at a time.';}
+  else if(S.mode==='depth'){const P=S.rho*g*S.depth/1000;h=rc('At the bottom',P.toFixed(0)+' kPa','gauge pressure','gold')+rc('Formula','P = \u03c1gh','+ atmosphere','cyan')+rc('Density',S.rho+' kg/m\u00b3','','violet')+rc('Depth',S.depth+' m','','green');
+    setB('depth '+S.depth+'m',P.toFixed(0)+' kPa');
+    law='<b>Pressure in a fluid grows with depth: P = P\u2080 + \u03c1gh.</b> It depends only on depth and density \u2014 not the container\u2019s shape or width. This is why your ears hurt at the bottom of a pool, deep-sea subs need thick hulls, and dam walls are built far thicker at the base than the top.';}
+  else if(S.mode==='leak'){h=rc('Top hole','slow jet','least depth','cyan')+rc('Bottom hole','fast jet','most depth','gold')+rc('Speed','v = \u221a(2gh)','from depth h','violet')+rc('Why','more water above','presses harder','green');
+    setB('Torricelli','v=\u221a(2gh)');
+    law='<b>Torricelli\u2019s law:</b> water spurts from a hole at speed v = \u221a(2gh), where h is the depth of the hole below the surface. The deeper the hole, the greater the pressure pushing it out, so the faster and farther it jets \u2014 the same \u221a(2gh) you get dropping an object from height h.';}
+  else {h=rc('Shapes','all different','same liquid','cyan')+rc('Water level','identical','in every tube','gold')+rc('Depends on','depth only','not shape/amount','violet')+rc('Name','Pascal\u2019s vases','hydrostatic paradox','green');
+    setB('same level','any shape');
+    law='<b>Communicating vessels:</b> connect containers of any shape and water settles to exactly the same level in all of them. Pressure at the base depends only on the depth of the fluid, never on the shape or the amount \u2014 a surprising result called the hydrostatic paradox.';}
+  gd.innerHTML=h;$('law-strip').innerHTML=law;}
+function setB(l,r){$('badge-l').textContent=l;$('badge-r').textContent=r;}
+const MODES=[{id:'press',l:'Hydraulic Press',t:'lift a car'},{id:'depth',l:'Pressure & Depth',t:'P = \u03c1gh'},{id:'leak',l:'Leaking Tank',t:'water jets'},{id:'vessels',l:'Communicating Vessels',t:'same level'}];
+const TT={press:'Hydraulic Press',depth:'Pressure with Depth',leak:'Leaking Tank',vessels:'Communicating Vessels'};
+const HH={press:'multiply a small force \u2014 then pump!',depth:'why dams are thick below',leak:'deeper holes shoot farther',vessels:'any shape, one level'};
+let voiceOn=false,tok=0;
+const SC={press:'A hydraulic press lets a gentle push lift an enormous weight. Pascal found that pressure pressed into a trapped fluid spreads equally throughout it, so the same pressure on a large piston gives a much larger force \u2014 multiplied by the ratio of the areas. There is no free lunch, though: the big piston barely moves, so you must pump the small one many times, exactly like a car jack.',
+depth:'The deeper you go in a fluid, the greater the pressure, because more weight of water presses down from above. Pressure equals density times gravity times depth, and it does not care about the shape of the container, only how deep you are. That is why a dam is built thick and strong at its base, where the water pushes hardest.',
+leak:'Poke holes down the side of a tank and watch the water shoot out. The lower holes spray faster and farther, because they have more water pressing above them. The exit speed is the square root of two times gravity times the depth \u2014 the very same formula as an object falling from that height.',
+vessels:'Here is a surprise. Connect containers of completely different shapes and widths, pour in water, and it rises to exactly the same level in every one. The pressure at the bottom depends only on how deep the water is, never on the shape of the vessel or how much water it holds.'};
+function speak(t){if(!voiceOn||!t||typeof speechSynthesis==='undefined')return;const my=++tok;try{speechSynthesis.cancel();}catch(e){}setTimeout(()=>{if(my!==tok||!voiceOn)return;try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){}},80);}
+function stopV(){tok++;try{if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel();}catch(e){}}
+function vBtn(){const v=$('voice-switcher');v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off';v.style.color=voiceOn?'var(--cyan)':'';}
+function modeBar(){const b=$('mode-bar');b.innerHTML='';MODES.forEach(m=>{const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.l+' <span class="mode-tag">'+m.t+'</span>');t.onclick=()=>setMode(m.id);b.appendChild(t);});}
+function setMode(id){stopV();S.mode=id;$('stage-title').firstChild.textContent=TT[id]+' ';$('stage-hint').textContent=HH[id];if(id==='press'){S.lift=0;S.strokes=0;}modeBar();buildControls();speak(SC[id]);}
+function bindUI(){stage=$('stage');sctx=stage.getContext('2d');aux=$('aux');actx=aux.getContext('2d');fit();window.addEventListener('resize',fit);
+  const ts=$('theme-switcher');try{if(localStorage.getItem('theme')==='light')document.body.classList.add('light-theme');}catch(e){}
+  ts.onclick=()=>{document.body.classList.toggle('light-theme');try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){}};
+  const vs=$('voice-switcher');try{if(localStorage.getItem('hyd-voice')==='on')voiceOn=true;}catch(e){}vBtn();
+  vs.onclick=()=>{voiceOn=!voiceOn;try{localStorage.setItem('hyd-voice',voiceOn?'on':'off');}catch(e){}vBtn();if(voiceOn)speak(SC[S.mode]);else stopV();};
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopV();});}
+function fit(){W=560;H=400;AUXW=560;AUXH=300;stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH;}
+function buildTheory(){$('theory').innerHTML=`<div class="theory-hdr">Theory \u2014 Hydraulics &amp; Pascal\u2019s Law</div>
+  <h3>Pressure</h3><p>Pressure is force spread over an area: P = F/A. The same force on a smaller area presses harder \u2014 a drawing pin, a knife edge and a stiletto heel all concentrate force into a tiny area.</p>
+  <div class="eq">P = F / A</div>
+  <h3>Pascal\u2019s Law</h3><p>Pressure applied to an enclosed fluid is transmitted equally to every part of it. Connect a small piston to a large one and the shared pressure produces a much larger force on the bigger area:</p>
+  <div class="eq">F\u2082 = F\u2081 \u00b7 (A\u2082 / A\u2081)<div class="vars">The force is multiplied by the area ratio \u2014 a hydraulic jack lifts a car with one hand. But the big piston moves A\u2081/A\u2082 as far, so work in equals work out. No energy is created, which is why a jack takes many pumps.</div></div>
+  <h3>Pressure with Depth</h3><p>Inside a fluid, pressure rises with depth as the weight of fluid above piles up. It depends only on depth and density, never the container\u2019s shape:</p>
+  <div class="eq">P = P\u2080 + \u03c1\u00b7g\u00b7h<div class="vars">P\u2080 is the surface (atmospheric) pressure. This is why dams are thick at the base, submarines need strong hulls and your ears pop underwater.</div></div>
+  <h3>Torricelli\u2019s Law</h3><p>Open a hole at depth h and the water jets out at v = \u221a(2gh) \u2014 the same speed an object reaches falling from height h. The pressure of the water above converts directly into the speed of the escaping stream, so lower holes spray faster and farther.</p>
+  <div class="eq">v = \u221a(2 g h)</div>
+  <h3>Communicating Vessels</h3><p>Because pressure depends only on depth, water poured into connected containers of any shape rises to the same level in every one \u2014 the hydrostatic paradox. The same idea lets a thin tube of water balance a whole tank, and is how a spirit level and a water-level tool work.</p>
+  <h3>Hydraulics Everywhere</h3><p>Car brakes, diggers, lifts, forklifts and aircraft controls all use Pascal\u2019s law to turn a small effort into a big, smooth, controllable force.</p>`;}
+let fr=0;function loop(now){try{tNow=now;if(S.pumpPhase>0)S.pumpPhase=Math.max(0,S.pumpPhase-0.15);drawStage();drawAux();if(fr++%6===0)upd();}catch(e){console.error(e);}requestAnimationFrame(loop);}
+function init(){modeBar();bindUI();buildTheory();setMode('press');requestAnimationFrame(loop);}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+
+</script></body></html>
