@@ -176,61 +176,61 @@ function beam(x1,y1,x2,y2,col,wid,intensity){const a=intensity==null?1:Math.max(
   sctx.globalAlpha=a;sctx.strokeStyle='#fff';sctx.lineWidth=Math.max(1,(wid||3)-1.5);sctx.setLineDash([7,16]);sctx.lineDashOffset=-(tNow*0.06)%23;sctx.beginPath();sctx.moveTo(x1,y1);sctx.lineTo(x2,y2);sctx.stroke();
   sctx.setLineDash([]);sctx.globalAlpha=1;sctx.lineCap='butt';}
 function head(x,y,ang,col){sctx.beginPath();sctx.moveTo(x,y);sctx.lineTo(x-10*Math.cos(ang-0.4),y-10*Math.sin(ang-0.4));sctx.lineTo(x-10*Math.cos(ang+0.4),y-10*Math.sin(ang+0.4));sctx.closePath();sctx.fillStyle=col;sctx.fill();}
-function normalLine(ix,iy,len){sctx.strokeStyle=cv('--text3');sctx.setLineDash([5,5]);sctx.lineWidth=1;sctx.beginPath();sctx.moveTo(ix,iy-len);sctx.lineTo(ix,iy+len);sctx.stroke();sctx.setLineDash([]);}
+function normalLine(ix,iy,len){sctx.strokeStyle=cv('--text2');sctx.setLineDash([5,5]);sctx.lineWidth=1;sctx.beginPath();sctx.moveTo(ix,iy-len);sctx.lineTo(ix,iy+len);sctx.stroke();sctx.setLineDash([]);}
 function angleArc(ix,iy,a0,a1,col){sctx.strokeStyle=col;sctx.lineWidth=1;sctx.beginPath();sctx.arc(ix,iy,28,a0,a1);sctx.stroke();}
 
 function dReflect(){const ix=W/2,iy=H/2;
   // mirror surface (hatched)
   sctx.strokeStyle=cv('--border2');sctx.lineWidth=3;sctx.beginPath();sctx.moveTo(0,iy);sctx.lineTo(W,iy);sctx.stroke();
-  sctx.strokeStyle=cv('--text3');sctx.lineWidth=1;for(let x=10;x<W;x+=14){sctx.beginPath();sctx.moveTo(x,iy);sctx.lineTo(x-8,iy+9);sctx.stroke();}
-  sctx.fillStyle=cv('--text2');sctx.font='10px monospace';sctx.fillText('mirror',W-54,iy+22);
+  sctx.strokeStyle=cv('--text2');sctx.lineWidth=1;for(let x=10;x<W;x+=14){sctx.beginPath();sctx.moveTo(x,iy);sctx.lineTo(x-8,iy+9);sctx.stroke();}
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText('mirror',W-54,iy+22);
   normalLine(ix,iy,150);
   const th=S.th*D2R,L=170;
   const sx=ix-Math.sin(th)*L, sy=iy-Math.cos(th)*L;
   beam(sx,sy,ix,iy,cv('--gold')); head(ix,iy,Math.atan2(iy-sy,ix-sx),cv('--gold'));
   const rx=ix+Math.sin(th)*L, ry=iy-Math.cos(th)*L;
   beam(ix,iy,rx,ry,cv('--cyan')); head(rx,ry,Math.atan2(ry-iy,rx-ix),cv('--cyan'));
-  sctx.fillStyle=cv('--gold');sctx.font='11px monospace';sctx.fillText('incident '+S.th+'°',sx-6,sy-6);
+  sctx.fillStyle=cv('--gold');sctx.font='12.5px monospace';sctx.fillText('incident '+S.th+'°',sx-6,sy-6);
   sctx.fillStyle=cv('--cyan');sctx.fillText('reflected '+S.th+'°',rx-30,ry-6);
-  sctx.fillStyle=cv('--text2');sctx.font='12px monospace';sctx.fillText('angle in  =  angle out',ix-66,42);
-  sctx.fillStyle=cv('--text3');sctx.font='9px monospace';sctx.fillText('drag the beam to change the angle',ix-90,H-16);}
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText('angle in  =  angle out',ix-66,42);
+  sctx.fillStyle=cv('--text2');sctx.font='12.5px monospace';sctx.fillText('drag the beam to change the angle',ix-90,H-16);}
 
 function dSnell(){const c={Air:'#5fe9c8',Water:'#3a8fff',Glass:'#8ab4ff',Diamond:'#eaf2ff'};const ix=W/2,iy=H/2;
   const n1=S.n1,n2=S.n2;
   sctx.fillStyle=c[S.top]||'#39f';sctx.globalAlpha=.13;sctx.fillRect(0,0,W,iy);sctx.fillStyle=c[S.bot]||'#39f';sctx.fillRect(0,iy,W,H-iy);sctx.globalAlpha=1;
   sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;sctx.beginPath();sctx.moveTo(0,iy);sctx.lineTo(W,iy);sctx.stroke();
   normalLine(ix,iy,150);
-  sctx.fillStyle=cv('--text2');sctx.font='10px monospace';sctx.fillText(S.top+'  n='+n1.toFixed(2),16,24);sctx.fillText(S.bot+'  n='+n2.toFixed(2),16,H-14);
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText(S.top+'  n='+n1.toFixed(2),16,24);sctx.fillText(S.bot+'  n='+n2.toFixed(2),16,H-14);
   const th=S.th*D2R,L=160;const sx=ix-Math.sin(th)*L,sy=iy-Math.cos(th)*L;
   beam(sx,sy,ix,iy,cv('--gold'));head(ix,iy,Math.atan2(iy-sy,ix-sx),cv('--gold'));
   const t2=refrAng(n1,n2,S.th),Rf=reflectance(n1,n2,S.th);
   // partial reflection
-  const rx=ix+Math.sin(th)*L*0.8,ry=iy-Math.cos(th)*L*0.8; beam(ix,iy,rx,ry,cv('--text2'),2,Rf);
-  sctx.fillStyle=cv('--text2');sctx.font='9px monospace';sctx.fillText('reflected '+(Rf*100).toFixed(0)+'%',rx-20,ry-4);
+  const rx=ix+Math.sin(th)*L*0.8,ry=iy-Math.cos(th)*L*0.8; beam(ix,iy,rx,ry,cv('--text'),2,Rf);
+  sctx.fillStyle=cv('--text');sctx.font='12.5px monospace';sctx.fillText('reflected '+(Rf*100).toFixed(0)+'%',rx-20,ry-4);
   if(t2!==null){const a2=t2*D2R;const tx=ix+Math.sin(a2)*160,ty=iy+Math.cos(a2)*160;beam(ix,iy,tx,ty,cv('--cyan'),3,1-Rf);head(tx,ty,Math.atan2(ty-iy,tx-ix),cv('--cyan'));
-    sctx.fillStyle=cv('--cyan');sctx.font='11px monospace';sctx.fillText('refracted '+t2.toFixed(1)+'°',tx+6,ty);}
+    sctx.fillStyle=cv('--cyan');sctx.font='12.5px monospace';sctx.fillText('refracted '+t2.toFixed(1)+'°',tx+6,ty);}
   else {const tx=ix+Math.sin(th)*160,ty=iy-Math.cos(th)*160;beam(ix,iy,tx,ty,cv('--red'),3);sctx.fillStyle=cv('--red');sctx.font='12px monospace';sctx.fillText('TOTAL INTERNAL REFLECTION',ix-90,iy+40);}
-  sctx.fillStyle=cv('--gold');sctx.font='11px monospace';sctx.fillText('incident '+S.th+'°',sx-6,sy-6);
-  sctx.fillStyle=cv('--text3');sctx.font='9px monospace';sctx.fillText(n2>n1?'denser below → bends toward normal':'rarer below → bends away',ix-180,iy-10);
+  sctx.fillStyle=cv('--gold');sctx.font='12.5px monospace';sctx.fillText('incident '+S.th+'°',sx-6,sy-6);
+  sctx.fillStyle=cv('--text2');sctx.font='12.5px monospace';sctx.fillText(n2>n1?'denser below → bends toward normal':'rarer below → bends away',ix-180,iy-10);
   sctx.fillText('drag the beam to aim',ix+30,H-16);}
 
 function dTIR(){const n1=MEDIA[S.tirN];const ix=W/2,iy=148;
   sctx.fillStyle='#3a8fff';sctx.globalAlpha=.13;sctx.fillRect(0,0,W,iy);sctx.fillStyle='#5fe9c8';sctx.globalAlpha=.10;sctx.fillRect(0,iy,W,H-iy);sctx.globalAlpha=1;
   sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;sctx.beginPath();sctx.moveTo(0,iy);sctx.lineTo(W,iy);sctx.stroke();
-  sctx.fillStyle=cv('--text2');sctx.font='10px monospace';sctx.fillText(S.tirN+'  n='+n1.toFixed(2),16,24);sctx.fillText('Air  n=1.00',16,iy+18);
+  sctx.fillStyle=cv('--text');sctx.font='12px monospace';sctx.fillText(S.tirN+'  n='+n1.toFixed(2),16,24);sctx.fillText('Air  n=1.00',16,iy+18);
   normalLine(ix,iy,120);
   const tc=critAng(n1,1.0);const th=S.th*D2R,L=150;const sx=ix-Math.sin(th)*L,sy=iy+Math.cos(th)*L;
   beam(sx,sy,ix,iy,cv('--gold'));head(ix,iy,Math.atan2(iy-sy,ix-sx),cv('--gold'));
   const t2=refrAng(n1,1.0,S.th),Rf=reflectance(n1,1.0,S.th);
   if(t2!==null){const a2=t2*D2R;const tx=ix+Math.sin(a2)*130,ty=iy-Math.cos(a2)*130;beam(ix,iy,tx,ty,cv('--cyan'),3,1-Rf);head(tx,ty,Math.atan2(ty-iy,tx-ix),cv('--cyan'));
-    beam(ix,iy,ix+Math.sin(th)*90,iy+Math.cos(th)*90,cv('--text2'),2,Rf);
-    sctx.fillStyle=cv('--cyan');sctx.font='11px monospace';sctx.fillText('escapes '+t2.toFixed(1)+'°',tx+4,ty-2);}
+    beam(ix,iy,ix+Math.sin(th)*90,iy+Math.cos(th)*90,cv('--text'),2,Rf);
+    sctx.fillStyle=cv('--cyan');sctx.font='12.5px monospace';sctx.fillText('escapes '+t2.toFixed(1)+'°',tx+4,ty-2);}
   else {beam(ix,iy,ix+Math.sin(th)*150,iy+Math.cos(th)*150,cv('--red'),3);sctx.fillStyle=cv('--red');sctx.font='12px monospace';sctx.fillText('⚡ trapped — total internal reflection',ix-30,iy+50);}
-  if(tc){sctx.strokeStyle=cv('--violet');sctx.setLineDash([3,3]);sctx.lineWidth=1.5;sctx.beginPath();sctx.moveTo(ix,iy);sctx.lineTo(ix-Math.sin(tc*D2R)*130,iy+Math.cos(tc*D2R)*130);sctx.stroke();sctx.setLineDash([]);sctx.fillStyle=cv('--violet');sctx.font='10px monospace';sctx.fillText('critical '+tc.toFixed(1)+'°',ix-118,iy+60);}
+  if(tc){sctx.strokeStyle=cv('--violet');sctx.setLineDash([3,3]);sctx.lineWidth=1.5;sctx.beginPath();sctx.moveTo(ix,iy);sctx.lineTo(ix-Math.sin(tc*D2R)*130,iy+Math.cos(tc*D2R)*130);sctx.stroke();sctx.setLineDash([]);sctx.fillStyle=cv('--violet');sctx.font='12px monospace';sctx.fillText('critical '+tc.toFixed(1)+'°',ix-118,iy+60);}
   // fibre-optic demo at the bottom
   const fy=H-44,fx0=30,fx1=W-30,r=15;
   sctx.strokeStyle=cv('--border2');sctx.lineWidth=2;sctx.strokeRect(fx0,fy-r,fx1-fx0,2*r);
-  sctx.fillStyle=cv('--text3');sctx.font='9px monospace';sctx.fillText('fibre-optic cable: light zig-zags by TIR and never leaks out',fx0+6,fy-r-6);
+  sctx.fillStyle=cv('--text2');sctx.font='12.5px monospace';sctx.fillText('fibre-optic cable: light zig-zags by TIR and never leaks out',fx0+6,fy-r-6);
   sctx.strokeStyle=cv('--cyan');sctx.lineWidth=2;sctx.beginPath();let zx=fx0,zy=fy+r,up=true;sctx.moveTo(zx,zy);
   const seg=44;while(zx<fx1){zx+=seg;zy=up?fy-r:fy+r;sctx.lineTo(Math.min(zx,fx1),zy);up=!up;}sctx.stroke();
   // moving photon
@@ -253,29 +253,29 @@ function dPrism(){const cx=W/2,cy=H/2+10,sz=90;
   const cols=[['#ff3030',0],['#ff9020',0.6],['#ffe020',1.1],['#40ff60',1.7],['#40a0ff',2.3],['#9040ff',3.0]];
   const base=0.55+(S.prismA-50)*0.004;
   cols.forEach(([col,dev])=>{const a=base+dev*0.045;const ex=xpt.x+Math.cos(a)*170,ey=xpt.y+Math.sin(a)*170;beam(xpt.x,xpt.y,ex,ey,col,2.4);});
-  sctx.fillStyle=cv('--text2');sctx.font='11px monospace';sctx.fillText('white light',sx,sy-6);
-  sctx.fillStyle=cv('--text2');sctx.fillText('rainbow',xpt.x+120,xpt.y+70);
-  sctx.fillStyle=cv('--text3');sctx.font='9px monospace';sctx.fillText('each colour has a slightly different n → bends by a different amount',30,H-16);
+  sctx.fillStyle=cv('--text');sctx.font='12.5px monospace';sctx.fillText('white light',sx,sy-6);
+  sctx.fillStyle=cv('--text');sctx.fillText('rainbow',xpt.x+120,xpt.y+70);
+  sctx.fillStyle=cv('--text2');sctx.font='12.5px monospace';sctx.fillText('each colour has a slightly different n → bends by a different amount',30,H-16);
   sctx.fillStyle='#ff3030';sctx.fillText('red bends least',xpt.x+120,xpt.y+30);sctx.fillStyle='#9040ff';sctx.fillText('violet bends most',xpt.x+120,xpt.y+90);}
 
 function drawAux(){if(!actx)return;clr(actx,AUXW,AUXH);
-  if(S.mode==='reflect'){actx.fillStyle=cv('--text2');actx.font='12px monospace';actx.fillText('Law of Reflection',20,30);
+  if(S.mode==='reflect'){actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('Law of Reflection',20,30);
     actx.font='13px monospace';actx.fillStyle=cv('--gold');actx.fillText('θ_incidence = θ_reflection = '+S.th+'°',20,64);
-    actx.fillStyle=cv('--text3');actx.font='11px monospace';
+    actx.fillStyle=cv('--text2');actx.font='12.5px monospace';
     ['The incident ray, the reflected ray and the','normal all lie in one plane.','','A smooth surface reflects a clear image (specular);','a rough one scatters light every way (diffuse) —','which is why you see a mirror but not a wall.'].forEach((t,i)=>actx.fillText(t,20,96+i*22));return;}
-  if(S.mode==='prism'){actx.fillStyle=cv('--text2');actx.font='12px monospace';actx.fillText('Dispersion',20,28);
-    actx.font='11px monospace';actx.fillStyle=cv('--text3');
+  if(S.mode==='prism'){actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('Dispersion',20,28);
+    actx.font='12.5px monospace';actx.fillStyle=cv('--text2');
     ['A material\u2019s refractive index depends slightly','on the colour (wavelength) of light.','Violet light slows most, so it bends most;','red slows least and bends least.','','So a single refraction fans white light into a','spectrum — a prism, and a raindrop, make rainbows.'].forEach((t,i)=>actx.fillText(t,20,56+i*22));
-    actx.fillStyle=cv('--gold');actx.font='11px monospace';actx.fillText('glass: n(red)≈1.513   n(violet)≈1.532',20,AUXH-14);return;}
+    actx.fillStyle=cv('--gold');actx.font='12.5px monospace';actx.fillText('glass: n(red)≈1.513   n(violet)≈1.532',20,AUXH-14);return;}
   // snell / tir
-  actx.fillStyle=cv('--text3');actx.font='10px monospace';actx.fillText("Snell's law:  n₁·sinθ₁ = n₂·sinθ₂",20,24);
+  actx.fillStyle=cv('--text2');actx.font='12px monospace';actx.fillText("Snell's law:  n₁·sinθ₁ = n₂·sinθ₂",20,24);
   const n1=S.mode==='snell'?S.n1:MEDIA[S.tirN],n2=S.mode==='snell'?S.n2:1.0;
   actx.font='12px monospace';actx.fillStyle=cv('--gold');actx.fillText(n1.toFixed(2)+' × sin('+S.th+'°) = '+(n1*Math.sin(S.th*D2R)).toFixed(3),20,54);
   const t2=refrAng(n1,n2,S.th);actx.fillStyle=cv('--cyan');actx.fillText(t2!==null?(n2.toFixed(2)+' × sin('+t2.toFixed(1)+'°) = '+(n2*Math.sin(t2*D2R)).toFixed(3)+' ✓'):'no real solution → all light reflects',20,82);
   const tc=critAng(n1,n2);
-  if(tc){actx.fillStyle=cv('--violet');actx.fillText('critical angle = asin(n₂/n₁) = '+tc.toFixed(1)+'°',20,118);actx.fillStyle=cv('--text2');actx.font='11px monospace';actx.fillText(S.th>tc?'beyond critical → trapped (fibre optics)':'below critical → some light escapes',20,146);}
-  else {actx.fillStyle=cv('--text2');actx.font='11px monospace';actx.fillText('into a denser medium — light always gets through',20,118);}
-  actx.fillStyle=cv('--text2');actx.font='10px monospace';actx.fillText('reflected fraction (Fresnel): '+(reflectance(n1,n2,S.th)*100).toFixed(0)+'%  — grows near grazing & critical',20,AUXH-12);}
+  if(tc){actx.fillStyle=cv('--violet');actx.fillText('critical angle = asin(n₂/n₁) = '+tc.toFixed(1)+'°',20,118);actx.fillStyle=cv('--text');actx.font='12.5px monospace';actx.fillText(S.th>tc?'beyond critical → trapped (fibre optics)':'below critical → some light escapes',20,146);}
+  else {actx.fillStyle=cv('--text');actx.font='12.5px monospace';actx.fillText('into a denser medium — light always gets through',20,118);}
+  actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('reflected fraction (Fresnel): '+(reflectance(n1,n2,S.th)*100).toFixed(0)+'%  — grows near grazing & critical',20,AUXH-12);}
 
 function $(i){return document.getElementById(i);}
 function el(t,c,h){const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
