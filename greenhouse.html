@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-32ZMW31TWT');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greenhouse Effect Lab | Science Wonders</title>
+<meta name="description" content="Interactive simulations of the Greenhouse Effect — from global energy flow and planetary albedo to the quantum vibrations of CO2 molecules. Real physics, live numbers.">
+<script>
+// Apply saved theme as early as possible to avoid a flash
+(function() {
+  try {
+    const t = localStorage.getItem('sw-theme');
+    if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  } catch (e) {}
+})();
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+/* ===== DARK THEME (default) ===== */
+:root{
+  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+  --border:#152035;--border2:#1e3050;
+  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--red:#ff4f60;
+  --canvas-bg:#020812;
+  --grid-line:rgba(30,50,80,.22);
+}
+
+/* ===== LIGHT THEME ===== */
+[data-theme="light"]{
+  --bg:#faf8f3;--bg2:#f1ede0;--bg3:#e6e0cd;
+  --border:#cfc6ab;--border2:#a79a78;
+  --text:#2a2418;--text2:#5a5040;--text3:#8a7e68;--text-bright:#1a1612;
+  --accent:#2a5fa0;--gold:#b07410;--gold-bright:#8a5208;
+  --cyan:#0a7090;--violet:#6f30a0;--green:#1a7048;--red:#a52030;
+  --canvas-bg:#fdfbf3;
+  --grid-line:rgba(120,100,60,.18);
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background 0.25s,color 0.25s;}
+
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:10;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+.logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;transition:all .2s;background:transparent;cursor:pointer;}
+.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;}
+
+/* Scenario tabs */
+.tabs-wrap{max-width:1200px;margin:18px auto 0;padding:0 20px;display:flex;gap:6px;flex-wrap:wrap;}
+.tab{font-family:monospace;font-size:10.5px;padding:9px 13px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;letter-spacing:.5px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.tab:hover{background:var(--bg3);color:var(--text-bright);border-color:var(--accent);}
+.tab.active{background:rgba(58,143,255,.13);color:var(--accent);border-color:var(--accent);}
+.tab .ico{font-size:13px;line-height:1;}
+
+/* Scenario title and intro */
+.scene-head{max-width:1200px;margin:16px auto 0;padding:0 20px;}
+.scene-title{font-family:'Georgia',serif;font-size:22px;color:var(--text-bright);letter-spacing:.5px;margin-bottom:4px;}
+.scene-sub{font-family:monospace;font-size:11px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;}
+
+/* Canvas */
+.canvas-wrap{max-width:1200px;margin:14px auto 0;padding:0 20px;}
+.canvas-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--canvas-bg);}
+svg#canvas{display:block;width:100%;height:auto;}
+.canvas-badge{position:absolute;top:14px;font-family:monospace;font-size:10px;color:var(--text2);background:var(--bg2);padding:5px 10px;border-radius:5px;border:1px solid var(--border2);letter-spacing:1px;}
+.canvas-badge.left{left:18px;color:var(--gold);}
+.canvas-badge.right{right:18px;}
+
+/* Panels */
+.panels{max-width:1200px;margin:14px auto 0;display:grid;grid-template-columns:340px 1fr 320px;gap:14px;padding:0 20px;}
+@media(max-width:1020px){.panels{grid-template-columns:1fr;}}
+
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.panel-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+/* Slider rows */
+.ctrl-row{margin-bottom:14px;}
+.ctrl-row:last-child{margin-bottom:0;}
+.ctrl-label{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
+.ctrl-val{font-size:12px;color:var(--text-bright);font-weight:bold;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
+.ctrl-sub{font-family:monospace;font-size:9.5px;color:var(--text3);margin-top:3px;letter-spacing:.5px;}
+.ctrl-toggle{display:flex;gap:6px;margin-top:8px;}
+.ctrl-toggle button{flex:1;font-family:monospace;font-size:10px;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;letter-spacing:.5px;transition:all .15s;}
+.ctrl-toggle button:hover{border-color:var(--accent);color:var(--accent);}
+.ctrl-toggle button.on{background:rgba(58,143,255,.13);color:var(--accent);border-color:var(--accent);}
+
+/* Action buttons */
+.action-btns{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);}
+.action-btns button{flex:1;font-family:monospace;font-size:11px;padding:9px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text);cursor:pointer;letter-spacing:1px;transition:all .15s;}
+.action-btns button:hover{border-color:var(--accent);color:var(--accent);background:var(--bg3);}
+.action-btns button.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+[data-theme="light"] .action-btns button.primary{color:#fff;}
+.action-btns button.primary:hover{filter:brightness(1.1);}
+
+/* Readouts */
+.readout-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.readout-cell{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;}
+.readout-cell.full{grid-column:span 2;}
+.readout-cell .l{font-family:monospace;font-size:8.5px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;}
+.readout-cell .v{font-family:monospace;font-size:13px;color:var(--gold);}
+.readout-cell .v.green{color:var(--green);}
+.readout-cell .v.red{color:var(--red);}
+.readout-cell .v.cyan{color:var(--cyan);}
+.readout-cell .v.violet{color:var(--violet);}
+
+.eqbox{margin-top:12px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:11px 13px;font-family:monospace;font-size:11px;color:var(--gold-bright);line-height:1.85;}
+.eqbox .lab{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+
+.banner{margin:12px 0 0;padding:10px 14px;border-radius:6px;font-family:monospace;font-size:11px;line-height:1.55;display:none;}
+.banner.show{display:block;}
+.banner.info{background:rgba(58,143,255,.07);border:1px solid rgba(58,143,255,.3);color:var(--accent);}
+.banner.warn{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.35);color:var(--red);}
+.banner.success{background:rgba(64,255,170,.05);border:1px solid rgba(64,255,170,.3);color:var(--green);}
+.banner.gold{background:rgba(240,192,96,.05);border:1px solid rgba(240,192,96,.3);color:var(--gold-bright);}
+
+/* FBD legend */
+.fbd-legend{margin-top:10px;font-family:monospace;font-size:10px;color:var(--text2);line-height:1.7;}
+.fbd-legend .sw{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px;}
+
+/* Theory */
+.theory-wrap{max-width:1200px;margin:20px auto 0;padding:0 20px 60px;}
+.theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px clamp(20px,4vw,38px);}
+.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:'Georgia',serif;font-size:20px;font-weight:bold;color:var(--text-bright);margin:30px 0 12px;}
+.theory h3:first-of-type{margin-top:0;}
+.theory h4{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:22px 0 8px;}
+.theory p{font-size:15px;color:var(--text2);margin-bottom:14px;line-height:1.8;}
+.theory em{color:var(--gold-bright);font-style:italic;}
+.theory strong{color:var(--text-bright);}
+.theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:11px 18px;margin:12px 0;border-radius:0 6px 6px 0;color:var(--gold-bright);line-height:1.85;}
+.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:4px;line-height:1.6;font-family:'Georgia',serif;font-style:italic;}
+
+footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
+footer a{color:var(--text2);text-decoration:none;}
+footer a:hover{color:var(--accent);}
+
+@media(max-width:600px){
+  header{padding:12px 16px;gap:10px;}
+  .page-subtitle{display:none;}
+  .tabs-wrap{padding:0 12px;gap:4px;}
+  .tab{font-size:9.5px;padding:7px 9px;letter-spacing:.3px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">Greenhouse Effect Lab</div>
+  <div class="header-spacer"></div>
+  <button class="header-link theme-toggle" id="theme-btn" title="Toggle light/dark theme"><span id="theme-icon">☀</span><span id="theme-label">Light</span></button>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<!-- Scenario tabs -->
+<div class="tabs-wrap" id="tabs">
+  <button class="tab active" data-scene="flow"><span class="ico">🌍</span>Global Energy Flow</button>
+  <button class="tab" data-scene="molecule"><span class="ico">⚛️</span>The Molecular View</button>
+  <button class="tab" data-scene="balance"><span class="ico">🌡️</span>Balance & Albedo</button>
+</div>
+
+<!-- Scenario title -->
+<div class="scene-head">
+  <div class="scene-title" id="scene-title">Global Energy Flow</div>
+  <div class="scene-sub" id="scene-sub">Visible Light In, Infrared Out</div>
+</div>
+
+<!-- Canvas -->
+<div class="canvas-wrap">
+  <div class="canvas-frame">
+    <svg id="canvas" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="var(--grid-line)" stroke-width="1"/>
+        </pattern>
+        <!-- Gradients -->
+        <linearGradient id="sunGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(240,192,96,0.2)"/>
+          <stop offset="100%" stop-color="rgba(240,192,96,0)"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)"/>
+      <g id="scene-bg"></g>
+      <g id="scene-main"></g>
+      <g id="scene-fg"></g>
+      <g id="scene-graph"></g>
+    </svg>
+    <div class="canvas-badge left" id="canvas-hint">—</div>
+    <div class="canvas-badge right" id="canvas-status">—</div>
+  </div>
+</div>
+
+<!-- Panels -->
+<div class="panels">
+  <div class="panel" id="controls-panel">
+    <div class="panel-title">Controls</div>
+    <div id="controls-content"></div>
+    <div class="action-btns">
+      <button id="btn-play" class="primary">▶ Play</button>
+      <button id="btn-reset">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="panel" id="fbd-panel">
+    <div class="panel-title" id="fbd-title">Diagram</div>
+    <svg id="fbd" viewBox="0 0 360 320" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:auto;"></svg>
+    <div class="fbd-legend" id="fbd-legend">
+      <!-- Injected by scene -->
+    </div>
+  </div>
+
+  <div class="panel" id="readout-panel">
+    <div class="panel-title">Live Readouts</div>
+    <div class="readout-grid" id="readout-content"></div>
+    <div class="eqbox" id="equation-box">
+      <div class="lab">Working</div>
+      <div id="equation-content">—</div>
+    </div>
+    <div class="banner" id="banner"><span id="banner-text"></span></div>
+  </div>
+</div>
+
+<!-- Theory -->
+<div class="theory-wrap"><div class="theory">
+  <div class="theory-hdr">Theory — What is the Greenhouse Effect?</div>
+
+  <h3>What is the Greenhouse Effect? (The Simple Version)</h3>
+  <p>Think of a car parked in the sun with its windows rolled up. Sunlight (which is mostly <strong>visible light</strong>) easily passes through the transparent glass windows and hits the dashboard and seats. These surfaces absorb the sunlight and warm up. Warm objects radiate heat, which takes the form of invisible <strong>infrared light</strong>. But here is the trick: glass doesn't let infrared light pass through! The heat is trapped inside the car, and the temperature rises dramatically.</p>
+  <p>The Earth's atmosphere does the exact same thing. Gases like <strong>Carbon Dioxide (CO₂)</strong>, <strong>Methane (CH₄)</strong>, and <strong>Water Vapor</strong> act like the glass of a greenhouse. They are entirely transparent to the incoming sunlight, letting it pass through to warm the Earth. However, when the warm Earth tries to radiate that heat (infrared) back out into space, these "greenhouse gases" block it, absorb it, and scatter it back down to the surface.</p>
+  <p>Without this natural effect, Earth would be a frozen, lifeless ball of ice at -18°C. But human activities are adding <em>too much</em> CO₂, effectively making the "glass" thicker and overheating the planet.</p>
+
+  <hr style="border: 0; border-bottom: 1px solid var(--border); margin: 30px 0;">
+
+  <h4>Wavelength & Wien's Law</h4>
+  <p>Why is sunlight different from Earth's heat? It depends on temperature. The Sun is incredibly hot (~5,500°C), so it emits high-energy, <strong>shortwave radiation</strong> (visible light). The Earth is comparatively cold (~15°C), so it emits low-energy, <strong>longwave radiation</strong> (infrared).</p>
+  <div class="eq">λ<sub>max</sub> = b / T
+    <div class="vars">Wien's Law: The peak wavelength of light an object emits is inversely proportional to its temperature. Hotter objects emit shorter wavelengths.</div>
+  </div>
+  
+  <h4>Why CO₂? The Quantum View</h4>
+  <p>Our atmosphere is 99% Nitrogen (N₂) and Oxygen (O₂). Why don't they trap heat? N₂ and O₂ are tightly bound symmetric molecules. When an infrared photon hits them, they cannot absorb its specific low energy. CO₂, however, is a polyatomic molecule (O=C=O). Its chemical bonds can bend and stretch asymmetrically. This allows CO₂ to perfectly catch Earth's infrared heat, vibrate vigorously, and re-emit the heat in a random direction.</p>
+
+  <h4>The Albedo Effect (Reflectivity)</h4>
+  <p>Not all sunlight is absorbed by the Earth. <strong>Albedo</strong> is a measure of reflectivity. Bright white ice and snow reflect up to 90% of visible light straight back to space <em>before</em> it can warm the ground and become infrared heat. When global temperatures rise and ice melts, dark oceans are exposed. The dark water absorbs more sunlight, creating even more heat—a powerful positive feedback loop.</p>
+</div></div>
+
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
+<script>
+'use strict';
+
+/* =====================================================================
+   GREENHOUSE EFFECT LAB ENGINE
+   ===================================================================== */
+const W = 1200, H = 480;
+const svg = document.getElementById('canvas');
+const gBg = document.getElementById('scene-bg');
+const gMain = document.getElementById('scene-main');
+const gFg = document.getElementById('scene-fg');
+const gGraph = document.getElementById('scene-graph');
+const fbdSvg = document.getElementById('fbd');
+
+// =====================================================================
+// Theme toggle
+// =====================================================================
+const themeBtn = document.getElementById('theme-btn');
+const themeIcon = document.getElementById('theme-icon');
+const themeLabel = document.getElementById('theme-label');
+function applyThemeUi() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  themeIcon.textContent = isLight ? '☾' : '☀';
+  themeLabel.textContent = isLight ? 'Dark' : 'Light';
+}
+themeBtn.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    document.documentElement.removeAttribute('data-theme');
+    try { localStorage.setItem('sw-theme', 'dark'); } catch(e){}
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    try { localStorage.setItem('sw-theme', 'light'); } catch(e){}
+  }
+  applyThemeUi();
+});
+applyThemeUi();
+
+// =====================================================================
+// SVG helpers
+// =====================================================================
+function el(parent, tag, attrs) {
+  const n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) {
+    if (k === 'text') n.textContent = attrs[k];
+    else n.setAttribute(k, attrs[k]);
+  }
+  parent.appendChild(n);
+  return n;
+}
+function clearGroup(g) { while (g.firstChild) g.removeChild(g.firstChild); }
+function clearAll() { clearGroup(gBg); clearGroup(gMain); clearGroup(gFg); clearGroup(gGraph); }
+
+function arrow(parent, x1, y1, x2, y2, color, label, labelOffset) {
+  const len = Math.hypot(x2-x1, y2-y1);
+  if (len < 4) return;
+  const angle = Math.atan2(y2-y1, x2-x1);
+  const headLen = 8;
+  const a1 = angle - Math.PI/6;
+  const a2 = angle + Math.PI/6;
+  
+  el(parent, 'line', { x1, y1, x2, y2, stroke: color, 'stroke-width': 2.5, 'stroke-linecap': 'round' });
+  el(parent, 'path', {
+      d: `M ${x2} ${y2} L ${x2 - headLen*Math.cos(a1)} ${y2 - headLen*Math.sin(a1)} L ${x2 - headLen*Math.cos(a2)} ${y2 - headLen*Math.sin(a2)} Z`,
+      fill: color
+  });
+  
+  if (label) {
+    const mx = (x1+x2)/2, my = (y1+y2)/2;
+    const nx = -Math.sin(angle), ny = Math.cos(angle);
+    const off = labelOffset !== undefined ? labelOffset : 10;
+    el(parent, 'text', { x: mx + nx*off, y: my + ny*off + 4, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill: color, 'font-weight':'bold', text: label });
+  }
+}
+
+// =====================================================================
+// State
+// =====================================================================
+const state = {
+  scene: 'flow',
+  playing: false,
+  time: 0,
+  lastTs: null
+};
+
+const SCENES = {};
+
+// =====================================================================
+// SCENE 1 — GLOBAL ENERGY FLOW
+// =====================================================================
+SCENES.flow = {
+  title: 'Global Energy Flow',
+  sub: 'Visible Light In, Infrared Out',
+  params: { ghg: 40, albedo: 0.15 },
+  st: { 
+      photons: [], 
+      groundHeat: 10, 
+      temp: 15,
+      tickCount: 0,
+      stats: { in: 0, trapped: 0, escaped: 0, reflected: 0 }
+  },
+  reset() { 
+      this.st.photons = []; 
+      this.st.groundHeat = 10; 
+      this.st.temp = 15;
+      this.st.tickCount = 0;
+      this.st.stats = { in: 0, trapped: 0, escaped: 0, reflected: 0 };
+  },
+  controls() {
+    const html = `
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Greenhouse Gases (Thickness)</span><span class="ctrl-val" id="v-ghg">${this.params.ghg}%</span></div>
+        <input type="range" id="sl-ghg" min="0" max="100" step="1" value="${this.params.ghg}">
+        <div class="ctrl-sub">Higher % means the "gas blanket" traps more heat.</div>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Surface Albedo (Ice)</span><span class="ctrl-val" id="v-alb">${(this.params.albedo*100).toFixed(0)}%</span></div>
+        <input type="range" id="sl-alb" min="0" max="0.8" step="0.05" value="${this.params.albedo}">
+        <div class="ctrl-sub">Chance of ground reflecting sunlight straight back to space.</div>
+      </div>
+    `;
+    document.getElementById('controls-content').innerHTML = html;
+    document.getElementById('sl-ghg').oninput = e => { this.params.ghg = +e.target.value; document.getElementById('v-ghg').textContent = this.params.ghg + '%'; };
+    document.getElementById('sl-alb').oninput = e => { this.params.albedo = +e.target.value; document.getElementById('v-alb').textContent = (this.params.albedo*100).toFixed(0) + '%'; };
+  },
+  step(dt) {
+    this.st.tickCount++;
+    
+    // Spawn visible photon from sun
+    if (this.st.tickCount % 12 === 0) {
+        this.st.photons.push({
+            type: 'vis',
+            x: 200 + Math.random() * 800,
+            y: -10,
+            vy: 6,
+            state: 'moving'
+        });
+        this.st.stats.in++;
+    }
+
+    // Ground emits IR based on its heat pool
+    if (this.st.groundHeat > 5 && this.st.tickCount % 15 === 0) {
+        this.st.photons.push({
+            type: 'ir',
+            x: 200 + Math.random() * 800,
+            y: 420,
+            vy: -4,
+            state: 'moving'
+        });
+        this.st.groundHeat -= 5;
+    }
+
+    // Move Photons
+    for (let i = this.st.photons.length - 1; i >= 0; i--) {
+        let p = this.st.photons[i];
+        
+        if (p.state === 'moving') {
+            p.y += p.vy;
+            
+            // Hit Ground
+            if (p.y >= 420 && p.vy > 0) {
+                if (p.type === 'vis') {
+                    if (Math.random() < this.params.albedo) {
+                        p.vy = -6; // Reflect
+                        this.st.stats.reflected++;
+                    } else {
+                        this.st.groundHeat += 12; // Absorb sunlight
+                        this.st.photons.splice(i, 1);
+                    }
+                } else if (p.type === 'ir') {
+                    this.st.groundHeat += 10; // Absorb bounced heat
+                    this.st.photons.splice(i, 1);
+                }
+                continue;
+            }
+
+            // Atmosphere GHG Layer Interaction (Between y=100 and y=300)
+            if (p.type === 'ir' && p.y > 100 && p.y < 350) {
+                const trapChance = (this.params.ghg / 100) * 0.04;
+                if (Math.random() < trapChance) {
+                    p.state = 'absorbed';
+                    p.timer = 20; 
+                    this.st.stats.trapped++;
+                }
+            }
+
+            // Escaped to space
+            if (p.y < -20 && p.vy < 0) {
+                if (p.type === 'ir') this.st.stats.escaped++;
+                this.st.photons.splice(i, 1);
+            }
+            
+        } else if (p.state === 'absorbed') {
+            p.timer--;
+            if (p.timer <= 0) {
+                p.state = 'moving';
+                p.vy = Math.random() > 0.4 ? 4 : -4; // Skewed slightly to bounce back down
+            }
+        }
+    }
+
+    // Temperature dynamics
+    let targetTemp = 5 + (this.st.groundHeat / 2.5); 
+    this.st.temp += (targetTemp - this.st.temp) * 0.03;
+  },
+  draw() {
+    clearAll();
+    
+    // Background sun rays
+    el(gBg, 'rect', { x: 0, y: 0, width: W, height: 420, fill: 'url(#sunGrad)' });
+    
+    // Draw the "Greenhouse Gas Blanket"
+    const blanketOpacity = (this.params.ghg / 100) * 0.6;
+    el(gBg, 'rect', { x: 0, y: 100, width: W, height: 250, fill: 'var(--text2)', opacity: blanketOpacity });
+    if (this.params.ghg > 10) {
+        el(gBg, 'text', { x: W/2, y: 220, 'text-anchor': 'middle', 'font-family': 'monospace', 'font-size': 20, fill: '#fff', 'font-weight':'bold', opacity: 0.5 + blanketOpacity, text: 'GREENHOUSE GAS BLANKET' });
+    }
+
+    // Ground coloring based on temperature
+    const r = Math.min(255, Math.max(50, this.st.temp * 4));
+    const b = Math.min(255, Math.max(50, 200 - this.st.temp * 2));
+    const groundColor = `rgb(${r}, 80, ${b})`;
+    
+    el(gBg, 'rect', { x: 0, y: 420, width: W, height: 60, fill: groundColor });
+    
+    // Ice overlay based on albedo
+    if (this.params.albedo > 0) {
+        const iceW = W * this.params.albedo;
+        el(gBg, 'rect', { x: W/2 - iceW/2, y: 420, width: iceW, height: 10, fill: '#ffffff', opacity: 0.9 });
+        el(gBg, 'text', { x: W/2, y: 445, 'text-anchor': 'middle', 'font-family': 'monospace', 'font-size': 12, fill: '#fff', text: 'ICE (Reflective)' });
+    }
+
+    // Live Thermometer on Canvas
+    const thermX = 80, thermY = 280, thermH = 120;
+    el(gFg, 'rect', { x: thermX, y: thermY, width: 24, height: thermH, fill: 'var(--bg3)', stroke: '#fff', rx: 12 });
+    // Scale T from 0 to 60 for visual height
+    const tempPct = Math.min(1, Math.max(0, this.st.temp / 60)); 
+    const fillH = tempPct * thermH;
+    el(gFg, 'rect', { x: thermX+4, y: thermY + thermH - fillH, width: 16, height: fillH, fill: 'var(--red)', rx: 8 });
+    el(gFg, 'text', { x: thermX+12, y: thermY - 10, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':16, fill:'var(--text-bright)', 'font-weight':'bold', text: `${this.st.temp.toFixed(1)}°C` });
+
+    // Photons
+    for (let p of this.st.photons) {
+        if (p.type === 'vis') {
+            // Yellow sunlight
+            el(gMain, 'circle', { cx: p.x, cy: p.y, r: 4, fill: 'var(--gold-bright)' });
+            el(gMain, 'line', { x1: p.x, y1: p.y-p.vy*2, x2: p.x, y2: p.y, stroke: 'var(--gold)', 'stroke-width': 2 });
+        } else {
+            // Red Infrared Heat
+            if (p.state === 'absorbed') {
+                // Expanding circle effect when absorbed by a GHG molecule
+                el(gMain, 'circle', { cx: p.x, cy: p.y, r: 12, fill: 'none', stroke: 'var(--red)', 'stroke-width':2, opacity: 0.4 + 0.6*Math.abs(Math.sin(p.timer)) });
+                el(gMain, 'circle', { cx: p.x, cy: p.y, r: 5, fill: 'var(--red)' });
+            } else {
+                // Wavy line for IR
+                el(gMain, 'path', { 
+                    d: `M ${p.x-5} ${p.y-p.vy*1.5} Q ${p.x+8} ${p.y-p.vy*0.75} ${p.x-5} ${p.y}`,
+                    fill: 'none', stroke: 'var(--red)', 'stroke-width': 2.5 
+                });
+            }
+        }
+    }
+
+    // Legend / Labels
+    el(gFg, 'text', { x: 200, y: 30, 'font-family': 'monospace', 'font-size': 12, fill: 'var(--gold-bright)', text: '↓ Sunlight easily passes through the blanket' });
+    el(gFg, 'text', { x: 200, y: 410, 'font-family': 'monospace', 'font-size': 12, fill: 'var(--red)', text: '↑ Heat (Infrared) gets trapped by the blanket' });
+
+    document.getElementById('canvas-hint').textContent = this.params.ghg > 70 ? 'High GHG: Heat bounces around unable to escape, driving up temperature!' : 'Normal GHG: Energy flows in and escapes smoothly';
+    document.getElementById('canvas-status').textContent = `Surface Heat Index: ${this.st.groundHeat.toFixed(0)}`;
+  },
+  readout() {
+    const html = `
+      <div class="readout-cell"><div class="l">Visible In</div><div class="v gold">${this.st.stats.in}</div></div>
+      <div class="readout-cell"><div class="l">Reflected (Ice)</div><div class="v cyan">${this.st.stats.reflected}</div></div>
+      <div class="readout-cell"><div class="l">IR Escaped Space</div><div class="v green">${this.st.stats.escaped}</div></div>
+      <div class="readout-cell"><div class="l">IR Bounced Down</div><div class="v red">${this.st.stats.trapped}</div></div>
+      <div class="readout-cell full"><div class="l">Simulated Surface Temp</div><div class="v ${this.st.temp > 25 ? 'red' : 'gold'}">${this.st.temp.toFixed(1)} °C</div></div>
+    `;
+    document.getElementById('readout-content').innerHTML = html;
+    document.getElementById('equation-content').innerHTML = `
+      <strong>How it works:</strong><br>
+      1. Sunlight hits the ground and turns into Heat.<br>
+      2. Heat tries to radiate back to space.<br>
+      3. The GHG Blanket intercepts the heat and scatters it back down.<br>
+      <b>Trapped heat = Rising Temperature.</b>
+    `;
+    
+    document.getElementById('fbd-title').textContent = 'Spectrum Analyzer';
+    this.fbd();
+
+    const banner = document.getElementById('banner');
+    if (this.st.temp > 35) {
+      banner.className = 'banner show warn';
+      document.getElementById('banner-text').innerHTML = '⚠ Runaway heat! The blanket is too thick. Notice how the red Infrared photons bounce around like a pinball machine before they can finally escape. This trapped energy is what causes global warming.';
+    } else if (this.params.albedo > 0.6) {
+      banner.className = 'banner show cyan';
+      document.getElementById('banner-text').innerHTML = '❄️ High Albedo: Sunlight bounces off the bright white ice and returns to space as visible light *before* it can turn into heat. The planet cools rapidly.';
+    } else {
+      banner.className = 'banner';
+    }
+  },
+  fbd() {
+      clearGroup(fbdSvg);
+      el(fbdSvg, 'rect', { x: 30, y: 30, width: 300, height: 180, fill: 'var(--bg3)', stroke: 'var(--border2)' });
+      
+      // Axes
+      el(fbdSvg, 'line', { x1: 30, y1: 180, x2: 330, y2: 180, stroke: 'var(--text2)' });
+      el(fbdSvg, 'line', { x1: 30, y1: 180, x2: 30, y2: 30, stroke: 'var(--text2)' });
+      el(fbdSvg, 'text', { x: 180, y: 200, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--text2)', text:'Wavelength (λ)' });
+      
+      // Visible spectrum (Incoming)
+      el(fbdSvg, 'path', { d: 'M 40 180 Q 70 50 100 180', fill: 'rgba(240,192,96,0.3)', stroke: 'var(--gold)' });
+      el(fbdSvg, 'text', { x: 70, y: 150, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--gold-bright)', text:'SUN (Vis)' });
+
+      // Earth spectrum (Outgoing IR)
+      el(fbdSvg, 'path', { d: 'M 180 180 Q 230 80 280 180', fill: 'rgba(255,79,96,0.2)', stroke: 'var(--red)' });
+      el(fbdSvg, 'text', { x: 230, y: 150, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'var(--red)', text:'EARTH (IR)' });
+
+      // GHG absorption band overlay based on slider
+      const opacity = this.params.ghg / 100;
+      el(fbdSvg, 'rect', { x: 200, y: 30, width: 60, height: 150, fill: 'var(--text3)', opacity: opacity * 0.8 });
+      el(fbdSvg, 'text', { x: 230, y: 45, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':9, fill:'#fff', text:'GHG Block' });
+
+      // Legend
+      document.getElementById('fbd-legend').innerHTML = `
+        <div><span class="sw" style="background:var(--gold);"></span>Sunlight (Passes through)</div>
+        <div><span class="sw" style="background:var(--red);"></span>Heat (Blocked by GHGs)</div>
+      `;
+  }
+};
+
+// =====================================================================
+// SCENE 2 — THE MOLECULAR VIEW
+// =====================================================================
+SCENES.molecule = {
+  title: 'The Molecular View',
+  sub: 'Why CO₂ traps heat, but N₂ & O₂ do not',
+  params: { mol: 'co2', photon: 'ir' },
+  st: { px: 0, py: 240, active: false, status: 'ready', molState: 'idle', vTimer: 0 },
+  reset() { 
+      this.st = { px: 0, py: 240, active: false, status: 'ready', molState: 'idle', vTimer: 0 }; 
+  },
+  controls() {
+    const html = `
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Select Atmosphere Molecule</span></div>
+        <div class="ctrl-toggle">
+          <button class="${this.params.mol === 'n2' ? 'on' : ''}" id="b-n2">N₂ (Nitrogen - 78% of air)</button>
+          <button class="${this.params.mol === 'co2' ? 'on' : ''}" id="b-co2">CO₂ (Carbon Dioxide)</button>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Fire a Photon</span></div>
+        <div class="ctrl-toggle">
+          <button id="b-vis" style="color:var(--gold-bright); border-color:var(--gold);">Fire Sunlight (Visible)</button>
+          <button id="b-ir" style="color:var(--red); border-color:var(--red);">Fire Earth Heat (Infrared)</button>
+        </div>
+        <div class="ctrl-sub">Watch how the molecule reacts to the different wavelengths of light.</div>
+      </div>
+    `;
+    document.getElementById('controls-content').innerHTML = html;
+    document.getElementById('b-n2').onclick = () => { this.params.mol = 'n2'; this.reset(); this.controls(); };
+    document.getElementById('b-co2').onclick = () => { this.params.mol = 'co2'; this.reset(); this.controls(); };
+    document.getElementById('b-vis').onclick = () => { this.params.photon = 'vis'; this.fire(); };
+    document.getElementById('b-ir').onclick = () => { this.params.photon = 'ir'; this.fire(); };
+  },
+  fire() {
+      this.st.px = 100;
+      this.st.py = 240;
+      this.st.active = true;
+      this.st.status = 'flying';
+      this.st.molState = 'idle';
+  },
+  step(dt) {
+      if (this.st.molState === 'vibrating') {
+          this.st.vTimer -= dt;
+          if (this.st.vTimer <= 0) {
+              this.st.molState = 'idle';
+              // Re-emit photon in random direction
+              this.st.active = true;
+              this.st.px = 600;
+              this.st.py = 240;
+              this.st.vx = (Math.random() > 0.5 ? 1 : -1) * 8;
+              this.st.vy = (Math.random() - 0.5) * 8;
+              this.st.status = 're-emitted';
+          }
+          return;
+      }
+
+      if (this.st.active) {
+          if (this.st.status === 'flying') {
+              this.st.px += 10;
+          } else if (this.st.status === 're-emitted') {
+              this.st.px += this.st.vx;
+              this.st.py += this.st.vy;
+          }
+
+          // Check collision at center (600, 240)
+          if (this.st.status === 'flying' && this.st.px > 580 && this.st.px < 620) {
+              if (this.params.mol === 'co2' && this.params.photon === 'ir') {
+                  this.st.active = false;
+                  this.st.molState = 'vibrating';
+                  this.st.vTimer = 1.5; // seconds
+                  this.st.status = 'absorbed';
+              }
+          }
+
+          if (this.st.px > 1200 || this.st.px < 0 || this.st.py > 480 || this.st.py < 0) {
+              this.st.active = false;
+              this.st.status = 'ready';
+          }
+      }
+  },
+  draw() {
+      clearAll();
+      const cx = 600, cy = 240;
+
+      // Draw Molecule with heavy Shake effect if vibrating
+      let vibX = 0, vibY = 0;
+      if (this.st.molState === 'vibrating') {
+          vibX = Math.sin(Date.now() / 20) * 12; // fast shake
+          vibY = Math.cos(Date.now() / 25) * 12;
+      }
+
+      if (this.params.mol === 'n2') {
+          // N2 is symmetric
+          el(gMain, 'line', { x1: cx-20, y1: cy, x2: cx+20, y2: cy, stroke: 'var(--text3)', 'stroke-width': 6 });
+          el(gMain, 'circle', { cx: cx-25, cy: cy, r: 25, fill: 'var(--accent)' });
+          el(gMain, 'circle', { cx: cx+25, cy: cy, r: 25, fill: 'var(--accent)' });
+          el(gMain, 'text', { x: cx, y: cy-45, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':16, fill:'var(--text2)', 'font-weight':'bold', text:'N₂ (Nitrogen)'});
+      } else {
+          // CO2 is linear, C in middle, O on sides
+          const oxyColor = 'var(--red)';
+          const carbColor = 'var(--text2)';
+          el(gMain, 'line', { x1: cx-40-vibX, y1: cy+vibY, x2: cx, y2: cy-vibY, stroke: 'var(--text3)', 'stroke-width': 4 });
+          el(gMain, 'line', { x1: cx+40+vibX, y1: cy+vibY, x2: cx, y2: cy-vibY, stroke: 'var(--text3)', 'stroke-width': 4 });
+          el(gMain, 'circle', { cx: cx-50-vibX, cy: cy+vibY, r: 20, fill: oxyColor });
+          el(gMain, 'circle', { cx: cx+50+vibX, cy: cy+vibY, r: 20, fill: oxyColor });
+          el(gMain, 'circle', { cx: cx, cy: cy-vibY, r: 25, fill: carbColor });
+          el(gMain, 'text', { x: cx, y: cy-50, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':16, fill:'var(--text-bright)', 'font-weight':'bold', text:'CO₂ (Carbon Dioxide)'});
+      }
+
+      // Draw Photon
+      if (this.st.active) {
+          const color = this.params.photon === 'vis' ? 'var(--gold-bright)' : 'var(--red)';
+          el(gFg, 'circle', { cx: this.st.px, cy: this.st.py, r: 8, fill: color });
+          el(gFg, 'path', { 
+              d: `M ${this.st.px-25} ${this.st.py} Q ${this.st.px-12} ${this.st.py-20} ${this.st.px} ${this.st.py}`,
+              fill: 'none', stroke: color, 'stroke-width': 3 
+          });
+      }
+
+      // Action Text
+      if (this.st.molState === 'vibrating') {
+          el(gFg, 'text', { x: cx, y: cy+70, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':18, fill:'var(--red)', 'font-weight':'bold', text:'SHAKE! (Heat Absorbed)'});
+      }
+
+      let txt = "Ready. Fire a photon.";
+      if (this.st.status === 'flying') txt = `Incoming ${this.params.photon.toUpperCase()} light...`;
+      if (this.st.status === 'absorbed') txt = `ABSORBED! CO₂ perfectly matches the infrared frequency.`;
+      if (this.st.status === 're-emitted') txt = `RE-EMITTED! Heat sent back out in a random direction.`;
+      document.getElementById('canvas-hint').textContent = txt;
+  },
+  readout() {
+      const html = `
+        <div class="readout-cell full"><div class="l">Molecule Shape</div><div class="v cyan">${this.params.mol === 'n2' ? 'Symmetric (N₂)' : 'Asymmetric (CO₂)'}</div></div>
+        <div class="readout-cell full"><div class="l">Photon Match</div><div class="v ${this.st.status === 'absorbed' ? 'red' : 'gold'}">${this.st.status === 'absorbed' ? 'MATCH! Energy absorbed.' : 'No match. Light passes right through.'}</div></div>
+      `;
+      document.getElementById('readout-content').innerHTML = html;
+      
+      let eqText = '';
+      if (this.params.mol === 'n2') {
+          eqText = `N₂ is perfectly symmetric. Stretching its bonds does not change its electrical charge. Because it has no electrical "flutter," it is completely invisible to Infrared light.`;
+      } else {
+          eqText = `CO₂ has chemical bonds that bend and stretch asymmetrically. When it bends, the electrical charge shifts. This electrical flutter perfectly matches the frequency of Earth's Infrared heat, allowing it to "catch" the photon.`;
+      }
+      document.getElementById('equation-content').innerHTML = eqText;
+
+      document.getElementById('fbd-title').textContent = 'Dipole Mechanism';
+      this.fbd();
+
+      const banner = document.getElementById('banner');
+      if (this.st.status === 'absorbed') {
+          banner.className = 'banner show warn';
+          document.getElementById('banner-text').innerHTML = 'Watch closely: The CO₂ molecule absorbs the heat, vibrates wildly, and then spits the heat back out in a <strong>random direction</strong>. This is exactly how heat gets bounced back down to Earth instead of escaping into space!';
+      } else if (this.st.status === 'flying' && this.st.px > 650) {
+          banner.className = 'banner show success';
+          document.getElementById('banner-text').innerHTML = 'The light passed straight through! Only specific gases have the right molecular geometry to trap infrared heat.';
+      } else {
+          banner.className = 'banner';
+      }
+  },
+  fbd() {
+      clearGroup(fbdSvg);
+      el(fbdSvg, 'text', { x: 180, y: 30, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'var(--text2)', text:'Electrical Charge Shift' });
+      
+      if (this.params.mol === 'n2') {
+          el(fbdSvg, 'circle', { cx: 140, cy: 120, r: 20, fill:'var(--accent)' });
+          el(fbdSvg, 'circle', { cx: 220, cy: 120, r: 20, fill:'var(--accent)' });
+          el(fbdSvg, 'line', { x1: 160, y1: 120, x2: 200, y2: 120, stroke:'var(--text2)', 'stroke-width':4});
+          el(fbdSvg, 'text', { x: 180, y: 180, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--cyan)', text:'Symmetric Charge' });
+          el(fbdSvg, 'text', { x: 180, y: 200, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--cyan)', text:'Cannot catch light waves' });
+      } else {
+          el(fbdSvg, 'circle', { cx: 180, cy: 130, r: 25, fill:'var(--text2)' }); // C
+          el(fbdSvg, 'circle', { cx: 130, cy: 80, r: 20, fill:'var(--red)' }); // O
+          el(fbdSvg, 'circle', { cx: 230, cy: 80, r: 20, fill:'var(--red)' }); // O
+          el(fbdSvg, 'line', { x1: 145, y1: 95, x2: 165, y2: 115, stroke:'var(--text2)', 'stroke-width':4});
+          el(fbdSvg, 'line', { x1: 215, y1: 95, x2: 195, y2: 115, stroke:'var(--text2)', 'stroke-width':4});
+          
+          arrow(fbdSvg, 180, 150, 180, 200, 'var(--gold)', 'Net Charge Shift', 15);
+          el(fbdSvg, 'text', { x: 180, y: 230, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':10, fill:'var(--gold-bright)', text:'Bending catches the wave!' });
+      }
+      document.getElementById('fbd-legend').innerHTML = '';
+  }
+};
+
+// =====================================================================
+// SCENE 3 — BALANCE & ALBEDO
+// =====================================================================
+SCENES.balance = {
+  title: 'Planetary Balance & Ice Melt',
+  sub: 'Energy In vs. Energy Out = Temperature',
+  params: { co2: 280, albedo: 0.3 },
+  st: { T: 14 }, 
+  reset() { this.st.T = 14; },
+  controls() {
+    const html = `
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>CO₂ Concentration</span><span class="ctrl-val" id="v-co2">${this.params.co2} ppm</span></div>
+        <input type="range" id="sl-co2" min="150" max="1000" step="10" value="${this.params.co2}">
+        <div class="ctrl-sub">Pre-industrial was ~280ppm. Today is over 420ppm.</div>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-label"><span>Planetary Ice (Albedo)</span><span class="ctrl-val" id="v-alb">${this.params.albedo.toFixed(2)}</span></div>
+        <input type="range" id="sl-alb" min="0.05" max="0.6" step="0.01" value="${this.params.albedo}">
+        <div class="ctrl-sub">How much sunlight the Earth's ice reflects away.</div>
+      </div>
+    `;
+    document.getElementById('controls-content').innerHTML = html;
+    document.getElementById('sl-co2').oninput = e => { this.params.co2 = +e.target.value; document.getElementById('v-co2').textContent = this.params.co2 + ' ppm'; };
+    document.getElementById('sl-alb').oninput = e => { this.params.albedo = +e.target.value; document.getElementById('v-alb').textContent = this.params.albedo.toFixed(2); };
+  },
+  calcTargetTemp() {
+      // Simplified climate model
+      const radiativeForcing_CO2 = 5.35 * Math.log(this.params.co2 / 280);
+      const solarConstant = 1361; 
+      const radiativeForcing_Albedo = (0.3 - this.params.albedo) * (solarConstant / 4);
+      const totalForcing = radiativeForcing_CO2 + radiativeForcing_Albedo;
+      const lambda = 0.8; // Climate sensitivity
+      
+      return 14.0 + (totalForcing * lambda);
+  },
+  step(dt) {
+      const target = this.calcTargetTemp();
+      this.st.T += (target - this.st.T) * dt * 2; 
+  },
+  draw() {
+      clearAll();
+      const cx = 600, cy = 240;
+      
+      // Draw Sun
+      el(gBg, 'circle', { cx: 100, cy: 100, r: 60, fill: 'var(--gold-bright)' });
+      el(gBg, 'text', { x: 100, y: 180, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':14, fill:'var(--gold)', text:'Sunlight IN' });
+      
+      // Draw Earth (color gets redder as it gets hotter)
+      const r = Math.min(255, Math.max(50, (this.st.T-10) * 15));
+      const b = Math.min(255, Math.max(50, 255 - (this.st.T-10) * 15));
+      el(gMain, 'circle', { cx: cx, cy: cy, r: 120, fill: `rgb(${r},120,${b})`, stroke: 'var(--accent)', 'stroke-width': 2 });
+      
+      // Dynamic Ice Caps! 
+      // If temperature goes above 22C, ice visually melts completely.
+      let iceMeltFactor = Math.max(0, 1 - (this.st.T - 14) / 10); // 1 at 14C, 0 at 24C
+      const iceH = this.params.albedo * 80 * iceMeltFactor;
+      
+      if (iceH > 0) {
+          el(gMain, 'path', { d: `M ${cx-80} ${cy-90} Q ${cx} ${cy-90+iceH} ${cx+80} ${cy-90} Z`, fill: '#fff', opacity: 0.9 });
+          el(gMain, 'path', { d: `M ${cx-80} ${cy+90} Q ${cx} ${cy+90-iceH} ${cx+80} ${cy+90} Z`, fill: '#fff', opacity: 0.9 });
+      }
+
+      // Energy In Arrow
+      const Ein = (1361/4) * (1 - this.params.albedo);
+      arrow(gFg, 200, 150, 450, 200, 'var(--gold-bright)', `Ein ≈ ${Ein.toFixed(0)} W/m²`, 20);
+
+      // Energy Out Arrow
+      const Eout = Ein; 
+      arrow(gFg, 750, 200, 1000, 150, 'var(--red)', `Heat OUT ≈ ${Eout.toFixed(0)} W/m²`, -20);
+      
+      // GHG Barrier visualization (gets thicker with CO2)
+      const barrierThick = Math.min(50, (this.params.co2 / 300) * 10);
+      el(gFg, 'path', { d: `M 750 150 Q 800 200 750 250`, fill: 'none', stroke: 'var(--text3)', 'stroke-width': barrierThick, opacity: 0.6 });
+      el(gFg, 'text', { x: 790, y: 150, 'font-family':'monospace', 'font-size':11, fill:'var(--text2)', text:'GHG Blanket' });
+
+      // Thermometer
+      el(gFg, 'rect', { x: cx-10, y: cy-60, width: 20, height: 120, fill: 'var(--bg3)', stroke: '#fff', rx: 10 });
+      const tempPct = Math.min(1, Math.max(0, (this.st.T - (-10)) / 40)); 
+      const tH = tempPct * 100;
+      el(gFg, 'rect', { x: cx-6, y: cy+60-tH, width: 12, height: tH, fill: 'var(--red)', rx: 6 });
+      
+      document.getElementById('canvas-hint').textContent = 'Watch the Earth: As Temperature rises, the white ice caps melt away!';
+      document.getElementById('canvas-status').textContent = `Current T = ${this.st.T.toFixed(2)} °C`;
+  },
+  readout() {
+      const html = `
+        <div class="readout-cell"><div class="l">CO₂ Level</div><div class="v cyan">${this.params.co2} ppm</div></div>
+        <div class="readout-cell"><div class="l">Albedo (Ice)</div><div class="v">${(this.params.albedo*100).toFixed(0)}%</div></div>
+        <div class="readout-cell full"><div class="l">Global Avg Temp</div><div class="v ${this.st.T > 16 ? 'red' : 'green'}">${this.st.T.toFixed(2)} °C</div></div>
+      `;
+      document.getElementById('readout-content').innerHTML = html;
+      
+      document.getElementById('equation-content').innerHTML = `
+        Earth reaches equilibrium when:<br>
+        <b>Energy In = Energy Out</b><br><br>
+        Higher CO₂ increases Earth's insulation. The planet <b>must</b> warm up to push the same amount of heat out to space through the thicker blanket.
+      `;
+
+      document.getElementById('fbd-title').textContent = 'Scale of Balance';
+      this.fbd();
+
+      const banner = document.getElementById('banner');
+      if (this.st.T > 20) {
+          banner.className = 'banner show warn';
+          document.getElementById('banner-text').innerHTML = '🚨 High Temperature Alert! Notice how the ice caps on the Earth have melted completely away. Without bright ice to reflect sunlight, the dark ocean absorbs even more heat, accelerating the warming.';
+      } else if (this.params.co2 > 500) {
+          banner.className = 'banner show warn';
+          document.getElementById('banner-text').innerHTML = 'High CO₂! The "blanket" is very thick. The planet must reach a much higher temperature before it can successfully radiate enough heat out to balance the incoming sunlight.';
+      } else {
+          banner.className = 'banner';
+      }
+  },
+  fbd() {
+      clearGroup(fbdSvg);
+      el(fbdSvg, 'text', { x: 180, y: 30, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':11, fill:'var(--text2)', text:'Balance dictates Temperature' });
+      
+      // Seesaw base
+      el(fbdSvg, 'polygon', { points: '170,250 190,250 180,220', fill: 'var(--text3)' });
+      
+      // Calculate tilt based on temp delta from baseline 14
+      const tilt = Math.min(20, Math.max(-20, (this.st.T - 14) * 2));
+      const r_angle = tilt * Math.PI / 180;
+      
+      // Beam
+      const cx = 180, cy = 220, len = 100;
+      const lx = cx - len*Math.cos(r_angle), ly = cy - len*Math.sin(r_angle);
+      const rx = cx + len*Math.cos(r_angle), ry = cy + len*Math.sin(r_angle);
+      el(fbdSvg, 'line', { x1: lx, y1: ly, x2: rx, y2: ry, stroke: 'var(--text-bright)', 'stroke-width': 4 });
+      
+      // In box
+      el(fbdSvg, 'rect', { x: lx-15, y: ly-30, width: 30, height: 30, fill: 'var(--gold)' });
+      el(fbdSvg, 'text', { x: lx, y: ly-35, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'var(--gold-bright)', text:'IN' });
+      
+      // Out box
+      el(fbdSvg, 'rect', { x: rx-15, y: ry-30, width: 30, height: 30, fill: 'var(--red)' });
+      el(fbdSvg, 'text', { x: rx, y: ry-35, 'text-anchor':'middle', 'font-family':'monospace', 'font-size':12, fill:'var(--red)', text:'OUT' });
+
+      document.getElementById('fbd-legend').innerHTML = `Earth warms or cools until the scale perfectly balances.`;
+  }
+};
+
+// =====================================================================
+// SCENE SWITCHING
+// =====================================================================
+function setScene(name) {
+  state.scene = name;
+  state.playing = false;
+  document.getElementById('btn-play').textContent = '▶ Play';
+  const s = SCENES[name];
+  document.getElementById('scene-title').textContent = s.title;
+  document.getElementById('scene-sub').textContent = s.sub;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.scene === name));
+  s.reset();
+  s.controls();
+  s.draw();
+  s.readout();
+  s.fbd();
+}
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => setScene(t.dataset.scene));
+});
+
+// =====================================================================
+// PLAY / RESET buttons
+// =====================================================================
+document.getElementById('btn-play').addEventListener('click', function() {
+  state.playing = !state.playing;
+  this.textContent = state.playing ? '⏸ Pause' : '▶ Play';
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  const s = SCENES[state.scene];
+  s.reset();
+  state.playing = false;
+  document.getElementById('btn-play').textContent = '▶ Play';
+  s.draw(); s.readout(); s.fbd();
+});
+
+// =====================================================================
+// MAIN LOOP
+// =====================================================================
+function tick(ts) {
+  if (!state.lastTs) state.lastTs = ts;
+  const dt = Math.min(0.05, (ts - state.lastTs) / 1000);
+  state.lastTs = ts;
+  const s = SCENES[state.scene];
+  if (state.playing) s.step(dt);
+  // Always redraw — keeps live readouts current as user moves sliders
+  s.draw();
+  s.readout();
+  requestAnimationFrame(tick);
+}
+
+// Init
+setScene('flow');
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
