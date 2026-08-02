@@ -913,589 +913,300 @@
             c.fillRect(0, 0, w, h);
         }
 
-        // ---------- MAIN STAGE DRAWING ----------
-        function drawEarth(cx, cy, r, withWater, qInt) {
-            const c = sctx;
-            c.save();
-            // glow
-            const g = c.createRadialGradient(cx, cy, r * 0.2, cx, cy, r * 1.3);
-            g.addColorStop(0, 'rgba(30,80,160,0.05)');
-            g.addColorStop(1, 'rgba(30,80,160,0)');
-            c.fillStyle = g;
-            c.beginPath();
-            c.arc(cx, cy, r * 1.3, 0, 2 * Math.PI);
-            c.fill();
+        // ---------- MAIN STAGE DRAWING (upgraded, animated) ----------
+        let SPRAY = [];
+        function starField(c, w, h) {
+            for (let i = 0; i < 80; i++) {
+                const x = (i * 97) % w, y = (i * 61) % Math.floor(h * 0.92);
+                const tw = 0.3 + 0.7 * Math.abs(Math.sin(tNow * 0.002 + i));
+                c.fillStyle = 'rgba(200,220,255,' + (0.06 + 0.2 * tw) + ')';
+                c.fillRect(x, y, 1.6, 1.6);
+            }
+        }
+        function shakeAmt() {
+            let s = 0;
+            if (STATE.quakeIntensity > 0.05) s = STATE.quakeIntensity * 7;
+            if (STATE.tsunamiActive) { const p = STATE.tsunamiProgress; if (p > 0.6 && p < 0.86) s = Math.max(s, 4); }
+            return s;
+        }
+        function springFactor() { // 1 when Sun & Moon aligned, 0 at right angles
+            return Math.abs(Math.cos((STATE.moonAngle - STATE.sunAngle) * D2R));
+        }
 
-            // Ocean
-            const og = c.createRadialGradient(cx - r * .1, cy - r * .1, 0, cx, cy, r);
-            og.addColorStop(0, '#1a6a9a');
-            og.addColorStop(0.6, '#0e4a7a');
-            og.addColorStop(1, '#082a5a');
-            c.fillStyle = og;
-            c.beginPath();
-            c.arc(cx, cy, r, 0, 2 * Math.PI);
-            c.fill();
+        function drawSunStage(cx, cy, r) {
+            if (!STATE.showSun) return;
+            const a = STATE.sunAngle * D2R, dist = r + 150;
+            const sx = cx + dist * Math.cos(a), sy = cy + dist * Math.sin(a);
+            const g = sctx.createRadialGradient(sx, sy, 2, sx, sy, 46);
+            g.addColorStop(0, 'rgba(255,230,140,0.95)'); g.addColorStop(0.4, 'rgba(255,200,80,0.5)'); g.addColorStop(1, 'rgba(255,180,60,0)');
+            sctx.fillStyle = g; sctx.beginPath(); sctx.arc(sx, sy, 46, 0, 7); sctx.fill();
+            sctx.fillStyle = '#ffdf80'; sctx.beginPath(); sctx.arc(sx, sy, 15, 0, 7); sctx.fill();
+            // alignment beam on spring tide
+            const sf = springFactor();
+            if (sf > 0.8) {
+                sctx.strokeStyle = 'rgba(255,220,120,' + (0.05 + 0.18 * (sf - 0.8) / 0.2) + ')';
+                sctx.lineWidth = r * 1.5; sctx.beginPath(); sctx.moveTo(sx, sy); sctx.lineTo(cx - (sx - cx), cy - (sy - cy)); sctx.stroke();
+            }
+        }
 
-            // Plates
-            STATE.plates.forEach((p, idx) => {
-                const px = cx + p.x,
-                    py = cy + p.y;
-                const isSelected = (idx === STATE.selectedPlate);
-                const isQuake = (qInt > 0 && isSelected);
-                c.save();
-                c.globalAlpha = isSelected ? 1 : 0.7;
-                c.beginPath();
-                c.ellipse(px, py, p.w, p.h, 0, 0, 2 * Math.PI);
-                c.fillStyle = isQuake ? '#ff4f60' : p.color;
-                c.fill();
-                c.strokeStyle = isSelected ? cv('--gold') : 'rgba(255,255,255,0.3)';
-                c.lineWidth = isSelected ? 2.5 : 1;
-                c.stroke();
-                c.globalAlpha = 1;
-                c.fillStyle = isSelected ? cv('--gold-bright') : 'rgba(255,255,255,0.7)';
-                c.font = '7px monospace';
-                c.textAlign = 'center';
-                c.textBaseline = 'middle';
-                c.fillText(p.label, px, py);
-                if (isSelected) {
-                    // pulsing ring
-                    c.strokeStyle = `rgba(240,192,96,${0.2 + 0.2 * Math.sin(tNow * 0.005)})`;
-                    c.lineWidth = 1.5;
-                    c.setLineDash([3, 5]);
-                    c.beginPath();
-                    c.ellipse(px, py, p.w * 1.3, p.h * 1.3, 0, 0, 2 * Math.PI);
-                    c.stroke();
-                    c.setLineDash([]);
+        function tidalEnvelope(cx, cy, r, moonAngle, qInt) {
+            const c = sctx, pts = 120;
+            const sf = springFactor();
+            const amp = STATE.tideAmp * r * (0.55 + 0.55 * sf); // spring bigger, neap smaller
+            const radii = [];
+            for (let i = 0; i <= pts; i++) {
+                const th = (i / pts) * 2 * Math.PI;
+                const diff = th - moonAngle * D2R;
+                let bulge = amp * (Math.cos(diff) * Math.cos(diff)); // two bulges
+                if (STATE.tsunamiActive && STATE.tsunamiProgress > 0) {
+                    const src = (STATE.selectedPlate >= 0) ? Math.atan2(STATE.plates[STATE.selectedPlate].y, STATE.plates[STATE.selectedPlate].x) : 0;
+                    bulge += STATE.tsunamiProgress * 14 * Math.exp(-Math.abs(((th - src + Math.PI) % (2 * Math.PI)) - Math.PI) * 2) * Math.sin(th * 9 - tNow * 0.02) * STATE.tsunamiWaveHeight;
                 }
-                if (isQuake) {
-                    c.fillStyle = 'rgba(255,79,96,0.3)';
-                    c.beginPath();
-                    c.arc(px, py, p.w * 0.6 + 6 * Math.sin(tNow * 0.01), 0, 2 * Math.PI);
-                    c.fill();
-                    for (let i = 0; i < 4; i++) {
-                        const a = i / 4 * 2 * Math.PI + tNow * 0.005;
-                        const d = p.w * 0.5 + 4 + 6 * Math.sin(tNow * 0.008 + i);
-                        c.fillStyle = 'rgba(255,200,100,0.4)';
-                        c.beginPath();
-                        c.arc(px + d * Math.cos(a), py + d * Math.sin(a), 2 + 2 * Math.sin(tNow * 0.01 + i), 0, 2 * Math.PI);
-                        c.fill();
-                    }
+                if (qInt > 0.1) bulge += qInt * 5 * Math.sin(th * 5 + tNow * 0.02);
+                radii.push(r + 3 + bulge);
+            }
+            // filled water shell
+            c.beginPath();
+            for (let i = 0; i <= pts; i++) { const th = (i / pts) * 2 * Math.PI, rr = radii[i]; const x = cx + rr * Math.cos(th), y = cy + rr * Math.sin(th); i === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+            c.closePath();
+            const wg = c.createRadialGradient(cx, cy, r * 0.6, cx, cy, r + amp + 6);
+            wg.addColorStop(0, 'rgba(24,110,200,0.55)'); wg.addColorStop(0.7, 'rgba(30,150,235,0.75)'); wg.addColorStop(1, 'rgba(90,215,255,0.55)');
+            c.fillStyle = wg; c.fill();
+            c.strokeStyle = 'rgba(120,230,255,0.5)'; c.lineWidth = 2; c.stroke();
+            // moving foam sparkles along the rim
+            for (let i = 0; i < pts; i += 2) {
+                const th = (i / pts) * 2 * Math.PI, rr = radii[i];
+                const b = 0.15 + 0.35 * (0.5 + 0.5 * Math.sin(th * 6 + tNow * 0.004 + i));
+                c.fillStyle = 'rgba(200,245,255,' + b + ')';
+                c.beginPath(); c.arc(cx + rr * Math.cos(th), cy + rr * Math.sin(th), 1.4, 0, 7); c.fill();
+            }
+            return { radii, amp };
+        }
+
+        function drawEarthTop(cx, cy, r, qInt) {
+            const c = sctx;
+            // atmosphere glow
+            const ga = c.createRadialGradient(cx, cy, r * 0.85, cx, cy, r * 1.35);
+            ga.addColorStop(0, 'rgba(80,170,255,0.18)'); ga.addColorStop(1, 'rgba(80,170,255,0)');
+            c.fillStyle = ga; c.beginPath(); c.arc(cx, cy, r * 1.35, 0, 7); c.fill();
+            // ocean disk
+            const og = c.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+            og.addColorStop(0, '#2a86c0'); og.addColorStop(0.6, '#0f5590'); og.addColorStop(1, '#06315f');
+            c.save(); c.beginPath(); c.arc(cx, cy, r, 0, 7); c.clip();
+            c.fillStyle = og; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+            // rotating continents
+            const spin = tNow * 0.00025;
+            const conts = [[0.2, -0.15, 26, 18], [-0.35, 0.1, 22, 16], [0.05, 0.4, 30, 14], [-0.1, -0.45, 18, 12], [0.5, 0.25, 16, 12]];
+            conts.forEach((k, idx) => {
+                const a = Math.atan2(k[1], k[0]) + spin, rad = Math.hypot(k[0], k[1]) * r;
+                const x = cx + rad * Math.cos(a), y = cy + rad * Math.sin(a);
+                c.fillStyle = idx % 2 ? '#3f8a4a' : '#4d954f';
+                c.beginPath(); c.ellipse(x, y, k[2], k[3], a, 0, 7); c.fill();
+                c.fillStyle = 'rgba(90,70,40,0.25)'; c.beginPath(); c.ellipse(x + 4, y + 3, k[2] * 0.5, k[3] * 0.5, a, 0, 7); c.fill();
+            });
+            // day/night shading
+            const term = c.createLinearGradient(cx - r, cy, cx + r, cy);
+            term.addColorStop(0, 'rgba(0,0,20,0.35)'); term.addColorStop(0.5, 'rgba(0,0,20,0)'); term.addColorStop(1, 'rgba(0,0,20,0.15)');
+            c.fillStyle = term; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+            c.restore();
+            c.strokeStyle = 'rgba(150,220,255,0.4)'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.stroke();
+            // plates (kept interactive)
+            STATE.plates.forEach((p, idx) => {
+                const px = cx + p.x, py = cy + p.y, sel = idx === STATE.selectedPlate, quake = qInt > 0 && sel;
+                c.save(); c.globalAlpha = sel ? 1 : 0.72;
+                c.beginPath(); c.ellipse(px, py, p.w, p.h, 0, 0, 7); c.fillStyle = quake ? '#ff4f60' : p.color; c.fill();
+                c.strokeStyle = sel ? cv('--gold') : 'rgba(255,255,255,0.35)'; c.lineWidth = sel ? 2.5 : 1; c.stroke();
+                c.globalAlpha = 1; c.fillStyle = sel ? cv('--gold-bright') : 'rgba(255,255,255,0.85)';
+                c.font = 'bold 8px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.label, px, py);
+                if (sel) {
+                    c.strokeStyle = 'rgba(240,192,96,' + (0.25 + 0.25 * Math.sin(tNow * 0.006)) + ')'; c.lineWidth = 1.5; c.setLineDash([3, 5]);
+                    c.beginPath(); c.ellipse(px, py, p.w * 1.35, p.h * 1.35, 0, 0, 7); c.stroke(); c.setLineDash([]);
+                }
+                if (quake) {
+                    for (let k = 0; k < 3; k++) { const rr = (tNow * 0.05 + k * 20) % 60; c.strokeStyle = 'rgba(255,120,90,' + (0.5 * (1 - rr / 60)) + ')'; c.lineWidth = 2; c.beginPath(); c.arc(px, py, rr, 0, 7); c.stroke(); }
                 }
                 c.restore();
             });
-
-            // Continents
-            const conts = [
-                [-42, -22, 18, 14],
-                [18, -18, 14, 16],
-                [-12, 10, 20, 12],
-                [32, 8, 12, 14],
-                [-32, 18, 10, 8],
-                [8, -36, 8, 6],
-                [-20, -42, 6, 5]
-            ];
-            conts.forEach(([dx, dy, w, h]) => {
-                c.beginPath();
-                c.ellipse(cx + dx, cy + dy, w, h, 0, 0, 2 * Math.PI);
-                c.fillStyle = '#2a7a4a';
-                c.fill();
-                c.strokeStyle = '#1a5a3a';
-                c.lineWidth = 0.5;
-                c.stroke();
-            });
-
-            if (qInt > 0.1) {
-                c.fillStyle = `rgba(255,79,96,${0.04 * qInt})`;
-                c.beginPath();
-                c.arc(cx, cy, r * 0.9, 0, 2 * Math.PI);
-                c.fill();
-            }
-            c.restore();
         }
 
-        function drawMoon(cx, cy, r, angle, dist) {
-            const mx = cx + dist * Math.cos(angle * D2R);
-            const my = cy + dist * Math.sin(angle * D2R);
-            const c = sctx;
-            const grad = c.createRadialGradient(mx, my, 0, mx, my, r * 3);
-            grad.addColorStop(0, 'rgba(200,210,255,0.12)');
-            grad.addColorStop(1, 'rgba(200,210,255,0)');
-            c.fillStyle = grad;
-            c.beginPath();
-            c.arc(mx, my, r * 3, 0, 2 * Math.PI);
-            c.fill();
-            const mg = c.createRadialGradient(mx - r * .2, my - r * .2, 0, mx, my, r);
-            mg.addColorStop(0, '#e8e8f0');
-            mg.addColorStop(0.5, '#c8c8d8');
-            mg.addColorStop(1, '#8888a0');
-            c.fillStyle = mg;
-            c.beginPath();
-            c.arc(mx, my, r, 0, 2 * Math.PI);
-            c.fill();
-            c.strokeStyle = '#666680';
-            c.lineWidth = 1;
-            c.stroke();
-            c.fillStyle = 'rgba(100,100,120,0.25)';
-            [
-                [-.25, -.2, .15],
-                [.3, .1, .1],
-                [-.1, .35, .08],
-                [.4, -.3, .12]
-            ].forEach(([dx, dy, rr]) => {
-                c.beginPath();
-                c.arc(mx + dx * r, my + dy * r, rr * r, 0, 2 * Math.PI);
-                c.fill();
-            });
-            c.fillStyle = 'rgba(255,255,255,0.06)';
-            c.beginPath();
-            c.arc(mx + .3 * r, my - .25 * r, .18 * r, 0, 2 * Math.PI);
-            c.fill();
-            if (STATE.showLabels) {
-                c.fillStyle = cv('--text');
-                c.font = '9px monospace';
-                c.textAlign = 'center';
-                c.fillText('🌙 Moon', mx, my - r - 10);
-                c.strokeStyle = 'rgba(200,200,255,0.06)';
-                c.lineWidth = 1;
-                c.setLineDash([3, 6]);
-                c.beginPath();
-                c.arc(cx, cy, dist, 0, 2 * Math.PI);
-                c.stroke();
-                c.setLineDash([]);
-            }
+        function drawMoonBig(cx, cy, r, angle, dist) {
+            const c = sctx, a = angle * D2R, mx = cx + dist * Math.cos(a), my = cy + dist * Math.sin(a);
+            // orbit ring
+            c.strokeStyle = 'rgba(150,180,255,0.12)'; c.lineWidth = 1; c.setLineDash([2, 6]); c.beginPath(); c.arc(cx, cy, dist, 0, 7); c.stroke(); c.setLineDash([]);
+            // pull line (gradient toward moon)
+            const pg = c.createLinearGradient(cx, cy, mx, my);
+            pg.addColorStop(0, 'rgba(120,210,255,0)'); pg.addColorStop(1, 'rgba(120,210,255,0.4)');
+            c.strokeStyle = pg; c.lineWidth = 2; c.setLineDash([4, 5]); c.beginPath(); c.moveTo(cx, cy); c.lineTo(mx, my); c.stroke(); c.setLineDash([]);
+            // glow
+            const g = c.createRadialGradient(mx, my, r * 0.4, mx, my, r * 2.2);
+            g.addColorStop(0, 'rgba(230,240,255,0.4)'); g.addColorStop(1, 'rgba(230,240,255,0)');
+            c.fillStyle = g; c.beginPath(); c.arc(mx, my, r * 2.2, 0, 7); c.fill();
+            // body
+            const mg = c.createRadialGradient(mx - r * 0.3, my - r * 0.3, r * 0.1, mx, my, r);
+            mg.addColorStop(0, '#f4f6ff'); mg.addColorStop(0.7, '#c8cfe0'); mg.addColorStop(1, '#9aa2b8');
+            c.fillStyle = mg; c.beginPath(); c.arc(mx, my, r, 0, 7); c.fill();
+            // craters
+            c.fillStyle = 'rgba(120,130,150,0.5)';
+            [[-.3, -.2, .22], [.3, .1, .28], [.05, .4, .18], [-.35, .35, .15]].forEach(k => { c.beginPath(); c.arc(mx + k[0] * r, my + k[1] * r, k[2] * r, 0, 7); c.fill(); });
+            c.fillStyle = cv('--text'); c.font = 'bold 9px monospace'; c.textAlign = 'center'; c.fillText('🌙', mx, my - r - 6);
             return { x: mx, y: my };
-        }
-
-        function drawSun(cx, cy, angle, dist) {
-            const sx = cx + dist * Math.cos(angle * D2R);
-            const sy = cy + dist * Math.sin(angle * D2R);
-            const c = sctx;
-            const r = 16;
-            if (!STATE.showSun) return { x: sx, y: sy };
-            const grad = c.createRadialGradient(sx, sy, 0, sx, sy, r * 4);
-            grad.addColorStop(0, 'rgba(255,220,100,0.15)');
-            grad.addColorStop(0.6, 'rgba(255,200,80,0.04)');
-            grad.addColorStop(1, 'rgba(255,200,80,0)');
-            c.fillStyle = grad;
-            c.beginPath();
-            c.arc(sx, sy, r * 4, 0, 2 * Math.PI);
-            c.fill();
-            const sg = c.createRadialGradient(sx - r * .2, sy - r * .2, 0, sx, sy, r);
-            sg.addColorStop(0, '#fff8e0');
-            sg.addColorStop(0.4, '#ffdd44');
-            sg.addColorStop(1, '#ffaa00');
-            c.fillStyle = sg;
-            c.beginPath();
-            c.arc(sx, sy, r, 0, 2 * Math.PI);
-            c.fill();
-            c.fillStyle = 'rgba(255,200,50,0.2)';
-            for (let i = 0; i < 10; i++) {
-                const a = i / 10 * 2 * Math.PI + tNow * 0.0004;
-                const r1 = r + 3 + 5 * Math.sin(i * 3 + tNow * 0.002);
-                c.beginPath();
-                c.arc(sx + r1 * Math.cos(a), sy + r1 * Math.sin(a), 2.5, 0, 2 * Math.PI);
-                c.fill();
-            }
-            if (STATE.showLabels) {
-                c.fillStyle = cv('--text');
-                c.font = '8px monospace';
-                c.textAlign = 'center';
-                c.fillText('☀ Sun', sx, sy + r + 14);
-            }
-            return { x: sx, y: sy };
-        }
-
-        function drawTidalWater(cx, cy, r, moonAngle, amp, qInt, tsunProg) {
-            const c = sctx;
-            const pts = 100;
-            const maxAmp = amp * r * 0.45;
-            const waterR = r + 6;
-            const radii = [];
-            for (let i = 0; i < pts; i++) {
-                const theta = (i / pts) * 2 * Math.PI;
-                const diff = theta - moonAngle * D2R;
-                let tide = maxAmp * (Math.cos(diff) * Math.cos(diff) - 0.5) * 0.8 + maxAmp * 0.5;
-                if (tsunProg > 0 && STATE.tsunamiActive) {
-                    const srcAngle = (STATE.selectedPlate >= 0) ? Math.atan2(STATE.plates[STATE.selectedPlate].y, STATE
-                        .plates[STATE.selectedPlate].x) : 0;
-                    const tDiff = theta - srcAngle;
-                    const tWave = tsunProg * 0.6 * Math.exp(-Math.abs(tDiff) * 2.5) * Math.sin(tDiff * 8 - tNow * 0.015);
-                    tide += tWave * r * 0.18 * STATE.tsunamiWaveHeight;
-                }
-                if (qInt > 0.1) {
-                    tide += qInt * 0.06 * r * Math.sin(theta * 4 + tNow * 0.01);
-                }
-                radii.push(waterR + tide);
-            }
-            c.beginPath();
-            for (let i = 0; i <= pts; i++) {
-                const theta = (i % pts) / pts * 2 * Math.PI;
-                const rr = radii[i % pts];
-                const x = cx + rr * Math.cos(theta);
-                const y = cy + rr * Math.sin(theta);
-                if (i === 0) c.moveTo(x, y);
-                else c.lineTo(x, y);
-            }
-            c.closePath();
-            const wg = c.createRadialGradient(cx, cy, r * 0.4, cx, cy, r * 1.6);
-            wg.addColorStop(0, 'rgba(20,80,180,0.2)');
-            wg.addColorStop(0.5, 'rgba(16,110,210,0.4)');
-            wg.addColorStop(0.8, 'rgba(30,150,230,0.5)');
-            wg.addColorStop(1, 'rgba(40,190,250,0.25)');
-            c.fillStyle = wg;
-            c.fill();
-            c.strokeStyle = 'rgba(60,210,255,0.25)';
-            c.lineWidth = 1.5;
-            c.stroke();
-            for (let i = 0; i < pts; i += 3) {
-                const theta = (i / pts) * 2 * Math.PI;
-                const rr = radii[i];
-                const x = cx + rr * Math.cos(theta);
-                const y = cy + rr * Math.sin(theta);
-                const b = 0.04 + 0.08 * Math.sin(theta * 5 + tNow * 0.0008 + i);
-                c.fillStyle = `rgba(180,240,255,${b})`;
-                c.beginPath();
-                c.arc(x + 3 * Math.sin(theta + tNow * 0.0008), y + 3 * Math.cos(theta + tNow * 0.0008), 2, 0, 2 * Math.PI);
-                c.fill();
-            }
-            if (STATE.tsunamiActive && tsunProg > 0.3) {
-                c.strokeStyle = `rgba(255,79,96,${0.15 + 0.2 * tsunProg})`;
-                c.lineWidth = 3;
-                c.setLineDash([8, 10]);
-                const waveR = r + 20 + tsunProg * 60;
-                c.beginPath();
-                c.arc(cx, cy, waveR, 0, 2 * Math.PI);
-                c.stroke();
-                c.setLineDash([]);
-                c.fillStyle = `rgba(255,79,96,${0.4 + 0.4 * tsunProg})`;
-                c.font = '8px monospace';
-                c.textAlign = 'center';
-                c.fillText('🌊 TSUNAMI WAVE', cx, cy - waveR - 8);
-            }
-            return radii;
-        }
-
-        function drawTideLabels(cx, cy, r, moonAngle, radii, qInt) {
-            if (!STATE.showLabels) return;
-            const c = sctx;
-            const angles = [moonAngle, moonAngle + 180, moonAngle + 90, moonAngle + 270];
-            const labels = ['⬆ HIGH', '⬆ HIGH', '⬇ LOW', '⬇ LOW'];
-            const colors = ['#40ffaa', '#40ffaa', '#ff9d4f', '#ff9d4f'];
-            angles.forEach((a, idx) => {
-                const theta = a * D2R;
-                const rIdx = Math.round(((a % 360) / 360) * 100) % 100;
-                const rr = radii ? radii[rIdx] : r + 12;
-                const x = cx + (rr + 18) * Math.cos(theta);
-                const y = cy + (rr + 18) * Math.sin(theta);
-                c.fillStyle = colors[idx];
-                c.globalAlpha = 0.7;
-                c.font = '7px monospace';
-                c.textAlign = 'center';
-                c.textBaseline = 'middle';
-                c.fillText(labels[idx], x, y);
-                c.globalAlpha = 1;
-                const dx = cx + rr * Math.cos(theta);
-                const dy = cy + rr * Math.sin(theta);
-                c.fillStyle = colors[idx];
-                c.globalAlpha = 0.4;
-                c.beginPath();
-                c.arc(dx, dy, 2.5, 0, 2 * Math.PI);
-                c.fill();
-                c.globalAlpha = 1;
-            });
-            if (qInt > 0.3) {
-                c.fillStyle = `rgba(255,79,96,${0.5 + 0.3 * qInt})`;
-                c.font = '9px monospace';
-                c.textAlign = 'center';
-                c.fillText('⚡ EARTHQUAKE!', cx, cy - r - 28);
-            }
         }
 
         function drawStage() {
             if (!sctx) return;
-            clr(sctx, W, H);
-            const cx = W / 2,
-                cy = H / 2 - 4;
-            const r = STATE.earthR;
-            const moonA = STATE.moonAngle;
-            const dist = STATE.moonDist;
-            const amp = STATE.tideAmp;
-            const qInt = STATE.quakeIntensity;
-            const tsunProg = STATE.tsunamiProgress;
-
-            // Grid
-            sctx.strokeStyle = cv('--grid-stroke');
-            sctx.lineWidth = 0.5;
-            for (let i = 0; i < 16; i++) {
-                const a = (i / 16) * 2 * Math.PI;
-                sctx.beginPath();
-                sctx.moveTo(cx, cy);
-                sctx.lineTo(cx + (r + 60) * Math.cos(a), cy + (r + 60) * Math.sin(a));
-                sctx.stroke();
+            const c = sctx; clr(c, W, H);
+            const cx = W / 2, cy = H / 2 - 4, r = STATE.earthR;
+            const sh = shakeAmt();
+            c.save();
+            if (sh > 0) c.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
+            starField(c, W, H);
+            drawSunStage(cx, cy, r);
+            const env = tidalEnvelope(cx, cy, r, STATE.moonAngle, STATE.quakeIntensity);
+            drawEarthTop(cx, cy, r, STATE.quakeIntensity);
+            // tide labels at bulge tips
+            if (STATE.showLabels) {
+                const sf = springFactor();
+                [[STATE.moonAngle, '⬆ HIGH', '#40ffaa'], [STATE.moonAngle + 180, '⬆ HIGH', '#40ffaa'], [STATE.moonAngle + 90, '⬇ LOW', '#ff9d4f'], [STATE.moonAngle + 270, '⬇ LOW', '#ff9d4f']].forEach(L => {
+                    const th = L[0] * D2R, rr = r + 3 + STATE.tideAmp * r * (0.55 + 0.55 * sf) * (L[1][0] === '⬆' ? 1 : 0.05);
+                    c.fillStyle = L[2]; c.font = 'bold 10px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+                    c.fillText(L[1], cx + (rr + 20) * Math.cos(th), cy + (rr + 20) * Math.sin(th));
+                });
             }
-            for (let rr = r + 20; rr < r + 80; rr += 20) {
-                sctx.beginPath();
-                sctx.arc(cx, cy, rr, 0, 2 * Math.PI);
-                sctx.stroke();
+            const mp = drawMoonBig(cx, cy, STATE.moonR, STATE.moonAngle, STATE.moonDist);
+            // quake global shockwave
+            if (STATE.tsunamiActive && STATE.tsunamiProgress > 0.05) {
+                const waveR = r + 10 + STATE.tsunamiProgress * 80;
+                c.strokeStyle = 'rgba(255,90,110,' + (0.4 * (1 - STATE.tsunamiProgress / 1.4)) + ')'; c.lineWidth = 3; c.setLineDash([10, 12]);
+                c.beginPath(); c.arc(cx, cy, waveR, 0, 7); c.stroke(); c.setLineDash([]);
             }
-
-            drawSun(cx, cy, STATE.sunAngle, dist + 75);
-            const radii = drawTidalWater(cx, cy, r, moonA, amp, qInt, tsunProg);
-            drawEarth(cx, cy, r, true, qInt);
-            drawTideLabels(cx, cy, r, moonA, radii, qInt);
-            const moonPos = drawMoon(cx, cy, STATE.moonR, moonA, dist);
-
-            sctx.strokeStyle = 'rgba(200,200,255,0.06)';
-            sctx.lineWidth = 1;
-            sctx.setLineDash([2, 5]);
-            sctx.beginPath();
-            sctx.moveTo(moonPos.x, moonPos.y);
-            sctx.lineTo(cx, cy);
-            sctx.stroke();
-            sctx.setLineDash([]);
-
-            sctx.fillStyle = cv('--text2');
-            sctx.font = '9px monospace';
-            sctx.fillText('🔄 Drag moon · Click a plate to select · Press action buttons below', 14, H - 12);
-            if (STATE.autoRotate) {
-                sctx.fillStyle = 'rgba(60,200,255,0.4)';
-                sctx.fillText('⏵ auto-rotate ON', W - 130, H - 12);
-            }
-            if (STATE.selectedPlate >= 0) {
-                const p = STATE.plates[STATE.selectedPlate];
-                sctx.fillStyle = cv('--gold');
-                sctx.fillText(`📍 ${p.label} plate selected`, W / 2 - 60, 26);
-            }
+            c.restore();
+            // HUD (no shake)
+            if (springFactor() > 0.85) { c.fillStyle = '#40ffaa'; c.font = 'bold 11px monospace'; c.textAlign = 'center'; c.fillText('☀ SPRING TIDE — Sun & Moon aligned', cx, 24); }
+            else if (springFactor() < 0.2) { c.fillStyle = '#ff9d4f'; c.font = 'bold 11px monospace'; c.textAlign = 'center'; c.fillText('🌗 NEAP TIDE — Sun & Moon at right angles', cx, 24); }
+            c.textAlign = 'left'; c.fillStyle = cv('--text2'); c.font = '11px monospace';
+            c.fillText('drag the Moon · click a plate · use the buttons below', 14, H - 12);
+            if (STATE.quakeIntensity > 0.3) { c.fillStyle = '#ff4f60'; c.font = 'bold 13px monospace'; c.textAlign = 'center'; c.fillText('⚡ EARTHQUAKE!', cx, 44); c.textAlign = 'left'; }
         }
 
-        // ---------- BEACH VIEW (side view) ----------
+        // ---------- BEACH VIEW (cinematic side view) ----------
+        function oceanSurfaceY(x, baseY, t, amp) {
+            return baseY + Math.sin(x * 0.05 + t * 0.004) * amp + Math.sin(x * 0.11 - t * 0.006) * amp * 0.5;
+        }
         function drawBeach() {
             if (!bctx) return;
-            const c = bctx;
-            const w = AUXW,
-                h = AUXH;
-
+            const c = bctx, w = AUXW, h = AUXH, t = tNow;
             c.clearRect(0, 0, w, h);
-            c.fillStyle = cv('--stage-bg');
-            c.fillRect(0, 0, w, h);
+            const sh = shakeAmt();
+            c.save(); if (sh > 0) c.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
+            // sky
+            const sky = c.createLinearGradient(0, 0, 0, h * 0.55);
+            sky.addColorStop(0, '#0c2b52'); sky.addColorStop(0.7, '#3a6f9a'); sky.addColorStop(1, '#7fb0cf');
+            c.fillStyle = sky; c.fillRect(-10, -10, w + 20, h * 0.6);
+            // sun/moon in sky
+            c.fillStyle = 'rgba(255,235,150,0.9)'; c.beginPath(); c.arc(w * 0.82, h * 0.16, 16, 0, 7); c.fill();
+            // clouds
+            c.fillStyle = 'rgba(255,255,255,0.12)';
+            for (let i = 0; i < 5; i++) { const x = ((i * 150 + t * 0.006 * (0.5 + i * 0.1)) % (w + 140)) - 70, y = 26 + i * 16; c.beginPath(); c.ellipse(x, y, 44, 12, 0, 0, 7); c.ellipse(x - 28, y + 6, 26, 9, 0, 0, 7); c.ellipse(x + 30, y + 5, 22, 8, 0, 0, 7); c.fill(); }
+            // hills backdrop
+            c.fillStyle = '#20404f'; c.beginPath(); c.moveTo(0, h * 0.5); for (let x = 0; x <= w; x += 20) c.lineTo(x, h * 0.5 - 26 * Math.abs(Math.sin(x * 0.01 + 1))); c.lineTo(w, h); c.lineTo(0, h); c.fill();
 
-            // Sky
-            const sky = c.createLinearGradient(0, 0, 0, h * 0.5);
-            sky.addColorStop(0, '#0a2a4a');
-            sky.addColorStop(0.7, '#2a5a7a');
-            sky.addColorStop(1, '#5a8aaa');
-            c.fillStyle = sky;
-            c.fillRect(0, 0, w, h * 0.55);
+            // layout
+            const shoreX = w * 0.32;          // where sand meets sea (normal)
+            const seaBase = h * 0.60;
+            const tideFrac = getTidePercent() / 100;   // 0..1
+            const p = STATE.tsunamiActive ? STATE.tsunamiProgress : 0;
 
-            // Clouds
-            c.fillStyle = 'rgba(255,255,255,0.06)';
-            for (let i = 0; i < 5; i++) {
-                const x = (i * 130 + tNow * 0.002 * (0.5 + i * 0.1)) % (w + 100) - 50;
-                const y = 30 + i * 12 + 10 * Math.sin(i * 2 + tNow * 0.001);
-                c.beginPath();
-                c.ellipse(x, y, 40 + i * 8, 10 + i * 2, 0, 0, 2 * Math.PI);
-                c.fill();
-                c.beginPath();
-                c.ellipse(x - 30, y + 6, 25 + i * 5, 8 + i * 2, 0, 0, 2 * Math.PI);
-                c.fill();
-                c.beginPath();
-                c.ellipse(x + 30, y + 4, 20 + i * 4, 7 + i * 2, 0, 0, 2 * Math.PI);
-                c.fill();
+            // tsunami staging
+            let recede = 0, wallX = w + 60, wallH = 0, flood = 0;
+            if (p > 0) {
+                if (p < 0.22) recede = (p / 0.22) * 120 * STATE.tsunamiWaveHeight;               // sea pulls back
+                else if (p < 0.62) { recede = 120 * STATE.tsunamiWaveHeight * (1 - (p - 0.22) / 0.4); wallX = w - ((p - 0.22) / 0.4) * (w - shoreX + 40); wallH = 30 + 90 * ((p - 0.22) / 0.4) * STATE.tsunamiWaveHeight; }
+                else if (p < 0.86) { wallX = shoreX - 30 - (p - 0.62) / 0.24 * 80; wallH = 120 * STATE.tsunamiWaveHeight; flood = (p - 0.62) / 0.24; }
+                else { flood = Math.max(0, 1 - (p - 0.86) / 0.4); wallX = shoreX - 110; wallH = 90 * STATE.tsunamiWaveHeight * (1 - (p - 0.86) / 0.4); }
             }
 
-            // Terrain
-            const landTop = h * 0.25;
-            const beachStart = w * 0.3;
-            const oceanStart = w * 0.6;
-            const seaFloor = h * 0.78;
+            const curShore = shoreX + recede;                 // shoreline shifts right on recede
+            const seaY = seaBase - tideFrac * 14 + recede * 0.15;
 
-            // Compute water level
-            const maxAmp = STATE.tideAmp * STATE.earthR * 0.45;
-            const diff0 = -STATE.moonAngle * D2R;
-            const tide0 = maxAmp * (Math.cos(diff0) * Math.cos(diff0) - 0.5) * 0.8 + maxAmp * 0.5;
-            let tideLevel = seaFloor - tide0 * 0.6;
+            // sand / seabed
+            const sand = c.createLinearGradient(0, h * 0.4, 0, h); sand.addColorStop(0, '#c8a86a'); sand.addColorStop(1, '#8a7038');
+            c.fillStyle = sand; c.beginPath(); c.moveTo(0, h * 0.42);
+            for (let x = 0; x <= w; x += 6) { const y = h * 0.42 + (x / w) * (h * 0.5); c.lineTo(x, Math.min(h, y)); }
+            c.lineTo(w, h); c.lineTo(0, h); c.fill();
 
-            // Tsunami wave
-            let tsunamiOffset = 0;
-            if (STATE.tsunamiActive && STATE.tsunamiProgress > 0.05) {
-                const prog = STATE.tsunamiProgress;
-                const wavePos = w * (0.9 - prog * 0.6);
-                const waveAmp = 40 * prog * (1 - Math.min(1, prog * 2)) * STATE.tsunamiWaveHeight;
-                tsunamiOffset = waveAmp;
-                // draw wave crest
-                c.strokeStyle = `rgba(255,79,96,${0.3 + 0.3 * prog})`;
-                c.lineWidth = 3;
-                c.setLineDash([6, 8]);
-                c.beginPath();
-                for (let x = 0; x < w; x += 2) {
-                    const dist = Math.abs(x - wavePos);
-                    const waveH = waveAmp * Math.exp(-dist * dist / (4000));
-                    const y = tideLevel - waveH;
-                    if (x === 0) c.moveTo(x, y);
-                    else c.lineTo(x, y);
-                }
-                c.stroke();
-                c.setLineDash([]);
-                c.fillStyle = `rgba(255,79,96,${0.6 + 0.3 * prog})`;
-                c.font = '9px monospace';
-                c.textAlign = 'center';
-                c.fillText('🌊 TSUNAMI', wavePos, tideLevel - 30 - waveAmp * 0.5);
+            // palm trees + house on the dune (left)
+            drawPalm(c, 46, h * 0.44, t); drawPalm(c, 92, h * 0.47, t + 300);
+            c.fillStyle = '#b85c4a'; c.fillRect(120, h * 0.4 - 14, 22, 16); c.fillStyle = '#7a3a2e'; c.beginPath(); c.moveTo(117, h * 0.4 - 14); c.lineTo(143, h * 0.4 - 14); c.lineTo(130, h * 0.4 - 26); c.fill();
+            // a person (flees during crash)
+            const runX = 150 + (flood > 0.1 ? -Math.min(120, flood * 160) : 0);
+            drawPerson(c, runX, h * 0.42 + (runX / w) * (h * 0.5) - 2, flood > 0.1);
+
+            // ocean water (from shoreline to right)
+            const amp = 3 + p * 4;
+            c.beginPath(); c.moveTo(curShore, seaY);
+            for (let x = curShore; x <= w; x += 4) c.lineTo(x, oceanSurfaceY(x, seaY, t, amp));
+            c.lineTo(w, h); c.lineTo(curShore, h); c.closePath();
+            const wg = c.createLinearGradient(0, seaY - 20, 0, h); wg.addColorStop(0, 'rgba(40,150,225,0.9)'); wg.addColorStop(1, 'rgba(10,55,120,0.95)');
+            c.fillStyle = wg; c.fill();
+            // foam line at shore
+            c.strokeStyle = 'rgba(220,245,255,0.7)'; c.lineWidth = 2; c.beginPath();
+            for (let x = curShore; x <= w; x += 4) { const y = oceanSurfaceY(x, seaY, t, amp); x === curShore ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke();
+            // sparkles
+            for (let i = 0; i < 30; i++) { const x = curShore + ((i * 53 + t * 0.02) % (w - curShore)); const y = oceanSurfaceY(x, seaY, t, amp) + 4 + (i % 5) * 3; c.fillStyle = 'rgba(200,240,255,' + (0.1 + 0.15 * Math.sin(i + t * 0.005)) + ')'; c.fillRect(x, y, 2, 1.5); }
+
+            // recede warning + exposed seabed shimmer
+            if (recede > 8 && p < 0.62) {
+                c.fillStyle = 'rgba(120,150,120,0.25)'; c.fillRect(shoreX, seaBase, curShore - shoreX, h - seaBase);
+                c.fillStyle = '#ffd34d'; c.font = 'bold 12px monospace'; c.textAlign = 'center';
+                c.fillText('⚠ THE SEA IS PULLING BACK — RUN!', w / 2, h * 0.5);
             }
 
-            // Draw terrain
-            c.beginPath();
-            for (let x = 0; x <= w; x += 2) {
-                let y;
-                if (x < beachStart) {
-                    const t = x / beachStart;
-                    y = landTop + t * (h * 0.35 - landTop);
-                } else if (x < oceanStart) {
-                    const t = (x - beachStart) / (oceanStart - beachStart);
-                    y = h * 0.35 + t * (seaFloor - h * 0.35);
-                } else {
-                    y = seaFloor;
-                }
-                if (x === 0) c.moveTo(x, y);
-                else c.lineTo(x, y);
+            // tsunami wall
+            if (wallH > 4 && wallX < w + 20) {
+                const topY = seaY - wallH;
+                c.beginPath(); c.moveTo(wallX, h); c.lineTo(wallX, topY + 10);
+                c.quadraticCurveTo(wallX + 6, topY - 6, wallX + 34, topY); // curling crest
+                c.quadraticCurveTo(wallX + 20, topY + 12, wallX + 30, topY + 26);
+                c.lineTo(wallX + 120, seaY); c.lineTo(wallX + 120, h); c.closePath();
+                const twg = c.createLinearGradient(0, topY, 0, h); twg.addColorStop(0, '#7fd6ff'); twg.addColorStop(0.3, '#2a86c8'); twg.addColorStop(1, '#0a3a72');
+                c.fillStyle = twg; c.fill();
+                // crest foam
+                c.fillStyle = 'rgba(255,255,255,0.85)'; c.beginPath(); c.ellipse(wallX + 18, topY + 2, 20, 9, -0.3, 0, 7); c.fill();
+                // spawn spray at crest
+                if (p > 0.6 && p < 0.86 && Math.random() < 0.6) SPRAY.push({ x: wallX + 20, y: topY, vx: -1 - Math.random() * 2, vy: -2 - Math.random() * 3, life: 1 });
+                c.fillStyle = '#ff4f60'; c.font = 'bold 13px monospace'; c.textAlign = 'center'; c.fillText('🌊 TSUNAMI', wallX + 40, topY - 10);
             }
-            c.lineTo(w, h);
-            c.lineTo(0, h);
-            c.closePath();
-            const terrainGrad = c.createLinearGradient(0, landTop, 0, seaFloor);
-            terrainGrad.addColorStop(0, '#2a4a3a');
-            terrainGrad.addColorStop(0.4, '#5a7a4a');
-            terrainGrad.addColorStop(0.7, '#8a7a5a');
-            terrainGrad.addColorStop(1, '#4a5a5a');
-            c.fillStyle = terrainGrad;
-            c.fill();
-            c.strokeStyle = 'rgba(200,200,150,0.1)';
-            c.lineWidth = 1;
-            c.stroke();
+            // flood overlay on the sand
+            if (flood > 0.05) {
+                c.fillStyle = 'rgba(40,120,190,' + (0.45 * flood) + ')';
+                const floodX = curShore - flood * (curShore);
+                c.fillRect(floodX, seaBase - 10, curShore - floodX + 4, h);
+            }
+            // spray particles
+            for (let i = SPRAY.length - 1; i >= 0; i--) { const s = SPRAY[i]; s.x += s.vx; s.y += s.vy; s.vy += 0.15; s.life -= 0.02; if (s.life <= 0) { SPRAY.splice(i, 1); continue; } c.fillStyle = 'rgba(230,248,255,' + s.life + ')'; c.beginPath(); c.arc(s.x, s.y, 2, 0, 7); c.fill(); }
 
-            // Trees & houses
-            for (let i = 0; i < 12; i++) {
-                const x = 10 + i * 18 + 5 * Math.sin(i * 3);
-                if (x > beachStart) break;
-                const yBase = landTop + (x / beachStart) * (h * 0.35 - landTop);
-                c.fillStyle = '#2a6a3a';
-                c.beginPath();
-                c.moveTo(x, yBase);
-                c.lineTo(x - 4, yBase - 12);
-                c.lineTo(x + 4, yBase - 12);
-                c.closePath();
-                c.fill();
-                c.fillStyle = '#1a4a2a';
-                c.fillRect(x - 1, yBase, 2, 6);
-            }
-            for (let i = 0; i < 3; i++) {
-                const x = 30 + i * 50;
-                if (x > beachStart - 20) break;
-                const yBase = landTop + (x / beachStart) * (h * 0.35 - landTop);
-                c.fillStyle = '#8a7a5a';
-                c.fillRect(x, yBase - 12, 14, 12);
-                c.fillStyle = '#6a4a3a';
-                c.beginPath();
-                c.moveTo(x - 2, yBase - 12);
-                c.lineTo(x + 16, yBase - 12);
-                c.lineTo(x + 7, yBase - 22);
-                c.closePath();
-                c.fill();
-                c.fillStyle = '#ffcc88';
-                c.fillRect(x + 4, yBase - 6, 4, 6);
-            }
-
-            // Draw water
-            c.beginPath();
-            for (let x = oceanStart - 10; x <= w; x += 2) {
-                let terrainY;
-                if (x < beachStart) {
-                    const t = x / beachStart;
-                    terrainY = landTop + t * (h * 0.35 - landTop);
-                } else if (x < oceanStart) {
-                    const t = (x - beachStart) / (oceanStart - beachStart);
-                    terrainY = h * 0.35 + t * (seaFloor - h * 0.35);
-                } else {
-                    terrainY = seaFloor;
-                }
-                let waterY = tideLevel;
-                if (tsunamiOffset > 0) {
-                    const wavePos = w * (0.9 - STATE.tsunamiProgress * 0.6);
-                    const dist = Math.abs(x - wavePos);
-                    const waveH = tsunamiOffset * Math.exp(-dist * dist / (4000));
-                    waterY -= waveH;
-                }
-                if (waterY < terrainY) waterY = terrainY;
-                if (x === oceanStart - 10) c.moveTo(x, waterY);
-                else c.lineTo(x, waterY);
-            }
-            c.lineTo(w, h);
-            c.lineTo(oceanStart - 10, h);
-            c.closePath();
-            const waterGrad = c.createLinearGradient(0, tideLevel - 30, 0, h);
-            waterGrad.addColorStop(0, 'rgba(30,140,220,0.7)');
-            waterGrad.addColorStop(0.5, 'rgba(20,100,200,0.6)');
-            waterGrad.addColorStop(1, 'rgba(10,60,140,0.7)');
-            c.fillStyle = waterGrad;
-            c.fill();
-            c.strokeStyle = 'rgba(180,230,255,0.3)';
-            c.lineWidth = 1.5;
-            c.beginPath();
-            for (let x = oceanStart - 10; x <= w; x += 2) {
-                let terrainY;
-                if (x < beachStart) {
-                    const t = x / beachStart;
-                    terrainY = landTop + t * (h * 0.35 - landTop);
-                } else if (x < oceanStart) {
-                    const t = (x - beachStart) / (oceanStart - beachStart);
-                    terrainY = h * 0.35 + t * (seaFloor - h * 0.35);
-                } else {
-                    terrainY = seaFloor;
-                }
-                let waterY = tideLevel;
-                if (tsunamiOffset > 0) {
-                    const wavePos = w * (0.9 - STATE.tsunamiProgress * 0.6);
-                    const dist = Math.abs(x - wavePos);
-                    const waveH = tsunamiOffset * Math.exp(-dist * dist / (4000));
-                    waterY -= waveH;
-                }
-                if (waterY < terrainY) waterY = terrainY;
-                if (x === oceanStart - 10) c.moveTo(x, waterY);
-                else c.lineTo(x, waterY);
-            }
-            c.stroke();
-
-            // Labels
-            c.fillStyle = cv('--text');
-            c.font = '9px monospace';
-            c.textAlign = 'left';
-            c.fillText('🏖️ Beach', 10, 20);
-            c.fillText('🌊 Ocean', w - 80, 20);
-            const tideHeight = ((tide0 / maxAmp) * 100).toFixed(0);
-            c.fillStyle = '#ffdd66';
-            c.fillText(`Tide: ${tideHeight}%`, 10, 40);
-            if (STATE.tsunamiActive && STATE.tsunamiProgress > 0.1) {
-                c.fillStyle = '#ff4f60';
-                c.fillText(`⚠️ TSUNAMI WAVE APPROACHING!`, w / 2 - 80, 40);
-            }
-            const markerX = oceanStart + 20;
-            const markerY = tideLevel;
-            c.fillStyle = '#ffdd66';
-            c.beginPath();
-            c.arc(markerX, markerY, 4, 0, 2 * Math.PI);
-            c.fill();
-            c.fillStyle = cv('--text3');
-            c.font = '7px monospace';
-            c.textAlign = 'center';
-            c.fillText('sea level', markerX, markerY - 10);
-            if (tsunamiOffset > 5) {
-                c.fillStyle = 'rgba(255,79,96,0.1)';
-                const wavePos = w * (0.9 - STATE.tsunamiProgress * 0.6);
-                const reach = 50 + tsunamiOffset * 2;
-                c.fillRect(wavePos - reach, 0, reach * 2, h);
-                c.fillStyle = 'rgba(255,79,96,0.3)';
-                c.fillRect(wavePos - 20, 0, 40, h);
-            }
+            c.restore();
+            // labels (no shake)
+            c.fillStyle = cv('--text'); c.font = 'bold 11px monospace'; c.textAlign = 'left'; c.fillText('🏖 side view', 10, 18);
+            c.fillStyle = '#ffd34d'; c.font = '11px monospace';
+            c.fillText('tide ' + getTidePercent() + '%', 10, 34);
+            if (p > 0 && p < 0.62) { c.fillStyle = '#ff4f60'; c.textAlign = 'right'; c.font = 'bold 11px monospace'; c.fillText('⚠ TSUNAMI INCOMING', w - 10, 18); c.textAlign = 'left'; }
         }
+        function drawPalm(c, x, y, t) {
+            c.strokeStyle = '#6b4a2a'; c.lineWidth = 4; c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + 4, y - 20, x + 2, y - 34); c.stroke();
+            const sway = Math.sin(t * 0.002) * 3;
+            c.strokeStyle = '#2f8a4a'; c.lineWidth = 3;
+            for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(x + 2, y - 34); c.quadraticCurveTo(x + 2 + k * 10 + sway, y - 44, x + 2 + k * 20 + sway, y - 34 + Math.abs(k) * 4); c.stroke(); }
+        }
+        function drawPerson(c, x, y, running) {
+            c.strokeStyle = '#1a1a1a'; c.lineWidth = 2; c.fillStyle = '#1a1a1a';
+            c.beginPath(); c.arc(x, y - 12, 3, 0, 7); c.fill();
+            c.beginPath(); c.moveTo(x, y - 9); c.lineTo(x, y - 3); c.stroke();
+            const s = running ? Math.sin(tNow * 0.02) * 3 : 1;
+            c.beginPath(); c.moveTo(x, y - 3); c.lineTo(x - 3 - s, y + 2); c.moveTo(x, y - 3); c.lineTo(x + 3 + s, y + 2); c.stroke();
+            c.beginPath(); c.moveTo(x, y - 7); c.lineTo(x - 4, y - 5 - (running ? 3 : 0)); c.moveTo(x, y - 7); c.lineTo(x + 4, y - 9); c.stroke();
+        }
+
 
         // ---------- CONTROLS ----------
         function buildControls() {
