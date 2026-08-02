@@ -200,164 +200,127 @@ body.light-theme header {
 }
 .section-divider .label .star { color: var(--gold); display: inline-block; margin: 0 6px; }
 
-/* Featured */
-.featured-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 20px; }
-.featured-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
-@media (max-width: 760px) { .featured-grid { grid-template-columns: 1fr; } }
-.featured {
-  position: relative; display: grid; grid-template-columns: auto 1fr; gap: 28px;
-  background: var(--featured-gradient);
-  border: 1px solid var(--border2); border-radius: 14px;
-  padding: 32px clamp(24px, 4vw, 40px);
-  text-decoration: none; color: inherit; overflow: hidden;
-  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
-}
-.featured::before {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(circle at 90% 50%, rgba(58, 143, 255, 0.08), transparent 55%),
-    radial-gradient(circle at 5% 100%, rgba(240, 192, 96, 0.04), transparent 55%);
-}
-body.light-theme .featured::before { display: none; }
-.featured:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(58, 143, 255, 0.12); }
-.featured-icon {
-  position: relative; font-size: 64px; align-self: center;
-  display: inline-block;
-  transition: transform 0.3s ease, filter 0.3s ease;
-  line-height: 1;
-}
-
-  /* Keep the standard card icon behavior exactly as it is */
-.card:hover .card-icon { 
-  transform: scale(1.18) rotate(-4deg); 
-  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4)); 
-}
-
-/* Force the featured icon to physically jump UP and LEFT like the standard cards */
-.featured:hover .featured-icon {
-  transform: scale(1.18) rotate(-4deg) translate(-8px, -12px);
-  filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4));
-}
-.featured-body { position: relative; }
-
-/* GOLD "NEW · JUST LAUNCHED" BADGE */
-.featured-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: monospace; font-size: 10px; letter-spacing: 2px;
-  padding: 5px 11px; border-radius: 4px;
-  background: rgba(240, 192, 96, 0.08);
-  border: 1px solid rgba(240, 192, 96, 0.4);
-  color: var(--gold);
-  margin-bottom: 12px;
-}
-.featured-tag .dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--gold);
-  box-shadow: 0 0 8px var(--gold);
-  animation: blink 1.6s infinite;
-}
-@keyframes blink { 0%,100% { opacity: 1;} 50% { opacity: 0.3;} }
-
-.featured-title { font-family: monospace; font-size: 20px; color: var(--text-bright); letter-spacing: 1.5px; margin-bottom: 10px; }
-.featured-desc { font-size: 14px; color: var(--text); line-height: 1.85; margin-bottom: 18px; max-width: 580px; }
-.featured-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.featured-meta .cat { font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); transition: background 0.25s, border-color 0.25s; }
-.featured-link { font-family: monospace; font-size: 12px; color: var(--accent); letter-spacing: 1px; }
-.featured-link .arrow { display: inline-block; transition: transform 0.25s; }
-.featured:hover .featured-link .arrow { transform: translateX(5px); }
-@media (max-width: 600px) { .featured { grid-template-columns: 1fr; padding: 24px; gap: 12px; } .featured-icon { text-align: center; font-size: 52px; } }
-
-.cosmos-parts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 18px;
-}
-@media (max-width: 700px) {
-  .cosmos-parts { grid-template-columns: 1fr; }
-}
+/* Two-part journey card */
+.card-cosmos { cursor: default; }
+.card-cosmos .card-tag { margin-bottom: 4px; }
+.cosmos-parts { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
 .cosmos-part {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 16px 18px;
-  background: rgba(58, 143, 255, 0.04);
-  border: 1px solid rgba(58, 143, 255, 0.25);
-  border-radius: 10px;
-  color: inherit;
-  text-decoration: none;
-  transition: all 0.2s;
-  cursor: pointer;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(58, 143, 255, 0.05);
+  border: 1px solid var(--border2);
+  color: inherit; text-decoration: none; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
-.cosmos-part:hover {
-  background: rgba(58, 143, 255, 0.10);
-  border-color: #3a8fff;
-  transform: translateY(-2px);
-}
-.cosmos-part-num {
-  font-family: monospace;
-  font-size: 10px;
-  letter-spacing: 2.5px;
-  color: #f0c060;
-  font-weight: bold;
-}
-.cosmos-part-title {
-  font-family: 'Georgia', serif;
-  font-size: 17px;
-  color: #ddeeff;
-  font-weight: bold;
-  line-height: 1.3;
-}
-.cosmos-part-sub {
-  font-size: 12.5px;
-  color: #5878a0;
-  font-style: italic;
-  line-height: 1.4;
-}
-.cosmos-part-cta {
-  font-family: monospace;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  color: #3a8fff;
-  margin-top: 4px;
-}
-.cosmos-part-cta .arrow {
-  display: inline-block;
-  transition: transform 0.2s;
-}
-.cosmos-part:hover .cosmos-part-cta .arrow {
-  transform: translateX(4px);
-}
+.cosmos-part:hover { background: rgba(58, 143, 255, 0.11); border-color: var(--accent); transform: translateX(3px); }
+.cosmos-part-num { font-family: monospace; font-size: 10px; letter-spacing: 2.5px; color: var(--gold); font-weight: bold; }
+.cosmos-part-title { font-family: Georgia, serif; font-size: 15.5px; color: var(--text-bright); font-weight: bold; line-height: 1.3; }
+.cosmos-part-sub { font-size: 12px; color: var(--text2); font-style: italic; line-height: 1.45; }
+.cosmos-part-cta { font-family: monospace; font-size: 10.5px; letter-spacing: 1.5px; color: var(--accent); margin-top: 4px; }
+.cosmos-part-cta .arrow { display: inline-block; transition: transform 0.2s; }
+.cosmos-part:hover .cosmos-part-cta .arrow { transform: translateX(4px); }
 
-  
-/* Grid */
+/* ── Grid & cards ─────────────────────────────────────────── */
 .grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px; max-width: 960px; margin: 0 auto; padding: 0 24px 50px;
+  gap: 22px; max-width: 960px; margin: 0 auto; padding: 0 24px 50px;
 }
 .card {
-  position: relative; background: var(--bg2);
-  border: 1px solid var(--border); border-radius: 12px;
-  padding: 28px; cursor: pointer;
-  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s, background 0.25s;
+  position: relative; isolation: isolate;
+  background: linear-gradient(165deg, var(--bg3) 0%, var(--bg2) 45%, var(--bg2) 100%);
+  border: 1px solid var(--border); border-radius: 16px;
+  padding: 26px; cursor: pointer;
   text-decoration: none; display: flex; flex-direction: column;
   color: inherit; overflow: hidden;
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.5s ease, border-color 0.3s, transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.3s, background 0.25s;
 }
+.card.in { opacity: 1; transform: translateY(0); }
+.no-reveal .card { opacity: 1; transform: none; }
+
+/* cursor-following aurora */
+.card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(58, 143, 255, 0.15), transparent 60%);
+  opacity: 0; transition: opacity 0.35s;
+}
+.card:hover::before, .card:focus-visible::before { opacity: 1; }
+body.light-theme .card { background: linear-gradient(165deg, var(--bg3) 0%, var(--bg2) 55%); }
+body.light-theme .card::before { background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 0%), rgba(9, 105, 218, 0.09), transparent 60%); }
+
+/* light sweep along the top edge */
 .card::after {
   content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 1px;
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
   transition: left 0.7s ease;
 }
-.card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 10px 28px rgba(58, 143, 255, 0.08); }
 .card:hover::after { left: 100%; }
-.card:hover .card-icon { transform: scale(1.18) rotate(-4deg); filter: drop-shadow(0 0 12px rgba(58, 143, 255, 0.4)); }
-.card-icon { font-size: 48px; margin-bottom: 16px; display: inline-block; transition: transform 0.3s ease, filter 0.3s ease; line-height: 1; }
-.card-title { font-family: monospace; font-size: 15px; color: var(--text-bright); letter-spacing: 1px; margin-bottom: 10px; }
+.card:hover, .card:focus-visible {
+  border-color: var(--accent); transform: translateY(-6px);
+  box-shadow: 0 18px 44px rgba(58, 143, 255, 0.16);
+}
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* icon tile */
+.card-icon {
+  font-size: 32px; width: 62px; height: 62px; border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px; line-height: 1;
+  background: linear-gradient(150deg, rgba(58, 143, 255, 0.18), rgba(240, 192, 96, 0.08));
+  border: 1px solid var(--border2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.35s, border-color 0.35s, background 0.35s;
+}
+.card:hover .card-icon {
+  transform: translateY(-4px) scale(1.07) rotate(-4deg);
+  border-color: var(--accent);
+  box-shadow: 0 12px 26px rgba(58, 143, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+body.light-theme .card-icon { background: linear-gradient(150deg, rgba(9, 105, 218, 0.10), rgba(176, 125, 0, 0.07)); }
+
+.card-title {
+  font-family: monospace; font-size: 15.5px; color: var(--text-bright);
+  letter-spacing: 1px; line-height: 1.45; margin-bottom: 10px;
+  transition: color 0.25s;
+}
 .card-desc { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 18px; flex: 1; }
-.card-tag { display: inline-block; font-family: monospace; font-size: 10px; letter-spacing: 2px; padding: 3px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border2); color: var(--accent); align-self: flex-start; transition: background 0.25s, border-color 0.25s; }
-.card-link { margin-top: 16px; font-family: monospace; font-size: 11px; color: var(--accent); letter-spacing: 1px; }
-.card-link .arrow { display: inline-block; transition: transform 0.25s; }
-.card:hover .card-link .arrow { transform: translateX(5px); }
+
+.card-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: monospace; font-size: 10px; letter-spacing: 2px;
+  padding: 5px 12px; border-radius: 999px;
+  background: var(--bg3); border: 1px solid var(--border2); color: var(--accent);
+  align-self: flex-start;
+  transition: background 0.25s, border-color 0.25s;
+}
+.card-tag::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 7px var(--accent); opacity: 0.9;
+}
+.card:hover .card-tag { border-color: var(--accent); background: rgba(58, 143, 255, 0.10); }
+
+.card-link {
+  margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
+  font-family: monospace; font-size: 11px; color: var(--accent); letter-spacing: 1px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  transition: border-color 0.25s;
+}
+.card:hover .card-link { border-color: var(--border2); }
+.card-link .arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 50%; flex: none;
+  border: 1px solid var(--border2); font-size: 12px;
+  transition: transform 0.25s, background 0.25s, border-color 0.25s;
+}
+.card:hover .card-link .arrow {
+  transform: translateX(4px); background: rgba(58, 143, 255, 0.14); border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card { opacity: 1; transform: none; transition: border-color 0.25s, box-shadow 0.25s; }
+  .card:hover { transform: none; }
+  .card:hover .card-icon { transform: none; }
+}
 
 /* About */
 .about-wrap { max-width: 720px; margin: 30px auto 60px; padding: 0 24px; }
@@ -430,336 +393,25 @@ body.light-theme .footer-fine { color: var(--text3); }
 
 <div class="section-divider">
   <span class="line"></span>
-  <span class="label"><span class="star">✦</span> Latest Releases <span class="star">✦</span></span>
-  <span class="line"></span>
-</div>
-
-<div class="featured-wrap featured-grid">
-
-  <a class="featured" href="maxwell.html">
-    <div class="featured-icon">∇</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Maxwell's Equations Lab</div>
-      <div class="featured-desc">Explore the four fundamental laws that unify electricity, magnetism, and light. Interact with movable electric charges, slice bar magnets to test for monopoles, change magnetic flux to induce currents, and witness how oscillating field vectors propagate through a vacuum to forge light itself.</div>
-      <div class="featured-meta">
-        <span class="cat">ELECTROMAGNETISM</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-<a class="featured" href="tides.html">
-    <div class="featured-icon">🌊</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Tides, Earthquakes &amp; Tsunamis Lab</div>
-      <div class="featured-desc">Explore the massive forces of hydrodynamics and geology. Visualize how gravitational pull creates dual high tides across the globe, witness tectonic plates slip and rupture during an earthquake, and watch how that sudden displacement unleashes towering, high-speed tsunami waves racing across deep ocean basins toward the coast.</div>
-      <div class="featured-meta">
-        <span class="cat">GEOPHYSICS &amp; FLUIDS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-  
-<a class="featured" href="refraction.html">
-    <div class="featured-icon">🪞</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Reflection, Refraction &amp; Light</div>
-      <div class="featured-desc">A hands-on optics playground for the whole journey of a light ray. Bounce a beam off a mirror to see the law of reflection, bend it through water, glass and diamond with Snell's law, trap it inside a fibre-optic cable by total internal reflection, and split white light into a rainbow with a prism. Drag the beam to aim it, watch the animated rays travel, and see exactly how much light reflects versus refracts at every angle.</div>
-      <div class="featured-meta">
-        <span class="cat">OPTICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-  
-<a class="featured" href="entropy.html">
-  <div class="featured-icon">🔥</div>
-  <div class="featured-body">
-  <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-  <div class="featured-title">Entropy &amp; the Arrow of Time</div>
-  <div class="featured-desc">Watch a gas spread out and never un-mix, then discover why: pure counting. Explore microstates and S = k ln W, see heat flow hot to cold, and meet all four laws of thermodynamics — the rules that give time its direction and seal the fate of the universe.</div>
-  <div class="featured-meta">
-    <span class="cat">THERMODYNAMICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-</div>
-    </div>
-  </a> 
-  
-<div class="featured featured-cosmos">
-  <div class="featured-icon">✦</div>
-  <div class="featured-body">
-    <div class="featured-tag"><span class="dot"></span> COSMOLOGY · 2-PART JOURNEY</div>
-    <div class="featured-title">From the Big Bang to Today</div>
-    <div class="featured-desc">Travel from a multiverse of bubbles, through the hot quark soup and the very first light, to why galaxies are flying apart faster and faster today. A two-part interactive journey across 13.8 billion years.</div>
-    <div class="cosmos-parts">
-      <a class="cosmos-part" href="cosmic-birth.html">
-        <span class="cosmos-part-num">PART 1</span>
-        <span class="cosmos-part-title">The Birth of Your Universe</span>
-        <span class="cosmos-part-sub">Multiverse · Life story · QGP · First light</span>
-        <span class="cosmos-part-cta">Begin the journey <span class="arrow">→</span></span>
-      </a>
-      <a class="cosmos-part" href="cosmic-energy.html">
-        <span class="cosmos-part-num">PART 2</span>
-        <span class="cosmos-part-title">Dark Energy &amp; Today</span>
-        <span class="cosmos-part-sub">Flying apart · Where we are</span>
-        <span class="cosmos-part-cta">Continue the journey <span class="arrow">→</span></span>
-      </a>
-    </div>
-  </div>
-</div>  
-  <a class="featured" href="electric_circuits.html">
-    <div class="featured-icon">⚡</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Electric Circuits</div>
-      <div class="featured-desc">Build any circuit you can imagine. Drop in resistors, bulbs, capacitors, fans, and meters — and watch current flow, voltages drop, and components react in real time. Finally understand series vs parallel, short vs open, and where to place an ammeter.</div>
-      <div class="featured-meta">
-        <span class="cat">ELECTRICITY</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-<a class="featured" href="states-of-matter.html">
-    <div class="featured-icon">🧊</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">States of Matter &amp; Phase Changes</div>
-      <div class="featured-desc">Watch molecules break free as you melt a solid, boil a liquid, and tear it apart into gas. See why the temperature freezes in place while ice melts, why boiling swallows nearly seven times more heat than melting, and why water boils at 71&deg;C on Everest but 121&deg;C in a pressure cooker. Drag across the pressure&ndash;temperature phase diagram to find the triple point where all three states meet at once.</div>
-      <div class="featured-meta">
-        <span class="cat">THERMODYNAMICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">&rarr;</span></span>
-      </div>
-    </div>
-  </a>
-  
-<a class="featured" href="greenhouse.html">
-    <div class="featured-icon">🌡️</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">The Greenhouse Effect Lab</div>
-      <div class="featured-desc">Explore how Earth keeps warm through real radiative transfer and atmospheric physics. Trace shortwave sunlight as it enters and turns into heat, watch infrared waves bounce like pinballs against a thickening greenhouse gas blanket, examine the quantum mechanics of why CO₂ molecules bend and trap heat while nitrogen does not, and balance planetary albedo before the ice caps melt.</div>
-      <div class="featured-meta">
-        <span class="cat">THERMODYNAMICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-<a class="featured" href="kinetic.html">
-    <div class="featured-icon">💨</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · FEATURED LAB</div>
-      <div class="featured-title">Kinetic Theory of Gases</div>
-      <div class="featured-desc">Dive into the microscopic chaos of a gas. See temperature become motion and pressure become collisions. Squeeze the box, drop in a heavy grain, and watch the Ideal Gas Laws, Maxwell-Boltzmann distributions, diffusion, and Brownian motion emerge naturally from the engine of thermodynamics.</div>
-      <div class="featured-meta">
-        <span class="cat">THERMODYNAMICS</span>
-        <span class="featured-link">Explore the lab <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-
-  <a class="featured" href="sound.html">
-    <div class="featured-icon">🎵</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Sound, Waves &amp; Resonance</div>
-      <div class="featured-desc">Hear the physics, not just see it. Play pure tones and watch the waveform, build standing waves on a string, listen to beats throb as two notes drift apart, map two-source interference, drive a system into resonance, and stack harmonics to sculpt the timbre of any instrument — all with real Web-Audio sound and a tuner mini-game.</div>
-      <div class="featured-meta">
-        <span class="cat">WAVES &amp; SOUND</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-  <a class="featured" href="photoelectric.html">
-    <div class="featured-icon">⚛️</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">The Photoelectric Effect</div>
-      <div class="featured-desc">Shine light on a metal and knock electrons loose — but only the right colour works, no matter how bright the beam. Discover the photon, find the threshold frequency, measure the stopping voltage, and read Planck's constant straight off a graph in the experiment that won Einstein his Nobel Prize and launched quantum physics.</div>
-      <div class="featured-meta">
-        <span class="cat">QUANTUM PHYSICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-<a class="featured" href="rotation.html">
-    <div class="featured-icon">⚙</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Rotational Mechanics Lab</div>
-      <div class="featured-desc">Drag masses to find the centre of mass and throw them to trace its parabola. Build a moment of inertia mass by mass, then watch the parallel-axis theorem in live bars. Balance a wooden see-saw, spin up a skater (and a collapsing star) with conserved angular momentum, and race a sphere, disc, hollow sphere and ring down a wooden ramp with a photo finish.</div>
-      <div class="featured-meta">
-        <span class="cat">MECHANICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-  <a class="featured" href="spectra.html">
-    <div class="featured-icon">🔬</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Atomic Spectra &amp; the Bohr Model</div>
-      <div class="featured-desc">Excite a hydrogen atom and watch electrons leap between energy levels, firing off coloured photons one jump at a time. Explore the unique spectral fingerprints of real elements, follow the Balmer series, and play stellar detective — reading a distant star's chemistry from the dark absorption lines in its light.</div>
-      <div class="featured-meta">
-        <span class="cat">QUANTUM PHYSICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-  <a class="featured" href="projectile.html">
-    <div class="featured-icon">🎯</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Projectile &amp; Orbital Motion</div>
-      <div class="featured-desc">Launch a ball and learn to calculate its flight step by step — a live worksheet plugs your real numbers into the range, height and time-of-flight formulas as you go. Solve everyday worked examples from soccer kicks to cliff jumps, then follow Newton's cannonball all the way up into orbit.</div>
-      <div class="featured-meta">
-        <span class="cat">MECHANICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-
-  
-  <a class="featured" href="lenses-mirrors.html">
-    <div class="featured-icon">🔍</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Lenses & Mirrors</div>
-      <div class="featured-desc">Pick a lens or mirror, place an object, and watch the image form in real time. See exactly when an image is real or virtual, erect or inverted, magnified or diminished.</div>
-      <div class="featured-meta">
-        <span class="cat">OPTICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-<a class="featured" href="quantum-dots.html">
-    <div class="featured-icon">🌈</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · FEATURED LAB</div>
-      <div class="featured-title">Quantum Dots: The Colour of Size</div>
-      <div class="featured-desc">Trap an electron in a microscopic box and watch its frequency shift. Discover how this single quantum trick powers modern QLED TVs, deep-tissue bio-imaging, and next-gen greenhouses.</div>
-      <div class="featured-meta">
-        <span class="cat">QUANTUM PHYSICS</span>
-        <span class="featured-link">Explore the lab <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-  
-  <a class="featured" href="friction.html">
-    <div class="featured-icon">📐</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Friction & Forces Lab</div>
-      <div class="featured-desc">Eight interactive mechanics experiments. Explore the static-to-kinetic friction transition, stacked blocks, Atwood machines, and orbital free fall.</div>
-      <div class="featured-meta">
-        <span class="cat">MECHANICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-<a class="featured" href="hydraulics.html">
-    <div class="featured-icon">🛢️</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Hydraulics &amp; Pascal's Law</div>
-      <div class="featured-desc">Lift a whole car with one gentle push, then pump the jack stroke by stroke to feel the force-versus-distance trade-off. Discover why fluid pressure climbs with depth, watch water jet farther from deeper holes by Torricelli's law, and see water find the same level in connected tubes of every shape. The physics behind car jacks, brakes, diggers and dam walls.</div>
-      <div class="featured-meta">
-        <span class="cat">FLUIDS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-  
-  <a class="featured" href="twin-paradox.html">
-    <div class="featured-icon">⏱️</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Twin Paradox</div>
-      <div class="featured-desc">Pick a destination — Mars, Andromeda, anywhere — and watch your twin grow old on Earth while you barely age. Witness Einstein's time dilation in action.</div>
-      <div class="featured-meta">
-        <span class="cat">SPECIAL RELATIVITY</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-  <a class="featured" href="Earth and SolarSystem.html">
-    <div class="featured-icon">🌍</div>
-    <div class="featured-body">
-      <div class="featured-tag"><span class="dot"></span> NEW · JUST LAUNCHED</div>
-      <div class="featured-title">Solar System & Satellite Orbits</div>
-      <div class="featured-desc">Simulate planetary motion and orbital mechanics in real time. Alter satellite velocities, track escape trajectories, and calculate orbital periods under precise gravitational math to see what keeps celestial bodies locked in space.</div>
-      <div class="featured-meta">
-        <span class="cat">ASTROPHYSICS</span>
-        <span class="featured-link">Launch simulation <span class="arrow">→</span></span>
-      </div>
-    </div>
-  </a>
-
-  
-</div>
-
-<div class="section-divider">
-  <span class="line"></span>
   <span class="label"><span class="star">✦</span> All Simulations <span class="star">✦</span></span>
   <span class="line"></span>
 </div>
 
 <div class="grid">
 
-  <a class="card" href="gravity.html">
-    <div class="grid-glow-bar"></div>
-    <div class="card-icon">🌌</div>
-    <div class="card-title">N-Body Gravitational Simulation</div>
-    <div class="card-desc">Watch planets orbit a star under real Newtonian gravity. Add bodies, adjust star mass, and see live orbital velocities and periods computed in SI units.</div>
-    <span class="card-tag">CLASSICAL MECHANICS</span>
+  <a class="card" href="spectra.html">
+    <div class="card-icon">🔬</div>
+    <div class="card-title">Atomic Spectra &amp; the Bohr Model</div>
+    <div class="card-desc">Excite a hydrogen atom and watch electrons leap between energy levels, firing off coloured photons one jump at a time. Explore the unique spectral fingerprints of real elements, follow the Balmer series, and play stellar detective — reading a distant star's chemistry from the dark absorption lines in its light.</div>
+    <span class="card-tag">QUANTUM PHYSICS</span>
     <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
-  <a class="card" href="double-slit.html">
-    <div class="card-icon">🌊</div>
-    <div class="card-title">Double Slit Experiment</div>
-    <div class="card-desc">See why quantum particles make interference fringes. The experiment that proved light and matter behave as waves — and baffled physicists for centuries.</div>
-    <span class="card-tag">QUANTUM MECHANICS</span>
-    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
-  </a>
-
-  <a class="card" href="Doppler_effect.html">
-    <div class="card-icon">🔊</div>
-    <div class="card-title">Doppler Effect</div>
-    <div class="card-desc">Hear and see how sound waves compress and stretch as a source moves. The physics behind ambulance sirens, radar guns, and expanding galaxies.</div>
-    <span class="card-tag">WAVE MECHANICS</span>
-    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
-  </a>
-<a class="card" href="buoyancy.html">
-  <div class="card-icon">🛟</div>
-  <div class="card-title">Buoyancy &amp; Density</div>
-  <div class="card-desc">Drop objects into water, oil, honey, or mercury and watch them float, sink, or hover. Discover Archimedes' principle, learn why ships float and most of an iceberg hides below the waves, then pilot a submarine to perfect neutral buoyancy.</div>
-  <div class="card-tag">FLUIDS</div>
-  <div class="card-link">Launch simulation →</div>
-</a>
   <a class="card" href="planes.html">
-  <div class="card-icon">✈️</div>
-  <div class="card-title">Bernoulli &amp; Flow — Why Planes Fly</div>
-  <div class="card-desc">Take the controls and fly a plane on real aerodynamics — throttle up, climb, and learn to escape a stall. Then see Bernoulli's principle in the streamlines over a wing, and explore the lift equation behind the four forces of flight.</div>
-  <div class="card-tag">FLUID DYNAMICS</div>
-  <div class="card-link">Launch simulation →</div>
-</a>
-  
-  <a class="card" href="Planet_formation.html">
-    <div class="card-icon">🪐</div>
-    <div class="card-title">Planet Formation</div>
-    <div class="card-desc">Witness how dust and gas clouds collapse under gravity to form planets. From a swirling protoplanetary disc to rocky worlds and gas giants.</div>
-    <span class="card-tag">ASTROPHYSICS</span>
+    <div class="card-icon">✈️</div>
+    <div class="card-title">Bernoulli &amp; Flow — Why Planes Fly</div>
+    <div class="card-desc">Take the controls and fly a plane on real aerodynamics — throttle up, climb, and learn to escape a stall. Then see Bernoulli's principle in the streamlines over a wing, and explore the lift equation behind the four forces of flight.</div>
+    <span class="card-tag">FLUID DYNAMICS</span>
     <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
@@ -771,11 +423,27 @@ body.light-theme .footer-fine { color: var(--text3); }
     <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
+  <a class="card" href="buoyancy.html">
+    <div class="card-icon">🛟</div>
+    <div class="card-title">Buoyancy &amp; Density</div>
+    <div class="card-desc">Drop objects into water, oil, honey, or mercury and watch them float, sink, or hover. Discover Archimedes' principle, learn why ships float and most of an iceberg hides below the waves, then pilot a submarine to perfect neutral buoyancy.</div>
+    <span class="card-tag">FLUIDS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
   <a class="card" href="CarbonDating.html">
     <div class="card-icon">⏳</div>
     <div class="card-title">Carbon-14 Dating</div>
     <div class="card-desc">Model the radioactive decay of Carbon-14 isotopes over millennia. Learn how the steady ticking of an atomic clock allows us to calculate the age of ancient organic remains.</div>
     <span class="card-tag">NUCLEAR PHYSICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="Doppler_effect.html">
+    <div class="card-icon">🔊</div>
+    <div class="card-title">Doppler Effect</div>
+    <div class="card-desc">Hear and see how sound waves compress and stretch as a source moves. The physics behind ambulance sirens, radar guns, and expanding galaxies.</div>
+    <span class="card-tag">WAVE MECHANICS</span>
     <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
@@ -787,11 +455,200 @@ body.light-theme .footer-fine { color: var(--text3); }
     <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
+  <a class="card" href="double-slit.html">
+    <div class="card-icon">🌀</div>
+    <div class="card-title">Double Slit Experiment</div>
+    <div class="card-desc">See why quantum particles make interference fringes. The experiment that proved light and matter behave as waves — and baffled physicists for centuries.</div>
+    <span class="card-tag">QUANTUM MECHANICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="electric_circuits.html">
+    <div class="card-icon">⚡</div>
+    <div class="card-title">Electric Circuits</div>
+    <div class="card-desc">Build any circuit you can imagine. Drop in resistors, bulbs, capacitors, fans, and meters — and watch current flow, voltages drop, and components react in real time. Finally understand series vs parallel, short vs open, and where to place an ammeter.</div>
+    <span class="card-tag">ELECTRICITY</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
   <a class="card" href="induction.html">
     <div class="card-icon">🧲</div>
     <div class="card-title">Electromagnetic Induction</div>
     <div class="card-desc">Move a magnet through a coil of wire to generate an electric current. Visualize Faraday's Law in action and see the fundamental principle behind how power generators work.</div>
     <span class="card-tag">ELECTROMAGNETISM</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="entropy.html">
+    <div class="card-icon">🔥</div>
+    <div class="card-title">Entropy &amp; the Arrow of Time</div>
+    <div class="card-desc">Watch a gas spread out and never un-mix, then discover why: pure counting. Explore microstates and S = k ln W, see heat flow hot to cold, and meet all four laws of thermodynamics — the rules that give time its direction and seal the fate of the universe.</div>
+    <span class="card-tag">THERMODYNAMICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="friction.html">
+    <div class="card-icon">📐</div>
+    <div class="card-title">Friction & Forces Lab</div>
+    <div class="card-desc">Eight interactive mechanics experiments. Explore the static-to-kinetic friction transition, stacked blocks, Atwood machines, and orbital free fall.</div>
+    <span class="card-tag">MECHANICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <div class="card card-cosmos">
+    <div class="card-icon">✦</div>
+    <div class="card-title">From the Big Bang to Today</div>
+    <div class="card-desc">Travel from a multiverse of bubbles, through the hot quark soup and the very first light, to why galaxies are flying apart faster and faster today. A two-part interactive journey across 13.8 billion years.</div>
+    <span class="card-tag">COSMOLOGY</span>
+  <div class="cosmos-parts">
+        <a class="cosmos-part" href="cosmic-birth.html">
+          <span class="cosmos-part-num">PART 1</span>
+          <span class="cosmos-part-title">The Birth of Your Universe</span>
+          <span class="cosmos-part-sub">Multiverse · Life story · QGP · First light</span>
+          <span class="cosmos-part-cta">Begin the journey <span class="arrow">→</span></span>
+        </a>
+        <a class="cosmos-part" href="cosmic-energy.html">
+          <span class="cosmos-part-num">PART 2</span>
+          <span class="cosmos-part-title">Dark Energy &amp; Today</span>
+          <span class="cosmos-part-sub">Flying apart · Where we are</span>
+          <span class="cosmos-part-cta">Continue the journey <span class="arrow">→</span></span>
+        </a>
+      </div>
+  </div>
+
+  <a class="card" href="greenhouse.html">
+    <div class="card-icon">🌡️</div>
+    <div class="card-title">The Greenhouse Effect Lab</div>
+    <div class="card-desc">Explore how Earth keeps warm through real radiative transfer and atmospheric physics. Trace shortwave sunlight as it enters and turns into heat, watch infrared waves bounce like pinballs against a thickening greenhouse gas blanket, examine the quantum mechanics of why CO₂ molecules bend and trap heat while nitrogen does not, and balance planetary albedo before the ice caps melt.</div>
+    <span class="card-tag">THERMODYNAMICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="hydraulics.html">
+    <div class="card-icon">🛢️</div>
+    <div class="card-title">Hydraulics &amp; Pascal's Law</div>
+    <div class="card-desc">Lift a whole car with one gentle push, then pump the jack stroke by stroke to feel the force-versus-distance trade-off. Discover why fluid pressure climbs with depth, watch water jet farther from deeper holes by Torricelli's law, and see water find the same level in connected tubes of every shape. The physics behind car jacks, brakes, diggers and dam walls.</div>
+    <span class="card-tag">FLUIDS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="kinetic.html">
+    <div class="card-icon">💨</div>
+    <div class="card-title">Kinetic Theory of Gases</div>
+    <div class="card-desc">Dive into the microscopic chaos of a gas. See temperature become motion and pressure become collisions. Squeeze the box, drop in a heavy grain, and watch the Ideal Gas Laws, Maxwell-Boltzmann distributions, diffusion, and Brownian motion emerge naturally from the engine of thermodynamics.</div>
+    <span class="card-tag">THERMODYNAMICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="lenses-mirrors.html">
+    <div class="card-icon">🔍</div>
+    <div class="card-title">Lenses & Mirrors</div>
+    <div class="card-desc">Pick a lens or mirror, place an object, and watch the image form in real time. See exactly when an image is real or virtual, erect or inverted, magnified or diminished.</div>
+    <span class="card-tag">OPTICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="maxwell.html">
+    <div class="card-icon">∇</div>
+    <div class="card-title">Maxwell's Equations Lab</div>
+    <div class="card-desc">Explore the four fundamental laws that unify electricity, magnetism, and light. Interact with movable electric charges, slice bar magnets to test for monopoles, change magnetic flux to induce currents, and witness how oscillating field vectors propagate through a vacuum to forge light itself.</div>
+    <span class="card-tag">ELECTROMAGNETISM</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="gravity.html">
+    <div class="card-icon">🌌</div>
+    <div class="card-title">N-Body Gravitational Simulation</div>
+    <div class="card-desc">Watch planets orbit a star under real Newtonian gravity. Add bodies, adjust star mass, and see live orbital velocities and periods computed in SI units.</div>
+    <span class="card-tag">CLASSICAL MECHANICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="photoelectric.html">
+    <div class="card-icon">⚛️</div>
+    <div class="card-title">The Photoelectric Effect</div>
+    <div class="card-desc">Shine light on a metal and knock electrons loose — but only the right colour works, no matter how bright the beam. Discover the photon, find the threshold frequency, measure the stopping voltage, and read Planck's constant straight off a graph in the experiment that won Einstein his Nobel Prize and launched quantum physics.</div>
+    <span class="card-tag">QUANTUM PHYSICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="Planet_formation.html">
+    <div class="card-icon">🪐</div>
+    <div class="card-title">Planet Formation</div>
+    <div class="card-desc">Witness how dust and gas clouds collapse under gravity to form planets. From a swirling protoplanetary disc to rocky worlds and gas giants.</div>
+    <span class="card-tag">ASTROPHYSICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="projectile.html">
+    <div class="card-icon">🎯</div>
+    <div class="card-title">Projectile &amp; Orbital Motion</div>
+    <div class="card-desc">Launch a ball and learn to calculate its flight step by step — a live worksheet plugs your real numbers into the range, height and time-of-flight formulas as you go. Solve everyday worked examples from soccer kicks to cliff jumps, then follow Newton's cannonball all the way up into orbit.</div>
+    <span class="card-tag">MECHANICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="quantum-dots.html">
+    <div class="card-icon">🌈</div>
+    <div class="card-title">Quantum Dots: The Colour of Size</div>
+    <div class="card-desc">Trap an electron in a microscopic box and watch its frequency shift. Discover how this single quantum trick powers modern QLED TVs, deep-tissue bio-imaging, and next-gen greenhouses.</div>
+    <span class="card-tag">QUANTUM PHYSICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="refraction.html">
+    <div class="card-icon">🪞</div>
+    <div class="card-title">Reflection, Refraction &amp; Light</div>
+    <div class="card-desc">A hands-on optics playground for the whole journey of a light ray. Bounce a beam off a mirror to see the law of reflection, bend it through water, glass and diamond with Snell's law, trap it inside a fibre-optic cable by total internal reflection, and split white light into a rainbow with a prism. Drag the beam to aim it, watch the animated rays travel, and see exactly how much light reflects versus refracts at every angle.</div>
+    <span class="card-tag">OPTICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="rotation.html">
+    <div class="card-icon">⚙</div>
+    <div class="card-title">Rotational Mechanics Lab</div>
+    <div class="card-desc">Drag masses to find the centre of mass and throw them to trace its parabola. Build a moment of inertia mass by mass, then watch the parallel-axis theorem in live bars. Balance a wooden see-saw, spin up a skater (and a collapsing star) with conserved angular momentum, and race a sphere, disc, hollow sphere and ring down a wooden ramp with a photo finish.</div>
+    <span class="card-tag">MECHANICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="Earth and SolarSystem.html">
+    <div class="card-icon">🌍</div>
+    <div class="card-title">Solar System & Satellite Orbits</div>
+    <div class="card-desc">Simulate planetary motion and orbital mechanics in real time. Alter satellite velocities, track escape trajectories, and calculate orbital periods under precise gravitational math to see what keeps celestial bodies locked in space.</div>
+    <span class="card-tag">ASTROPHYSICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="sound.html">
+    <div class="card-icon">🎵</div>
+    <div class="card-title">Sound, Waves &amp; Resonance</div>
+    <div class="card-desc">Hear the physics, not just see it. Play pure tones and watch the waveform, build standing waves on a string, listen to beats throb as two notes drift apart, map two-source interference, drive a system into resonance, and stack harmonics to sculpt the timbre of any instrument — all with real Web-Audio sound and a tuner mini-game.</div>
+    <span class="card-tag">WAVES &amp; SOUND</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="states-of-matter.html">
+    <div class="card-icon">🧊</div>
+    <div class="card-title">States of Matter &amp; Phase Changes</div>
+    <div class="card-desc">Watch molecules break free as you melt a solid, boil a liquid, and tear it apart into gas. See why the temperature freezes in place while ice melts, why boiling swallows nearly seven times more heat than melting, and why water boils at 71&deg;C on Everest but 121&deg;C in a pressure cooker. Drag across the pressure&ndash;temperature phase diagram to find the triple point where all three states meet at once.</div>
+    <span class="card-tag">THERMODYNAMICS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="tides.html">
+    <div class="card-icon">🌊</div>
+    <div class="card-title">Tides, Earthquakes &amp; Tsunamis Lab</div>
+    <div class="card-desc">Explore the massive forces of hydrodynamics and geology. Visualize how gravitational pull creates dual high tides across the globe, witness tectonic plates slip and rupture during an earthquake, and watch how that sudden displacement unleashes towering, high-speed tsunami waves racing across deep ocean basins toward the coast.</div>
+    <span class="card-tag">GEOPHYSICS &amp; FLUIDS</span>
+    <div class="card-link">Launch simulation <span class="arrow">→</span></div>
+  </a>
+
+  <a class="card" href="twin-paradox.html">
+    <div class="card-icon">⏱️</div>
+    <div class="card-title">Twin Paradox</div>
+    <div class="card-desc">Pick a destination — Mars, Andromeda, anywhere — and watch your twin grow old on Earth while you barely age. Witness Einstein's time dilation in action.</div>
+    <span class="card-tag">SPECIAL RELATIVITY</span>
     <div class="card-link">Launch simulation <span class="arrow">→</span></div>
   </a>
 
@@ -826,7 +683,7 @@ body.light-theme .footer-fine { color: var(--text3); }
   document.addEventListener("DOMContentLoaded", () => {
     // Dynamic asset discovery metric calculation counter
     
-    const totalSimulations = document.querySelectorAll('a.featured, a.card').length + document.querySelectorAll('.featured-cosmos').length;
+    const totalSimulations = document.querySelectorAll('.grid > .card').length;
     document.getElementById('sim-count').textContent = totalSimulations;
     
     // Local Storage persistent Theme state initialization loop
@@ -846,6 +703,38 @@ body.light-theme .footer-fine { color: var(--text3); }
       }
       localStorage.setItem('theme', theme);
     });
+
+    // ── Cursor-following glow on cards ──
+    const glowTargets = document.querySelectorAll('.card');
+    glowTargets.forEach(el => {
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+        el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+      });
+    });
+
+    // ── Staggered reveal for the simulation cards ──
+    const cards = document.querySelectorAll('.card');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!('IntersectionObserver' in window) || reduce) {
+      document.body.classList.add('no-reveal');
+    } else {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (!en.isIntersecting) return;
+          en.target.classList.add('in');
+          en.target.addEventListener('transitionend', () => {
+            en.target.style.transitionDelay = '0ms';
+          }, { once: true });
+          io.unobserve(en.target);
+        });
+      }, { rootMargin: '0px 0px -40px 0px' });
+      cards.forEach((c, i) => {
+        c.style.transitionDelay = (Math.min(i, 9) * 55) + 'ms';
+        io.observe(c);
+      });
+    }
   });
 
   // ── PWA: register the service worker for offline + installability ──
