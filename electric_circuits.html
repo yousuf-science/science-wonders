@@ -80,8 +80,35 @@ header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:
 .header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
 select.header-link option{background:var(--bg2);color:var(--text);}
 
+/* VOICE CONTROLS */
+.voice-wrap{max-width:1400px;margin:14px auto 0;padding:0 20px;}
+.voice-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.voice-bar select,
+.voice-bar button {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 6px 9px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.voice-bar select:hover,
+.voice-bar button:hover {
+  border-color: var(--accent);
+  background: var(--bg3);
+}
+
 /* Toolbar */
-.toolbar{max-width:1400px;margin:18px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.toolbar{max-width:1400px;margin:12px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .tool-btn{font-family:monospace;font-size:11px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;letter-spacing:.5px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
 .tool-btn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
 .tool-btn.active{background:var(--bg3);color:var(--accent);border-color:var(--accent);}
@@ -134,7 +161,7 @@ footer a:hover{color:var(--accent);}
   <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
   <div class="page-subtitle">Electric Circuits — Studio Workbench</div>
   <div class="header-spacer"></div>
-  <select id="theme-selector" class="header-link" style="outline:none; cursor:pointer;">
+  <select id="theme-selector" class="header-link" style="outline:none; cursor:pointer;" aria-label="Select theme">
     <option value="midnight">🌙 Midnight (Dark)</option>
     <option value="cosmos">🪐 Cosmos</option>
     <option value="chalk">📋 Chalk</option>
@@ -144,6 +171,25 @@ footer a:hover{color:var(--accent);}
   </select>
   <a class="header-link" href="index.html">← All Simulations</a>
 </header>
+
+<!-- VOICE CONTROLS -->
+<div class="voice-wrap">
+  <div class="voice-bar">
+    <select id="v-sel" aria-label="Select voice"></select>
+    <select id="v-speed" aria-label="Narration speed">
+      <option value="0.75">0.75×</option>
+      <option value="1" selected>1×</option>
+      <option value="1.25">1.25×</option>
+      <option value="1.5">1.5×</option>
+    </select>
+    <button type="button" onclick="narrate('concept')">
+      ▶ Play
+    </button>
+    <button type="button" onclick="stopNarrate()">
+      ■ Stop
+    </button>
+  </div>
+</div>
 
 <div class="toolbar">
   <button class="tool-btn active" id="add-select"><span class="ico">⬈</span>Select &amp; Toggle</button>
@@ -215,6 +261,126 @@ footer a:hover{color:var(--accent);}
 
 <script>
 'use strict';
+
+/* ============================================================================
+   VOICE NARRATION SYSTEM (Web Speech API)
+   ============================================================================ */
+let utter = null;
+
+const NARRATIONS = {
+  concept: `
+    An electric circuit is a closed loop that allows electric current to flow.
+    Voltage from a DC battery provides the electromotive force that pushes charge through conductors.
+
+    According to Ohm's Law, current is directly proportional to voltage and inversely proportional to resistance: V equals I times R.
+
+    In this interactive workbench, you can connect resistors, bulbs, capacitors, switches, and meters.
+    Watch how current flows, voltage drops across components, and power dissipation causes bulbs to glow or burn out if overloaded.
+  `
+};
+
+function voiceRank(voice) {
+  const name = (voice.name || "").toLowerCase();
+  const language = (voice.lang || "")
+    .toLowerCase()
+    .replace("_", "-");
+
+  let score = 0;
+
+  if (language.startsWith("en-gb")) score += 4;
+  if (/male/.test(name) && !/female/.test(name)) score += 3;
+
+  if (
+    /daniel|ryan|george|arthur|oliver|thomas|brian|graham/.test(name)
+  ) {
+    score += 3;
+  }
+
+  if (language.startsWith("en")) score += 1;
+
+  return score;
+}
+
+window.sqVoiceOrder = (a, b) => voiceRank(b) - voiceRank(a);
+
+function getEnglishVoices() {
+  return speechSynthesis
+    .getVoices()
+    .filter(voice =>
+      (voice.lang || "").toLowerCase().startsWith("en")
+    )
+    .sort(window.sqVoiceOrder);
+}
+
+function populateVoices() {
+  const select = document.getElementById("v-sel");
+  if (!select) return;
+
+  const previousVoice = select.value;
+  const voices = getEnglishVoices();
+
+  select.innerHTML = "";
+
+  voices.forEach(voice => {
+    const option = document.createElement("option");
+
+    option.value = voice.name;
+    option.textContent = `${voice.name} (${voice.lang})`;
+
+    select.appendChild(option);
+  });
+
+  if (
+    previousVoice &&
+    voices.some(voice => voice.name === previousVoice)
+  ) {
+    select.value = previousVoice;
+  }
+}
+
+function narrate(key) {
+  stopNarrate();
+
+  const text = NARRATIONS[key] || "";
+  if (!text.trim()) return;
+
+  utter = new SpeechSynthesisUtterance(
+    text.replace(/\s+/g, " ").trim()
+  );
+
+  const voiceSelect = document.getElementById("v-sel");
+  const speedSelect = document.getElementById("v-speed");
+
+  const voices = getEnglishVoices();
+
+  const chosenVoice =
+    voices.find(voice => voice.name === voiceSelect?.value) ||
+    voices[0];
+
+  if (chosenVoice) {
+    utter.voice = chosenVoice;
+  }
+
+  utter.rate = Number(speedSelect?.value) || 1;
+
+  utter.onend = () => {
+    utter = null;
+  };
+
+  utter.onerror = () => {
+    utter = null;
+  };
+
+  speechSynthesis.speak(utter);
+}
+
+function stopNarrate() {
+  speechSynthesis.cancel();
+  utter = null;
+}
+
+speechSynthesis.onvoiceschanged = populateVoices;
+populateVoices();
 
 /* ============================================================================
    ELECTRIC CIRCUIT SANDBOX
