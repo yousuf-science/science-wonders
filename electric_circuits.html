@@ -14,48 +14,77 @@
 <meta name="description" content="An interactive circuit simulator. Build any circuit, drop in resistors, bulbs, capacitors, meters — and watch current flow, voltage drop, and components react in real time.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
-  --border:#152035;--border2:#1e3050;
-  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
-  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
-  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;
-  --canvas-bg:#020812;
-  --grid-stroke:rgba(30,50,80,.18);
-}
 
-/* HIGH-CONTRAST LIGHT THEME DESIGN PARADIGM MAP */
-body.light-theme {
-  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#ebf2fa;
-  --border:#d0d7de;--border2:#b6c2d1;
-  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
-  --accent:#0969da;--gold:#b07d00;--gold-bright:#8a6200;
-  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;
-  --canvas-bg:#f8fa9b; /* Classic blueprint cream layout tint */
-  --canvas-bg:#f0f4f8;
-  --grid-stroke:rgba(9,105,218,0.08);
+/* =========================================================
+   6-THEME PALETTE SYSTEM
+   ========================================================= */
+:root, [data-theme="midnight"] {
+  --bg:#070b14; --surface:#0d1422; --card:#121b2d; --text:#eef4ff; --muted:#9aabc4; --border:#26334a; --accent1:#6ca7ff; --accent2:#31d3c5; --accent3:#f8bd4b; --accent4:#b494ff; --shadow:0 16px 38px rgba(0,0,0,.34); --grid-line:rgba(148,163,184,.08); --wrong:#fb7185; --correct:#34d399;
+  --bg2:var(--surface); --bg3:var(--card); --border2:var(--border);
+  --text2:var(--muted); --text3:#5878a0; --text-bright:#ffffff;
+  --accent:var(--accent1); --gold:var(--accent3); --gold-bright:#ffe8a0;
+  --cyan:var(--accent2); --violet:var(--accent4); --green:var(--correct); --pink:var(--wrong); --red:var(--wrong);
+  --canvas-bg:#020812; --grid-stroke:var(--grid-line);
+}
+[data-theme="cosmos"] {
+  --bg:#fbf8f0; --surface:#fffdf8; --card:#fffefb; --text:#12345d; --muted:#617087; --border:#ddd3c1; --accent1:#176bd5; --accent2:#10a9a5; --accent3:#f2a619; --accent4:#7c56bd; --shadow:0 12px 28px rgba(43,50,60,.10); --grid-line:rgba(60,83,105,.055); --wrong:#e85c4a; --correct:#4ea943;
+  --bg2:var(--surface); --bg3:var(--card); --border2:var(--border);
+  --text2:var(--muted); --text3:#8899aa; --text-bright:var(--text);
+  --accent:var(--accent1); --gold:var(--accent3); --gold-bright:#d88b00;
+  --cyan:var(--accent2); --violet:var(--accent4); --green:var(--correct); --pink:var(--wrong); --red:var(--wrong);
+  --canvas-bg:#f4f0e6; --grid-stroke:var(--grid-line);
+}
+[data-theme="chalk"] {
+  --bg:#f2fbfa; --surface:#fbfffe; --card:#ffffff; --text:#123c44; --muted:#62767b; --border:#c9dfdc; --accent1:#078b91; --accent2:#2db7b2; --accent3:#e99c22; --accent4:#5868bd; --shadow:0 12px 28px rgba(25,83,84,.10); --grid-line:rgba(7,139,145,.055); --wrong:#d95f55; --correct:#3f9f52;
+  --bg2:var(--surface); --bg3:var(--card); --border2:var(--border);
+  --text2:var(--muted); --text3:#7a8e93; --text-bright:var(--text);
+  --accent:var(--accent1); --gold:var(--accent3); --gold-bright:#b87400;
+  --cyan:var(--accent2); --violet:var(--accent4); --green:var(--correct); --pink:var(--wrong); --red:var(--wrong);
+  --canvas-bg:#e6f4f2; --grid-stroke:var(--grid-line);
+}
+[data-theme="neon"] {
+  --bg:#fff6f2; --surface:#fffdfb; --card:#ffffff; --text:#4a2d31; --muted:#806b6e; --border:#ead0c7; --accent1:#e75d4f; --accent2:#168f92; --accent3:#eda11a; --accent4:#8861bd; --shadow:0 12px 28px rgba(104,52,43,.10); --grid-line:rgba(231,93,79,.052); --wrong:#d9443b; --correct:#3d9c55;
+  --bg2:var(--surface); --bg3:var(--card); --border2:var(--border);
+  --text2:var(--muted); --text3:#9a8386; --text-bright:var(--text);
+  --accent:var(--accent1); --gold:var(--accent3); --gold-bright:#b87700;
+  --cyan:var(--accent2); --violet:var(--accent4); --green:var(--correct); --pink:var(--wrong); --red:var(--wrong);
+  --canvas-bg:#fceee8; --grid-stroke:var(--grid-line);
+}
+[data-theme="ember"] {
+  --bg:#fffaf0; --surface:#fffef9; --card:#ffffff; --text:#493617; --muted:#7d705d; --border:#ead9b8; --accent1:#e99b12; --accent2:#218d8b; --accent3:#e56742; --accent4:#7358b5; --shadow:0 12px 28px rgba(105,74,19,.10); --grid-line:rgba(233,155,18,.055); --wrong:#d95745; --correct:#4c9c4d;
+  --bg2:var(--surface); --bg3:var(--card); --border2:var(--border);
+  --text2:var(--muted); --text3:#968873; --text-bright:var(--text);
+  --accent:var(--accent1); --gold:var(--accent3); --gold-bright:#b84920;
+  --cyan:var(--accent2); --violet:var(--accent4); --green:var(--correct); --pink:var(--wrong); --red:var(--wrong);
+  --canvas-bg:#f5eedc; --grid-stroke:var(--grid-line);
+}
+[data-theme="aurora"] {
+  --bg:#f8f4ff; --surface:#fefcff; --card:#ffffff; --text:#352b59; --muted:#736c86; --border:#ddd1ec; --accent1:#7654b8; --accent2:#119f9a; --accent3:#e89f1b; --accent4:#d95f8d; --shadow:0 12px 28px rgba(67,45,104,.11); --grid-line:rgba(118,84,184,.055); --wrong:#d95d68; --correct:#459f55;
+  --bg2:var(--surface); --bg3:var(--card); --border2:var(--border);
+  --text2:var(--muted); --text3:#8b839c; --text-bright:var(--text);
+  --accent:var(--accent1); --gold:var(--accent3); --gold-bright:#b37700;
+  --cyan:var(--accent2); --violet:var(--accent4); --green:var(--correct); --pink:var(--wrong); --red:var(--wrong);
+  --canvas-bg:#eee6fb; --grid-stroke:var(--grid-line);
 }
 
 body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background 0.2s ease, color 0.2s ease;}
 
-header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:10;transition:background 0.2s ease, border-color 0.2s ease;}
-body.light-theme header{background:rgba(255,255,255,0.96);}
+header{display:flex;align-items:center;gap:20px;padding:13px 28px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:10;transition:background 0.2s ease, border-color 0.2s ease;}
 
 .logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
 .logo span{color:var(--text2);}
 .logo a{color:inherit;text-decoration:none;}
 .page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:20px;letter-spacing:2px;}
 .header-spacer{flex:1;}
-.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;background:transparent;}
 .header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
-.theme-toggle-btn { font-weight: bold; color: var(--gold); }
+select.header-link option{background:var(--bg2);color:var(--text);}
 
 /* Toolbar */
 .toolbar{max-width:1400px;margin:18px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .tool-btn{font-family:monospace;font-size:11px;padding:8px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;letter-spacing:.5px;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
 .tool-btn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
-.tool-btn.active{background:rgba(58,143,255,.12);color:var(--accent);border-color:var(--accent);}
-body.light-theme .tool-btn.active{background:var(--bg3);}
+.tool-btn.active{background:var(--bg3);color:var(--accent);border-color:var(--accent);}
 .tool-btn .ico{font-size:14px;line-height:1;}
 .tool-sep{width:1px;height:24px;background:var(--border);}
 
@@ -63,10 +92,8 @@ body.light-theme .tool-btn.active{background:var(--bg3);}
 .canvas-wrap{max-width:1400px;margin:14px auto 0;padding:0 20px;}
 .canvas-frame{position:relative;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--canvas-bg);transition:background 0.2s ease, border-color 0.2s ease;}
 svg#canvas{display:block;width:100%;height:auto;cursor:default;user-select:none;}
-.canvas-hint{position:absolute;top:14px;left:18px;font-family:monospace;font-size:11px;color:var(--gold);background:rgba(1,6,16,.92);padding:6px 12px;border-radius:5px;border:1px solid var(--border2);pointer-events:none;letter-spacing:1px;max-width:60%;}
-body.light-theme .canvas-hint{background:rgba(255,255,255,0.95);color:var(--gold-bright);}
-.canvas-status{position:absolute;top:14px;right:18px;font-family:monospace;font-size:10px;color:var(--text2);background:rgba(1,6,16,.92);padding:5px 10px;border-radius:5px;border:1px solid var(--border2);letter-spacing:1px;}
-body.light-theme .canvas-status{background:rgba(255,255,255,0.95);}
+.canvas-hint{position:absolute;top:14px;left:18px;font-family:monospace;font-size:11px;color:var(--gold-bright);background:var(--bg2);padding:6px 12px;border-radius:5px;border:1px solid var(--border2);pointer-events:none;letter-spacing:1px;max-width:60%;}
+.canvas-status{position:absolute;top:14px;right:18px;font-family:monospace;font-size:10px;color:var(--text2);background:var(--bg2);padding:5px 10px;border-radius:5px;border:1px solid var(--border2);letter-spacing:1px;}
 
 /* Panels */
 .panels{max-width:1400px;margin:14px auto 0;display:grid;grid-template-columns:1fr 380px;gap:14px;padding:0 20px;}
@@ -107,7 +134,14 @@ footer a:hover{color:var(--accent);}
   <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
   <div class="page-subtitle">Electric Circuits — Studio Workbench</div>
   <div class="header-spacer"></div>
-  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <select id="theme-selector" class="header-link" style="outline:none; cursor:pointer;">
+    <option value="midnight">🌙 Midnight (Dark)</option>
+    <option value="cosmos">🪐 Cosmos</option>
+    <option value="chalk">📋 Chalk</option>
+    <option value="neon">⚡ Neon</option>
+    <option value="ember">🔥 Ember</option>
+    <option value="aurora">✨ Aurora</option>
+  </select>
   <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
@@ -186,7 +220,7 @@ footer a:hover{color:var(--accent);}
    ELECTRIC CIRCUIT SANDBOX
    --------------------------------------------------------------------------
    - Nodes are connected by branches (each branch is one component).
-   - Solver: Modified Nonal Analysis with Gaussian elimination.
+   - Solver: Modified Nodal Analysis with Gaussian elimination.
    - Capacitors integrated with forward Euler each frame (DT = 0.015 s).
    ============================================================================ */
 
@@ -1058,14 +1092,16 @@ function setupToolbar() {
     solve(); render(); updateSelectedPanel(); updateStatus();
   });
 
-  // Local Storage persistent Theme state initialization loop
-  const themeSwitcher = document.getElementById('theme-switcher');
-  if (localStorage.getItem('theme') === 'light') {
-    document.body.classList.add('light-theme');
-  }
-  themeSwitcher.addEventListener('click', () => {
-    document.body.classList.toggle('light-theme');
-    localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+  // 6-Theme Dropdown Selector with Local Storage Persistence
+  const themeSelector = document.getElementById('theme-selector');
+  const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeSelector.value = savedTheme;
+
+  themeSelector.addEventListener('change', (e) => {
+    const selectedTheme = e.target.value;
+    document.documentElement.setAttribute('data-theme', selectedTheme);
+    localStorage.setItem('sim_theme', selectedTheme);
     render();
   });
 }
