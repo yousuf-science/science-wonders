@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -11,30 +9,79 @@
       gtag('config', 'G-32ZMW31TWT');
     </script>
     
-
-    
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How We Know How Old Things Are — Science Wonders</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
+
+/* =========================================================
+   6-THEME PALETTE SYSTEM
+   ========================================================= */
+:root, [data-theme="midnight"] {
   --bg:#010409;--bg2:#06101e;--bg3:#0a1828;
   --border:#152035;--border2:#1e3050;
-  --text:#c0d8f0;--text2:#5878a0;--text3:#3a5070;
+  --text:#c0d8f0;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
   --gold:#f0c060;--gold2:#ffe8a0;
   --cyan:#20d8ff;--green:#40ffaa;--orange:#ff9040;
   --red:#ff4060;--c14:#40ff80;--c12:#6090ff;
 }
-body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;}
-header{display:flex;align-items:center;gap:20px;padding:12px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.98);position:sticky;top:0;z-index:20;}
-.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+[data-theme="cosmos"] {
+  --bg:#fbf8f0; --bg2:#fffdf8; --bg3:#fffefb;
+  --border:#ddd3c1; --border2:#c9bea8;
+  --text:#12345d; --text2:#617087; --text3:#8899aa; --text-bright:#091e36;
+  --gold:#d88b00; --gold2:#b87400;
+  --cyan:#10a9a5; --green:#2e8b22; --orange:#d87020;
+  --red:#e85c4a; --c14:#1a8f3c; --c12:#2050c0;
+}
+[data-theme="chalk"] {
+  --bg:#f2fbfa; --bg2:#fbfffe; --bg3:#ffffff;
+  --border:#c9dfdc; --border2:#b0c8c5;
+  --text:#123c44; --text2:#62767b; --text3:#7a8e93; --text-bright:#08282d;
+  --gold:#d08010; --gold2:#a06000;
+  --cyan:#2db7b2; --green:#2f8f42; --orange:#d07010;
+  --red:#d95f55; --c14:#208f3c; --c12:#3060c0;
+}
+[data-theme="neon"] {
+  --bg:#fff6f2; --bg2:#fffdfb; --bg3:#ffffff;
+  --border:#ead0c7; --border2:#d5b8ae;
+  --text:#4a2d31; --text2:#806b6e; --text3:#9a8386; --text-bright:#2d181b;
+  --gold:#d88000; --gold2:#a86000;
+  --cyan:#168f92; --green:#2d8c45; --orange:#d06010;
+  --red:#d9443b; --c14:#1d8c35; --c12:#4050b0;
+}
+[data-theme="ember"] {
+  --bg:#fffaf0; --bg2:#fffef9; --bg3:#ffffff;
+  --border:#ead9b8; --border2:#d4c09a;
+  --text:#493617; --text2:#7d705d; --text3:#968873; --text-bright:#2d200c;
+  --gold:#d88000; --gold2:#b84920;
+  --cyan:#218d8b; --green:#3c8c3d; --orange:#d05010;
+  --red:#d95745; --c14:#2c8c2d; --c12:#4050a0;
+}
+[data-theme="aurora"] {
+  --bg:#f8f4ff; --bg2:#fefcff; --bg3:#ffffff;
+  --border:#ddd1ec; --border2:#c4b4d6;
+  --text:#352b59; --text2:#736c86; --text3:#8b839c; --text-bright:#1d1633;
+  --gold:#c88000; --gold2:#996000;
+  --cyan:#119f9a; --green:#358f45; --orange:#d06015;
+  --red:#d95d68; --c14:#258f35; --c12:#4634a8;
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;transition:background .2s,color .2s;}
+header{display:flex;align-items:center;gap:16px;padding:12px 28px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;}
 .logo span{color:var(--text2);}
-.hdr-sub{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
-.wrap{max-width:940px;margin:0 auto;padding:18px 20px 50px;}
+.logo a{color:inherit;text-decoration:none;}
+.hdr-sub{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:16px;letter-spacing:1.5px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:1.5px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;background:transparent;}
+.header-link:hover{color:var(--gold);border-color:var(--border2);background:var(--bg3);}
+select.header-link option{background:var(--bg2);color:var(--text);}
+
+.wrap{max-width:960px;margin:0 auto;padding:18px 20px 50px;}
 
 /* Intro banner */
-.intro{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;text-align:center;}
+.intro{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;text-align:center;transition:background .2s,border-color .2s;}
 .intro h2{font-family:'Georgia',serif;font-size:22px;color:var(--gold2);margin-bottom:8px;font-weight:normal;}
 .intro p{font-size:14px;color:var(--text2);line-height:1.75;max-width:680px;margin:0 auto;}
 
@@ -53,11 +100,17 @@ header{display:flex;align-items:center;gap:20px;padding:12px 28px;border-bottom:
 .art-age{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
 
 /* Main canvas */
-.canvas-box{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+.canvas-box{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#000;}
 canvas#main{display:block;width:100%;background:#000;}
 
+/* Interactive Time Scrubber */
+.scrubber-wrap{display:none;background:rgba(1,6,16,.92);border-top:1px solid var(--border2);padding:10px 22px;font-family:monospace;}
+.scrubber-row{display:flex;align-items:center;gap:14px;}
+.scrubber-label{font-size:10px;color:var(--gold);white-space:nowrap;letter-spacing:1px;}
+.scrubber-wrap input[type=range]{flex:1;accent-color:var(--c14);cursor:pointer;height:6px;}
+
 /* Story text panel */
-.story-panel{background:rgba(1,6,16,.95);border-top:1px solid var(--border2);padding:16px 22px;}
+.story-panel{background:var(--bg2);border-top:1px solid var(--border2);padding:16px 22px;transition:background .2s;}
 .story-stage{font-family:monospace;font-size:9px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
 .story-title{font-size:16px;color:var(--gold2);font-weight:normal;margin-bottom:6px;}
 .story-text{font-size:13px;color:var(--text2);line-height:1.8;}
@@ -71,18 +124,18 @@ button:hover{background:var(--bg3);color:var(--text);border-color:var(--cyan);}
 button.lit{border-color:var(--cyan);color:var(--cyan);}
 button.go{border-color:var(--green);color:var(--green);}
 .stage-dots{display:flex;gap:5px;align-items:center;margin-left:4px;}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background .3s;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background .3s;cursor:pointer;}
 .dot.active{background:var(--gold);}
 .dot.done{background:var(--green);}
 
 /* Voice box */
-.vbox{display:none;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:9px 13px;margin-top:10px;font-family:monospace;font-size:10px;line-height:1.8;}
-.vctrls{display:flex;gap:7px;align-items:center;margin-bottom:6px;flex-wrap:wrap;}
-.vctrls select{flex:1;min-width:110px;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:4px;font-family:monospace;font-size:10px;padding:2px 6px;}
+.vbox{display:none;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:10px 14px;margin-top:12px;font-family:monospace;font-size:10.5px;line-height:1.8;}
+.vctrls{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap;}
+.vctrls select{flex:1;min-width:110px;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:4px;font-family:monospace;font-size:10px;padding:3px 6px;}
 #vt{color:var(--gold2);line-height:1.75;}
 
 /* Result card */
-.result{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-top:14px;}
+.result{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-top:14px;transition:background .2s;}
 .result-inner{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;}
 .res-left{min-width:180px;}
 .res-tag{font-family:monospace;font-size:9px;letter-spacing:3px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;}
@@ -92,32 +145,43 @@ button.go{border-color:var(--green);color:var(--green);}
 .res-bars{margin-bottom:10px;}
 .rb{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-family:monospace;font-size:10px;}
 .rb-lbl{width:32px;color:var(--text3);}
-.rb-track{flex:1;height:9px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.rb-track{flex:1;height:9px;background:rgba(128,128,128,.15);border-radius:4px;overflow:hidden;}
 .rb-fill{height:100%;border-radius:4px;transition:width .5s;}
 .rb-val{width:44px;text-align:right;}
 .res-hist{font-size:12px;color:var(--text3);line-height:1.75;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
 .res-hist strong{color:var(--text2);}
-.dino-warn{background:rgba(255,64,96,.07);border:1px solid rgba(255,64,96,.25);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:11px;color:#ff9098;line-height:1.85;}
+.dino-warn{background:rgba(255,64,96,.07);border:1px solid rgba(255,64,96,.25);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:11px;color:var(--red);line-height:1.85;}
 .dino-warn strong{color:var(--red);}
 
 /* Theory toggle */
 .theory-toggle{font-family:monospace;font-size:10px;color:var(--text3);cursor:pointer;text-align:center;margin-top:16px;letter-spacing:2px;padding:8px;border:1px solid var(--border);border-radius:6px;transition:all .2s;}
 .theory-toggle:hover{color:var(--text2);border-color:var(--border2);}
-.theory{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-top:12px;}
+.theory{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-top:12px;transition:background .2s;}
 .theory h3{font-family:monospace;font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin:18px 0 8px;font-weight:normal;}
 .theory h3:first-of-type{margin-top:0;}
 .theory p{font-size:13px;color:var(--text2);line-height:1.85;margin-bottom:8px;}
 .teq{font-family:monospace;font-size:11px;background:var(--bg3);border-left:3px solid var(--gold);padding:9px 14px;margin:10px 0;border-radius:0 6px 6px 0;color:var(--gold2);}
 .hbox{border-radius:7px;padding:11px 14px;margin:10px 0;font-family:monospace;font-size:11px;line-height:1.85;}
-.hb-g{background:rgba(64,255,128,.05);border:1px solid rgba(64,255,128,.18);color:#80ffb0;}
-.hb-r{background:rgba(255,64,96,.04);border:1px solid rgba(255,64,96,.18);color:#ff9098;}
-footer{border-top:1px solid var(--border);padding:12px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;margin-top:20px;}
+.hb-g{background:rgba(64,255,128,.05);border:1px solid rgba(64,255,128,.18);color:var(--green);}
+.hb-r{background:rgba(255,64,96,.04);border:1px solid rgba(255,64,96,.18);color:var(--red);}
+footer{border-top:1px solid var(--border);padding:14px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;margin-top:20px;}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">Science<span> Wonders</span></div>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
   <div class="hdr-sub">How We Know How Old Things Are</div>
+  <div class="header-spacer"></div>
+  <button id="btn-narrate" class="header-link">🔇 Voice</button>
+  <select id="theme-selector" class="header-link" aria-label="Select theme">
+    <option value="midnight">🌙 Midnight (Dark)</option>
+    <option value="cosmos">🪐 Cosmos</option>
+    <option value="chalk">📋 Chalk</option>
+    <option value="neon">⚡ Neon</option>
+    <option value="ember">🔥 Ember</option>
+    <option value="aurora">✨ Aurora</option>
+  </select>
+  <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
 <div class="wrap">
@@ -153,6 +217,16 @@ footer{border-top:1px solid var(--border);padding:12px 28px;text-align:center;fo
 
 <div class="canvas-box">
   <canvas id="main" height="460"></canvas>
+  
+  <!-- INTERACTIVE TIME SCRUBBER (Appears in Stage 3 Decay View) -->
+  <div class="scrubber-wrap" id="scrubber-wrap">
+    <div class="scrubber-row">
+      <span class="scrubber-label">⏱️ SCRUB TIME:</span>
+      <input type="range" id="sl-time" min="0" max="1" step="0.005" value="0">
+      <span class="scrubber-label" id="scrub-val" style="min-width:90px;text-align:right;">0 yrs</span>
+    </div>
+  </div>
+
   <div class="story-panel">
     <div class="story-stage" id="st-stage">Stage 1 of 4</div>
     <div class="story-title" id="st-title">Loading...</div>
@@ -160,19 +234,18 @@ footer{border-top:1px solid var(--border);padding:12px 28px;text-align:center;fo
     <div class="controls">
       <button id="btn-prev">&#8592; Back</button>
       <button id="btn-next" class="go">Next &#8594;</button>
-      <button id="btn-auto">&#9654; Auto</button>
-      <button id="btn-v">&#x1F507; Voice</button>
+      <button id="btn-auto">&#9654; Auto Play</button>
       <div class="stage-dots" id="dots"></div>
     </div>
     <div class="vbox" id="vbox">
       <div class="vctrls">
         <span style="color:var(--text3);font-size:9px;">VOICE</span>
         <select id="vsel"><option>Loading...</option></select>
-        <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".88" style="width:45px;accent-color:var(--gold);">
-        <span id="rv" style="color:var(--gold);min-width:26px;">0.9x</span>
+        <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".90" style="width:60px;">
+        <span id="rv" style="color:var(--gold);min-width:30px;">0.9×</span>
       </div>
       <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">CURRENTLY SAYING</div>
-      <div id="vt">-</div>
+      <div id="vt">—</div>
     </div>
   </div>
 </div>
@@ -185,87 +258,109 @@ footer{border-top:1px solid var(--border);padding:12px 28px;text-align:center;fo
 <div class="theory" id="theory">
   <h3>The Carbon-14 Clock</h3>
   <p>Carbon-14 is made in the upper atmosphere when cosmic rays strike nitrogen atoms. It mixes into the air as CO2 and is absorbed by every living thing. The ratio of C-14 to ordinary C-12 is the same everywhere on Earth and has been for thousands of years. When something dies, it stops absorbing C-14. The clock starts.</p>
-  <div class="teq">Remaining C-14 = 100% x (1/2) ^ (Age / 5,730)
+  <div class="teq">Remaining C-14 = 100% × (1/2) ^ (Age / 5,730)
     <div style="font-size:10px;color:var(--text3);margin-top:5px;">After 5,730 years: 50% remains. After 11,460 years: 25%. After 17,190 years: 12.5%.</div>
   </div>
   <h3>Why 5,730 years?</h3>
-  <p>That is the half-life of Carbon-14 - the time it takes for exactly half the atoms to decay into nitrogen. This rate is set by quantum physics and cannot be changed by any amount of heat, pressure, or chemistry. It has been the same for billions of years and will be the same forever. That reliability is what makes it a clock.</p>
+  <p>That is the half-life of Carbon-14 — the time it takes for exactly half the atoms to decay into nitrogen. This rate is set by quantum physics and cannot be changed by any amount of heat, pressure, or chemistry. It has been the same for billions of years and will be the same forever. That reliability is what makes it a clock.</p>
   <h3>Why can't we use it for dinosaurs?</h3>
-  <p>After about 50,000 years - just 9 half-lives - the C-14 concentration drops below the detection limit of any instrument. For dinosaur bones (66+ million years old), every single C-14 atom decayed away long ago. Scientists use Uranium-238 instead, which decays much more slowly - half-life of 4.5 billion years - perfect for dating million-year-old rocks.</p>
+  <p>After about 50,000 years — just 9 half-lives — the C-14 concentration drops below the detection limit of any instrument. For dinosaur bones (66+ million years old), every single C-14 atom decayed away long ago. Scientists use Uranium-238 instead, which decays much more slowly — half-life of 4.5 billion years — perfect for dating million-year-old rocks.</p>
   <div class="hbox hb-g">
     <strong>Independent cross-checks:</strong> Carbon dating has been verified against tree rings (going back 13,900 years), ice cores, coral, and written historical records. Every method agrees. Willard Libby invented it in 1949 and won the Nobel Prize in 1960.
   </div>
   <div class="hbox hb-r">
-    <strong>How we date dinosaurs:</strong> Uranium-Lead dating of zircon crystals found in the rock layers surrounding the fossil. The crystal traps uranium when it forms. Over millions of years, uranium decays to lead. Measuring the ratio gives the age of the rock - and therefore the age of the fossil buried in it.
+    <strong>How we date dinosaurs:</strong> Uranium-Lead dating of zircon crystals found in the rock layers surrounding the fossil. The crystal traps uranium when it forms. Over millions of years, uranium decays to lead. Measuring the ratio gives the age of the rock — and therefore the age of the fossil buried in it.
   </div>
 </div>
 
 </div>
-<footer>SCIENCE WONDERS &nbsp;.&nbsp; OPEN-SOURCE EDUCATIONAL SIMULATIONS</footer>
+<footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
 
 <script>
-// narration state - first
-let narrateOn=false,speaking=false,chosenVoice=null,speechRate=.88;
+// ============================================================================
+// VOICE NARRATION ENGINE (Standardised Rules)
+// ============================================================================
+let narrateOn=false, speaking=false, chosenVoice=null, speechRate=0.90;
+
+function populateVoices(){
+  if(!window.speechSynthesis)return;
+  const voices=speechSynthesis.getVoices(), sel=document.getElementById('vsel');
+  if(!voices.length)return; sel.innerHTML='';
+  const groups=[
+    {l:'— Female English —',v:voices.filter(v=>v.lang.startsWith('en')&&/female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Male English —',  v:voices.filter(v=>v.lang.startsWith('en')&&/male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name))},
+    {l:'— English —',       v:voices.filter(v=>v.lang.startsWith('en')&&!/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Other —',         v:voices.filter(v=>!v.lang.startsWith('en'))}
+  ];
+  groups.forEach(g=>{
+    if(!g.v.length)return;
+    const og=document.createElement('optgroup'); og.label=g.l;
+    g.v.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;og.appendChild(o);});
+    sel.appendChild(og);
+  });
+  const pref=voices.find(v=>v.name==='Google UK English Female')||voices.find(v=>v.lang==='en-GB'&&/female/i.test(v.name))||voices.find(v=>v.lang.startsWith('en'));
+  if(pref){sel.value=pref.name;chosenVoice=pref;}
+  else if(voices[0]){sel.value=voices[0].name;chosenVoice=voices[0];}
+}
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=populateVoices;populateVoices();}
 
 function narrate(text){
   if(!narrateOn||!window.speechSynthesis)return;
-  speechSynthesis.cancel();speaking=true;
+  speechSynthesis.cancel(); speaking=true;
   document.getElementById('vt').textContent=text;
-  var sents=text.match(/[^.!?]+[.!?]+[\s]*/g)||[text];
-  var idx=0;
+  const sents=text.match(/[^.!?]+[.!?]+[\s]*/g)||[text];
+  let idx=0;
   function next(){
     if(!narrateOn){speaking=false;return;}
     if(idx>=sents.length){speaking=false;return;}
-    var u=new SpeechSynthesisUtterance(sents[idx].trim());
+    const u=new SpeechSynthesisUtterance(sents[idx].trim());
     if(chosenVoice)u.voice=chosenVoice;
     u.rate=speechRate;u.pitch=1;u.volume=1;
-    u.onend=function(){idx++;next();};u.onerror=function(){idx++;next();};
+    u.onend=()=>{idx++;next();}; u.onerror=()=>{idx++;next();};
     speechSynthesis.speak(u);
   }
   next();
 }
 function stopV(){if(window.speechSynthesis)speechSynthesis.cancel();speaking=false;}
 
-// physics
-var HALF_LIFE=5730;
-var LAMBDA=Math.log(2)/HALF_LIFE;
+// ============================================================================
+// PHYSICS & SIMULATION STATE
+// ============================================================================
+const HALF_LIFE=5730;
+const LAMBDA=Math.log(2)/HALF_LIFE;
 function cFrac(age){return Math.exp(-LAMBDA*Math.min(age,200000));}
 
-// canvas
-var cv=document.getElementById('main'),ctx=cv.getContext('2d');
-var W,H,CX,CY;
+const cv=document.getElementById('main'), ctx=cv.getContext('2d');
+let W,H,CX,CY;
 function resize(){
-  var r=cv.getBoundingClientRect();
+  const r=cv.getBoundingClientRect();
   W=cv.width=Math.round(r.width);H=460;cv.height=H;CX=W/2;CY=H/2;
 }
 resize();window.addEventListener('resize',resize);
 
-// sim state
-var artIdx=0,stageIdx=0,stageT=0,autoPlay=false;
-var atoms=[],decayAge=0,animating=false;
-var lastTs=null;
+let artIdx=0, stageIdx=0, stageT=0, autoPlay=false, manualScrub=false;
+let atoms=[], decayAge=0;
+let lastTs=null;
 
-// background stars
-var BGS=[];
-for(var i=0;i<180;i++)BGS.push({x:Math.random(),y:Math.random(),b:Math.random()*.8+.2,s:.2+Math.random()*.9});
+const BGS=[];
+for(let i=0;i<180;i++) BGS.push({x:Math.random(),y:Math.random(),b:Math.random()*.8+.2,s:.2+Math.random()*.9});
 
-// atom region per artifact (normalised 0-1 to canvas)
-var REGIONS=[
-  {cx:.5,cy:.46,rx:.35,ry:.12},   // wood - horizontal log
-  {cx:.5,cy:.45,rx:.28,ry:.2},    // mammoth - body
-  {cx:.5,cy:.48,rx:.4,ry:.25},    // cave - wall area
-  {cx:.5,cy:.48,rx:.32,ry:.16},   // dinosaur - fossil
+const REGIONS=[
+  {cx:.5,cy:.46,rx:.35,ry:.12},   // wood
+  {cx:.5,cy:.45,rx:.28,ry:.2},    // mammoth
+  {cx:.5,cy:.48,rx:.4,ry:.25},    // cave
+  {cx:.5,cy:.48,rx:.32,ry:.16}    // dinosaur
 ];
 
 function inRegion(r,x,y){
-  var dx=(x/W-r.cx)/r.rx,dy=(y/H-r.cy)/r.ry;
+  const dx=(x/W-r.cx)/r.rx,dy=(y/H-r.cy)/r.ry;
   return dx*dx+dy*dy<=1;
 }
 
 function initAtoms(nTotal,nC14,reg){
   atoms=[];decayAge=0;
-  for(var i=0;i<nTotal;i++){
-    var ax,ay,tries=0;
+  for(let i=0;i<nTotal;i++){
+    let ax,ay,tries=0;
     do{
       ax=W*(reg.cx-reg.rx)+Math.random()*W*reg.rx*2;
       ay=H*(reg.cy-reg.ry)+Math.random()*H*reg.ry*2;
@@ -281,31 +376,33 @@ function initAtoms(nTotal,nC14,reg){
   }
 }
 
-// =================== ARTIFACT DATA ===================
-var ARTS=[
+// ============================================================================
+// ARTIFACT DATA & SCENES
+// ============================================================================
+const ARTS=[
   {
     name:'Ancient Wood',age:3000,isDino:false,
     histFact:'3,000 years ago: Ancient Egypt was at its height. Pharaohs ruled, the Library of Alexandria had not yet been built, and Homer was composing the Iliad.',
     stages:[
       {
         title:'A living cedar tree in ancient Egypt',
-        text:'About 3,000 years ago, this cedar tree stood in the forests of Lebanon, under a warm Mediterranean sun. Every day it breathed in carbon dioxide from the air. Most of that carbon was perfectly ordinary. But a tiny fraction - one in every trillion atoms - was a special kind called <em>Carbon-14</em>, gently radioactive, drifting down from the atmosphere. The tree absorbed it all, without knowing it was building a clock inside itself.',
-        narr:'About 3,000 years ago, this cedar tree stood in the forests of Lebanon, under a warm Mediterranean sun. Every day it breathed in carbon dioxide from the air. Most of that carbon was perfectly ordinary. But a tiny fraction - one in every trillion atoms - was a special kind called Carbon-14, gently radioactive, drifting down from the atmosphere. The tree absorbed it all, without knowing it was building a clock inside itself.'
+        text:'About 3,000 years ago, this cedar tree stood in the forests of Lebanon, under a warm Mediterranean sun. Every day it breathed in carbon dioxide from the air. Most of that carbon was perfectly ordinary. But a tiny fraction — one in every trillion atoms — was a special kind called <em>Carbon-14</em>, gently radioactive, drifting down from the atmosphere. The tree absorbed it all, without knowing it was building a clock inside itself.',
+        narr:'About 3,000 years ago, this cedar tree stood in the forests of Lebanon, under a warm Mediterranean sun. Every day it breathed in carbon dioxide from the air. Most of that carbon was perfectly ordinary. But a tiny fraction — one in every trillion atoms — was a special kind called Carbon-14, gently radioactive, drifting down from the atmosphere. The tree absorbed it all, without knowing it was building a clock inside itself.'
       },
       {
         title:'The tree is cut down. The clock starts.',
-        text:'A craftsman felled the tree - perhaps to build a temple door, a ship, or a piece of furniture. The moment the tree died, it stopped breathing. No more Carbon-14 came in. But the atoms already inside the wood did not disappear instantly. They began to decay - slowly, steadily, at a perfectly fixed rate. <strong>The clock had started without anyone winding it.</strong>',
-        narr:'A craftsman felled the tree - perhaps to build a temple door, a ship, or a piece of furniture. The moment the tree died, it stopped breathing. No more Carbon-14 came in. But the atoms already inside the wood did not disappear. They began to decay - slowly, steadily, at a perfectly fixed rate. The clock had started without anyone winding it.'
+        text:'A craftsman felled the tree — perhaps to build a temple door, a ship, or a piece of furniture. The moment the tree died, it stopped breathing. No more Carbon-14 came in. But the atoms already inside the wood did not disappear instantly. They began to decay — slowly, steadily, at a perfectly fixed rate. <strong>The clock had started without anyone winding it.</strong>',
+        narr:'A craftsman felled the tree — perhaps to build a temple door, a ship, or a piece of furniture. The moment the tree died, it stopped breathing. No more Carbon-14 came in. But the atoms already inside the wood did not disappear. They began to decay — slowly, steadily, at a perfectly fixed rate. The clock had started without anyone winding it.'
       },
       {
         title:'3,000 years pass — watch the clock tick',
-        text:'Every <strong>5,730 years</strong>, exactly half of the remaining Carbon-14 atoms decay into nitrogen and drift away. After 3,000 years - just over half a half-life - about <em>70% of the original C-14 is still here</em>. Watch the green atoms slowly disappear. Each one that vanishes is another tick of the clock. This has been happening quietly, inside this wood, for three thousand years.',
-        narr:'Every 5,730 years, exactly half of the remaining Carbon-14 atoms decay into nitrogen and drift away. After 3,000 years - just over half a half-life - about 70% of the original Carbon-14 is still here. Watch the green atoms slowly disappear. Each one that vanishes is another tick of the clock. This has been happening quietly, inside this wood, for three thousand years.'
+        text:'Every <strong>5,730 years</strong>, exactly half of the remaining Carbon-14 atoms decay into nitrogen and drift away. After 3,000 years — just over half a half-life — about <em>70% of the original C-14 is still here</em>. Watch the green atoms slowly disappear, or <strong>use the Scrubber below to control time manually</strong>.',
+        narr:'Every 5,730 years, exactly half of the remaining Carbon-14 atoms decay into nitrogen and drift away. After 3,000 years — just over half a half-life — about 70% of the original Carbon-14 is still here. Watch the green atoms slowly disappear. Each one that vanishes is another tick of the clock. This has been happening quietly, inside this wood, for three thousand years.'
       },
       {
         title:'Scientists measure the clock. They find the answer.',
-        text:'Archaeologists find this beam buried in ancient ruins. They carefully take a splinter - just a few milligrams. It goes into a machine called an Accelerator Mass Spectrometer, which counts individual carbon atoms. It finds <em>70% of the original C-14 still present</em>. One simple calculation: Age = -ln(0.70) / 0.000121 = <strong>about 3,000 years</strong>. A tree that once stood alive in ancient Egypt has just told us its age.',
-        narr:'Archaeologists find this beam buried in ancient ruins. They carefully take a splinter - just a few milligrams. It goes into a machine that counts individual carbon atoms. It finds 70% of the original Carbon-14 still present. One simple calculation gives us the answer: about 3,000 years old. A tree that once stood alive in ancient Egypt has just told us its age.'
+        text:'Archaeologists find this beam buried in ancient ruins. They carefully take a splinter — just a few milligrams. It goes into a machine called an Accelerator Mass Spectrometer, which counts individual carbon atoms. It finds <em>70% of the original C-14 still present</em>. One simple calculation: Age = -ln(0.70) / 0.000121 = <strong>about 3,000 years</strong>. A tree that once stood alive in ancient Egypt has just told us its age.',
+        narr:'Archaeologists find this beam buried in ancient ruins. They carefully take a splinter — just a few milligrams. It goes into a machine that counts individual carbon atoms. It finds 70% of the original Carbon-14 still present. One simple calculation gives us the answer: about 3,000 years old. A tree that once stood alive in ancient Egypt has just told us its age.'
       }
     ]
   },
@@ -315,18 +412,18 @@ var ARTS=[
     stages:[
       {
         title:'A mammoth walks across the Siberian tundra',
-        text:'25,000 years ago, woolly mammoths were not rare. Vast herds roamed across what is now Siberia, Alaska, and northern Europe. Like every living thing, this mammoth was breathing in Carbon-14 - absorbing it in the grasses it ate, building up a steady ratio inside its body. It had no idea this invisible radioactive carbon would one day be the key to its own story.',
-        narr:'25,000 years ago, woolly mammoths were not rare. Vast herds roamed across what is now Siberia, Alaska, and northern Europe. Like every living thing, this mammoth was breathing in Carbon-14 - absorbing it in the grasses it ate, building up a steady ratio inside its body. It had no idea this invisible radioactive carbon would one day be the key to its own story.'
+        text:'25,000 years ago, woolly mammoths were not rare. Vast herds roamed across what is now Siberia, Alaska, and northern Europe. Like every living thing, this mammoth was breathing in Carbon-14 — absorbing it in the grasses it ate, building up a steady ratio inside its body. It had no idea this invisible radioactive carbon would one day be the key to its own story.',
+        narr:'25,000 years ago, woolly mammoths were not rare. Vast herds roamed across what is now Siberia, Alaska, and northern Europe. Like every living thing, this mammoth was breathing in Carbon-14 — absorbing it in the grasses it ate, building up a steady ratio inside its body. It had no idea this invisible radioactive carbon would one day be the key to its own story.'
       },
       {
         title:'The mammoth dies. The frozen ground preserves it.',
-        text:'The mammoth died - possibly falling through thin ice, or simply old age. The Siberian permafrost, permanently frozen ground, preserved it almost perfectly. Its fur, its last meal in its stomach, even its DNA were locked in the ice. And deep inside its bones and tusks, the Carbon-14 clock was running - faithfully, unstoppably, for the next 25,000 years.',
-        narr:'The mammoth died - possibly falling through thin ice, or simply old age. The Siberian permafrost, permanently frozen ground, preserved it almost perfectly. Its fur, its last meal in its stomach, even its DNA were locked in the ice. And deep inside its bones and tusks, the Carbon-14 clock was running - faithfully, unstoppably, for the next 25,000 years.'
+        text:'The mammoth died — possibly falling through thin ice, or simply old age. The Siberian permafrost, permanently frozen ground, preserved it almost perfectly. Its fur, its last meal in its stomach, even its DNA were locked in the ice. And deep inside its bones and tusks, the Carbon-14 clock was running — faithfully, unstoppably, for the next 25,000 years.',
+        narr:'The mammoth died — possibly falling through thin ice, or simply old age. The Siberian permafrost, permanently frozen ground, preserved it almost perfectly. Its fur, its last meal in its stomach, even its DNA were locked in the ice. And deep inside its bones and tusks, the Carbon-14 clock was running — faithfully, unstoppably, for the next 25,000 years.'
       },
       {
         title:'The clock has been ticking for 25,000 years',
-        text:'After 25,000 years - more than <strong>4 full half-lives</strong> - only about <em>5% of the original Carbon-14 remains</em>. Nearly all the green atoms are gone. The ratio has shifted dramatically. The clock has not stopped - it has just nearly run out of ticks. But that tiny remaining 5% is enough. With modern instruments, scientists can count even these last few atoms and calculate the age.',
-        narr:'After 25,000 years - more than 4 full half-lives - only about 5% of the original Carbon-14 remains. Nearly all the green atoms are gone. The ratio has shifted dramatically. But that tiny remaining 5% is enough. With modern instruments, scientists can count even these last few atoms and calculate the age.'
+        text:'After 25,000 years — more than <strong>4 full half-lives</strong> — only about <em>5% of the original Carbon-14 remains</em>. Nearly all the green atoms are gone. The ratio has shifted dramatically. The clock has not stopped — it has just nearly run out of ticks. But that tiny remaining 5% is enough. With modern instruments, scientists can count even these last few atoms and calculate the age.',
+        narr:'After 25,000 years — more than 4 full half-lives — only about 5% of the original Carbon-14 remains. Nearly all the green atoms are gone. The ratio has shifted dramatically. But that tiny remaining 5% is enough. With modern instruments, scientists can count even these last few atoms and calculate the age.'
       },
       {
         title:'The mammoth introduces itself across 25,000 years.',
@@ -341,18 +438,18 @@ var ARTS=[
     stages:[
       {
         title:'An Ice Age artist, painting by firelight',
-        text:'17,000 years ago, someone crawled deep into a cave in what is now southern France. They lit a torch. By its flickering light, they mixed charcoal with animal fat and painted these animals on the cave wall - a bison, a horse, a deer. They were fully human, with memories and feelings and stories. And they used <em>burned wood as their pigment</em>. That charcoal carries Carbon-14 that was frozen in time the moment the fire went out.',
+        text:'17,000 years ago, someone crawled deep into a cave in what is now southern France. They lit a torch. By its flickering light, they mixed charcoal with animal fat and painted these animals on the cave wall — a bison, a horse, a deer. They were fully human, with memories and feelings and stories. And they used <em>burned wood as their pigment</em>. That charcoal carries Carbon-14 that was frozen in time the moment the fire went out.',
         narr:'17,000 years ago, someone crawled deep into a cave in what is now southern France. They lit a torch. By its flickering light, they mixed charcoal with animal fat and painted these animals on the cave wall. They were fully human, with memories and feelings and stories. And they used burned wood as their pigment. That charcoal carries Carbon-14 that was frozen in time the moment the fire went out.'
       },
       {
         title:'The cave is sealed. The paintings sleep for 17,000 years.',
-        text:'After the artist left, the cave entrance eventually collapsed or was buried. The paintings were sealed in perfect darkness, untouched for 170 centuries. The charcoal pigment sat on the wall. And inside every carbon atom of that charcoal, the decay was happening - invisible, silent, exact. In 1940, four teenagers stumbled into the Lascaux Cave while looking for a lost dog. They became the first humans to see these paintings in 17,000 years.',
+        text:'After the artist left, the cave entrance eventually collapsed or was buried. The paintings were sealed in perfect darkness, untouched for 170 centuries. The charcoal pigment sat on the wall. And inside every carbon atom of that charcoal, the decay was happening — invisible, silent, exact. In 1940, four teenagers stumbled into the Lascaux Cave while looking for a lost dog. They became the first humans to see these paintings in 17,000 years.',
         narr:'After the artist left, the cave entrance eventually collapsed or was buried. The paintings were sealed in perfect darkness, untouched for 170 centuries. In 1940, four teenagers stumbled into the Lascaux Cave while looking for a lost dog. They became the first humans to see these paintings in 17,000 years.'
       },
       {
         title:'17,000 years of decay in the charcoal',
-        text:'Charcoal is carbon. The moment wood burns, its Carbon-14 clock starts. After 17,000 years - almost <strong>3 full half-lives</strong> - about <em>14% of the original C-14 remains</em>. Three-quarters of the green atoms you see here have already decayed away. But 14% is still measurable. A tiny scrape of pigment from the cave wall contains enough Carbon-14 to be counted precisely by modern instruments.',
-        narr:'Charcoal is carbon. The moment wood burns, its Carbon-14 clock starts. After 17,000 years - almost 3 full half-lives - about 14% of the original Carbon-14 remains. Three-quarters of the green atoms have already decayed away. But 14% is still measurable. A tiny scrape of pigment from the cave wall contains enough Carbon-14 to be counted precisely by modern instruments.'
+        text:'Charcoal is carbon. The moment wood burns, its Carbon-14 clock starts. After 17,000 years — almost <strong>3 full half-lives</strong> — about <em>14% of the original C-14 remains</em>. Three-quarters of the green atoms you see here have already decayed away. But 14% is still measurable. A tiny scrape of pigment from the cave wall contains enough Carbon-14 to be counted precisely by modern instruments.',
+        narr:'Charcoal is carbon. The moment wood burns, its Carbon-14 clock starts. After 17,000 years — almost 3 full half-lives — about 14% of the original Carbon-14 remains. Three-quarters of the green atoms have already decayed away. But 14% is still measurable. A tiny scrape of pigment from the cave wall contains enough Carbon-14 to be counted precisely by modern instruments.'
       },
       {
         title:'Dating the hand that painted it.',
@@ -367,80 +464,72 @@ var ARTS=[
     stages:[
       {
         title:'T-Rex, alive 68 million years ago',
-        text:'Sixty-eight million years ago, Tyrannosaurus rex hunted across what is now Montana and the Dakotas. Like every living thing, it absorbed Carbon-14 throughout its life. When it died, the Carbon-14 clock started - exactly as it does for everything else. But here is the critical problem: <strong>68 million years is unimaginably longer than Carbon-14 can measure.</strong> Let us see why.',
+        text:'Sixty-eight million years ago, Tyrannosaurus rex hunted across what is now Montana and the Dakotas. Like every living thing, it absorbed Carbon-14 throughout its life. When it died, the Carbon-14 clock started — exactly as it does for everything else. But here is the critical problem: <strong>68 million years is unimaginably longer than Carbon-14 can measure.</strong> Let us see why.',
         narr:'Sixty-eight million years ago, Tyrannosaurus rex hunted across what is now Montana and the Dakotas. Like every living thing, it absorbed Carbon-14 throughout its life. When it died, the Carbon-14 clock started. But here is the critical problem: 68 million years is unimaginably longer than Carbon-14 can measure. Let us see why.'
       },
       {
         title:'The Carbon-14 runs out. Completely.',
-        text:'Carbon-14 has a half-life of 5,730 years. After 50,000 years - only 9 half-lives - the concentration drops below what any instrument can detect. But the T-Rex died <strong>68 million years ago</strong>. That is 68,000,000 years - over 11,000 half-lives. Every single Carbon-14 atom that was ever in this bone decayed away millions of years ago. Not one remains. The clock did not just run down. It ran out entirely, and kept going for millions more years in the dark.',
-        narr:'Carbon-14 has a half-life of 5,730 years. After 50,000 years - only 9 half-lives - the concentration drops below what any instrument can detect. But the T-Rex died 68 million years ago. That is over 11,000 half-lives of Carbon-14. Every single Carbon-14 atom that was ever in this bone decayed away millions of years ago. Not one remains.'
+        text:'Carbon-14 has a half-life of 5,730 years. After 50,000 years — only 9 half-lives — the concentration drops below what any instrument can detect. But the T-Rex died <strong>68 million years ago</strong>. That is 68,000,000 years — over 11,000 half-lives. Every single Carbon-14 atom that was ever in this bone decayed away millions of years ago. Not one remains. The clock did not just run down. It ran out entirely, and kept going for millions more years in the dark.',
+        narr:'Carbon-14 has a half-life of 5,730 years. After 50,000 years — only 9 half-lives — the concentration drops below what any instrument can detect. But the T-Rex died 68 million years ago. That is over 11,000 half-lives of Carbon-14. Every single Carbon-14 atom that was ever in this bone decayed away millions of years ago. Not one remains.'
       },
       {
         title:'Zero. There is nothing left to measure.',
-        text:'If you tried to carbon-date this dinosaur bone, the result would simply be zero Carbon-14 detected. That tells you only that the bone is older than 50,000 years. It cannot tell you whether it is 1 million or 500 million years old. Carbon dating has hit a wall. <strong>We need a different clock.</strong> One with a much, much longer half-life. Scientists use Uranium-238, which has a half-life of 4.5 billion years - almost as old as Earth itself.',
+        text:'If you tried to carbon-date this dinosaur bone, the result would simply be zero Carbon-14 detected. That tells you only that the bone is older than 50,000 years. It cannot tell you whether it is 1 million or 500 million years old. Carbon dating has hit a wall. <strong>We need a different clock.</strong> One with a much, much longer half-life. Scientists use Uranium-238, which has a half-life of 4.5 billion years — almost as old as Earth itself.',
         narr:'If you tried to carbon-date this dinosaur bone, the result would simply be zero Carbon-14 detected. That tells you only that the bone is older than 50,000 years. It cannot tell you whether it is 1 million or 500 million years old. Carbon dating has hit a wall. We need a different clock. Scientists use Uranium-238, which has a half-life of 4.5 billion years.'
       },
       {
         title:'How we really know dinosaurs are 68 million years old.',
-        text:'Scientists do not date the bone itself. They date the <em>rock layer it was buried in</em>. Volcanic ash contains crystals called zircon that trap uranium when they form. Over millions of years, uranium decays to lead. By measuring the uranium-to-lead ratio in these crystals - above and below where the fossil was found - scientists bracket the age precisely. The T-Rex in Montana: the rock above dates to 66 million years, the rock below to 68 million. <strong>T-Rex lived between 66 and 68 million years ago.</strong>',
+        text:'Scientists do not date the bone itself. They date the <em>rock layer it was buried in</em>. Volcanic ash contains crystals called zircon that trap uranium when they form. Over millions of years, uranium decays to lead. By measuring the uranium-to-lead ratio in these crystals — above and below where the fossil was found — scientists bracket the age precisely. The T-Rex in Montana: the rock above dates to 66 million years, the rock below to 68 million. <strong>T-Rex lived between 66 and 68 million years ago.</strong>',
         narr:'Scientists do not date the bone itself. They date the rock layer it was buried in. Volcanic ash contains crystals called zircon that trap uranium when they form. Over millions of years, uranium decays to lead. By measuring the uranium-to-lead ratio in these crystals, scientists can bracket the age of the fossil. The T-Rex in Montana: the rock above dates to 66 million years, the rock below to 68 million years. T-Rex lived between 66 and 68 million years ago.'
       }
     ]
   }
 ];
 
-// =================== RENDERER ===================
-
-// pre-made deterministic fur positions for mammoth
-var furP=[];
-for(var fi=0;fi<55;fi++){furP.push({a:(fi/55)*Math.PI*2,r:.18+((fi*7)%30)/130,da:(fi*.4)%.8-.4});}
+// ============================================================================
+// CANVAS SCENE RENDERERS
+// ============================================================================
+const furP=[];
+for(let fi=0;fi<55;fi++){furP.push({a:(fi/55)*Math.PI*2,r:.18+((fi*7)%30)/130,da:(fi*.4)%.8-.4});}
 
 function drawStars(ts,bright){
-  BGS.forEach(function(s){
-    var a=bright*(0.08+.1*Math.sin(ts*.0003+s.b*7));
-    ctx.fillStyle='rgba(200,215,255,'+a.toFixed(3)+')';
+  BGS.forEach(s=>{
+    const a=bright*(0.08+.1*Math.sin(ts*.0003+s.b*7));
+    ctx.fillStyle=`rgba(200,215,255,${a.toFixed(3)})`;
     ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.s,0,Math.PI*2);ctx.fill();
   });
 }
 
 // ---- WOOD SCENES ----
 function drawWoodS0(ts){
-  // Day sky
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#050e28');sk.addColorStop(.7,'#0a1e10');sk.addColorStop(1,'#162808');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.4);
-  // Sun
-  var sx=W*.82,sy=H*.2;
-  for(var g=8;g>0;g--){ctx.beginPath();ctx.arc(sx,sy,28+g*12,0,Math.PI*2);ctx.fillStyle='rgba(255,230,80,'+(0.025-g*.002).toFixed(4)+')';ctx.fill();}
-  var sg=ctx.createRadialGradient(sx-6,sy-6,2,sx,sy,26);
+  const sx=W*.82,sy=H*.2;
+  for(let g=8;g>0;g--){ctx.beginPath();ctx.arc(sx,sy,28+g*12,0,Math.PI*2);ctx.fillStyle=`rgba(255,230,80,${(0.025-g*.002).toFixed(4)})`;ctx.fill();}
+  const sg=ctx.createRadialGradient(sx-6,sy-6,2,sx,sy,26);
   sg.addColorStop(0,'#fffff0');sg.addColorStop(.5,'#ffe060');sg.addColorStop(1,'#ffaa20');
   ctx.beginPath();ctx.arc(sx,sy,26,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
-  // Ground
   ctx.fillStyle='#162808';ctx.fillRect(0,H*.75,W,H*.25);
-  // Living tree
-  var tx=CX,ty=H*.75;
-  var tg=ctx.createLinearGradient(tx-16,0,tx+16,0);
+  const tx=CX,ty=H*.75;
+  const tg=ctx.createLinearGradient(tx-16,0,tx+16,0);
   tg.addColorStop(0,'#3a1e0a');tg.addColorStop(.5,'#5a3214');tg.addColorStop(1,'#3a1e0a');
   ctx.fillStyle=tg;ctx.fillRect(tx-16,ty-200,32,205);
-  // Canopy
-  var cg=['#1a5c0a','#226814','#2a7c1a','#1e6010','#326c18'];
-  [[tx,ty-275,65],[tx-50,ty-245,48],[tx+48,ty-240,44],[tx-22,ty-305,42],[tx+22,ty-300,40],[tx-62,ty-215,32],[tx+60,ty-210,30]].forEach(function(b,i){
-    var pulse=1+.04*Math.sin(ts*.001+i*.9);
+  const cg=['#1a5c0a','#226814','#2a7c1a','#1e6010','#326c18'];
+  [[tx,ty-275,65],[tx-50,ty-245,48],[tx+48,ty-240,44],[tx-22,ty-305,42],[tx+22,ty-300,40],[tx-62,ty-215,32],[tx+60,ty-210,30]].forEach((b,i)=>{
+    const pulse=1+.04*Math.sin(ts*.001+i*.9);
     ctx.beginPath();ctx.arc(b[0],b[1],b[2]*pulse,0,Math.PI*2);ctx.fillStyle=cg[i%cg.length];ctx.fill();
   });
-  // C-14 atoms floating in
-  var t2=(ts*.0006)%1;
-  for(var i=0;i<8;i++){
-    var aa=(i/8)*Math.PI*2+ts*.0003;
-    var rd=60+i*20;
-    var ax=CX+Math.cos(aa)*rd*.6,ay=ty-220+Math.sin(aa)*rd*.4;
-    var isGreen=i%3===0;
+  for(let i=0;i<8;i++){
+    const aa=(i/8)*Math.PI*2+ts*.0003;
+    const rd=60+i*20;
+    const ax=CX+Math.cos(aa)*rd*.6,ay=ty-220+Math.sin(aa)*rd*.4;
+    const isGreen=i%3===0;
     ctx.beginPath();ctx.arc(ax,ay,isGreen?4:2.5,0,Math.PI*2);
     ctx.fillStyle=isGreen?'rgba(64,255,128,.8)':'rgba(140,180,255,.5)';ctx.fill();
     if(isGreen){ctx.beginPath();ctx.arc(ax,ay,9,0,Math.PI*2);ctx.fillStyle='rgba(64,255,128,.12)';ctx.fill();}
   }
-  // Label
   ctx.textAlign='center';ctx.font='bold 12px monospace';ctx.fillStyle='rgba(64,255,128,.8)';
   ctx.fillText('C-14 flowing in every day',CX,H*.84);
   ctx.font='10px monospace';ctx.fillStyle='rgba(120,180,100,.55)';
@@ -448,47 +537,41 @@ function drawWoodS0(ts){
 }
 
 function drawWoodS1(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#050e18');sk.addColorStop(1,'#0a1008');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.7);
   ctx.fillStyle='#111a08';ctx.fillRect(0,H*.7,W,H*.3);
-  // Fallen tree / log
-  var ly=H*.68;
-  var lg=ctx.createLinearGradient(0,ly-20,0,ly+20);
+  const ly=H*.68;
+  const lg=ctx.createLinearGradient(0,ly-20,0,ly+20);
   lg.addColorStop(0,'#5a3218');lg.addColorStop(.5,'#7a4828');lg.addColorStop(1,'#3a1e0c');
   ctx.fillStyle=lg;ctx.beginPath();ctx.roundRect(W*.05,ly-20,W*.9,40,18);ctx.fill();
   ctx.strokeStyle='#2a1408';ctx.lineWidth=2;ctx.stroke();
-  // Wood grain
-  for(var i=1;i<9;i++){
+  for(let i=1;i<9;i++){
     ctx.beginPath();ctx.moveTo(W*.06+i*W*.1,ly-16);
     ctx.bezierCurveTo(W*.08+i*W*.1,ly-8,W*.07+i*W*.1,ly+8,W*.06+i*W*.1,ly+16);
     ctx.strokeStyle='rgba(40,18,6,.35)';ctx.lineWidth=1;ctx.stroke();
   }
-  // Cross-section ring
-  var ex=W*.1,ey=ly;
+  const ex=W*.1,ey=ly;
   ctx.beginPath();ctx.ellipse(ex,ey,22,19,0,0,Math.PI*2);
   ctx.fillStyle='#6a3c1c';ctx.fill();ctx.strokeStyle='#2a1408';ctx.lineWidth=2;ctx.stroke();
-  [[16,14],[11,10],[7,6],[3.5,3]].forEach(function(r){
+  [[16,14],[11,10],[7,6],[3.5,3]].forEach(r=>{
     ctx.beginPath();ctx.ellipse(ex,ey,r[0],r[1],0,0,Math.PI*2);
     ctx.strokeStyle='rgba(38,18,5,.5)';ctx.lineWidth=1;ctx.stroke();
   });
-  // Axe mark
   ctx.fillStyle='rgba(180,140,60,.7)';ctx.strokeStyle='rgba(220,180,80,.5)';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(W*.2,ly-22);ctx.lineTo(W*.26,ly-30);ctx.lineTo(W*.28,ly-16);ctx.lineTo(W*.22,ly-8);ctx.closePath();ctx.fill();ctx.stroke();
-  // Clock
-  var ck=ctx.createRadialGradient(W*.78,H*.3,4,W*.78,H*.3,42);
+  const ck=ctx.createRadialGradient(W*.78,H*.3,4,W*.78,H*.3,42);
   ck.addColorStop(0,'rgba(240,192,96,.15)');ck.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=ck;ctx.beginPath();ctx.arc(W*.78,H*.3,42,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.arc(W*.78,H*.3,36,0,Math.PI*2);
   ctx.strokeStyle='rgba(240,192,96,.7)';ctx.lineWidth=2;ctx.stroke();
-  var ca=-Math.PI/2+ts*.0018;
+  const ca=-Math.PI/2+ts*.0018;
   ctx.strokeStyle='rgba(240,192,96,.9)';ctx.lineWidth=2.5;
   ctx.beginPath();ctx.moveTo(W*.78,H*.3);ctx.lineTo(W*.78+Math.cos(ca)*24,H*.3+Math.sin(ca)*24);ctx.stroke();
   ctx.fillStyle='rgba(240,192,96,.9)';ctx.beginPath();ctx.arc(W*.78,H*.3,3.5,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='rgba(240,192,96,.85)';ctx.font='bold 11px monospace';ctx.textAlign='center';
   ctx.fillText('CLOCK STARTS',W*.78,H*.3+52);
-  // Red X
   ctx.strokeStyle='rgba(255,64,96,.8)';ctx.lineWidth=5;ctx.lineCap='round';
   ctx.beginPath();ctx.moveTo(W*.55,H*.15);ctx.lineTo(W*.65,H*.25);ctx.stroke();
   ctx.beginPath();ctx.moveTo(W*.65,H*.15);ctx.lineTo(W*.55,H*.25);ctx.stroke();
@@ -497,26 +580,21 @@ function drawWoodS1(ts){
 }
 
 function drawWoodS2(ts){
-  // Underground feel
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#030810');sk.addColorStop(1,'#080d04');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
-  // Soil layers
-  var soils=['#1e140a','#181008','#221806','#141008'];
-  soils.forEach(function(c,i){ctx.fillStyle=c;ctx.fillRect(0,H*(i*.22),W,H*.22+2);});
-  // Log buried
-  var ly=H*.5;
-  var lg=ctx.createLinearGradient(0,ly-18,0,ly+18);
+  const soils=['#1e140a','#181008','#221806','#141008'];
+  soils.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,H*(i*.22),W,H*.22+2);});
+  const ly=H*.5;
+  const lg=ctx.createLinearGradient(0,ly-18,0,ly+18);
   lg.addColorStop(0,'#4a2c10');lg.addColorStop(.5,'#6a3c1c');lg.addColorStop(1,'#2a1808');
   ctx.fillStyle=lg;ctx.beginPath();ctx.roundRect(W*.06,ly-18,W*.88,36,16);ctx.fill();
-  // Ring end
   ctx.beginPath();ctx.ellipse(W*.1,ly,20,18,0,0,Math.PI*2);
   ctx.fillStyle='#5a321a';ctx.fill();ctx.strokeStyle='#1e0e06';ctx.lineWidth=2;ctx.stroke();
-  // Atoms - rendered by main loop (stage 2 == decay stage)
-  // Year counter
-  var years=Math.min(3000,stageT*280);
-  var frac=cFrac(years);
-  var pct=(frac*100).toFixed(1);
+  
+  const years=Math.min(3000, stageT*280);
+  const frac=cFrac(years);
+  const pct=(frac*100).toFixed(1);
   ctx.fillStyle='rgba(0,8,20,.82)';ctx.beginPath();ctx.roundRect(W*.04,H*.08,W*.42,H*.2,8);ctx.fill();
   ctx.textAlign='left';ctx.font='9px monospace';ctx.fillStyle='rgba(100,150,200,.7)';
   ctx.fillText('YEARS ELAPSED',W*.06,H*.11);
@@ -526,8 +604,7 @@ function drawWoodS2(ts){
   ctx.fillText('C-14 remaining: '+pct+'%',W*.06,H*.11+52);
   ctx.fillStyle='rgba(96,144,255,.6)';
   ctx.fillText('Half-lives elapsed: '+(years/HALF_LIFE).toFixed(2),W*.06,H*.11+68);
-  // Ratio bar
-  var bx=W*.52,by=H*.1,bw=W*.42,bh=20;
+  const bx=W*.52,by=H*.1,bw=W*.42,bh=20;
   ctx.fillStyle='rgba(0,8,20,.82)';ctx.beginPath();ctx.roundRect(bx,by,bw,bh*2.8,6);ctx.fill();
   ctx.fillStyle='rgba(64,255,128,.2)';ctx.fillRect(bx+3,by+3,(bw-6)*frac,bh-6);
   ctx.fillStyle='rgba(96,144,255,.2)';ctx.fillRect(bx+3+(bw-6)*frac,by+3,(bw-6)*(1-frac),bh-6);
@@ -538,15 +615,13 @@ function drawWoodS2(ts){
 }
 
 function drawWoodS3(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#030810');sk.addColorStop(1,'#060e14');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.5);
-  // Lab bench
   ctx.fillStyle='#141e2c';ctx.fillRect(0,H*.6,W,H*.4);
   ctx.fillStyle='#1c2838';ctx.fillRect(0,H*.6,W,8);
-  // Machine
-  var mx=CX+80,my=H*.58;
+  const mx=CX+80,my=H*.58;
   ctx.fillStyle='#1a2a3c';ctx.strokeStyle='#243448';ctx.lineWidth=2;
   ctx.beginPath();ctx.roundRect(mx-75,my-130,150,135,10);ctx.fill();ctx.stroke();
   ctx.fillStyle='#050e1c';ctx.beginPath();ctx.roundRect(mx-55,my-122,110,78,5);ctx.fill();
@@ -560,14 +635,12 @@ function drawWoodS3(ts){
   ctx.fillText('~3,000 years',mx-51,my-52);
   ctx.font='9px monospace';ctx.fillStyle='rgba(100,160,200,.6)';ctx.textAlign='center';
   ctx.fillText('ACCELERATOR MASS SPECTROMETER',mx,my-8);
-  // Sample
   ctx.fillStyle='rgba(180,220,255,.15)';ctx.strokeStyle='rgba(100,160,220,.45)';ctx.lineWidth=2;
   ctx.beginPath();ctx.roundRect(CX-80,H*.4,18,100,9);ctx.fill();ctx.stroke();
   ctx.fillStyle='rgba(100,60,30,.7)';ctx.beginPath();ctx.roundRect(CX-77,H*.4+55,12,42,5);ctx.fill();
   ctx.fillStyle='rgba(200,220,255,.75)';ctx.font='10px monospace';ctx.textAlign='center';
   ctx.fillText('WOOD',CX-71,H*.4+115);ctx.fillText('SAMPLE',CX-71,H*.4+128);
-  // Result box
-  for(var g=5;g>0;g--){ctx.fillStyle='rgba(240,192,96,'+(0.015+g*.006).toFixed(3)+')';ctx.beginPath();ctx.roundRect(CX-W*.36-g*2,H*.7-g*1.5,W*.72+g*4,H*.22+g*3,10+g);ctx.fill();}
+  for(let g=5;g>0;g--){ctx.fillStyle=`rgba(240,192,96,${(0.015+g*.006).toFixed(3)})`;ctx.beginPath();ctx.roundRect(CX-W*.36-g*2,H*.7-g*1.5,W*.72+g*4,H*.22+g*3,10+g);ctx.fill();}
   ctx.fillStyle='rgba(4,12,24,.95)';ctx.beginPath();ctx.roundRect(CX-W*.36,H*.7,W*.72,H*.22,10);ctx.fill();
   ctx.strokeStyle='rgba(240,192,96,.5)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.textAlign='center';ctx.font='10px monospace';ctx.fillStyle='rgba(160,180,200,.65)';
@@ -580,23 +653,20 @@ function drawWoodS3(ts){
 
 // ---- MAMMOTH SCENES ----
 function drawMamS0(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#050e22');sk.addColorStop(.65,'#0a1632');sk.addColorStop(1,'#0a1218');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.8);
-  // Snow
   ctx.fillStyle='#bcd0de';ctx.fillRect(0,H*.68,W,H*.32);
-  var snowG=ctx.createLinearGradient(0,H*.68,0,H);
+  const snowG=ctx.createLinearGradient(0,H*.68,0,H);
   snowG.addColorStop(0,'rgba(220,240,255,.3)');snowG.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=snowG;ctx.fillRect(0,H*.68,W,H*.12);
-  // Snow bumps
-  for(var i=0;i<7;i++){ctx.beginPath();ctx.ellipse(W*(.08+i*.14),H*.68,W*.09,H*.05,0,Math.PI,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();}
+  for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse(W*(.08+i*.14),H*.68,W*.09,H*.05,0,Math.PI,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fill();}
   drawMammothShape(ts,CX,H*.68,1);
-  // Breathing C-14
-  for(var i=0;i<6;i++){
-    var ba=(ts*.0008+i*.9)%(Math.PI*2);
-    var ax=CX-60+Math.cos(ba)*80,ay=H*.42+Math.sin(ba)*30;
-    var isGreen=i%3===0;
+  for(let i=0;i<6;i++){
+    const ba=(ts*.0008+i*.9)%(Math.PI*2);
+    const ax=CX-60+Math.cos(ba)*80,ay=H*.42+Math.sin(ba)*30;
+    const isGreen=i%3===0;
     ctx.beginPath();ctx.arc(ax,ay,isGreen?3.5:2,0,Math.PI*2);
     ctx.fillStyle=isGreen?'rgba(64,255,128,.75)':'rgba(140,180,255,.45)';ctx.fill();
   }
@@ -605,69 +675,54 @@ function drawMamS0(ts){
 }
 
 function drawMammothShape(ts,mcx,mcy,s){
-  // Legs
   ctx.fillStyle='#6a4820';ctx.strokeStyle='#3a2810';ctx.lineWidth=2;
-  [[-52,0],[-22,2],[20,1],[50,0]].forEach(function(o){
+  [[-52,0],[-22,2],[20,1],[50,0]].forEach(o=>{
     ctx.beginPath();ctx.roundRect(mcx+o[0]*s-7*s,mcy+o[1]*s,14*s,42*s,5*s);ctx.fill();ctx.stroke();
   });
-  // Hooves
   ctx.fillStyle='#1e1008';
-  [[-52,0],[-22,2],[20,1],[50,0]].forEach(function(o){
+  [[-52,0],[-22,2],[20,1],[50,0]].forEach(o=>{
     ctx.beginPath();ctx.roundRect(mcx+o[0]*s-8*s,mcy+o[1]*s+38*s,16*s,9*s,3*s);ctx.fill();
   });
-  // Body
   ctx.fillStyle='#7a5030';ctx.strokeStyle='#4a2e18';ctx.lineWidth=2.5;
   ctx.beginPath();ctx.ellipse(mcx+6*s,mcy-32*s,85*s,50*s,-0.1,0,Math.PI*2);ctx.fill();ctx.stroke();
-  // Hump
   ctx.fillStyle='#8a5838';ctx.beginPath();ctx.ellipse(mcx-28*s,mcy-62*s,36*s,28*s,0.3,0,Math.PI*2);ctx.fill();
-  // Head
   ctx.fillStyle='#7a4c2c';ctx.strokeStyle='#4a2e14';ctx.lineWidth=2;
   ctx.beginPath();ctx.ellipse(mcx-80*s,mcy-42*s,32*s,26*s,0.2,0,Math.PI*2);ctx.fill();ctx.stroke();
   ctx.fillStyle='#1a0804';ctx.beginPath();ctx.arc(mcx-90*s,mcy-50*s,4*s,0,Math.PI*2);ctx.fill();
-  // Trunk
   ctx.strokeStyle='#6a4020';ctx.lineWidth=9*s;ctx.lineCap='round';
   ctx.beginPath();ctx.moveTo(mcx-105*s,mcy-30*s);
   ctx.bezierCurveTo(mcx-128*s,mcy-15*s,mcx-132*s,mcy+12*s,mcx-116*s,mcy+36*s);ctx.stroke();
-  // Tusks
   ctx.strokeStyle='#e0d4a0';ctx.lineWidth=5*s;
   ctx.beginPath();ctx.arc(mcx-84*s,mcy-18*s,38*s,Math.PI*.55,Math.PI*1.05);ctx.stroke();
   ctx.beginPath();ctx.arc(mcx-84*s,mcy-8*s,30*s,Math.PI*.6,Math.PI*1.1);ctx.stroke();
-  // Ear
   ctx.fillStyle='#6a4020';ctx.beginPath();ctx.ellipse(mcx-60*s,mcy-58*s,16*s,13*s,-0.4,0,Math.PI*2);ctx.fill();
-  // Fur
   ctx.strokeStyle='rgba(50,28,10,.4)';ctx.lineWidth=1.5;
-  furP.forEach(function(fp){
-    var fx=mcx+Math.cos(fp.a)*78*s*fp.r,fy=mcy-28*s+Math.sin(fp.a)*46*s*fp.r;
+  furP.forEach(fp=>{
+    const fx=mcx+Math.cos(fp.a)*78*s*fp.r,fy=mcy-28*s+Math.sin(fp.a)*46*s*fp.r;
     ctx.beginPath();ctx.moveTo(fx,fy);ctx.lineTo(fx+7*s*Math.cos(fp.a+fp.da),fy+6*s*Math.sin(fp.a+fp.da));ctx.stroke();
   });
 }
 
 function drawMamS1(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#050e22');sk.addColorStop(1,'#0a1218');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.9);
-  // Snow ground with mammoth lying
   ctx.fillStyle='#b0c8da';ctx.fillRect(0,H*.7,W,H*.3);
-  // Fallen mammoth (simplified, lying on side)
-  var mx=CX,my=H*.72;
+  const mx=CX,my=H*.72;
   ctx.fillStyle='#7a5030';ctx.strokeStyle='#4a2e18';ctx.lineWidth=2;
   ctx.beginPath();ctx.ellipse(mx,my,110,28,0.1,0,Math.PI*2);ctx.fill();ctx.stroke();
-  // Tusks sticking up
   ctx.strokeStyle='#e0d4a0';ctx.lineWidth=6;
   ctx.beginPath();ctx.moveTo(mx-95,my-20);ctx.bezierCurveTo(mx-120,my-50,mx-90,my-70,mx-65,my-55);ctx.stroke();
-  // Snow covering it
   ctx.fillStyle='rgba(200,225,245,.5)';
   ctx.beginPath();ctx.ellipse(mx+20,my+10,100,20,0.05,0,Math.PI*2);ctx.fill();
-  // Big red X
   ctx.strokeStyle='rgba(255,64,96,.8)';ctx.lineWidth=6;ctx.lineCap='round';
   ctx.beginPath();ctx.moveTo(mx-20,my-55);ctx.lineTo(mx+20,my-15);ctx.stroke();
   ctx.beginPath();ctx.moveTo(mx+20,my-55);ctx.lineTo(mx-20,my-15);ctx.stroke();
-  // Clock
   ctx.beginPath();ctx.arc(W*.78,H*.28,38,0,Math.PI*2);
   ctx.strokeStyle='rgba(240,192,96,.6)';ctx.lineWidth=2;ctx.stroke();
   ctx.fillStyle='rgba(0,8,20,.7)';ctx.fill();
-  var ca=-Math.PI/2+ts*.0016;
+  const ca=-Math.PI/2+ts*.0016;
   ctx.strokeStyle='rgba(240,192,96,.9)';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(W*.78,H*.28);ctx.lineTo(W*.78+Math.cos(ca)*24,H*.28+Math.sin(ca)*24);ctx.stroke();
   ctx.fillStyle='rgba(240,192,96,.85)';ctx.font='bold 11px monospace';ctx.textAlign='center';
@@ -679,19 +734,15 @@ function drawMamS1(ts){
 }
 
 function drawMamS2(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#030810');sk.addColorStop(1,'#050e10');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#0a1808';ctx.fillRect(0,H*.4,W,H*.6);
-  // Frozen ground texture
-  for(var i=0;i<6;i++){ctx.fillStyle='rgba(20,60,80,'+(0.06+i*.01).toFixed(2)+')';ctx.fillRect(0,H*(.4+i*.1),W,H*.1+2);}
-  // Frozen mammoth outline
+  for(let i=0;i<6;i++){ctx.fillStyle=`rgba(20,60,80,${(0.06+i*.01).toFixed(2)})`;ctx.fillRect(0,H*(.4+i*.1),W,H*.1+2);}
   ctx.strokeStyle='rgba(130,160,200,.3)';ctx.lineWidth=2;
   ctx.beginPath();ctx.ellipse(CX,H*.58,120,35,0,0,Math.PI*2);ctx.stroke();
-  // Atoms rendered by main loop
-  var years=Math.min(25000,stageT*2500);
-  var frac=cFrac(years);
-  // Info overlay
+  const years=Math.min(25000, stageT*2500);
+  const frac=cFrac(years);
   ctx.fillStyle='rgba(0,6,18,.82)';ctx.beginPath();ctx.roundRect(W*.03,H*.07,W*.44,H*.2,8);ctx.fill();
   ctx.textAlign='left';ctx.font='9px monospace';ctx.fillStyle='rgba(100,150,200,.65)';
   ctx.fillText('YEARS ELAPSED',W*.05,H*.1);
@@ -704,14 +755,13 @@ function drawMamS2(ts){
 }
 
 function drawMamS3(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#030810');sk.addColorStop(1,'#060e14');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.5);
   ctx.fillStyle='#141e2c';ctx.fillRect(0,H*.6,W,H*.4);
   ctx.fillStyle='#1c2838';ctx.fillRect(0,H*.6,W,8);
-  // Machine
-  var mx2=CX+80,my2=H*.58;
+  const mx2=CX+80,my2=H*.58;
   ctx.fillStyle='#1a2a3c';ctx.strokeStyle='#243448';ctx.lineWidth=2;
   ctx.beginPath();ctx.roundRect(mx2-75,my2-130,150,135,10);ctx.fill();ctx.stroke();
   ctx.fillStyle='#050e1c';ctx.beginPath();ctx.roundRect(mx2-55,my2-122,110,78,5);ctx.fill();
@@ -725,13 +775,11 @@ function drawMamS3(ts){
   ctx.fillText('~25,000 years',mx2-51,my2-52);
   ctx.font='9px monospace';ctx.fillStyle='rgba(100,160,200,.6)';ctx.textAlign='center';
   ctx.fillText('ACCELERATOR MASS SPECTROMETER',mx2,my2-8);
-  // Tusk sample
   ctx.strokeStyle='#e0d4a0';ctx.lineWidth=8;ctx.lineCap='round';
   ctx.beginPath();ctx.arc(CX-80,H*.45,28,Math.PI*.5,Math.PI*1.1);ctx.stroke();
   ctx.fillStyle='rgba(200,220,255,.75)';ctx.font='10px monospace';ctx.textAlign='center';
   ctx.fillText('TUSK SAMPLE',CX-80,H*.57);
-  // Result
-  for(var g=5;g>0;g--){ctx.fillStyle='rgba(240,192,96,'+(0.015+g*.006).toFixed(3)+')';ctx.beginPath();ctx.roundRect(CX-W*.36-g*2,H*.7-g*1.5,W*.72+g*4,H*.22+g*3,10+g);ctx.fill();}
+  for(let g=5;g>0;g--){ctx.fillStyle=`rgba(240,192,96,${(0.015+g*.006).toFixed(3)})`;ctx.beginPath();ctx.roundRect(CX-W*.36-g*2,H*.7-g*1.5,W*.72+g*4,H*.22+g*3,10+g);ctx.fill();}
   ctx.fillStyle='rgba(4,12,24,.95)';ctx.beginPath();ctx.roundRect(CX-W*.36,H*.7,W*.72,H*.22,10);ctx.fill();
   ctx.strokeStyle='rgba(240,192,96,.5)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.textAlign='center';ctx.font='10px monospace';ctx.fillStyle='rgba(160,180,200,.65)';
@@ -745,72 +793,60 @@ function drawMamS3(ts){
 // ---- CAVE SCENES ----
 function drawCaveS0(ts){
   ctx.fillStyle='#0a0604';ctx.fillRect(0,0,W,H);
-  // Cave wall texture
-  var cg2=ctx.createRadialGradient(W*.65,H*.4,20,W*.5,H*.5,Math.max(W,H)*.7);
+  const cg2=ctx.createRadialGradient(W*.65,H*.4,20,W*.5,H*.5,Math.max(W,H)*.7);
   cg2.addColorStop(0,'#2a1810');cg2.addColorStop(.5,'#1a1008');cg2.addColorStop(1,'#0a0604');
   ctx.fillStyle=cg2;ctx.fillRect(0,0,W,H);
-  // Rock patches
-  [[.1,.1,.28,.22],[.6,.05,.22,.16],[.05,.5,.2,.28],[.72,.62,.24,.28],[.35,.8,.38,.14]].forEach(function(r){
+  [[.1,.1,.28,.22],[.6,.05,.22,.16],[.05,.5,.2,.28],[.72,.62,.24,.28],[.35,.8,.38,.14]].forEach(r=>{
     ctx.fillStyle='rgba(50,32,16,.18)';ctx.beginPath();ctx.ellipse(r[0]*W,r[1]*H,r[2]*W*.5,r[3]*H*.5,0,0,Math.PI*2);ctx.fill();
   });
-  // Torch glow
-  var tx2=W*.12,ty2=H*.52;
-  var tg2=ctx.createRadialGradient(tx2,ty2,5,tx2,ty2,180);
+  const tx2=W*.12,ty2=H*.52;
+  const tg2=ctx.createRadialGradient(tx2,ty2,5,tx2,ty2,180);
   tg2.addColorStop(0,'rgba(255,180,60,.42)');tg2.addColorStop(.45,'rgba(255,100,30,.15)');
   tg2.addColorStop(.8,'rgba(255,60,10,.05)');tg2.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=tg2;ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#4a2c08';ctx.fillRect(tx2-3,ty2-38,6,48);
-  var ff=.5+.5*Math.sin(ts*.009);
-  var fg2=ctx.createRadialGradient(tx2,ty2-40,2,tx2,ty2-50,15+ff*5);
+  const ff=.5+.5*Math.sin(ts*.009);
+  const fg2=ctx.createRadialGradient(tx2,ty2-40,2,tx2,ty2-50,15+ff*5);
   fg2.addColorStop(0,'rgba(255,255,200,.95)');fg2.addColorStop(.4,'rgba(255,160,40,.8)');fg2.addColorStop(1,'rgba(255,60,0,0)');
   ctx.fillStyle=fg2;ctx.beginPath();ctx.ellipse(tx2,ty2-44,7,13+ff*4,0,0,Math.PI*2);ctx.fill();
-  // Bison
-  var bx2=CX+20,by2=H*.42;
+  const bx2=CX+20,by2=H*.42;
   ctx.fillStyle='rgba(160,60,20,.75)';
   ctx.beginPath();ctx.ellipse(bx2,by2,50,30,0,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(bx2-42,by2-20,24,20,-.3,0,Math.PI*2);ctx.fill();
-  [[bx2-20,by2+28],[bx2,by2+28],[bx2+22,by2+30],[bx2+38,by2+28]].forEach(function(l){
+  [[bx2-20,by2+28],[bx2,by2+28],[bx2+22,by2+30],[bx2+38,by2+28]].forEach(l=>{
     ctx.beginPath();ctx.moveTo(l[0],l[1]);ctx.lineTo(l[0]-1,l[1]+24);ctx.strokeStyle='rgba(140,50,18,.7)';ctx.lineWidth=5;ctx.stroke();
   });
   ctx.strokeStyle='rgba(160,60,20,.7)';ctx.lineWidth=2.5;
   ctx.beginPath();ctx.moveTo(bx2-56,by2-32);ctx.lineTo(bx2-66,by2-48);ctx.stroke();
-  // Horse
   ctx.fillStyle='rgba(120,48,16,.6)';
   ctx.beginPath();ctx.ellipse(bx2+90,by2+10,32,20,-.1,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(bx2+62,by2-4,16,13,.2,0,Math.PI*2);ctx.fill();
-  // Artist
-  var ax2=W*.08,ay2=H*.65;
+  const ax2=W*.08,ay2=H*.65;
   ctx.fillStyle='rgba(80,50,30,.8)';ctx.beginPath();ctx.arc(ax2,ay2-40,12,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.moveTo(ax2,ay2-28);ctx.lineTo(ax2,ay2);ctx.lineWidth=6;ctx.strokeStyle='rgba(80,50,30,.8)';ctx.stroke();
   ctx.beginPath();ctx.moveTo(ax2,ay2-15);ctx.lineTo(ax2+20,ay2-5);ctx.stroke();
-  // C-14 atoms in charcoal
-  for(var i=0;i<5;i++){
-    var ca2=(ts*.001+i*1.1)%(Math.PI*2);
-    var ax3=ax2+20+Math.cos(ca2)*15,ay3=ay2-15+Math.sin(ca2)*8;
+  for(let i=0;i<5;i++){
+    const ca2=(ts*.001+i*1.1)%(Math.PI*2);
+    const ax3=ax2+20+Math.cos(ca2)*15,ay3=ay2-15+Math.sin(ca2)*8;
     ctx.beginPath();ctx.arc(ax3,ay3,i%2===0?3:2,0,Math.PI*2);
     ctx.fillStyle=i%2===0?'rgba(64,255,128,.7)':'rgba(150,180,255,.5)';ctx.fill();
   }
   ctx.textAlign='center';ctx.font='10px monospace';ctx.fillStyle='rgba(200,150,80,.65)';
-  ctx.fillText('17,000 years ago - someone is painting by torchlight',CX,H*.88);
+  ctx.fillText('17,000 years ago — someone is painting by torchlight',CX,H*.88);
 }
 
 function drawCaveS1(ts){
   ctx.fillStyle='#050302';ctx.fillRect(0,0,W,H);
-  // Very dark cave
-  var cg3=ctx.createRadialGradient(CX,CY,30,CX,CY,Math.max(W,H)*.6);
+  const cg3=ctx.createRadialGradient(CX,CY,30,CX,CY,Math.max(W,H)*.6);
   cg3.addColorStop(0,'#201408');cg3.addColorStop(.6,'#0e0a04');cg3.addColorStop(1,'#030202');
   ctx.fillStyle=cg3;ctx.fillRect(0,0,W,H);
-  // Faded paintings
   ctx.fillStyle='rgba(140,50,16,.35)';ctx.beginPath();ctx.ellipse(CX,H*.42,50,30,0,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(CX-42,H*.4,22,18,-.3,0,Math.PI*2);ctx.fill();
-  // Extinguished torch
-  var tx3=W*.15,ty3=H*.55;
+  const tx3=W*.15,ty3=H*.55;
   ctx.fillStyle='#3a2008';ctx.fillRect(tx3-3,ty3-35,6,45);
   ctx.fillStyle='rgba(80,50,20,.6)';ctx.beginPath();ctx.ellipse(tx3,ty3-38,5,3,0,0,Math.PI*2);ctx.fill();
-  // Smoke wisps
   ctx.strokeStyle='rgba(120,100,80,.25)';ctx.lineWidth=2;
   ctx.beginPath();ctx.moveTo(tx3,ty3-42);ctx.bezierCurveTo(tx3-8,ty3-58,tx3+6,ty3-70,tx3,ty3-82);ctx.stroke();
-  // Dark overlay - cave sealed
   ctx.fillStyle='rgba(0,0,0,.4)';ctx.fillRect(0,0,W,H);
   ctx.textAlign='center';ctx.font='bold 13px monospace';ctx.fillStyle='rgba(200,160,80,.75)';
   ctx.fillText('The torch goes out.',CX,CY-30);
@@ -822,15 +858,13 @@ function drawCaveS1(ts){
 
 function drawCaveS2(ts){
   ctx.fillStyle='#050302';ctx.fillRect(0,0,W,H);
-  var cg4=ctx.createRadialGradient(CX,CY*.6,20,CX,CY*.6,Math.max(W,H)*.7);
+  const cg4=ctx.createRadialGradient(CX,CY*.6,20,CX,CY*.6,Math.max(W,H)*.7);
   cg4.addColorStop(0,'#221610');cg4.addColorStop(.7,'#0e0a06');cg4.addColorStop(1,'#050302');
   ctx.fillStyle=cg4;ctx.fillRect(0,0,W,H);
-  // Paintings - faded
   ctx.fillStyle='rgba(150,55,18,.6)';ctx.beginPath();ctx.ellipse(CX,H*.42,50,28,0,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(CX-42,H*.4,22,18,-.3,0,Math.PI*2);ctx.fill();
-  // Atoms inside cave wall area - rendered by main loop
-  var years2=Math.min(17000,stageT*1700);
-  var frac2=cFrac(years2);
+  const years2=Math.min(17000, stageT*1700);
+  const frac2=cFrac(years2);
   ctx.fillStyle='rgba(0,6,18,.82)';ctx.beginPath();ctx.roundRect(W*.03,H*.07,W*.44,H*.2,8);ctx.fill();
   ctx.textAlign='left';ctx.font='9px monospace';ctx.fillStyle='rgba(100,150,200,.65)';
   ctx.fillText('YEARS OF DARKNESS',W*.05,H*.1);
@@ -843,13 +877,13 @@ function drawCaveS2(ts){
 }
 
 function drawCaveS3(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#030810');sk.addColorStop(1,'#060e14');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.5);
   ctx.fillStyle='#141e2c';ctx.fillRect(0,H*.6,W,H*.4);
   ctx.fillStyle='#1c2838';ctx.fillRect(0,H*.6,W,8);
-  var mx3=CX+80,my3=H*.58;
+  const mx3=CX+80,my3=H*.58;
   ctx.fillStyle='#1a2a3c';ctx.strokeStyle='#243448';ctx.lineWidth=2;
   ctx.beginPath();ctx.roundRect(mx3-75,my3-130,150,135,10);ctx.fill();ctx.stroke();
   ctx.fillStyle='#050e1c';ctx.beginPath();ctx.roundRect(mx3-55,my3-122,110,78,5);ctx.fill();
@@ -865,7 +899,7 @@ function drawCaveS3(ts){
   ctx.fillText('ACCELERATOR MASS SPECTROMETER',mx3,my3-8);
   ctx.fillStyle='rgba(200,160,80,.8)';ctx.font='10px monospace';
   ctx.fillText('Charcoal pigment',CX-80,H*.52);ctx.fillText('from cave wall',CX-80,H*.58);
-  for(var g=5;g>0;g--){ctx.fillStyle='rgba(240,192,96,'+(0.015+g*.006).toFixed(3)+')';ctx.beginPath();ctx.roundRect(CX-W*.36-g*2,H*.7-g*1.5,W*.72+g*4,H*.22+g*3,10+g);ctx.fill();}
+  for(let g=5;g>0;g--){ctx.fillStyle=`rgba(240,192,96,${(0.015+g*.006).toFixed(3)})`;ctx.beginPath();ctx.roundRect(CX-W*.36-g*2,H*.7-g*1.5,W*.72+g*4,H*.22+g*3,10+g);ctx.fill();}
   ctx.fillStyle='rgba(4,12,24,.95)';ctx.beginPath();ctx.roundRect(CX-W*.36,H*.7,W*.72,H*.22,10);ctx.fill();
   ctx.strokeStyle='rgba(240,192,96,.5)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.textAlign='center';ctx.font='10px monospace';ctx.fillStyle='rgba(160,180,200,.65)';
@@ -878,86 +912,67 @@ function drawCaveS3(ts){
 
 // ---- DINO SCENES ----
 function drawDinoS0(ts){
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#0a180a');sk.addColorStop(.5,'#101e08');sk.addColorStop(1,'#0a1408');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
   drawStars(ts,.3);
-  // Jungle
-  for(var i=0;i<8;i++){
-    var tx4=W*(.05+i*.13),tw=W*.1;
+  for(let i=0;i<8;i++){
+    const tx4=W*(.05+i*.13),tw=W*.1;
     ctx.fillStyle='#0a2408';ctx.beginPath();ctx.moveTo(tx4,H*.9);ctx.lineTo(tx4-tw*.5,H*.3+i*10);ctx.lineTo(tx4+tw*.5,H*.3+i*10);ctx.closePath();ctx.fill();
     ctx.fillStyle='#0e2e0a';ctx.beginPath();ctx.ellipse(tx4,H*.3+i*10,tw*.4,H*.14,0,0,Math.PI*2);ctx.fill();
   }
   ctx.fillStyle='#162a0a';ctx.fillRect(0,H*.82,W,H*.18);
-  // T-Rex silhouette
-  var rx=CX-30,ry=H*.65;
-  // body
+  const rx=CX-30,ry=H*.65;
   ctx.fillStyle='#2a4010';ctx.beginPath();ctx.ellipse(rx,ry,65,42,-.1,0,Math.PI*2);ctx.fill();
-  // head
   ctx.beginPath();ctx.ellipse(rx-65,ry-35,32,22,.15,0,Math.PI*2);ctx.fill();
-  // jaw
   ctx.beginPath();ctx.moveTo(rx-90,ry-25);ctx.lineTo(rx-38,ry-25);ctx.lineWidth=8;ctx.strokeStyle='#2a4010';ctx.stroke();
-  // teeth
-  for(var t=0;t<5;t++){ctx.beginPath();ctx.moveTo(rx-88+t*12,ry-24);ctx.lineTo(rx-86+t*12,ry-14);ctx.strokeStyle='rgba(180,200,160,.5)';ctx.lineWidth=2;ctx.stroke();}
-  // legs
+  for(let t=0;t<5;t++){ctx.beginPath();ctx.moveTo(rx-88+t*12,ry-24);ctx.lineTo(rx-86+t*12,ry-14);ctx.strokeStyle='rgba(180,200,160,.5)';ctx.lineWidth=2;ctx.stroke();}
   ctx.lineWidth=18;ctx.strokeStyle='#2a4010';ctx.lineCap='round';
   ctx.beginPath();ctx.moveTo(rx+10,ry+38);ctx.lineTo(rx+5,ry+80);ctx.lineTo(rx+22,ry+85);ctx.stroke();
   ctx.beginPath();ctx.moveTo(rx+35,ry+38);ctx.lineTo(rx+32,ry+80);ctx.lineTo(rx+50,ry+85);ctx.stroke();
-  // tiny arms
   ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(rx-20,ry-10);ctx.lineTo(rx-30,ry+5);ctx.stroke();
-  // tail
   ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(rx+62,ry);ctx.bezierCurveTo(rx+90,ry+15,rx+110,ry+25,rx+120,ry+10);ctx.stroke();
-  // C-14 atoms floating around T-Rex
-  for(var i=0;i<8;i++){
-    var a2=(ts*.0007+i*.785)%(Math.PI*2);
-    var ax4=rx+Math.cos(a2)*90,ay4=ry+Math.sin(a2)*55;
+  for(let i=0;i<8;i++){
+    const a2=(ts*.0007+i*.785)%(Math.PI*2);
+    const ax4=rx+Math.cos(a2)*90,ay4=ry+Math.sin(a2)*55;
     ctx.beginPath();ctx.arc(ax4,ay4,i%3===0?3.5:2,0,Math.PI*2);
     ctx.fillStyle=i%3===0?'rgba(64,255,128,.7)':'rgba(140,180,255,.45)';ctx.fill();
   }
   ctx.textAlign='center';ctx.font='10px monospace';ctx.fillStyle='rgba(64,255,128,.65)';
-  ctx.fillText('Alive 68 million years ago - absorbing C-14',CX,H*.9);
+  ctx.fillText('Alive 68 million years ago — absorbing C-14',CX,H*.9);
 }
 
 function drawDinoS1(ts){
-  // Dramatic - end of an era
-  var sk=ctx.createLinearGradient(0,0,0,H);
+  const sk=ctx.createLinearGradient(0,0,0,H);
   sk.addColorStop(0,'#1a0808');sk.addColorStop(.4,'#0e0404');sk.addColorStop(1,'#050202');
   ctx.fillStyle=sk;ctx.fillRect(0,0,W,H);
-  // Fire glow on horizon (meteor impact)
-  var fg3=ctx.createRadialGradient(CX,H*.85,10,CX,H*.85,W*.6);
+  const fg3=ctx.createRadialGradient(CX,H*.85,10,CX,H*.85,W*.6);
   fg3.addColorStop(0,'rgba(255,120,20,.5)');fg3.addColorStop(.4,'rgba(255,60,10,.2)');fg3.addColorStop(1,'rgba(0,0,0,0)');
   ctx.fillStyle=fg3;ctx.fillRect(0,0,W,H);
-  // Meteor streak
-  var mp=Math.min(1,(stageT)*.3);
+  const mp=Math.min(1,(stageT)*.3);
   if(mp<1){ctx.strokeStyle='rgba(255,200,80,.8)';ctx.lineWidth=4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(W*.85,H*.05);ctx.lineTo(W*.85-mp*W*.5,H*.05+mp*H*.5);ctx.stroke();}
-  // Dino silhouette (faded/dying)
   ctx.save();ctx.globalAlpha=.4;
-  var rx2=CX-30,ry2=H*.62;
+  const rx2=CX-30,ry2=H*.62;
   ctx.fillStyle='#3a2010';ctx.beginPath();ctx.ellipse(rx2,ry2,65,40,-.1,0,Math.PI*2);ctx.fill();
   ctx.beginPath();ctx.ellipse(rx2-65,ry2-33,32,22,.15,0,Math.PI*2);ctx.fill();
   ctx.restore();
-  // C-14 gone
   ctx.textAlign='center';ctx.font='bold 13px monospace';ctx.fillStyle='rgba(255,64,96,.8)';
-  ctx.fillText('THE END - 66 million years ago',CX,CY-20);
+  ctx.fillText('THE END — 66 million years ago',CX,CY-20);
   ctx.font='11px monospace';ctx.fillStyle='rgba(200,160,80,.7)';
   ctx.fillText('C-14 clock starts. But it will run out',CX,CY+12);
   ctx.fillText('millions of years before anyone can measure it.',CX,CY+30);
 }
 
 function drawDinoS2(ts){
-  // Rock layers - no atoms
-  var layers=['#1a1a0e','#16140a','#201a0c','#18160a','#22200e','#1a1808'];
-  layers.forEach(function(c,i){ctx.fillStyle=c;ctx.fillRect(0,H*(i/6),W,H/6+2);});
-  // Layer lines
+  const layers=['#1a1a0e','#16140a','#201a0c','#18160a','#22200e','#1a1808'];
+  layers.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,H*(i/6),W,H/6+2);});
   ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=.8;
-  for(var i=1;i<6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
-  // Fossil embedded
+  for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
   ctx.strokeStyle='rgba(200,185,140,.45)';ctx.lineWidth=2.5;ctx.lineCap='round';
-  var fx=CX,fy=H*.48;
+  const fx=CX,fy=H*.48;
   ctx.beginPath();ctx.ellipse(fx-65,fy-15,20,14,-.15,0,Math.PI*2);ctx.fill();ctx.stroke();
   ctx.beginPath();ctx.moveTo(fx-45,fy-10);ctx.bezierCurveTo(fx,fy-5,fx+38,fy,fx+65,fy+10);ctx.stroke();
-  for(var r=0;r<4;r++){ctx.beginPath();ctx.moveTo(fx-32+r*18,fy-8+r*2);ctx.lineTo(fx-30+r*18,fy+10+r*2);ctx.stroke();ctx.beginPath();ctx.moveTo(fx-32+r*18,fy-8+r*2);ctx.lineTo(fx-34+r*18,fy+10+r*2);ctx.stroke();}
-  // Big zero message
+  for(let r=0;r<4;r++){ctx.beginPath();ctx.moveTo(fx-32+r*18,fy-8+r*2);ctx.lineTo(fx-30+r*18,fy+10+r*2);ctx.stroke();ctx.beginPath();ctx.moveTo(fx-32+r*18,fy-8+r*2);ctx.lineTo(fx-34+r*18,fy+10+r*2);ctx.stroke();}
   ctx.textAlign='center';ctx.fillStyle='rgba(0,6,18,.85)';ctx.beginPath();ctx.roundRect(CX-W*.38,H*.12,W*.76,H*.26,10);ctx.fill();
   ctx.font='bold 40px monospace';ctx.fillStyle='rgba(255,64,96,.9)';
   ctx.fillText('0%',CX,H*.23);
@@ -965,19 +980,17 @@ function drawDinoS2(ts){
   ctx.fillText('Zero Carbon-14 remains.',CX,H*.27);
   ctx.fillStyle='rgba(180,150,100,.6)';
   ctx.fillText('It all decayed away millions of years ago.',CX,H*.33);
-  // Layer age labels
-  ['66 Ma','67 Ma','68 Ma','70 Ma','75 Ma','80 Ma'].forEach(function(lbl,i){
+  ['66 Ma','67 Ma','68 Ma','70 Ma','75 Ma','80 Ma'].forEach((lbl,i)=>{
     ctx.fillStyle='rgba(160,140,90,.45)';ctx.font='8px monospace';ctx.textAlign='left';
     ctx.fillText(lbl,6,H*(i/6)+14);
   });
 }
 
 function drawDinoS3(ts){
-  var layers=['#1a1a0e','#16140a','#201a0c','#18160a','#22200e','#1a1808'];
-  layers.forEach(function(c,i){ctx.fillStyle=c;ctx.fillRect(0,H*(i/6),W,H/6+2);});
+  const layers=['#1a1a0e','#16140a','#201a0c','#18160a','#22200e','#1a1808'];
+  layers.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(0,H*(i/6),W,H/6+2);});
   ctx.strokeStyle='rgba(0,0,0,.2)';ctx.lineWidth=.8;
-  for(var i=1;i<6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
-  // Age brackets
+  for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
   ctx.strokeStyle='rgba(64,255,128,.5)';ctx.lineWidth=2;ctx.setLineDash([5,4]);
   ctx.beginPath();ctx.moveTo(W*.08,H/6*2);ctx.lineTo(W*.92,H/6*2);ctx.stroke();
   ctx.beginPath();ctx.moveTo(W*.08,H/6*3);ctx.lineTo(W*.92,H/6*3);ctx.stroke();
@@ -985,12 +998,10 @@ function drawDinoS3(ts){
   ctx.fillStyle='rgba(64,255,128,.7)';ctx.font='9px monospace';ctx.textAlign='right';
   ctx.fillText('Rock above fossil: 66 million years',W*.9,H/6*2-5);
   ctx.fillText('Rock below fossil: 68 million years',W*.9,H/6*3+12);
-  // Arrow pointing to fossil layer
   ctx.fillStyle='rgba(240,192,96,.75)';ctx.lineWidth=2;ctx.strokeStyle='rgba(240,192,96,.6)';
   ctx.beginPath();ctx.moveTo(W*.05,H*.48);ctx.lineTo(W*.15,H*.48);ctx.stroke();
   ctx.beginPath();ctx.moveTo(W*.15,H*.48);ctx.lineTo(W*.12,H*.45);ctx.moveTo(W*.15,H*.48);ctx.lineTo(W*.12,H*.51);ctx.stroke();
   ctx.fillText('T-Rex fossil here',W*.15,H*.45);
-  // Uranium clock explanation
   ctx.fillStyle='rgba(0,6,18,.88)';ctx.beginPath();ctx.roundRect(CX+W*.05,H*.12,W*.42,H*.28,8);ctx.fill();
   ctx.textAlign='left';ctx.font='9px monospace';ctx.fillStyle='rgba(32,216,255,.8)';
   ctx.fillText('URANIUM-LEAD DATING',CX+W*.07,H*.15);
@@ -1000,54 +1011,54 @@ function drawDinoS3(ts){
   ctx.fillText('Uranium trapped in zircon',CX+W*.07,H*.21);
   ctx.fillText('crystals in volcanic ash.',CX+W*.07,H*.235);
   ctx.fillText('Uranium decays to lead.',CX+W*.07,H*.25);
-  ctx.fillText('Measure ratio -> get age.',CX+W*.07,H*.265);
-  // Result box
-  for(var g=4;g>0;g--){ctx.fillStyle='rgba(240,192,96,'+(0.02+g*.006).toFixed(3)+')';ctx.beginPath();ctx.roundRect(CX-W*.38-g*2,H*.72-g,W*.75+g*4,H*.2+g*2,8+g);ctx.fill();}
+  ctx.fillText('Measure ratio → get age.',CX+W*.07,H*.265);
+  for(let g=4;g>0;g--){ctx.fillStyle=`rgba(240,192,96,${(0.02+g*.006).toFixed(3)})`;ctx.beginPath();ctx.roundRect(CX-W*.38-g*2,H*.72-g,W*.75+g*4,H*.2+g*2,8+g);ctx.fill();}
   ctx.fillStyle='rgba(4,12,24,.95)';ctx.beginPath();ctx.roundRect(CX-W*.38,H*.72,W*.75,H*.2,8);ctx.fill();
   ctx.strokeStyle='rgba(240,192,96,.45)';ctx.lineWidth=1.5;ctx.stroke();
   ctx.textAlign='center';ctx.font='10px monospace';ctx.fillStyle='rgba(160,180,200,.65)';
   ctx.fillText('DATING RESULT (Uranium-Lead method)',CX-W*.01,H*.72+16);
   ctx.font='bold 26px monospace';ctx.fillStyle='rgba(240,192,96,1)';
-  ctx.fillText('66-68 million years old',CX-W*.01,H*.72+48);
+  ctx.fillText('66–68 million years old',CX-W*.01,H*.72+48);
   ctx.font='10px monospace';ctx.fillStyle='rgba(255,100,120,.75)';
   ctx.fillText('Carbon dating cannot reach this far. A different clock was needed.',CX-W*.01,H*.72+68);
 }
 
-// Stage render table
-var RENDERS=[
+const RENDERS=[
   [drawWoodS0,drawWoodS1,drawWoodS2,drawWoodS3],
   [drawMamS0,drawMamS1,drawMamS2,drawMamS3],
   [drawCaveS0,drawCaveS1,drawCaveS2,drawCaveS3],
-  [drawDinoS0,drawDinoS1,drawDinoS2,drawDinoS3],
+  [drawDinoS0,drawDinoS1,drawDinoS2,drawDinoS3]
 ];
 
-// =================== ATOM RENDERING ===================
-var ATOM_STAGES=[2,2,2,2]; // which stage index shows atoms
+// ============================================================================
+// ATOM RENDERER
+// ============================================================================
+const ATOM_STAGES=[2,2,2,2];
 
 function shouldShowAtoms(){return stageIdx===ATOM_STAGES[artIdx]&&!ARTS[artIdx].isDino;}
 
 function renderAtoms(ts,dt){
   if(!shouldShowAtoms())return;
-  var art=ARTS[artIdx];
-  var years=Math.min(art.age,stageT*art.age*.1);
-  var frac=cFrac(years);
-  var nTotal=atoms.length;
-  var nC14=Math.round(nTotal*frac);
-  // update decay
-  var currentC14=atoms.filter(function(a){return a.isC14&&!a.decayed;}).length;
+  const art=ARTS[artIdx];
+  const years=Math.min(art.age, stageT*art.age*.1);
+  const frac=cFrac(years);
+  const nTotal=atoms.length;
+  const nC14=Math.round(nTotal*frac);
+  
+  const currentC14=atoms.filter(a=>a.isC14&&!a.decayed).length;
   if(currentC14>nC14){
-    var toDecay=currentC14-nC14;
-    var alive=atoms.filter(function(a){return a.isC14&&!a.decayed&&!a.decaying;});
-    for(var i=0;i<Math.min(toDecay,3);i++){
+    const toDecay=currentC14-nC14;
+    const alive=atoms.filter(a=>a.isC14&&!a.decayed&&!a.decaying);
+    for(let i=0;i<Math.min(toDecay,3);i++){
       if(i<alive.length){alive[i].decaying=true;alive[i].decayT=ts;}
     }
   }
-  atoms.forEach(function(a,i){
+  atoms.forEach((a,i)=>{
     if(a.decayed)return;
     a.phase+=dt*.7;
-    var reg=REGIONS[artIdx];
-    var bx=W*(reg.cx-reg.rx),bw=W*reg.rx*2;
-    var by=H*(reg.cy-reg.ry),bh=H*reg.ry*2;
+    const reg=REGIONS[artIdx];
+    const bx=W*(reg.cx-reg.rx),bw=W*reg.rx*2;
+    const by=H*(reg.cy-reg.ry),bh=H*reg.ry*2;
     a.x+=Math.sin(a.phase+a.y*.02)*dt*10*a.vx;
     a.y+=Math.cos(a.phase+a.x*.02)*dt*10*a.vy;
     if(a.x<bx+a.r)a.vx=Math.abs(a.vx);
@@ -1057,105 +1068,120 @@ function renderAtoms(ts,dt){
     a.x=Math.max(bx+a.r,Math.min(bx+bw-a.r,a.x));
     a.y=Math.max(by+a.r,Math.min(by+bh-a.r,a.y));
     if(a.decaying){
-      var el=(ts-a.decayT)/800,pr=Math.min(1,el);
+      const el=(ts-a.decayT)/800,pr=Math.min(1,el);
       a.alpha=1-pr;
       ctx.beginPath();ctx.arc(a.x,a.y,a.r+pr*14,0,Math.PI*2);
-      ctx.strokeStyle='rgba(64,255,128,'+(((1-pr)*.4)).toFixed(3)+')';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.strokeStyle=`rgba(64,255,128,${((1-pr)*.4).toFixed(3)})`;ctx.lineWidth=1.5;ctx.stroke();
       if(pr>=1){a.decayed=true;}
     }
     if(!a.decayed){
-      var isC14=i<nC14;
-      var col=isC14?'64,255,128':'96,144,255';
-      var pulse=.7+.3*Math.sin(ts*.002+a.phase);
+      const isC14=i<nC14;
+      const col=isC14?'64,255,128':'96,144,255';
+      const pulse=.7+.3*Math.sin(ts*.002+a.phase);
       ctx.beginPath();ctx.arc(a.x,a.y,a.r*3.5,0,Math.PI*2);
-      ctx.fillStyle='rgba('+col+','+(a.alpha*pulse*.09).toFixed(3)+')';ctx.fill();
+      ctx.fillStyle=`rgba(${col},${(a.alpha*pulse*.09).toFixed(3)})`;ctx.fill();
       ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
-      ctx.fillStyle='rgba('+col+','+(a.alpha*(.6+pulse*.35)).toFixed(2)+')';ctx.fill();
+      ctx.fillStyle=`rgba(${col},${(a.alpha*(.6+pulse*.35)).toFixed(2)})`;ctx.fill();
     }
   });
 }
 
-// =================== MAIN LOOP ===================
+// ============================================================================
+// MAIN ANIMATION LOOP
+// ============================================================================
 function loop(ts){
   if(!lastTs)lastTs=ts;
-  var dt=Math.min((ts-lastTs)/1000,.04);
+  const dt=Math.min((ts-lastTs)/1000,.04);
   lastTs=ts;
-  stageT+=dt;
-  // Auto advance
+  if(!manualScrub) stageT+=dt;
+  
   if(autoPlay&&stageT>12&&stageIdx<3){gotoStage(stageIdx+1);}
-  // Render
   ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
   RENDERS[artIdx][stageIdx](ts);
   renderAtoms(ts,dt);
   requestAnimationFrame(loop);
 }
 
-// =================== STAGE MANAGEMENT ===================
+// ============================================================================
+// STAGE & UI MANAGEMENT
+// ============================================================================
 function gotoStage(idx){
   stageIdx=Math.max(0,Math.min(3,idx));
   stageT=0;
-  var art=ARTS[artIdx];
-  var st=art.stages[stageIdx];
-  document.getElementById('st-stage').textContent='Stage '+(stageIdx+1)+' of 4  -  '+art.name;
+  manualScrub=false;
+  const art=ARTS[artIdx];
+  const st=art.stages[stageIdx];
+  document.getElementById('st-stage').textContent=`Stage ${stageIdx+1} of 4  —  ${art.name}`;
   document.getElementById('st-title').textContent=st.title;
   document.getElementById('st-text').innerHTML=st.text;
-  // Dots
-  var dots=document.getElementById('dots');
-  dots.querySelectorAll('.dot').forEach(function(d,i){
+  
+  const dots=document.getElementById('dots');
+  dots.querySelectorAll('.dot').forEach((d,i)=>{
     d.className='dot'+(i<stageIdx?' done':i===stageIdx?' active':'');
   });
-  // Init atoms if decay stage
+  
+  // Show Interactive Scrubber only during Decay Stage (Stage 3 = index 2)
+  const scrubberWrap = document.getElementById('scrubber-wrap');
+  if(stageIdx===2 && !art.isDino){
+    scrubberWrap.style.display='block';
+    const slider = document.getElementById('sl-time');
+    slider.value = 0;
+    document.getElementById('scrub-val').textContent = '0 yrs';
+  } else {
+    scrubberWrap.style.display='none';
+  }
+
   if(stageIdx===ATOM_STAGES[artIdx]&&!art.isDino){
-    var reg=REGIONS[artIdx];
-    var nTotal=120;
+    const reg=REGIONS[artIdx];
+    const nTotal=120;
     initAtoms(nTotal,nTotal,reg);
   }
-  // Result card
-  var res=document.getElementById('result');
+  
+  const res=document.getElementById('result');
   if(stageIdx===3){
     res.style.display='block';
     buildResult(art);
   } else {
     res.style.display='none';
   }
-  if(narrateOn)narrate(st.narr);
+  if(narrateOn) narrate(st.narr);
 }
 
 function gotoArt(idx){
   artIdx=idx;
   stageIdx=0;stageT=0;atoms=[];
-  document.querySelectorAll('.art-card').forEach(function(c,i){c.classList.toggle('active',i===idx);});
+  document.querySelectorAll('.art-card').forEach((c,i)=>{c.classList.toggle('active',i===idx);});
   buildDots();
   document.getElementById('result').style.display='none';
   gotoStage(0);
 }
 
 function buildDots(){
-  var d=document.getElementById('dots');
+  const d=document.getElementById('dots');
   d.innerHTML='';
-  for(var i=0;i<4;i++){
-    var dot=document.createElement('div');
+  for(let i=0;i<4;i++){
+    const dot=document.createElement('div');
     dot.className='dot'+(i===0?' active':'');
-    (function(ii){dot.onclick=function(){gotoStage(ii);}})(i);
+    dot.onclick=()=>gotoStage(i);
     d.appendChild(dot);
   }
 }
 
 function buildResult(art){
-  var frac=art.isDino?0:cFrac(art.age);
-  var pct=(frac*100).toFixed(1);
-  var hl=(art.age/HALF_LIFE).toFixed(1);
+  const frac=art.isDino?0:cFrac(art.age);
+  const pct=(frac*100).toFixed(1);
+  const hl=(art.age/HALF_LIFE).toFixed(1);
   if(art.isDino){
     document.getElementById('result-inner').innerHTML=
       '<div class="dino-warn"><strong>Carbon dating FAILS here.</strong><br>'+
-      'C-14 remaining: <strong>0%</strong> - it all decayed away millions of years ago.<br>'+
+      'C-14 remaining: <strong>0%</strong> — it all decayed away millions of years ago.<br>'+
       'Method used instead: <strong>Uranium-Lead dating</strong> of zircon crystals in surrounding rock.<br>'+
-      'U-238 half-life: 4.5 billion years - perfect for measuring millions of years.<br>'+
+      'U-238 half-life: 4.5 billion years — perfect for measuring millions of years.<br>'+
       'Result: T-Rex lived between <strong>66 and 68 million years ago</strong>.</div>';
   } else {
-    var html='<div class="res-left"><div class="res-tag">Calculated age</div>'+
+    const html='<div class="res-left"><div class="res-tag">Calculated age</div>'+
       '<div class="res-num">'+Math.round(art.age).toLocaleString()+'</div>'+
-      '<div class="res-unit">years old<br>+/- '+Math.round(art.age*.015).toLocaleString()+' years</div></div>'+
+      '<div class="res-unit">years old<br>± '+Math.round(art.age*.015).toLocaleString()+' years</div></div>'+
       '<div class="res-right"><div class="res-bars">'+
       '<div class="rb"><span class="rb-lbl" style="color:var(--c14)">C-14</span><div class="rb-track"><div class="rb-fill" style="background:var(--c14);width:'+pct+'%"></div></div><span class="rb-val" style="color:var(--c14)">'+pct+'%</span></div>'+
       '<div class="rb"><span class="rb-lbl" style="color:var(--c12)">C-12</span><div class="rb-track"><div class="rb-fill" style="background:var(--c12);width:'+((100-parseFloat(pct)).toFixed(1))+'%"></div></div><span class="rb-val" style="color:var(--c12)">'+((100-parseFloat(pct)).toFixed(1))+'%</span></div>'+
@@ -1165,62 +1191,66 @@ function buildResult(art){
   }
 }
 
-// =================== VOICE ===================
-function populateVoices(){
-  if(!window.speechSynthesis)return;
-  var voices=speechSynthesis.getVoices(),sel=document.getElementById('vsel');
-  if(!voices.length)return;sel.innerHTML='';
-  var groups=[
-    {l:'-- Female English --',v:voices.filter(function(v){return v.lang.startsWith('en')&&/female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name);})},
-    {l:'-- Male English --',  v:voices.filter(function(v){return v.lang.startsWith('en')&&/male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name);})},
-    {l:'-- English --',       v:voices.filter(function(v){return v.lang.startsWith('en')&&!/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name);})},
-    {l:'-- Other --',         v:voices.filter(function(v){return !v.lang.startsWith('en');})}
-  ];
-  groups.forEach(function(g){
-    if(!g.v.length)return;
-    var og=document.createElement('optgroup');og.label=g.l;
-    g.v.forEach(function(v){var o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';og.appendChild(o);});
-    sel.appendChild(og);
-  });
-  var pref=voices.find(function(v){return v.name==='Google UK English Female';})||
-           voices.find(function(v){return v.lang==='en-GB'&&/female/i.test(v.name);})||
-           voices.find(function(v){return v.lang.startsWith('en');});
-  if(pref){sel.value=pref.name;chosenVoice=pref;}
-  else if(voices[0]){sel.value=voices[0].name;chosenVoice=voices[0];}
-}
-if(window.speechSynthesis){speechSynthesis.onvoiceschanged=populateVoices;populateVoices();}
-
-// =================== CONTROLS ===================
-document.getElementById('btn-prev').onclick=function(){gotoStage(stageIdx-1);};
-document.getElementById('btn-next').onclick=function(){gotoStage(stageIdx+1);};
+// ============================================================================
+// EVENT LISTENERS & THEME STORAGE
+// ============================================================================
+document.getElementById('btn-prev').onclick=()=>gotoStage(stageIdx-1);
+document.getElementById('btn-next').onclick=()=>gotoStage(stageIdx+1);
 document.getElementById('btn-auto').onclick=function(){
-  autoPlay=!autoPlay;this.textContent=autoPlay?'| Pause auto':'> Auto';this.classList.toggle('lit',autoPlay);
+  autoPlay=!autoPlay;this.textContent=autoPlay?'⏸ Pause':'▶ Auto Play';this.classList.toggle('lit',autoPlay);
 };
-document.getElementById('btn-v').onclick=function(){
-  if(!window.speechSynthesis){alert('Voice not supported. Use Chrome, Edge or Safari.');return;}
+
+document.getElementById('btn-narrate').onclick=function(){
+  if(!window.speechSynthesis){alert('Voice not supported. Please use Chrome, Edge or Safari.');return;}
   narrateOn=!narrateOn;
-  this.textContent=narrateOn?'Voice ON':'Voice';this.classList.toggle('lit',narrateOn);
+  this.textContent=narrateOn?'🔊 Voice ON':'🔇 Voice';this.style.color=narrateOn?'var(--cyan)':'';
   document.getElementById('vbox').style.display=narrateOn?'block':'none';
   if(narrateOn){populateVoices();narrate(ARTS[artIdx].stages[stageIdx].narr);}
   else stopV();
 };
+
 document.getElementById('vsel').onchange=function(){
-  var v=speechSynthesis.getVoices().find(function(v){return v.name===this.value;}.bind(this));if(v)chosenVoice=v;
+  const v=speechSynthesis.getVoices().find(v=>v.name===this.value);
+  if(v)chosenVoice=v;
 };
 document.getElementById('sl-rate').oninput=function(){
-  speechRate=parseFloat(this.value);document.getElementById('rv').textContent=speechRate.toFixed(1)+'x';
-};
-document.getElementById('art-cards').addEventListener('click',function(e){
-  var card=e.target.closest('.art-card');if(!card)return;gotoArt(parseInt(card.dataset.i));
-});
-document.getElementById('th-toggle').onclick=function(){
-  var th=document.getElementById('theory');
-  var open=th.style.display==='block';
-  th.style.display=open?'none':'block';
-  this.textContent=open?'v For the curious: the science behind it':'^  Hide the science';
+  speechRate=parseFloat(this.value);document.getElementById('rv').textContent=speechRate.toFixed(1)+'×';
 };
 
-// =================== INIT ===================
+document.getElementById('art-cards').addEventListener('click',e=>{
+  const card=e.target.closest('.art-card');if(!card)return;gotoArt(parseInt(card.dataset.i));
+});
+
+document.getElementById('th-toggle').onclick=function(){
+  const th=document.getElementById('theory');
+  const open=th.style.display==='block';
+  th.style.display=open?'none':'block';
+  this.textContent=open?'▼ For the curious: the science behind it':'▲ Hide the science';
+};
+
+// Interactive Scrubber logic
+document.getElementById('sl-time').oninput=function(){
+  manualScrub=true;
+  const art=ARTS[artIdx];
+  const targetYears = parseFloat(this.value) * art.age;
+  stageT = targetYears / (art.age * 0.1);
+  document.getElementById('scrub-val').textContent = Math.round(targetYears).toLocaleString() + ' yrs';
+};
+
+// Theme Selector Wiring
+const themeSelector = document.getElementById('theme-selector');
+const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeSelector.value = savedTheme;
+themeSelector.addEventListener('change', (e) => {
+  const selectedTheme = e.target.value;
+  document.documentElement.setAttribute('data-theme', selectedTheme);
+  localStorage.setItem('sim_theme', selectedTheme);
+});
+
+// ============================================================================
+// INIT
+// ============================================================================
 buildDots();
 gotoArt(0);
 requestAnimationFrame(loop);
