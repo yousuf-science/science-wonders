@@ -11,7 +11,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buoyancy &amp; Density — Science Wonders</title>
-<meta name="description" content="An interactive buoyancy and density simulation. Drop objects into different fluids, explore Archimedes' principle, see why ships float and icebergs hide, and investigate why the Titanic sank.">
+<meta name="description" content="An interactive buoyancy and density simulation with real-time force vectors, bubble particle physics, material shaders, and an RMS Titanic flooding cutaway.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 
@@ -102,7 +102,7 @@ select.header-link option{background:var(--bg2);color:var(--text);}
 .card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
 
 .stage-wrap{position:relative;background:var(--stage-bg);}
-canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
+canvas#stage{display:block;width:100%;height:auto;cursor:pointer;touch-action:none;}
 canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
 .aux-small canvas#aux{max-height:280px;}
 .stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:var(--bg2);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);color:var(--text);}
@@ -184,7 +184,7 @@ footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--acc
   <div class="top-grid">
     <div class="left-col">
       <div class="card">
-        <div class="card-title" id="stage-title">The Tank <span class="hint" id="stage-hint">drag the block</span></div>
+        <div class="card-title" id="stage-title">The Tank <span class="hint" id="stage-hint">drag or dunk object underwater</span></div>
         
         <!-- FULL VOICE NARRATION BOX -->
         <div class="nbox" id="nbox">
@@ -278,7 +278,7 @@ function narrate(text){
 function stopNarration(){if(window.speechSynthesis)speechSynthesis.cancel();speaking=false;}
 
 // ============================================================================
-// BUOYANCY & DENSITY — engine
+// BUOYANCY & DENSITY — engine & particle bubbles
 // ============================================================================
 let W=560,H=400,AUXW=560,AUXH=300;
 const G=9.81;
@@ -318,6 +318,19 @@ const S={
 
 let TX0=30,TX1=W-30,TY0=30,TY1=H-26, SURFACE;
 let OW=92, OH=92, OX;
+let bubbles = [];
+
+function spawnBubble(x, y){
+  bubbles.push({
+    x: x + (Math.random()*20 - 10),
+    y: y,
+    r: 1.5 + Math.random()*3,
+    vy: -1.2 - Math.random()*1.5,
+    vx: (Math.random() - 0.5)*0.8,
+    alpha: 0.8
+  });
+}
+
 function layout(){ TX0=30;TX1=W-30;TY0=30;TY1=H-26; SURFACE=TY0+96; OX=(TX0+TX1)/2 - OW/2; }
 
 function setObject(key){ S.obj=key; S.rhoObj=OBJECTS[key].rho; S.objCol=OBJECTS[key].col; S.customName=key; drop(); }
@@ -327,7 +340,7 @@ function effRho(){
   if(S.mode === 'sub') return S.ballast;
   if(S.mode === 'titanic') {
     const emptyRho = 620;
-    return Math.round(emptyRho + (S.floodPercent / 100) * (S.rhoFl - emptyRho + 350));
+    return Math.round(emptyRho + (S.floodPercent / 100) * (S.rhoFl - emptyRho + 405));
   }
   return S.rhoObj;
 }
@@ -341,16 +354,32 @@ function subFrac(){
 }
 
 function stepPhysics(dt){
+  // update bubbles
+  for(let i=bubbles.length-1; i>=0; i--){
+    let b = bubbles[i];
+    b.y += b.vy * dt;
+    b.x += b.vx * dt;
+    b.alpha -= 0.008 * dt;
+    if(b.y < SURFACE || b.alpha <= 0){
+      bubbles.splice(i, 1);
+    }
+  }
+
   if(S.dragging) { S.vy=0; return; }
   const ro=effRho(), rf=S.rhoFl;
   const f=subFrac();
-  const a = 0.45*(1 - (rf*f)/ro);
+  const a = 0.48*(1 - (rf*f)/ro);
   S.vy += a*dt;
   const inFluid=f>0.02;
-  S.vy *= inFluid? 0.86 : 0.985;
+  S.vy *= inFluid? 0.88 : 0.985;
   S.y += S.vy*dt*2.2;
   if(S.y<TY0+2){ S.y=TY0+2; if(S.vy<0)S.vy=0; }
   if(S.y+OH>TY1-2){ S.y=TY1-2-OH; if(S.vy>0)S.vy*=-0.3; }
+
+  // spawn bubbles if moving underwater
+  if(inFluid && Math.abs(S.vy) > 0.4 && Math.random() < 0.35){
+    spawnBubble(OX + OW/2, S.y + OH);
+  }
 }
 
 function verdict(){
@@ -383,6 +412,21 @@ function drawStage(){
   } else {
     drawObject();
   }
+
+  // Draw force vector arrows on object
+  drawForceArrows();
+
+  // Draw bubble particles
+  sctx.save();
+  for(let b of bubbles){
+    sctx.beginPath();
+    sctx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+    sctx.fillStyle = `rgba(200, 240, 255, ${b.alpha})`;
+    sctx.fill();
+    sctx.strokeStyle = `rgba(255, 255, 255, ${b.alpha})`;
+    sctx.stroke();
+  }
+  sctx.restore();
   
   const v=verdict();
   sctx.font='bold 13px monospace';
@@ -391,15 +435,82 @@ function drawStage(){
   if(v==='float'){ const above=(1-floatFrac())*100; sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace'; sctx.fillText(above.toFixed(0)+'% pokes above the surface', TX1-180, TY0-9); }
 }
 
+function drawForceArrows(){
+  const cx = OX + OW/2;
+  const cy = S.y + OH/2;
+  const f = subFrac();
+  const V = S.volumeL/1000;
+  const Fb = S.rhoFl * V * f * G;
+  const Wt = effRho() * V * G;
+  
+  // Scale arrows for display (pixels per Newton)
+  const scale = 0.45;
+  const lenFb = Math.min(65, Math.max(10, Fb * scale));
+  const lenWt = Math.min(65, Math.max(10, Wt * scale));
+
+  sctx.save();
+  sctx.lineWidth = 3;
+
+  // Upward Buoyant Force (Cyan)
+  if(Fb > 0.5){
+    sctx.strokeStyle = cssv('--cyan');
+    sctx.fillStyle = cssv('--cyan');
+    sctx.beginPath();
+    sctx.moveTo(cx, cy - 8);
+    sctx.lineTo(cx, cy - 8 - lenFb);
+    sctx.stroke();
+    // arrow head
+    sctx.beginPath();
+    sctx.moveTo(cx, cy - 8 - lenFb - 6);
+    sctx.lineTo(cx - 5, cy - 8 - lenFb);
+    sctx.lineTo(cx + 5, cy - 8 - lenFb);
+    sctx.closePath();
+    sctx.fill();
+    sctx.font = 'bold 9px monospace';
+    sctx.fillText('Fb=' + Fb.toFixed(0) + 'N', cx + 8, cy - lenFb/2 - 4);
+  }
+
+  // Downward Weight Force (Orange)
+  sctx.strokeStyle = cssv('--orange');
+  sctx.fillStyle = cssv('--orange');
+  sctx.beginPath();
+  sctx.moveTo(cx, cy + 8);
+  sctx.lineTo(cx, cy + 8 + lenWt);
+  sctx.stroke();
+  sctx.beginPath();
+  sctx.moveTo(cx, cy + 8 + lenWt + 6);
+  sctx.lineTo(cx - 5, cy + 8 + lenWt);
+  sctx.lineTo(cx + 5, cy + 8 + lenWt);
+  sctx.closePath();
+  sctx.fill();
+  sctx.font = 'bold 9px monospace';
+  sctx.fillText('W=' + Wt.toFixed(0) + 'N', cx + 8, cy + lenWt/2 + 6);
+
+  sctx.restore();
+}
+
 function drawObject(){
   const name = S.mode==='sub'?'sub':S.customName;
   const col = S.mode==='sub'? '#d0d6dc' : S.objCol;
+  sctx.save();
+  // Shadow
   sctx.fillStyle='rgba(0,0,0,0.25)'; sctx.fillRect(OX+4,S.y+4,OW,OH);
-  sctx.fillStyle=col; sctx.fillRect(OX,S.y,OW,OH);
-  sctx.strokeStyle='rgba(255,255,255,0.4)'; sctx.lineWidth=1.5; sctx.strokeRect(OX,S.y,OW,OH);
-  sctx.fillStyle='#0a0e16'; sctx.font='bold 11px monospace'; sctx.textAlign='center';
+  
+  // Material gradient rendering
+  const grad = sctx.createLinearGradient(OX, S.y, OX+OW, S.y+OH);
+  grad.addColorStop(0, col);
+  grad.addColorStop(1, '#1b263b');
+  sctx.fillStyle = grad;
+  sctx.fillRect(OX, S.y, OW, OH);
+
+  // Bevel border
+  sctx.strokeStyle='rgba(255,255,255,0.45)'; sctx.lineWidth=2; sctx.strokeRect(OX,S.y,OW,OH);
+  
+  sctx.fillStyle='#ffffff'; sctx.font='bold 11px monospace'; sctx.textAlign='center';
   sctx.fillText(name, OX+OW/2, S.y+OH/2-2);
-  sctx.font='9px monospace'; sctx.fillText(effRho()+' kg/m³', OX+OW/2, S.y+OH/2+12); sctx.textAlign='left';
+  sctx.font='9px monospace'; sctx.fillText(effRho()+' kg/m³', OX+OW/2, S.y+OH/2+12);
+  sctx.restore();
+  
   if(S.dragging){ sctx.strokeStyle=cssv('--cyan'); sctx.lineWidth=2; sctx.strokeRect(OX-2,S.y-2,OW+4,OH+4); }
 }
 
@@ -418,7 +529,11 @@ function drawIceberg(){
   sctx.lineTo(cx - 35, topY + 35);
   sctx.closePath();
   
-  sctx.fillStyle = '#dbeeff';
+  const iceGrad = sctx.createLinearGradient(cx, topY, cx, botY);
+  iceGrad.addColorStop(0, '#ffffff');
+  iceGrad.addColorStop(0.2, '#cce7ff');
+  iceGrad.addColorStop(1, '#4a90e2');
+  sctx.fillStyle = iceGrad;
   sctx.fill();
   sctx.lineWidth = 2;
   sctx.strokeStyle = '#a4d4ff';
@@ -444,40 +559,53 @@ function drawIceberg(){
 function drawTitanic(){
   sctx.save();
   const cx = OX + OW/2;
-  const tiltAngle = (S.floodPercent / 100) * 0.35;
+  const tiltAngle = (S.floodPercent / 100) * 0.38;
   
   sctx.translate(cx, S.y + OH/2);
   sctx.rotate(tiltAngle);
   
-  const shipW = 180, shipH = 50;
+  const shipW = 210, shipH = 54;
   
+  // Hull profile
   sctx.beginPath();
   sctx.moveTo(-shipW/2, -shipH/2);
   sctx.lineTo(shipW/2, -shipH/2);
-  sctx.lineTo(shipW/2 - 25, shipH/2);
-  sctx.lineTo(-shipW/2 + 35, shipH/2);
+  sctx.lineTo(shipW/2 - 28, shipH/2);
+  sctx.lineTo(-shipW/2 + 38, shipH/2);
   sctx.closePath();
-  sctx.fillStyle = '#2d333b';
+  sctx.fillStyle = '#212529';
   sctx.fill();
   sctx.lineWidth = 2;
-  sctx.strokeStyle = '#6e7781';
+  sctx.strokeStyle = '#8d99ae';
   sctx.stroke();
   
-  if(S.floodPercent > 0){
-    const floodW = (shipW - 40) * (S.floodPercent / 100);
-    sctx.fillStyle = 'rgba(32, 208, 255, 0.5)';
-    sctx.fillRect(-shipW/2 + 20, -shipH/2 + 10, floodW, shipH - 14);
+  // Draw 5 Watertight Compartments inside Hull
+  const compW = (shipW - 68) / 5;
+  for(let i=0; i<5; i++){
+    const compX = -shipW/2 + 34 + i * compW;
+    sctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    sctx.strokeRect(compX, -shipH/2 + 6, compW, shipH - 12);
+    
+    // Flood compartments from bow (right) to stern (left) based on slider
+    const floodThreshold = (4 - i) * 20;
+    if(S.floodPercent > floodThreshold){
+      const localFlood = Math.min(1, (S.floodPercent - floodThreshold) / 20);
+      sctx.fillStyle = 'rgba(32, 208, 255, 0.65)';
+      const fillH = (shipH - 12) * localFlood;
+      sctx.fillRect(compX, shipH/2 - 6 - fillH, compW, fillH);
+    }
   }
   
+  // Funnels
   sctx.fillStyle = '#b84c32';
-  for(let i = -40; i <= 40; i += 30){
-    sctx.fillRect(i, -shipH/2 - 22, 14, 22);
+  for(let i = -50; i <= 50; i += 32){
+    sctx.fillRect(i, -shipH/2 - 24, 15, 24);
   }
   
   sctx.fillStyle = '#ffffff';
   sctx.font = 'bold 11px monospace';
   sctx.textAlign = 'center';
-  sctx.fillText('RMS TITANIC', 0, 5);
+  sctx.fillText('RMS TITANIC', 0, 4);
   sctx.font = '9px monospace';
   sctx.fillText('Avg ρ: ' + effRho() + ' kg/m³', 0, 18);
   sctx.restore();
@@ -547,7 +675,10 @@ function buildControls(){
   }
   else if(S.mode==='titanic'){
     const w=el('div'); w.style.gridColumn='span 2';
-    addSlider(w,{label:'🌊 Compartment Flooding',min:0,max:100,step:1,val:S.floodPercent,fmt:v=>v+'%',mini:'water fills compartments, increasing average hull density',oninput:v=>{S.floodPercent=v;}});
+    addSlider(w,{label:'🌊 Compartment Flooding',min:0,max:100,step:1,val:S.floodPercent,fmt:v=>v+'%',mini:'water fills compartments, increasing average hull density',oninput:v=>{
+      S.floodPercent=v;
+      if(v > 10 && Math.random() < 0.4) spawnBubble(OX + OW/2, S.y + OH);
+    }});
     p.appendChild(w);
   }
   else { // submarine game
@@ -692,7 +823,7 @@ function buildTheory(){
   <p>The Titanic was constructed from steel plates (ρ ≈ 7850 kg/m³), which is over seven times denser than sea water. Yet, she floated effortlessly. Why? Because her hull enclosed an enormous volume of air (ρ ≈ 1.2 kg/m³).</p>
   <p>The <em>average density</em> of the ship is calculated by dividing its total mass (steel + cargo + trapped air) by its total volume:</p>
   <div class="eq">ρ<sub>average</sub> = M<sub>total</sub> / V<sub>total</sub> &lt; ρ<sub>sea water</sub></div>
-  <p>When the iceberg breached five of her watertight compartments, sea water rushed in to replace the air. As compartments flooded, the ship's average density steadily increased. Once five compartments filled, the bow tilted, pulling subsequent walls under water and allowing irreversible flooding until ρ<sub>average</sub> &gt; 1025 kg/m³, pulling her to the ocean floor.</p>
+  <p>When the iceberg breached five of her forward watertight compartments, sea water rushed in to replace the air. As compartments flooded, the ship's average density steadily increased. Once five compartments filled, the bow tilted, pulling subsequent walls under water and allowing irreversible flooding until ρ<sub>average</sub> &gt; 1025 kg/m³, pulling her to the ocean floor.</p>
 
   <h3>How Much Sticks Out?</h3>
   <p>A floating object sinks just far enough that the fluid it displaces weighs exactly as much as the whole object. That gives a wonderfully simple result for the fraction underwater:</p>
