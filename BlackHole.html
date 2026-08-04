@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -10,13 +9,16 @@
       gtag('config', 'G-32ZMW31TWT');
     </script>
 
-    
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Black Hole Formation — Science Wonders</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
+
+/* =========================================================
+   6-THEME PALETTE SYSTEM
+   ========================================================= */
+:root, [data-theme="midnight"] {
   --bg:#010409;--bg2:#06101e;--bg3:#0a1828;
   --border:#152035;--border2:#1e3050;
   --text:#c0d8f0;--text2:#5878a0;--text3:#3a5070;
@@ -24,11 +26,57 @@
   --cyan:#20d8ff;--violet:#b060ff;--green:#40ffaa;
   --orange:#ff9040;--red:#ff4060;--pink:#ff60c0;
 }
-body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;}
-header{display:flex;align-items:center;gap:20px;padding:12px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.98);position:sticky;top:0;z-index:20;}
+[data-theme="cosmos"] {
+  --bg:#fbf8f0; --bg2:#fffdf8; --bg3:#fffefb;
+  --border:#ddd3c1; --border2:#c9bea8;
+  --text:#12345d; --text2:#617087; --text3:#8899aa;
+  --gold:#f2a619; --gold2:#d88b00;
+  --cyan:#10a9a5; --violet:#7c56bd; --green:#4ea943;
+  --orange:#d87020; --red:#e85c4a; --pink:#d84090;
+}
+[data-theme="chalk"] {
+  --bg:#f2fbfa; --bg2:#fbfffe; --bg3:#ffffff;
+  --border:#c9dfdc; --border2:#b0c8c5;
+  --text:#123c44; --text2:#62767b; --text3:#7a8e93;
+  --gold:#e99c22; --gold2:#b87400;
+  --cyan:#2db7b2; --violet:#5868bd; --green:#3f9f52;
+  --orange:#d07010; --red:#d95f55; --pink:#c84080;
+}
+[data-theme="neon"] {
+  --bg:#fff6f2; --bg2:#fffdfb; --bg3:#ffffff;
+  --border:#ead0c7; --border2:#d5b8ae;
+  --text:#4a2d31; --text2:#806b6e; --text3:#9a8386;
+  --gold:#eda11a; --gold2:#b87700;
+  --cyan:#168f92; --violet:#8861bd; --green:#3d9c55;
+  --orange:#d06010; --red:#d9443b; --pink:#c03070;
+}
+[data-theme="ember"] {
+  --bg:#fffaf0; --bg2:#fffef9; --bg3:#ffffff;
+  --border:#ead9b8; --border2:#d4c09a;
+  --text:#493617; --text2:#7d705d; --text3:#968873;
+  --gold:#e99b12; --gold2:#b84920;
+  --cyan:#218d8b; --violet:#7358b5; --green:#4c9c4d;
+  --orange:#d05010; --red:#d95745; --pink:#c03565;
+}
+[data-theme="aurora"] {
+  --bg:#f8f4ff; --bg2:#fefcff; --bg3:#ffffff;
+  --border:#ddd1ec; --border2:#c4b4d6;
+  --text:#352b59; --text2:#736c86; --text3:#8b839c;
+  --gold:#e89f1b; --gold2:#b37700;
+  --cyan:#119f9a; --violet:#7654b8; --green:#459f55;
+  --orange:#d06015; --red:#d95d68; --pink:#c84078;
+}
+
+body{background:var(--bg);color:var(--text);font-family:'Georgia',serif;min-height:100vh;transition:background 0.2s ease, color 0.2s ease;}
+header{display:flex;align-items:center;gap:20px;padding:12px 28px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:20;transition:background 0.2s ease, border-color 0.2s ease;}
 .logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
 .logo span{color:var(--text2);}
+.logo a{color:inherit;text-decoration:none;}
 .hdr-sub{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.header-spacer{flex:1;}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 12px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;background:transparent;}
+.header-link:hover{color:var(--gold);border-color:var(--border2);background:var(--bg3);}
+select.header-link option{background:var(--bg2);color:var(--text);}
 
 /* ── Canvas ── */
 .cwrap{position:relative;max-width:960px;margin:18px auto 0;padding:0 20px;}
@@ -106,8 +154,18 @@ footer{border-top:1px solid var(--border);padding:14px 28px;text-align:center;fo
 </head>
 <body>
 <header>
-  <div class="logo">⭐ Science<span> Wonders</span></div>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
   <div class="hdr-sub">Black Hole Formation</div>
+  <div class="header-spacer"></div>
+  <select id="theme-selector" class="header-link" style="outline:none; cursor:pointer;" aria-label="Select theme">
+    <option value="midnight">🌙 Midnight (Dark)</option>
+    <option value="cosmos">🪐 Cosmos</option>
+    <option value="chalk">📋 Chalk</option>
+    <option value="neon">⚡ Neon</option>
+    <option value="ember">🔥 Ember</option>
+    <option value="aurora">✨ Aurora</option>
+  </select>
+  <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
 <div class="cwrap">
@@ -1107,6 +1165,20 @@ document.getElementById('sbar').addEventListener('click',e=>{
   const idx=parseInt(seg.id.replace('seg',''));
   stopNarration();speaking=false;
   while(stage<idx)nextStage();
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THEME & PERSISTENCE
+// ═══════════════════════════════════════════════════════════════════════════
+const themeSelector = document.getElementById('theme-selector');
+const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeSelector.value = savedTheme;
+
+themeSelector.addEventListener('change', (e) => {
+  const selectedTheme = e.target.value;
+  document.documentElement.setAttribute('data-theme', selectedTheme);
+  localStorage.setItem('sim_theme', selectedTheme);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
