@@ -1,455 +1,981 @@
-<!DOCTYPE html><html lang="en"><head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-32ZMW31TWT');</script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-32ZMW31TWT');
+  </script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>States of Matter &amp; Phase Changes — Science Wonders</title>
 <meta name="description" content="An interactive states-of-matter lab: add heat to a box of molecules and watch ice melt and water boil in real time, see why temperature pauses on the heating curve (latent heat), and drag through a pressure-temperature phase diagram to discover why water boils at 71C on Everest.">
 <style>
+/* =========================================================
+   6-THEME PALETTE SYSTEM
+   ========================================================= */
+:root, [data-theme="midnight"] {
+  --bg: #010409; --bg2: #080f1e; --bg3: #0c1830;
+  --border: #152035; --border2: #1e3050;
+  --text: #b8ceec; --text2: #5878a0; --text3: #3a5070; --text-bright: #ddeeff;
+  --accent: #3a8fff; --gold: #f0c060; --gold-bright: #ffe8a0;
+  --cyan: #20d0ff; --violet: #c060ff; --green: #40ffaa; --pink: #ff6090; --red: #ff4f60; --orange: #ff9d4f;
+  --stage-bg: #020912;
+  --grid-stroke: rgba(30, 50, 80, 0.22);
+}
+[data-theme="cosmos"] {
+  --bg: #fbf8f0; --bg2: #fffdf8; --bg3: #fffefb;
+  --border: #ddd3c1; --border2: #c9bea8;
+  --text: #12345d; --text2: #617087; --text3: #8899aa; --text-bright: #091e36;
+  --accent: #10a9a5; --gold: #d88b00; --gold-bright: #b87400;
+  --cyan: #10a9a5; --violet: #7c56bd; --green: #2e8b22; --pink: #d84090; --red: #e85c4a; --orange: #d87020;
+  --stage-bg: #f5f0e6;
+  --grid-stroke: rgba(18, 52, 93, 0.12);
+}
+[data-theme="chalk"] {
+  --bg: #f2fbfa; --bg2: #fbfffe; --bg3: #ffffff;
+  --border: #c9dfdc; --border2: #b0c8c5;
+  --text: #123c44; --text2: #62767b; --text3: #7a8e93; --text-bright: #08282d;
+  --accent: #2db7b2; --gold: #d08010; --gold-bright: #a06000;
+  --cyan: #2db7b2; --violet: #5868bd; --green: #2f8f42; --pink: #c84080; --red: #d95f55; --orange: #d07010;
+  --stage-bg: #e8f4f3;
+  --grid-stroke: rgba(18, 60, 68, 0.12);
+}
+[data-theme="neon"] {
+  --bg: #fff6f2; --bg2: #fffdfb; --bg3: #ffffff;
+  --border: #ead0c7; --border2: #d5b8ae;
+  --text: #4a2d31; --text2: #806b6e; --text3: #9a8386; --text-bright: #2d181b;
+  --accent: #168f92; --gold: #d88000; --gold-bright: #a86000;
+  --cyan: #168f92; --violet: #8861bd; --green: #2d8c45; --pink: #c03070; --red: #d9443b; --orange: #d06010;
+  --stage-bg: #fcede8;
+  --grid-stroke: rgba(74, 45, 49, 0.12);
+}
+[data-theme="ember"] {
+  --bg: #fffaf0; --bg2: #fffef9; --bg3: #ffffff;
+  --border: #ead9b8; --border2: #d4c09a;
+  --text: #493617; --text2: #7d705d; --text3: #968873; --text-bright: #2d200c;
+  --accent: #218d8b; --gold: #d88000; --gold-bright: #b84920;
+  --cyan: #218d8b; --violet: #7358b5; --green: #3c8c3d; --pink: #c03565; --red: #d95745; --orange: #d05010;
+  --stage-bg: #f5eedc;
+  --grid-stroke: rgba(73, 54, 23, 0.12);
+}
+[data-theme="aurora"] {
+  --bg: #f8f4ff; --bg2: #fefcff; --bg3: #ffffff;
+  --border: #ddd1ec; --border2: #c4b4d6;
+  --text: #352b59; --text2: #736c86; --text3: #8b839c; --text-bright: #1d1633;
+  --accent: #119f9a; --gold: #c88000; --gold-bright: #996000;
+  --cyan: #119f9a; --violet: #7654b8; --green: #358f45; --pink: #c84078; --red: #d95d68; --orange: #d06015;
+  --stage-bg: #efeaf8;
+  --grid-stroke: rgba(53, 43, 89, 0.12);
+}
+
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
-  --border:#152035;--border2:#1e3050;
-  --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
-  --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
-  --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
-  --stage-bg:#020912;
-  --grid-stroke:rgba(30,50,80,.22);
-}
-body.light-theme{
-  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
-  --border:#d0d7de;--border2:#b6c2d1;
-  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
-  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
-  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
-  --stage-bg:#0a1220;
-  --grid-stroke:rgba(9,105,218,0.06);
-}
 body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
 
-header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
-body.light-theme header{background:rgba(255,255,255,.96);}
-.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+header{display:flex;align-items:center;gap:16px;padding:12px 28px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;flex-wrap:wrap;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;}
 .logo span{color:var(--text2);}
 .logo a{color:inherit;text-decoration:none;}
-.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:16px;letter-spacing:1.5px;}
 .header-spacer{flex:1;}
-.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
-.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
-.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:1.5px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;background:var(--bg3);}
+.header-link:hover{color:var(--gold);border-color:var(--border2);}
+select.header-link option{background:var(--bg2);color:var(--text);}
 
-.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
-.mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+/* ── Narration Box ── */
+.nbox{display:none;max-width:1080px;margin:14px auto 0;padding:0 20px;}
+.nbox-inner{background:var(--bg2);border:1px solid var(--border2);border-left:4px solid var(--gold);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:11px;line-height:1.8;}
+.nctrls{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
+.nctrls select{flex:1;min-width:130px;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:4px;font-family:monospace;font-size:10.5px;padding:4px 8px;}
+#narr-text{color:var(--gold-bright);line-height:1.75;}
+
+.mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.mode-tab{font-family:monospace;font-size:11px;letter-spacing:1px;padding:8px 16px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
 .mode-tab:hover{color:var(--text);border-color:var(--accent);}
 .mode-tab.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);}
-.mode-tag{font-size:8px;opacity:.7;}
+.mode-tag{font-size:8.5px;opacity:.7;}
 
 .wrap{max-width:1080px;margin:14px auto 0;padding:0 20px;}
-.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:12px;align-items:start;}
-.left-col,.right-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+.top-grid{display:grid;grid-template-columns:1.25fr 0.75fr;gap:14px;align-items:start;}
+.left-col,.right-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
 @media(max-width:860px){.top-grid{display:flex;flex-direction:column;}.left-col{order:1;}.right-col{order:2;}}
 
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:background .2s,border-color .2s;}
 .card-pad{padding:16px 18px;}
-.card-title{font-family:monospace;font-size:9px;letter-spacing:4px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.card-title .hint{font-size:8.5px;letter-spacing:1px;color:var(--text3);text-transform:none;}
+.card-title{font-family:monospace;font-size:9.5px;letter-spacing:3.5px;color:var(--text2);text-transform:uppercase;padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.card-title .hint{font-size:9px;letter-spacing:1px;color:var(--text3);text-transform:none;}
 
 .stage-wrap{position:relative;background:var(--stage-bg);}
 canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
 canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
 .aux-small canvas#aux{max-height:280px;}
-.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
-body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
-.sb-tl{top:9px;left:9px;color:var(--gold);}
-.sb-tr{top:9px;right:9px;color:var(--cyan);}
+.stage-badge{position:absolute;font-family:monospace;font-size:10px;background:var(--bg2);padding:5px 10px;border-radius:5px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);color:var(--text);}
+.sb-tl{top:10px;left:10px;color:var(--gold);}
+.sb-tr{top:10px;right:10px;color:var(--cyan);}
 
-.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
-.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
-@media(max-width:430px){.sb-controls{grid-template-columns:1fr;}}
-.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
+.play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:background .2s,border-color .2s;}
+.sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+@media(max-width:460px){.sb-controls{grid-template-columns:1fr;}}
+.ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:4px;}
 .ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
-.ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
-input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
-.wl-slider{height:14px;border-radius:7px;-webkit-appearance:none;appearance:none;outline:none;}
+.ctl .sb-mini{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:16px;}
 
-.section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
+.section-label{font-family:monospace;font-size:9.5px;letter-spacing:2px;color:var(--text3);text-transform:uppercase;margin:0 0 8px;}
 .btn-grid{display:grid;gap:6px;}
 .btn-grid.c2{grid-template-columns:1fr 1fr;}.btn-grid.c3{grid-template-columns:repeat(3,1fr);}
-.minibtn{font-family:monospace;font-size:10px;padding:7px 5px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
+.minibtn{font-family:monospace;font-size:10.5px;padding:8px 6px;background:transparent;border:1px solid var(--border2);border-radius:5px;color:var(--text2);cursor:pointer;transition:all .15s;text-align:center;}
 .minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
 .minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
-.toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
-.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
-.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
 
 .readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
-.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
-.rcell.wide{grid-column:span 2;}
+.rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;transition:background .2s,border-color .2s;}
 @media(max-width:520px){.readout-grid{grid-template-columns:repeat(2,1fr);}}
-.r-label{font-family:monospace;font-size:8.5px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
+.r-label{font-family:monospace;font-size:9px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin-bottom:4px;}
 .r-value{font-family:monospace;font-size:14px;color:var(--text-bright);letter-spacing:.3px;}
 .r-value.sm{font-size:12px;}
 .r-value.gold{color:var(--gold);}.r-value.cyan{color:var(--cyan);}.r-value.green{color:var(--green);}.r-value.violet{color:var(--violet);}.r-value.orange{color:var(--orange);}.r-value.pink{color:var(--pink);}.r-value.red{color:var(--red);}
-.r-sub{font-family:monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+.r-sub{font-family:monospace;font-size:9.5px;color:var(--text3);margin-top:3px;}
 
-.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
+.law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 16px;margin-top:12px;font-family:monospace;font-size:11.5px;line-height:1.8;color:var(--text2);}
 .law-strip b{color:var(--gold-bright);}
-body.light-theme .law-strip b{color:var(--gold);}
-.law-strip .big{font-size:13px;color:var(--cyan);}
-
-.verdict{margin-top:12px;padding:11px 15px;border-radius:8px;font-family:monospace;font-size:12px;display:none;}
-.verdict.show{display:block;}
-.verdict.go{background:rgba(64,255,170,.06);border:1px solid rgba(64,255,170,.3);color:#8effc8;}
-body.light-theme .verdict.go{color:var(--green);}
-.verdict.no{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.3);color:#ff9aa6;}
-body.light-theme .verdict.no{color:var(--red);}
 
 .theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
 .theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
-.theory-hdr{font-family:monospace;font-size:9px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.theory h3{font-family:monospace;font-size:11px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
+.theory-hdr{font-family:monospace;font-size:9.5px;letter-spacing:5px;color:var(--text2);text-transform:uppercase;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.theory h3{font-family:monospace;font-size:11.5px;font-weight:normal;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:28px 0 10px;}
 .theory h3:first-of-type{margin-top:0;}
-.theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
+.theory p{font-size:14.5px;color:var(--text2);margin-bottom:12px;line-height:1.85;}
 .theory em{color:var(--gold-bright);font-style:italic;}
-body.light-theme .theory em{color:var(--gold);}
 .theory strong{color:var(--text);}
 .theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
-body.light-theme .theory .eq{color:var(--gold);}
-.theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
+.theory .eq .vars{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
 .theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
-.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
-body.light-theme .hb-cyan{color:var(--cyan);}
-.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
-body.light-theme .hb-gold{color:var(--gold);}
-.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
-body.light-theme .hb-violet{color:var(--violet);}
-.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
-.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
-.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
-.ctable td:first-child{color:var(--gold-bright);}
-body.light-theme .ctable td:first-child{color:var(--gold);}
-.ctable tr:last-child td{border-bottom:none;}
+.hb-cyan{background:rgba(32,208,255,.05);border:1px solid rgba(32,208,255,.2);color:var(--cyan);}
+.hb-gold{background:rgba(240,192,96,.05);border:1px solid rgba(240,192,96,.22);color:var(--gold);}
 
 footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
 footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
+</style>
+</head>
+<body>
 
-@media(max-width:600px){header{padding:12px 16px;gap:10px;}.page-subtitle{display:none;}.mode-tab{font-size:9.5px;padding:6px 10px;}}
-</style></head><body>
-<header><div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
-<div class="page-subtitle">States of Matter &amp; Phase Changes</div><div class="header-spacer"></div>
-<a class="header-link" id="voice-switcher">🔇 Voice off</a><a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
-<a class="header-link" href="index.html">← All Simulations</a></header>
+<header>
+  <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
+  <div class="page-subtitle">States of Matter &amp; Phase Changes</div>
+  <div class="header-spacer"></div>
+  <button id="btn-narrate" class="header-link">🔇 Voice</button>
+  <select id="theme-selector" class="header-link" aria-label="Select theme">
+    <option value="midnight">🌙 Midnight (Dark)</option>
+    <option value="cosmos">🪐 Cosmos</option>
+    <option value="chalk">📋 Chalk</option>
+    <option value="neon">⚡ Neon</option>
+    <option value="ember">🔥 Ember</option>
+    <option value="aurora">✨ Aurora</option>
+  </select>
+  <a class="header-link" href="index.html">← All Simulations</a>
+</header>
+
+<!-- NARRATION BOX -->
+<div class="nbox" id="nbox">
+  <div class="nbox-inner">
+    <div class="nctrls">
+      <span style="color:var(--text3);font-size:10px;">VOICE NARRATION</span>
+      <select id="vsel"><option>Loading…</option></select>
+      <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".90" style="width:70px;">
+      <span id="rate-v" style="color:var(--gold);min-width:32px;">0.9×</span>
+    </div>
+    <div id="narr-text">—</div>
+  </div>
+</div>
+
 <div class="mode-bar" id="mode-bar"></div>
-<div class="wrap"><div class="top-grid">
-<div class="left-col"><div class="card"><div class="card-title" id="stage-title">Melt It, Boil It <span class="hint" id="stage-hint">add heat</span></div>
-<div class="stage-wrap"><canvas id="stage" width="560" height="400"></canvas><div class="stage-badge sb-tl" id="badge-l">—</div><div class="stage-badge sb-tr" id="badge-r">—</div></div></div>
-<div class="play-bar"><div class="sb-controls" id="mode-controls"></div></div></div>
-<div class="right-col"><div class="card aux-small"><div class="card-title">The Science <span class="hint">live</span></div>
-<div class="stage-wrap"><canvas id="aux" width="560" height="300"></canvas></div></div>
-<div class="card"><div class="card-title">Readout</div><div class="card-pad"><div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div></div></div></div></div>
-<div class="card" style="margin-top:12px;"><div class="card-title">The Principle</div><div class="card-pad"><div class="law-strip" id="law-strip" style="margin-top:0;"></div></div></div></div>
-<div class="theory-wrap"><div class="theory" id="theory"></div></div>
+
+<div class="wrap">
+  <div class="top-grid">
+    <div class="left-col">
+      <div class="card">
+        <div class="card-title" id="stage-title">Melt It, Boil It <span class="hint" id="stage-hint">add heat</span></div>
+        <div class="stage-wrap">
+          <canvas id="stage" width="560" height="400"></canvas>
+          <div class="stage-badge sb-tl" id="badge-l">—</div>
+          <div class="stage-badge sb-tr" id="badge-r">—</div>
+        </div>
+      </div>
+      <div class="play-bar">
+        <div class="sb-controls" id="mode-controls"></div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="card aux-small">
+        <div class="card-title">The Science <span class="hint">live</span></div>
+        <div class="stage-wrap"><canvas id="aux" width="560" height="300"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Readout</div>
+        <div class="card-pad">
+          <div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px;">
+    <div class="card-title">The Principle</div>
+    <div class="card-pad"><div class="law-strip" id="law-strip" style="margin-top:0;"></div></div>
+  </div>
+</div>
+
+<div class="theory-wrap">
+  <div class="theory" id="theory"></div>
+</div>
+
 <footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="index.html">← BACK TO ALL SIMULATIONS</a></footer>
+
 <script>
 'use strict';
-// STATES OF MATTER & PHASE CHANGES
-let W=560,H=400,AUXW=560,AUXH=300;
-// ---- water heating curve (J/g): ice-warm, fusion, water-warm, vaporization, steam-warm ----
-const EN=[42,334,418,2260,40]; const CUM=[0]; EN.forEach(x=>CUM.push(CUM[CUM.length-1]+x)); const ETOT=CUM[5];
-// slider width allotted to each segment (so solid/liquid stay interactive); curve still uses real energy
-const SW=[0.16,0.16,0.24,0.28,0.16]; const SWC=[0]; SW.forEach(x=>SWC.push(SWC[SWC.length-1]+x));
-function heatState(Hpct){
-  let f=Math.max(0,Math.min(1,Hpct/100)); let seg=0; while(seg<4 && f>SWC[seg+1]) seg++;
-  const u=Math.max(0,Math.min(1,(f-SWC[seg])/(SW[seg]||1))); const Q=CUM[seg]+u*EN[seg];
-  if(seg===0) return {T:-20+u*20, phase:'solid', melt:0, boil:0, seg, Q};
-  if(seg===1) return {T:0, phase:'melting', melt:u, boil:0, seg, Q};
-  if(seg===2) return {T:u*100, phase:'liquid', melt:1, boil:0, seg, Q};
-  if(seg===3) return {T:100, phase:'boiling', melt:1, boil:u, seg, Q};
-  return {T:100+u*20, phase:'gas', melt:1, boil:1, seg, Q};
+
+// ============================================================================
+// NARRATION ENGINE (Standardized)
+// ============================================================================
+let narrateOn = false, speaking = false, chosenVoice = null, speechRate = 0.90;
+
+function populateVoices(){
+  if(!window.speechSynthesis) return;
+  const voices = speechSynthesis.getVoices(), sel = document.getElementById('vsel');
+  if(!voices.length) return;
+  sel.innerHTML = '';
+  const groups = [
+    {l:'— Female English —', v:voices.filter(v=>v.lang.startsWith('en')&&/female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Male English —',   v:voices.filter(v=>v.lang.startsWith('en')&&/male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name))},
+    {l:'— English —',        v:voices.filter(v=>v.lang.startsWith('en')&&!/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Other —',          v:voices.filter(v=>!v.lang.startsWith('en'))},
+  ];
+  groups.forEach(g=>{
+    if(!g.v.length) return;
+    const og = document.createElement('optgroup'); og.label = g.l;
+    g.v.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;og.appendChild(o);});
+    sel.appendChild(og);
+  });
+  const pref = voices.find(v=>v.name==='Google UK English Female')||voices.find(v=>v.lang==='en-GB'&&/female/i.test(v.name))||voices.find(v=>v.lang.startsWith('en'));
+  if(pref){sel.value=pref.name;chosenVoice=pref;}
+  else if(voices[0]){sel.value=voices[0].name;chosenVoice=voices[0];}
 }
-const PHASE_NAME={solid:'❄️ Solid (ice)',melting:'💧 Melting',liquid:'💧 Liquid (water)',boiling:'♨️ Boiling',gas:'💨 Gas (steam)'};
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged = populateVoices; populateVoices();}
 
-const S={mode:'lab', H:8, auto:0, mols:[], pT:60, pP:0 /*log10 atm*/ };
-
-// ---- molecular dynamics ----
-const BX0=26,BY0=30,BX1=W-26,BY1=H-60; const NX=15,NY=8, N=NX*NY, MR=8, BOND=26;
-function initMols(){
-  S.mols=[];
-  const gw=(BX1-BX0-20)/(NX-1), gh=18;
-  const x0=BX0+10, y0=BY1-2-(NY-1)*gh;
-  for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){
-    const hx=x0+i*gw+(j%2)*gw*0.5*0.4, hy=y0+j*gh;
-    S.mols.push({x:hx,y:hy,vx:0,vy:0,hx:hx,hy:hy});
+function narrate(text){
+  if(!narrateOn || !window.speechSynthesis) return;
+  speechSynthesis.cancel(); speaking = true;
+  document.getElementById('narr-text').textContent = text;
+  const sents = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text];
+  let idx = 0;
+  function next(){
+    if(!narrateOn || idx >= sents.length){speaking = false; return;}
+    const u = new SpeechSynthesisUtterance(sents[idx].trim());
+    if(chosenVoice) u.voice = chosenVoice;
+    u.rate = speechRate; u.pitch = 1; u.volume = 1;
+    u.onend = ()=>{idx++; next();}; u.onerror = ()=>{idx++; next();};
+    speechSynthesis.speak(u);
   }
+  next();
 }
-function stepMols(dt){
-  const hs=heatState(S.H); const wS=1-hs.melt, wL=hs.melt*(1-hs.boil), wG=hs.boil;
-  const grav=0.05*(wS+wL);
-  const thermal=0.12 + (hs.T+20)/140*(0.35+wG*3.2);
-  const ks=0.03*wS;
-  const damp=0.86+wG*0.12;
-  const m=S.mols;
-  for(let i=0;i<N;i++){ m[i].fx=0; m[i].fy=0; }
-  for(let i=0;i<N;i++){ const a=m[i];
-    for(let j=i+1;j<N;j++){ const b=m[j]; let dx=b.x-a.x, dy=b.y-a.y; const d2=dx*dx+dy*dy;
-      if(d2>BOND*BOND||d2<0.01)continue; const d=Math.sqrt(d2); const nx=dx/d, ny=dy/d;
-      if(d<MR*1.8){ const push=(MR*1.8-d)*0.06; a.fx-=nx*push; a.fy-=ny*push; b.fx+=nx*push; b.fy+=ny*push; }
-      else { const att=(wL*0.9+wS*0.4)*0.010*(d-MR*1.8); a.fx+=nx*att; a.fy+=ny*att; b.fx-=nx*att; b.fy-=ny*att; }
+function stopNarration(){if(window.speechSynthesis) speechSynthesis.cancel(); speaking = false;}
+
+// ============================================================================
+// SIMULATION ENGINE & STATE
+// ============================================================================
+let W = 560, H = 400, AUXW = 560, AUXH = 300;
+const EN = [42, 334, 418, 2260, 40];
+const CUM = [0]; EN.forEach(x => CUM.push(CUM[CUM.length - 1] + x));
+const ETOT = CUM[5];
+const SW = [0.16, 0.16, 0.24, 0.28, 0.16];
+const SWC = [0]; SW.forEach(x => SWC.push(SWC[SWC.length - 1] + x));
+
+function heatState(Hpct) {
+  let f = Math.max(0, Math.min(1, Hpct / 100));
+  let seg = 0;
+  while (seg < 4 && f > SWC[seg + 1]) seg++;
+  const u = Math.max(0, Math.min(1, (f - SWC[seg]) / (SW[seg] || 1)));
+  const Q = CUM[seg] + u * EN[seg];
+  if (seg === 0) return { T: -20 + u * 20, phase: 'solid', melt: 0, boil: 0, seg, Q };
+  if (seg === 1) return { T: 0, phase: 'melting', melt: u, boil: 0, seg, Q };
+  if (seg === 2) return { T: u * 100, phase: 'liquid', melt: 1, boil: 0, seg, Q };
+  if (seg === 3) return { T: 100, phase: 'boiling', melt: 1, boil: u, seg, Q };
+  return { T: 100 + u * 20, phase: 'gas', melt: 1, boil: 1, seg, Q };
+}
+
+const PHASE_NAME = {
+  solid: '❄️ Solid (ice)',
+  melting: '💧 Melting',
+  liquid: '💧 Liquid (water)',
+  boiling: '♨️ Boiling',
+  gas: '💨 Gas (steam)'
+};
+
+const S = {
+  mode: 'lab',
+  H: 8,
+  auto: 0,
+  mols: [],
+  pT: 60,
+  pP: 0 // log10 atm
+};
+
+// ---- Molecular Dynamics ----
+const BX0 = 26, BY0 = 30, BX1 = W - 26, BY1 = H - 60;
+const NX = 15, NY = 8, N = NX * NY, MR = 8, BOND = 26;
+
+function initMols() {
+  S.mols = [];
+  const gw = (BX1 - BX0 - 20) / (NX - 1), gh = 18;
+  const x0 = BX0 + 10, y0 = BY1 - 2 - (NY - 1) * gh;
+  for (let j = 0; j < NY; j++) {
+    for (let i = 0; i < NX; i++) {
+      const hx = x0 + i * gw + (j % 2) * gw * 0.5 * 0.4;
+      const hy = y0 + j * gh;
+      S.mols.push({ x: hx, y: hy, vx: 0, vy: 0, hx: hx, hy: hy });
     }
   }
-  for(let i=0;i<N;i++){ const p=m[i];
-    p.fx+=ks*(p.hx-p.x); p.fy+=ks*(p.hy-p.y);
-    p.fy+=grav;
-    p.vx=(p.vx+p.fx)*damp+(Math.random()-0.5)*thermal;
-    p.vy=(p.vy+p.fy)*damp+(Math.random()-0.5)*thermal;
-    const sp=Math.hypot(p.vx,p.vy), mx=3.2+wG*4; if(sp>mx){p.vx*=mx/sp;p.vy*=mx/sp;}
-    p.x+=p.vx; p.y+=p.vy;
-    if(p.x<BX0+MR/2){p.x=BX0+MR/2;p.vx=Math.abs(p.vx)*0.7;} if(p.x>BX1-MR/2){p.x=BX1-MR/2;p.vx=-Math.abs(p.vx)*0.7;}
-    if(p.y<BY0+MR/2){p.y=BY0+MR/2;p.vy=Math.abs(p.vy)*0.7;} if(p.y>BY1-MR/2){p.y=BY1-MR/2;p.vy=-Math.abs(p.vy)*0.7;}
+}
+
+function stepMols(dt) {
+  const hs = heatState(S.H);
+  const wS = 1 - hs.melt, wL = hs.melt * (1 - hs.boil), wG = hs.boil;
+  const grav = 0.05 * (wS + wL);
+  const thermal = 0.12 + (hs.T + 20) / 140 * (0.35 + wG * 3.2);
+  const ks = 0.03 * wS;
+  const damp = 0.86 + wG * 0.12;
+  const m = S.mols;
+  for (let i = 0; i < N; i++) { m[i].fx = 0; m[i].fy = 0; }
+  for (let i = 0; i < N; i++) {
+    const a = m[i];
+    for (let j = i + 1; j < N; j++) {
+      const b = m[j];
+      let dx = b.x - a.x, dy = b.y - a.y;
+      const d2 = dx * dx + dy * dy;
+      if (d2 > BOND * BOND || d2 < 0.01) continue;
+      const d = Math.sqrt(d2);
+      const nx = dx / d, ny = dy / d;
+      if (d < MR * 1.8) {
+        const push = (MR * 1.8 - d) * 0.06;
+        a.fx -= nx * push; a.fy -= ny * push;
+        b.fx += nx * push; b.fy += ny * push;
+      } else {
+        const att = (wL * 0.9 + wS * 0.4) * 0.010 * (d - MR * 1.8);
+        a.fx += nx * att; a.fy += ny * att;
+        b.fx -= nx * att; b.fy -= ny * att;
+      }
+    }
+  }
+  for (let i = 0; i < N; i++) {
+    const p = m[i];
+    p.fx += ks * (p.hx - p.x);
+    p.fy += ks * (p.hy - p.y);
+    p.fy += grav;
+    p.vx = (p.vx + p.fx) * damp + (Math.random() - 0.5) * thermal;
+    p.vy = (p.vy + p.fy) * damp + (Math.random() - 0.5) * thermal;
+    const sp = Math.hypot(p.vx, p.vy), mx = 3.2 + wG * 4;
+    if (sp > mx) { p.vx *= mx / sp; p.vy *= mx / sp; }
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < BX0 + MR / 2) { p.x = BX0 + MR / 2; p.vx = Math.abs(p.vx) * 0.7; }
+    if (p.x > BX1 - MR / 2) { p.x = BX1 - MR / 2; p.vx = -Math.abs(p.vx) * 0.7; }
+    if (p.y < BY0 + MR / 2) { p.y = BY0 + MR / 2; p.vy = Math.abs(p.vy) * 0.7; }
+    if (p.y > BY1 - MR / 2) { p.y = BY1 - MR / 2; p.vy = -Math.abs(p.vy) * 0.7; }
   }
 }
 
-// ---- phase diagram helpers (water) ----
-const Rv=461.5,Lv=2.26e6;
-function boilT(P){ return 1/(1/373.15-(Rv/Lv)*Math.log(P))-273.15; } // °C, P in atm
-function phaseAt(Tc,Patm){
-  if(Tc>374&&Patm>218) return 'supercritical';
-  if(Patm<0.006) return Tc< -5+(Math.log10(Patm)+2.2)*5 ? 'solid':'gas'; // rough sublimation
-  if(Tc<0) return 'solid';
-  return Tc<boilT(Patm)? 'liquid':'gas';
+// ---- Phase Diagram Helpers (Water) ----
+const Rv = 461.5, Lv = 2.26e6;
+function boilT(P) { return 1 / (1 / 373.15 - (Rv / Lv) * Math.log(P)) - 273.15; }
+function phaseAt(Tc, Patm) {
+  if (Tc > 374 && Patm > 218) return 'supercritical';
+  if (Patm < 0.006) return Tc < -5 + (Math.log10(Patm) + 2.2) * 5 ? 'solid' : 'gas';
+  if (Tc < 0) return 'solid';
+  return Tc < boilT(Patm) ? 'liquid' : 'gas';
 }
 
-// ============================ RENDER ============================
-let stage,sctx,aux,actx,tNow=0,lastT=0;
-function cv(n){return getComputedStyle(document.body).getPropertyValue(n).trim()||'#fff';}
-function clr(c,w,h){c.clearRect(0,0,w,h);c.fillStyle=cv('--stage-bg');c.fillRect(0,0,w,h);}
-function drawStage(){if(!sctx)return;clr(sctx,W,H);({lab:drawLab,curve:drawCurve,diagram:drawDiagram}[S.mode])();}
+// ============================================================================
+// RENDERING
+// ============================================================================
+let stage, sctx, aux, actx, tNow = 0, lastT = 0;
+function cv(n) { return getComputedStyle(document.body).getPropertyValue(n).trim() || '#fff'; }
+function clr(c, w, h) { c.clearRect(0, 0, w, h); c.fillStyle = cv('--stage-bg'); c.fillRect(0, 0, w, h); }
 
-function phaseTint(hs){ // molecule color by phase
-  if(hs.phase==='solid'||hs.phase==='melting') return ['#bfe6ff','#7fc8ff'];
-  if(hs.phase==='gas') return ['#dff0ff','#a8d4f0'];
-  return ['#5fb0ff','#2a86e0'];
+function drawStage() {
+  if (!sctx) return;
+  clr(sctx, W, H);
+  ({ lab: drawLab, curve: drawCurve, diagram: drawDiagram }[S.mode])();
 }
-function drawLab(){
-  const hs=heatState(S.H);
-  // container
-  const cont=sctx.createLinearGradient(0,BY0,0,BY1); cont.addColorStop(0,'rgba(120,180,255,0.04)'); cont.addColorStop(1,'rgba(120,180,255,0.10)');
-  sctx.fillStyle=cont; sctx.fillRect(BX0,BY0,BX1-BX0,BY1-BY0);
-  sctx.strokeStyle=cv('--border2'); sctx.lineWidth=2; sctx.beginPath(); sctx.moveTo(BX0,BY0); sctx.lineTo(BX0,BY1); sctx.lineTo(BX1,BY1); sctx.lineTo(BX1,BY0); sctx.stroke();
-  // bonds
-  const wBond=(1-hs.melt)*0.55+hs.melt*(1-hs.boil)*0.3;
-  if(wBond>0.02){ const m=S.mols;
-    for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){const dx=m[j].x-m[i].x,dy=m[j].y-m[i].y,d2=dx*dx+dy*dy; if(d2<BOND*BOND){const d=Math.sqrt(d2); sctx.strokeStyle='rgba(150,210,255,'+(wBond*(1-d/BOND))+')'; sctx.lineWidth=1.5; sctx.beginPath(); sctx.moveTo(m[i].x,m[i].y); sctx.lineTo(m[j].x,m[j].y); sctx.stroke();}}
+
+function phaseTint(hs) {
+  if (hs.phase === 'solid' || hs.phase === 'melting') return ['#bfe6ff', '#7fc8ff'];
+  if (hs.phase === 'gas') return ['#dff0ff', '#a8d4f0'];
+  return ['#5fb0ff', '#2a86e0'];
+}
+
+function drawLab() {
+  const hs = heatState(S.H);
+  const cont = sctx.createLinearGradient(0, BY0, 0, BY1);
+  cont.addColorStop(0, 'rgba(120, 180, 255, 0.04)');
+  cont.addColorStop(1, 'rgba(120, 180, 255, 0.10)');
+  sctx.fillStyle = cont;
+  sctx.fillRect(BX0, BY0, BX1 - BX0, BY1 - BY0);
+  sctx.strokeStyle = cv('--border2');
+  sctx.lineWidth = 2;
+  sctx.beginPath();
+  sctx.moveTo(BX0, BY0); sctx.lineTo(BX0, BY1); sctx.lineTo(BX1, BY1); sctx.lineTo(BX1, BY0);
+  sctx.stroke();
+
+  const wBond = (1 - hs.melt) * 0.55 + hs.melt * (1 - hs.boil) * 0.3;
+  if (wBond > 0.02) {
+    const m = S.mols;
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const dx = m[j].x - m[i].x, dy = m[j].y - m[i].y, d2 = dx * dx + dy * dy;
+        if (d2 < BOND * BOND) {
+          const d = Math.sqrt(d2);
+          sctx.strokeStyle = `rgba(150,210,255,${(wBond * (1 - d / BOND)).toFixed(3)})`;
+          sctx.lineWidth = 1.5;
+          sctx.beginPath(); sctx.moveTo(m[i].x, m[i].y); sctx.lineTo(m[j].x, m[j].y); sctx.stroke();
+        }
+      }
+    }
   }
-  // molecules (glossy droplets)
-  const[c1,c2]=phaseTint(hs);
-  for(const p of S.mols){ const g=sctx.createRadialGradient(p.x-2,p.y-2,1,p.x,p.y,MR); g.addColorStop(0,c1); g.addColorStop(1,c2);
-    sctx.fillStyle=g; sctx.beginPath(); sctx.arc(p.x,p.y,MR/2+1.5,0,7); sctx.fill();
-    sctx.fillStyle='rgba(255,255,255,0.5)'; sctx.beginPath(); sctx.arc(p.x-1.5,p.y-1.5,1.2,0,7); sctx.fill(); }
-  // flame / ice under container based on auto
-  if(S.auto>0){ for(let i=0;i<7;i++){const fx=BX0+40+i*(BX1-BX0-80)/6; const fh=14+8*Math.sin(tNow*0.02+i); const fg=sctx.createLinearGradient(0,BY1,0,BY1+fh+14); fg.addColorStop(0,'rgba(255,180,40,0.9)'); fg.addColorStop(1,'rgba(255,60,0,0)'); sctx.fillStyle=fg; sctx.beginPath(); sctx.moveTo(fx-6,BY1+16); sctx.quadraticCurveTo(fx,BY1+2-fh,fx+6,BY1+16); sctx.fill(); }
-    sctx.fillStyle='#ff9d4f'; sctx.font='12px monospace'; sctx.fillText('🔥 heating',BX0,BY1+30); }
-  else if(S.auto<0){ sctx.fillStyle='#7fc8ff'; sctx.font='12px monospace'; sctx.fillText('❄️ cooling',BX0,BY1+30); }
-  // phase label + temp
-  sctx.fillStyle=cv('--text'); sctx.font='bold 15px monospace'; sctx.textAlign='center';
-  sctx.fillText(PHASE_NAME[hs.phase], W/2, 22); sctx.textAlign='left';
-  if(hs.phase==='melting'||hs.phase==='boiling'){ sctx.fillStyle=cv('--gold'); sctx.font='11px monospace'; sctx.textAlign='center';
-    sctx.fillText('temperature is STUCK — heat is breaking bonds ('+Math.round((hs.phase==='melting'?hs.melt:hs.boil)*100)+'%)', W/2, 40); sctx.textAlign='left'; }
-  drawThermo(W-30,70,hs.T);
-}
-function drawThermo(x,y,Tc){ const h=150,f=Math.max(0,Math.min(1,(Tc+30)/160));
-  sctx.fillStyle='rgba(255,255,255,0.14)'; sctx.fillRect(x-5,y,10,h);
-  const col=Tc<=0?'#7fc8ff':Tc>=100?'#ff5a5a':'#ffb04f';
-  sctx.fillStyle=col; sctx.fillRect(x-3,y+h*(1-f),6,h*f);
-  sctx.beginPath(); sctx.arc(x,y+h+7,9,0,7); sctx.fillStyle=col; sctx.fill();
-  sctx.fillStyle=cv('--text'); sctx.font='bold 12px monospace'; sctx.textAlign='center'; sctx.fillText(Tc.toFixed(0)+'°C',x,y-8); sctx.textAlign='left';
-  // 0 and 100 marks
-  sctx.fillStyle=cv('--text2'); sctx.font='8px monospace'; sctx.fillText('100',x+8,y+h*(1-(130/160))+3); sctx.fillText('0',x+8,y+h*(1-(30/160))+3);
+
+  const [c1, c2] = phaseTint(hs);
+  for (const p of S.mols) {
+    const g = sctx.createRadialGradient(p.x - 2, p.y - 2, 1, p.x, p.y, MR);
+    g.addColorStop(0, c1); g.addColorStop(1, c2);
+    sctx.fillStyle = g;
+    sctx.beginPath(); sctx.arc(p.x, p.y, MR / 2 + 1.5, 0, Math.PI * 2); sctx.fill();
+    sctx.fillStyle = 'rgba(255,255,255,0.5)';
+    sctx.beginPath(); sctx.arc(p.x - 1.5, p.y - 1.5, 1.2, 0, Math.PI * 2); sctx.fill();
+  }
+
+  if (S.auto > 0) {
+    for (let i = 0; i < 7; i++) {
+      const fx = BX0 + 40 + i * (BX1 - BX0 - 80) / 6;
+      const fh = 14 + 8 * Math.sin(tNow * 0.02 + i);
+      const fg = sctx.createLinearGradient(0, BY1, 0, BY1 + fh + 14);
+      fg.addColorStop(0, 'rgba(255,180,40,0.9)');
+      fg.addColorStop(1, 'rgba(255,60,0,0)');
+      sctx.fillStyle = fg;
+      sctx.beginPath();
+      sctx.moveTo(fx - 6, BY1 + 16);
+      sctx.quadraticCurveTo(fx, BY1 + 2 - fh, fx + 6, BY1 + 16);
+      sctx.fill();
+    }
+    sctx.fillStyle = '#ff9d4f'; sctx.font = '12px monospace'; sctx.fillText('🔥 heating', BX0, BY1 + 30);
+  } else if (S.auto < 0) {
+    sctx.fillStyle = '#7fc8ff'; sctx.font = '12px monospace'; sctx.fillText('❄️ cooling', BX0, BY1 + 30);
+  }
+
+  sctx.fillStyle = cv('--text'); sctx.font = 'bold 15px monospace'; sctx.textAlign = 'center';
+  sctx.fillText(PHASE_NAME[hs.phase], W / 2, 22); sctx.textAlign = 'left';
+  if (hs.phase === 'melting' || hs.phase === 'boiling') {
+    sctx.fillStyle = cv('--gold'); sctx.font = '11px monospace'; sctx.textAlign = 'center';
+    sctx.fillText(`temperature is STUCK — heat is breaking bonds (${Math.round((hs.phase === 'melting' ? hs.melt : hs.boil) * 100)}%)`, W / 2, 40);
+    sctx.textAlign = 'left';
+  }
+  drawThermo(W - 30, 70, hs.T);
 }
 
-function drawCurve(){
-  const hs=heatState(S.H); const x0=54,y0=H-56,w=W-x0-20,h=H-100;
-  // axes
-  sctx.strokeStyle=cv('--border2'); sctx.lineWidth=1.5; sctx.beginPath(); sctx.moveTo(x0,20); sctx.lineTo(x0,y0); sctx.lineTo(x0+w,y0); sctx.stroke();
-  sctx.fillStyle=cv('--text2'); sctx.font='11px monospace'; sctx.save(); sctx.translate(16,H/2); sctx.rotate(-Math.PI/2); sctx.fillText('temperature (°C)',-40,0); sctx.restore();
-  sctx.fillText('heat added  →',x0+w-90,y0+22);
-  // temperature scale marks
-  const Ty=t=>y0-((t+30)/160)*h;
-  [0,100].forEach(t=>{sctx.strokeStyle='rgba(150,180,220,0.15)'; sctx.beginPath(); sctx.moveTo(x0,Ty(t)); sctx.lineTo(x0+w,Ty(t)); sctx.stroke(); sctx.fillStyle=cv('--text3'); sctx.fillText(t+'°',x0-26,Ty(t)+3);});
-  // curve segments (x by cumulative energy)
-  const Xq=q=>x0+q/ETOT*w;
-  const segCol=['#7fc8ff','#8a7bff','#5fb0ff','#ff7a4f','#ff5a5a'];
-  const pts=[[0,-20],[CUM[1],0],[CUM[2],0],[CUM[3],100],[CUM[4],100],[CUM[5],120]];
-  for(let i=0;i<pts.length-1;i++){ sctx.strokeStyle=segCol[i]; sctx.lineWidth=3.5; sctx.beginPath(); sctx.moveTo(Xq(pts[i][0]),Ty(pts[i][1])); sctx.lineTo(Xq(pts[i+1][0]),Ty(pts[i+1][1])); sctx.stroke(); }
-  // plateau labels
-  sctx.font='10px monospace'; sctx.textAlign='center';
-  sctx.fillStyle='#8a7bff'; sctx.fillText('melting',(Xq(CUM[1])+Xq(CUM[2]))/2,Ty(0)-8);
-  sctx.fillStyle='#ff7a4f'; sctx.fillText('boiling (needs 6.8× more heat!)',(Xq(CUM[3])+Xq(CUM[4]))/2,Ty(100)-8);
-  sctx.fillStyle=cv('--text3'); sctx.fillText('ice',Xq(CUM[0]/1+20),Ty(-14)); sctx.fillText('water',(Xq(CUM[2])+Xq(CUM[3]))/2,Ty(50)); sctx.fillText('steam',Xq(CUM[4])+18,Ty(112));
-  sctx.textAlign='left';
-  // current marker
-  const mx=Xq(hs.Q),my=Ty(hs.T);
-  sctx.strokeStyle='rgba(255,255,255,0.2)'; sctx.setLineDash([3,4]); sctx.beginPath(); sctx.moveTo(mx,20); sctx.lineTo(mx,y0); sctx.stroke(); sctx.setLineDash([]);
-  sctx.fillStyle='#fff'; sctx.beginPath(); sctx.arc(mx,my,6,0,7); sctx.fill();
-  sctx.fillStyle=cv('--gold'); sctx.beginPath(); sctx.arc(mx,my,3.5,0,7); sctx.fill();
-  sctx.fillStyle=cv('--text'); sctx.font='bold 13px monospace'; sctx.textAlign='center'; sctx.fillText(PHASE_NAME[hs.phase]+'  '+hs.T.toFixed(0)+'°C',W/2,H-16); sctx.textAlign='left';
+function drawThermo(x, y, Tc) {
+  const h = 150, f = Math.max(0, Math.min(1, (Tc + 30) / 160));
+  sctx.fillStyle = 'rgba(255,255,255,0.14)';
+  sctx.fillRect(x - 5, y, 10, h);
+  const col = Tc <= 0 ? '#7fc8ff' : Tc >= 100 ? '#ff5a5a' : '#ffb04f';
+  sctx.fillStyle = col;
+  sctx.fillRect(x - 3, y + h * (1 - f), 6, h * f);
+  sctx.beginPath(); sctx.arc(x, y + h + 7, 9, 0, Math.PI * 2); sctx.fillStyle = col; sctx.fill();
+  sctx.fillStyle = cv('--text'); sctx.font = 'bold 12px monospace'; sctx.textAlign = 'center';
+  sctx.fillText(`${Tc.toFixed(0)}°C`, x, y - 8); sctx.textAlign = 'left';
+  sctx.fillStyle = cv('--text2'); sctx.font = '8px monospace';
+  sctx.fillText('100', x + 8, y + h * (1 - (130 / 160)) + 3);
+  sctx.fillText('0', x + 8, y + h * (1 - (30 / 160)) + 3);
 }
 
-function drawDiagram(){
-  const x0=54,y0=H-54,w=W-x0-30,h=H-90;
-  const Tmin=-40,Tmax=400; const Tx=t=>x0+(t-Tmin)/(Tmax-Tmin)*w;
-  const Pmin=-3,Pmax=2.6; const Py=lp=>y0-(lp-Pmin)/(Pmax-Pmin)*h; // log10 atm
-  // region fills
-  function region(col){sctx.fillStyle=col;}
-  // sample grid fill
-  for(let gx=0;gx<w;gx+=7)for(let gy=0;gy<h;gy+=7){ const T=Tmin+(gx/w)*(Tmax-Tmin); const lp=Pmin+(1-gy/h)*(Pmax-Pmin); const ph=phaseAt(T,Math.pow(10,lp));
-    sctx.fillStyle= ph==='solid'?'rgba(120,190,255,0.13)':ph==='liquid'?'rgba(60,140,240,0.16)':ph==='supercritical'?'rgba(200,120,255,0.13)':'rgba(255,150,90,0.10)';
-    sctx.fillRect(x0+gx,y0-h+gy,7,7); }
-  // axes
-  sctx.strokeStyle=cv('--border2'); sctx.lineWidth=1.5; sctx.beginPath(); sctx.moveTo(x0,y0-h); sctx.lineTo(x0,y0); sctx.lineTo(x0+w,y0); sctx.stroke();
-  sctx.fillStyle=cv('--text2'); sctx.font='10px monospace'; sctx.fillText('temperature (°C) →',x0+w-120,y0+20);
-  sctx.save(); sctx.translate(16,H/2); sctx.rotate(-Math.PI/2); sctx.fillText('pressure (atm, log)',-40,0); sctx.restore();
-  [-3,-2,-1,0,1,2].forEach(lp=>{sctx.fillStyle=cv('--text3'); sctx.font='8px monospace'; sctx.fillText(Math.pow(10,lp)+'',x0-26,Py(lp)+3);});
-  // 1 atm line
-  sctx.strokeStyle='rgba(255,255,255,0.25)'; sctx.setLineDash([4,4]); sctx.beginPath(); sctx.moveTo(x0,Py(0)); sctx.lineTo(x0+w,Py(0)); sctx.stroke(); sctx.setLineDash([]);
-  sctx.fillStyle=cv('--text2'); sctx.font='9px monospace'; sctx.fillText('1 atm (sea level)',x0+w-110,Py(0)-4);
-  // vaporization curve
-  sctx.strokeStyle='#ff7a4f'; sctx.lineWidth=2.5; sctx.beginPath(); let first=true;
-  for(let lp=-2.2;lp<=Math.log10(218);lp+=0.05){ const P=Math.pow(10,lp); const T=boilT(P); const px=Tx(T),py=Py(lp); if(px>x0&&px<x0+w){first?(sctx.moveTo(px,py),first=false):sctx.lineTo(px,py);} } sctx.stroke();
-  // fusion line (~0°C vertical)
-  sctx.strokeStyle='#8a7bff'; sctx.beginPath(); sctx.moveTo(Tx(0),Py(Math.log10(0.006))); sctx.lineTo(Tx(-3),Py(Pmax)); sctx.stroke();
-  // sublimation
-  sctx.strokeStyle='#7fc8ff'; sctx.beginPath(); sctx.moveTo(Tx(0),Py(Math.log10(0.006))); sctx.lineTo(Tx(-40),Py(-3)); sctx.stroke();
-  // triple & critical points
-  sctx.fillStyle=cv('--gold'); sctx.beginPath(); sctx.arc(Tx(0.01),Py(Math.log10(0.006)),4,0,7); sctx.fill(); sctx.font='9px monospace'; sctx.fillText('triple point',Tx(0.01)+6,Py(Math.log10(0.006)));
-  sctx.fillStyle='#c060ff'; sctx.beginPath(); sctx.arc(Tx(374),Py(Math.log10(218)),4,0,7); sctx.fill(); sctx.fillText('critical point',Tx(374)-70,Py(Math.log10(218))-6);
-  // region labels
-  sctx.font='bold 12px monospace';
-  sctx.fillStyle='#7fc8ff'; sctx.fillText('SOLID',Tx(-25),Py(1));
-  sctx.fillStyle='#5fb0ff'; sctx.fillText('LIQUID',Tx(45),Py(1.2));
-  sctx.fillStyle='#ff9d4f'; sctx.fillText('GAS',Tx(230),Py(-1.5));
-  // draggable marker
-  const px=Tx(S.pT),py=Py(S.pP); const ph=phaseAt(S.pT,Math.pow(10,S.pP));
-  sctx.strokeStyle='#fff'; sctx.lineWidth=2; sctx.beginPath(); sctx.arc(px,py,8,0,7); sctx.stroke();
-  sctx.fillStyle='#fff'; sctx.beginPath(); sctx.arc(px,py,4,0,7); sctx.fill();
-  sctx.fillStyle=cv('--text'); sctx.font='bold 12px monospace'; sctx.textAlign='center';
-  sctx.fillText(S.pT.toFixed(0)+'°C · '+Math.pow(10,S.pP).toFixed(3)+' atm → '+ph.toUpperCase(),W/2,H-14); sctx.textAlign='left';
+function drawCurve() {
+  const hs = heatState(S.H);
+  const x0 = 54, y0 = H - 56, w = W - x0 - 20, h = H - 100;
+  sctx.strokeStyle = cv('--border2'); sctx.lineWidth = 1.5;
+  sctx.beginPath(); sctx.moveTo(x0, 20); sctx.lineTo(x0, y0); sctx.lineTo(x0 + w, y0); sctx.stroke();
+  sctx.fillStyle = cv('--text2'); sctx.font = '11px monospace';
+  sctx.save(); sctx.translate(16, H / 2); sctx.rotate(-Math.PI / 2);
+  sctx.fillText('temperature (°C)', -40, 0); sctx.restore();
+  sctx.fillText('heat added  →', x0 + w - 90, y0 + 22);
+
+  const Ty = t => y0 - ((t + 30) / 160) * h;
+  [0, 100].forEach(t => {
+    sctx.strokeStyle = 'rgba(150,180,220,0.15)';
+    sctx.beginPath(); sctx.moveTo(x0, Ty(t)); sctx.lineTo(x0 + w, Ty(t)); sctx.stroke();
+    sctx.fillStyle = cv('--text3'); sctx.fillText(`${t}°`, x0 - 26, Ty(t) + 3);
+  });
+
+  const Xq = q => x0 + q / ETOT * w;
+  const segCol = ['#7fc8ff', '#8a7bff', '#5fb0ff', '#ff7a4f', '#ff5a5a'];
+  const pts = [[0, -20], [CUM[1], 0], [CUM[2], 0], [CUM[3], 100], [CUM[4], 100], [CUM[5], 120]];
+  for (let i = 0; i < pts.length - 1; i++) {
+    sctx.strokeStyle = segCol[i]; sctx.lineWidth = 3.5;
+    sctx.beginPath(); sctx.moveTo(Xq(pts[i][0]), Ty(pts[i][1])); sctx.lineTo(Xq(pts[i + 1][0]), Ty(pts[i + 1][1])); sctx.stroke();
+  }
+
+  sctx.font = '10px monospace'; sctx.textAlign = 'center';
+  sctx.fillStyle = '#8a7bff'; sctx.fillText('melting', (Xq(CUM[1]) + Xq(CUM[2])) / 2, Ty(0) - 8);
+  sctx.fillStyle = '#ff7a4f'; sctx.fillText('boiling (needs 6.8× more heat!)', (Xq(CUM[3]) + Xq(CUM[4])) / 2, Ty(100) - 8);
+  sctx.fillStyle = cv('--text3');
+  sctx.fillText('ice', Xq(CUM[0] / 1 + 20), Ty(-14));
+  sctx.fillText('water', (Xq(CUM[2]) + Xq(CUM[3])) / 2, Ty(50));
+  sctx.fillText('steam', Xq(CUM[4]) + 18, Ty(112));
+  sctx.textAlign = 'left';
+
+  const mx = Xq(hs.Q), my = Ty(hs.T);
+  sctx.strokeStyle = 'rgba(255,255,255,0.2)'; sctx.setLineDash([3, 4]);
+  sctx.beginPath(); sctx.moveTo(mx, 20); sctx.lineTo(mx, y0); sctx.stroke(); sctx.setLineDash([]);
+  sctx.fillStyle = '#fff'; sctx.beginPath(); sctx.arc(mx, my, 6, 0, Math.PI * 2); sctx.fill();
+  sctx.fillStyle = cv('--gold'); sctx.beginPath(); sctx.arc(mx, my, 3.5, 0, Math.PI * 2); sctx.fill();
+  sctx.fillStyle = cv('--text'); sctx.font = 'bold 13px monospace'; sctx.textAlign = 'center';
+  sctx.fillText(`${PHASE_NAME[hs.phase]}  ${hs.T.toFixed(0)}°C`, W / 2, H - 16); sctx.textAlign = 'left';
 }
 
-// ============================ AUX + UI ============================
-function drawAux(){if(!actx)return;clr(actx,AUXW,AUXH);({lab:auxLab,curve:auxCurve,diagram:auxDiagram}[S.mode])();}
-function abar(y,frac,col,lab,val){const x=170,w=AUXW-200;actx.fillStyle=cv('--bg3');actx.fillRect(x,y,w,24);actx.fillStyle=col;actx.globalAlpha=.72;actx.fillRect(x,y,w*Math.max(0,Math.min(1,frac)),24);actx.globalAlpha=1;actx.strokeStyle=col;actx.strokeRect(x,y,w,24);actx.fillStyle=cv('--text');actx.font='11px monospace';actx.fillText(lab,16,y+16);actx.fillStyle=col;actx.fillText(val,x+8,y+16);}
-function auxLab(){const hs=heatState(S.H);
-  actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('What the molecules are doing',16,22);
-  actx.font='11px monospace';actx.fillStyle=cv('--text2');
-  const txt={solid:['Locked in a fixed lattice, only vibrating','in place. Rigid shape, fixed volume.'],
-    melting:['Bonds are breaking. Heat goes into freeing','molecules, NOT raising temperature.'],
-    liquid:['Molecules slip past each other but stay','close. Flows, takes the container\u2019s shape.'],
-    boiling:['Bonds snapping fast. Huge energy needed','to rip every molecule free — T stays 100°C.'],
-    gas:['Free, fast, far apart. Fills all space.','Spreads to fill any container.']}[hs.phase];
-  txt.forEach((t,i)=>actx.fillText(t,16,48+i*20));
-  abar(96,(1-hs.melt),'#7fc8ff','solid order',Math.round((1-hs.melt)*100)+'%');
-  abar(128,hs.melt*(1-hs.boil),'#5fb0ff','liquid',Math.round(hs.melt*(1-hs.boil)*100)+'%');
-  abar(160,hs.boil,'#ff9d4f','gas',Math.round(hs.boil*100)+'%');
-  actx.fillStyle=cv('--gold');actx.font='12px monospace';actx.fillText('temperature: '+hs.T.toFixed(0)+'°C',16,208);
-  actx.fillStyle=cv('--text2');actx.font='10px monospace';actx.fillText('heat added: '+Math.round(S.H)+'%  of the melt→boil→superheat journey',16,228);
-}
-function auxCurve(){const hs=heatState(S.H);
-  actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('Latent heat — the flat parts',16,22);
-  actx.font='11px monospace';actx.fillStyle=cv('--text2');
-  ['On the sloped parts, heat raises temperature.','On the FLAT parts, temperature is frozen while','heat breaks the bonds between molecules —','this hidden energy is called latent heat.'].forEach((t,i)=>actx.fillText(t,16,48+i*20));
-  actx.fillStyle=cv('--gold');actx.font='11px monospace';
-  actx.fillText('melt 1 g of ice: 334 J',16,150);
-  actx.fillText('boil 1 g of water: 2260 J  (6.8× more!)',16,172);
-  actx.fillStyle=cv('--text2');actx.font='10px monospace';
-  actx.fillText('That is why a pot sits at 100°C the whole boil,',16,200);
-  actx.fillText('and why steam burns are so severe.',16,218);
-}
-function auxDiagram(){
-  actx.fillStyle=cv('--text');actx.font='12px monospace';actx.fillText('Pressure changes everything',16,22);
-  actx.font='11px monospace';actx.fillStyle=cv('--text2');
-  ['Lower the pressure and water boils at a lower','temperature — on Everest it boils at ~71°C,','so food cooks slowly. A pressure cooker does','the opposite: 2 atm pushes boiling to 121°C.'].forEach((t,i)=>actx.fillText(t,16,48+i*20));
-  const P=Math.pow(10,S.pP);
-  actx.fillStyle=cv('--gold');actx.font='11px monospace';
-  actx.fillText('at '+P.toFixed(3)+' atm, water boils at '+(P>0.006?boilT(P).toFixed(0)+'°C':'— (sublimes)'),16,150);
-  actx.fillStyle=cv('--text2');actx.font='10px monospace';
-  ['Below the triple point (0.006 atm) liquid can\u2019t','exist — ice turns straight to vapour (sublimation),','like dry ice or freeze-drying.','Above the critical point, gas & liquid merge.'].forEach((t,i)=>actx.fillText(t,16,178+i*18));
+function drawDiagram() {
+  const x0 = 54, y0 = H - 54, w = W - x0 - 30, h = H - 90;
+  const Tmin = -40, Tmax = 400;
+  const Tx = t => x0 + (t - Tmin) / (Tmax - Tmin) * w;
+  const Pmin = -3, Pmax = 2.6;
+  const Py = lp => y0 - (lp - Pmin) / (Pmax - Pmin) * h;
+
+  for (let gx = 0; gx < w; gx += 7) {
+    for (let gy = 0; gy < h; gy += 7) {
+      const T = Tmin + (gx / w) * (Tmax - Tmin);
+      const lp = Pmin + (1 - gy / h) * (Pmax - Pmin);
+      const ph = phaseAt(T, Math.pow(10, lp));
+      sctx.fillStyle = ph === 'solid' ? 'rgba(120,190,255,0.13)' : ph === 'liquid' ? 'rgba(60,140,240,0.16)' : ph === 'supercritical' ? 'rgba(200,120,255,0.13)' : 'rgba(255,150,90,0.10)';
+      sctx.fillRect(x0 + gx, y0 - h + gy, 7, 7);
+    }
+  }
+
+  sctx.strokeStyle = cv('--border2'); sctx.lineWidth = 1.5;
+  sctx.beginPath(); sctx.moveTo(x0, y0 - h); sctx.lineTo(x0, y0); sctx.lineTo(x0 + w, y0); sctx.stroke();
+  sctx.fillStyle = cv('--text2'); sctx.font = '10px monospace';
+  sctx.fillText('temperature (°C) →', x0 + w - 120, y0 + 20);
+  sctx.save(); sctx.translate(16, H / 2); sctx.rotate(-Math.PI / 2);
+  sctx.fillText('pressure (atm, log)', -40, 0); sctx.restore();
+  [-3, -2, -1, 0, 1, 2].forEach(lp => {
+    sctx.fillStyle = cv('--text3'); sctx.font = '8px monospace';
+    sctx.fillText(`${Math.pow(10, lp)}`, x0 - 26, Py(lp) + 3);
+  });
+
+  sctx.strokeStyle = 'rgba(255,255,255,0.25)'; sctx.setLineDash([4, 4]);
+  sctx.beginPath(); sctx.moveTo(x0, Py(0)); sctx.lineTo(x0 + w, Py(0)); sctx.stroke(); sctx.setLineDash([]);
+  sctx.fillStyle = cv('--text2'); sctx.font = '9px monospace';
+  sctx.fillText('1 atm (sea level)', x0 + w - 110, Py(0) - 4);
+
+  sctx.strokeStyle = '#ff7a4f'; sctx.lineWidth = 2.5; sctx.beginPath(); let first = true;
+  for (let lp = -2.2; lp <= Math.log10(218); lp += 0.05) {
+    const P = Math.pow(10, lp);
+    const T = boilT(P);
+    const px = Tx(T), py = Py(lp);
+    if (px > x0 && px < x0 + w) { first ? (sctx.moveTo(px, py), first = false) : sctx.lineTo(px, py); }
+  }
+  sctx.stroke();
+
+  sctx.strokeStyle = '#8a7bff'; sctx.beginPath();
+  sctx.moveTo(Tx(0), Py(Math.log10(0.006))); sctx.lineTo(Tx(-3), Py(Pmax)); sctx.stroke();
+
+  sctx.strokeStyle = '#7fc8ff'; sctx.beginPath();
+  sctx.moveTo(Tx(0), Py(Math.log10(0.006))); sctx.lineTo(Tx(-40), Py(-3)); sctx.stroke();
+
+  sctx.fillStyle = cv('--gold'); sctx.beginPath();
+  sctx.arc(Tx(0.01), Py(Math.log10(0.006)), 4, 0, Math.PI * 2); sctx.fill();
+  sctx.font = '9px monospace'; sctx.fillText('triple point', Tx(0.01) + 6, Py(Math.log10(0.006)));
+  sctx.fillStyle = '#c060ff'; sctx.beginPath();
+  sctx.arc(Tx(374), Py(Math.log10(218)), 4, 0, Math.PI * 2); sctx.fill();
+  sctx.fillText('critical point', Tx(374) - 70, Py(Math.log10(218)) - 6);
+
+  sctx.font = 'bold 12px monospace';
+  sctx.fillStyle = '#7fc8ff'; sctx.fillText('SOLID', Tx(-25), Py(1));
+  sctx.fillStyle = '#5fb0ff'; sctx.fillText('LIQUID', Tx(45), Py(1.2));
+  sctx.fillStyle = '#ff9d4f'; sctx.fillText('GAS', Tx(230), Py(-1.5));
+
+  const px = Tx(S.pT), py = Py(S.pP);
+  const ph = phaseAt(S.pT, Math.pow(10, S.pP));
+  sctx.strokeStyle = '#fff'; sctx.lineWidth = 2;
+  sctx.beginPath(); sctx.arc(px, py, 8, 0, Math.PI * 2); sctx.stroke();
+  sctx.fillStyle = '#fff'; sctx.beginPath(); sctx.arc(px, py, 4, 0, Math.PI * 2); sctx.fill();
+  sctx.fillStyle = cv('--text'); sctx.font = 'bold 12px monospace'; sctx.textAlign = 'center';
+  sctx.fillText(`${S.pT.toFixed(0)}°C · ${Math.pow(10, S.pP).toFixed(3)} atm → ${ph.toUpperCase()}`, W / 2, H - 14);
+  sctx.textAlign = 'left';
 }
 
-function $(i){return document.getElementById(i);}
-function el(t,c,h){const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
-function sld(p,o){const c=el('div','ctl');const r=el('div','param-row');r.append(el('span',null,o.label),el('span','param-val',o.fmt(o.val)));const inp=el('input');inp.type='range';inp.min=o.min;inp.max=o.max;inp.step=o.step;inp.value=o.val;const m=el('div','sb-mini',o.mini||'');inp.id=o.id||'';inp.oninput=()=>{r.children[1].textContent=o.fmt(+inp.value);o.oninput(+inp.value);upd();};c.append(r,inp,m);p.appendChild(c);return inp;}
-function btn(p,arr){const w=el('div');w.style.gridColumn='span 2';const g=el('div','btn-grid c'+Math.min(3,arr.length));arr.forEach(b=>{const x=el('button','minibtn',b.l);x.onclick=b.f;g.appendChild(x);});w.appendChild(g);p.appendChild(w);}
-function buildControls(){const p=$('mode-controls');p.innerHTML='';
-  if(S.mode==='lab'||S.mode==='curve'){
-    sld(p,{label:'🌡️ Heat added',min:0,max:100,step:0.5,val:S.H,fmt:v=>Math.round(v)+'%',id:'heat-sld',mini:'drag to melt, then boil the water',oninput:v=>{S.H=v;}});
-    btn(p,[{l:'🔥 Heat',f:()=>{S.auto=1;syncAutoBtns();}},{l:'❄️ Cool',f:()=>{S.auto=-1;syncAutoBtns();}},{l:'⏸ Hold',f:()=>{S.auto=0;syncAutoBtns();}}]);
-    const w=el('div');w.style.gridColumn='span 2';w.append(el('div','section-label','Jump to'));const g=el('div','btn-grid c3');
-    [['❄️ Ice',8],['💧 Water',45],['💨 Steam',94]].forEach(([l,v])=>{const b=el('button','minibtn',l);b.onclick=()=>{S.H=v;S.auto=0;buildControls();};g.appendChild(b);});
-    w.appendChild(g);p.appendChild(w);
+// ============================================================================
+// AUXILIARY CANVAS & READOUT UI
+// ============================================================================
+function drawAux() {
+  if (!actx) return;
+  clr(actx, AUXW, AUXH);
+  ({ lab: auxLab, curve: auxCurve, diagram: auxDiagram }[S.mode])();
+}
+
+function abar(y, frac, col, lab, val) {
+  const x = 170, w = AUXW - 200;
+  actx.fillStyle = cv('--bg3');
+  actx.fillRect(x, y, w, 24);
+  actx.fillStyle = col; actx.globalAlpha = 0.72;
+  actx.fillRect(x, y, w * Math.max(0, Math.min(1, frac)), 24);
+  actx.globalAlpha = 1;
+  actx.strokeStyle = col; actx.strokeRect(x, y, w, 24);
+  actx.fillStyle = cv('--text'); actx.font = '11px monospace';
+  actx.fillText(lab, 16, y + 16);
+  actx.fillStyle = col; actx.fillText(val, x + 8, y + 16);
+}
+
+function auxLab() {
+  const hs = heatState(S.H);
+  actx.fillStyle = cv('--text'); actx.font = '12px monospace';
+  actx.fillText('What the molecules are doing', 16, 22);
+  actx.font = '11px monospace'; actx.fillStyle = cv('--text2');
+  const txt = {
+    solid: ['Locked in a fixed lattice, only vibrating', 'in place. Rigid shape, fixed volume.'],
+    melting: ['Bonds are breaking. Heat goes into freeing', 'molecules, NOT raising temperature.'],
+    liquid: ['Molecules slip past each other but stay', 'close. Flows, takes the container\'s shape.'],
+    boiling: ['Bonds snapping fast. Huge energy needed', 'to rip every molecule free — T stays 100°C.'],
+    gas: ['Free, fast, far apart. Fills all space.', 'Spreads to fill any container.']
+  }[hs.phase];
+  txt.forEach((t, i) => actx.fillText(t, 16, 48 + i * 20));
+  abar(96, (1 - hs.melt), '#7fc8ff', 'solid order', `${Math.round((1 - hs.melt) * 100)}%`);
+  abar(128, hs.melt * (1 - hs.boil), '#5fb0ff', 'liquid', `${Math.round(hs.melt * (1 - hs.boil) * 100)}%`);
+  abar(160, hs.boil, '#ff9d4f', 'gas', `${Math.round(hs.boil * 100)}%`);
+  actx.fillStyle = cv('--gold'); actx.font = '12px monospace';
+  actx.fillText(`temperature: ${hs.T.toFixed(0)}°C`, 16, 208);
+  actx.fillStyle = cv('--text2'); actx.font = '10px monospace';
+  actx.fillText(`heat added: ${Math.round(S.H)}%  of the melt→boil→superheat journey`, 16, 228);
+}
+
+function auxCurve() {
+  actx.fillStyle = cv('--text'); actx.font = '12px monospace';
+  actx.fillText('Latent heat — the flat parts', 16, 22);
+  actx.font = '11px monospace'; actx.fillStyle = cv('--text2');
+  [
+    'On the sloped parts, heat raises temperature.',
+    'On the FLAT parts, temperature is frozen while',
+    'heat breaks the bonds between molecules —',
+    'this hidden energy is called latent heat.'
+  ].forEach((t, i) => actx.fillText(t, 16, 48 + i * 20));
+  actx.fillStyle = cv('--gold'); actx.font = '11px monospace';
+  actx.fillText('melt 1 g of ice: 334 J', 16, 150);
+  actx.fillText('boil 1 g of water: 2260 J  (6.8× more!)', 16, 172);
+  actx.fillStyle = cv('--text2'); actx.font = '10px monospace';
+  actx.fillText('That is why a pot sits at 100°C the whole boil,', 16, 200);
+  actx.fillText('and why steam burns are so severe.', 16, 218);
+}
+
+function auxDiagram() {
+  actx.fillStyle = cv('--text'); actx.font = '12px monospace';
+  actx.fillText('Pressure changes everything', 16, 22);
+  actx.font = '11px monospace'; actx.fillStyle = cv('--text2');
+  [
+    'Lower the pressure and water boils at a lower',
+    'temperature — on Everest it boils at ~71°C,',
+    'so food cooks slowly. A pressure cooker does',
+    'the opposite: 2 atm pushes boiling to 121°C.'
+  ].forEach((t, i) => actx.fillText(t, 16, 48 + i * 20));
+  const P = Math.pow(10, S.pP);
+  actx.fillStyle = cv('--gold'); actx.font = '11px monospace';
+  actx.fillText(`at ${P.toFixed(3)} atm, water boils at ${P > 0.006 ? boilT(P).toFixed(0) + '°C' : '— (sublimes)'}`, 16, 150);
+  actx.fillStyle = cv('--text2'); actx.font = '10px monospace';
+  [
+    'Below the triple point (0.006 atm) liquid can\'t',
+    'exist — ice turns straight to vapour (sublimation),',
+    'like dry ice or freeze-drying.',
+    'Above the critical point, gas & liquid merge.'
+  ].forEach((t, i) => actx.fillText(t, 16, 178 + i * 18));
+}
+
+function $(id) { return document.getElementById(id); }
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  return e;
+}
+
+function sld(parent, o) {
+  const c = el('div', 'ctl');
+  const r = el('div', 'param-row');
+  r.append(el('span', null, o.label), el('span', 'param-val', o.fmt(o.val)));
+  const inp = el('input');
+  inp.type = 'range'; inp.min = o.min; inp.max = o.max; inp.step = o.step; inp.value = o.val;
+  const m = el('div', 'sb-mini', o.mini || '');
+  inp.id = o.id || '';
+  inp.oninput = () => {
+    r.children[1].textContent = o.fmt(+inp.value);
+    o.oninput(+inp.value);
+    upd();
+  };
+  c.append(r, inp, m);
+  parent.appendChild(c);
+  return inp;
+}
+
+function btn(parent, arr) {
+  const w = el('div');
+  w.style.gridColumn = 'span 2';
+  const g = el('div', `btn-grid c${Math.min(3, arr.length)}`);
+  arr.forEach(b => {
+    const x = el('button', 'minibtn', b.l);
+    x.onclick = b.f;
+    g.appendChild(x);
+  });
+  w.appendChild(g);
+  parent.appendChild(w);
+}
+
+function buildControls() {
+  const p = $('mode-controls'); p.innerHTML = '';
+  if (S.mode === 'lab' || S.mode === 'curve') {
+    sld(p, {
+      label: '🌡️ Heat added', min: 0, max: 100, step: 0.5, val: S.H,
+      fmt: v => `${Math.round(v)}%`, id: 'heat-sld', mini: 'drag to melt, then boil the water',
+      oninput: v => { S.H = v; }
+    });
+    btn(p, [
+      { l: '🔥 Heat', f: () => { S.auto = 1; } },
+      { l: '❄️ Cool', f: () => { S.auto = -1; } },
+      { l: '⏸ Hold', f: () => { S.auto = 0; } }
+    ]);
+    const w = el('div'); w.style.gridColumn = 'span 2';
+    w.append(el('div', 'section-label', 'Jump to'));
+    const g = el('div', 'btn-grid c3');
+    [['❄️ Ice', 8], ['💧 Water', 45], ['💨 Steam', 94]].forEach(([l, val]) => {
+      const b = el('button', 'minibtn', l);
+      b.onclick = () => { S.H = val; S.auto = 0; buildControls(); };
+      g.appendChild(b);
+    });
+    w.appendChild(g); p.appendChild(w);
   } else {
-    sld(p,{label:'🌡️ Temperature',min:-40,max:400,step:1,val:S.pT,fmt:v=>v+'°C',mini:'drag the white dot on the diagram too',oninput:v=>{S.pT=v;}});
-    sld(p,{label:'⏬ Pressure',min:-3,max:2.6,step:0.05,val:S.pP,fmt:v=>Math.pow(10,v).toFixed(3)+' atm',oninput:v=>{S.pP=v;}});
-    btn(p,[{l:'🏔 Everest',f:()=>{S.pP=Math.log10(0.33);buildControls();}},{l:'🌊 Sea level',f:()=>{S.pP=0;buildControls();}},{l:'🍲 Cooker',f:()=>{S.pP=Math.log10(2);buildControls();}}]);
+    sld(p, {
+      label: '🌡️ Temperature', min: -40, max: 400, step: 1, val: S.pT,
+      fmt: v => `${v}°C`, mini: 'drag the white dot on the diagram too',
+      oninput: v => { S.pT = v; }
+    });
+    sld(p, {
+      label: '⏬ Pressure', min: -3, max: 2.6, step: 0.05, val: S.pP,
+      fmt: v => `${Math.pow(10, v).toFixed(3)} atm`,
+      oninput: v => { S.pP = v; }
+    });
+    btn(p, [
+      { l: '🏔 Everest', f: () => { S.pP = Math.log10(0.33); buildControls(); } },
+      { l: '🌊 Sea level', f: () => { S.pP = 0; buildControls(); } },
+      { l: '🍲 Cooker', f: () => { S.pP = Math.log10(2); buildControls(); } }
+    ]);
   }
   upd();
 }
-function syncAutoBtns(){}
-function rc(l,v,s,c){return '<div class="rcell"><div class="r-label">'+l+'</div><div class="r-value '+(c||'sm')+'">'+v+'</div><div class="r-sub">'+(s||'')+'</div></div>';}
-function upd(){const g=$('readout-grid');let h,law;
-  if(S.mode==='lab'||S.mode==='curve'){const hs=heatState(S.H);
-    h=rc('Phase',PHASE_NAME[hs.phase].replace(/^[^ ]+ /,''),'','gold')+rc('Temperature',hs.T.toFixed(0)+'°C','',hs.T<=0?'cyan':hs.T>=100?'red':'green')+rc('Heat added',Math.round(S.H)+'%','of full range','violet')+rc('Changing?',(hs.phase==='melting'||hs.phase==='boiling')?'bonds breaking':'warming up','',(hs.phase==='melting'||hs.phase==='boiling')?'gold':'sm');
-    setB(PHASE_NAME[hs.phase].split(' ')[0],hs.T.toFixed(0)+'°C');
-    law='<b>Adding heat doesn\u2019t always raise temperature.</b> Warming ice, water or steam does. But at the melting and boiling points the temperature <b>stops rising</b> — all the heat goes into breaking the bonds that hold molecules together (the <b>latent heat</b>). Boiling water needs 6.8× more energy than melting the same ice, which is why a pot lingers at 100°C.';}
-  else {const P=Math.pow(10,S.pP),ph=phaseAt(S.pT,P);
-    h=rc('Temperature',S.pT+'°C','','gold')+rc('Pressure',P.toFixed(3)+' atm','','cyan')+rc('Phase',ph,'',ph==='liquid'?'green':ph==='solid'?'cyan':'violet')+rc('Boils at',P>0.006?boilT(P).toFixed(0)+'°C':'sublimes','this pressure','red');
-    setB(P.toFixed(2)+' atm',ph);
-    law='<b>The phase diagram maps it all.</b> Every point of temperature and pressure puts water into solid, liquid or gas. Cross a line and it changes phase. Lower the pressure and the boiling line drops — water boils cooler up a mountain; raise it and a pressure cooker boils hotter. Below the triple point, ice sublimes straight to vapour.';}
-  g.innerHTML=h;$('law-strip').innerHTML=law;}
-function setB(l,r){$('badge-l').textContent=l;$('badge-r').textContent=r;}
-const MODES=[{id:'lab',l:'Heat Lab',t:'melt & boil'},{id:'curve',l:'Heating Curve',t:'latent heat'},{id:'diagram',l:'Phase Diagram',t:'pressure'}];
-const TT={lab:'Melt It, Boil It',curve:'The Heating Curve',diagram:'The Phase Diagram'};
-const HH={lab:'add heat, watch the molecules',curve:'watch temperature pause',diagram:'drag through the phases'};
-let voiceOn=false,tok=0;
-const SC={lab:'Watch what heat does to matter. In a solid, molecules are locked in a lattice, just vibrating. Add heat and they jiggle harder until the lattice breaks and they flow as a liquid. Add more and they tear free completely, flying apart as a gas. Notice that while ice melts or water boils, the temperature stops climbing, because the heat is busy breaking bonds instead.',
-curve:'This is the heating curve of water. On the sloped parts, heat raises the temperature. But on the flat parts, the temperature freezes even as you pour in heat, because that energy is breaking bonds, not warming the water. This hidden energy is called latent heat, and boiling needs almost seven times more of it than melting.',
-diagram:'Whether water is solid, liquid or gas depends on both temperature and pressure. This phase diagram maps every combination. Lower the pressure and the boiling point drops, which is why water boils at just seventy degrees on Everest. A pressure cooker does the reverse. And below the triple point, ice skips liquid entirely and turns straight to vapour.'};
-function speak(t){if(!voiceOn||!t||typeof speechSynthesis==='undefined')return;const my=++tok;try{speechSynthesis.cancel();}catch(e){}setTimeout(()=>{if(my!==tok||!voiceOn)return;try{const u=new SpeechSynthesisUtterance(t);u.rate=0.96;speechSynthesis.speak(u);}catch(e){}},80);}
-function stopV(){tok++;try{if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel();}catch(e){}}
-function vBtn(){const v=$('voice-switcher');v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off';v.style.color=voiceOn?'var(--cyan)':'';}
-function modeBar(){const b=$('mode-bar');b.innerHTML='';MODES.forEach(m=>{const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.l+' <span class="mode-tag">'+m.t+'</span>');t.onclick=()=>setMode(m.id);b.appendChild(t);});}
-function setMode(id){stopV();S.mode=id;$('stage-title').firstChild.textContent=TT[id]+' ';$('stage-hint').textContent=HH[id];modeBar();buildControls();speak(SC[id]);}
-function bindUI(){stage=$('stage');sctx=stage.getContext('2d');aux=$('aux');actx=aux.getContext('2d');fit();window.addEventListener('resize',fit);
-  function pt(e){const r=stage.getBoundingClientRect();const cx=(e.touches?e.touches[0].clientX:e.clientX),cy=(e.touches?e.touches[0].clientY:e.clientY);return{x:(cx-r.left)*(W/r.width),y:(cy-r.top)*(H/r.height)};}
-  let drag=false;
-  function setFromPtr(p){if(S.mode!=='diagram')return;const x0=54,y0=H-54,w=W-x0-30,h=H-90;S.pT=Math.max(-40,Math.min(400,-40+(p.x-x0)/w*440));S.pP=Math.max(-3,Math.min(2.6,-3+(y0-p.y)/h*5.6));buildControls();}
-  stage.addEventListener('mousedown',e=>{drag=true;setFromPtr(pt(e));});
-  window.addEventListener('mousemove',e=>{if(drag)setFromPtr(pt(e));});
-  window.addEventListener('mouseup',()=>drag=false);
-  stage.addEventListener('touchstart',e=>{drag=true;setFromPtr(pt(e));e.preventDefault&&e.preventDefault();},{passive:false});
-  window.addEventListener('touchmove',e=>{if(drag){setFromPtr(pt(e));e.preventDefault&&e.preventDefault();}},{passive:false});
-  window.addEventListener('touchend',()=>drag=false);
-  const ts=$('theme-switcher');try{if(localStorage.getItem('theme')==='light')document.body.classList.add('light-theme');}catch(e){}
-  ts.onclick=()=>{document.body.classList.toggle('light-theme');try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){}};
-  const vs=$('voice-switcher');try{if(localStorage.getItem('sm-voice')==='on')voiceOn=true;}catch(e){}vBtn();
-  vs.onclick=()=>{voiceOn=!voiceOn;try{localStorage.setItem('sm-voice',voiceOn?'on':'off');}catch(e){}vBtn();if(voiceOn)speak(SC[S.mode]);else stopV();};
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopV();});}
-function fit(){W=560;H=400;AUXW=560;AUXH=300;stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH;}
-function buildTheory(){$('theory').innerHTML=`<div class="theory-hdr">Theory — States of Matter &amp; Phase Changes</div>
-  <h3>The Three States</h3><p>All matter is made of particles in constant motion. What differs between a <em>solid</em>, a <em>liquid</em> and a <em>gas</em> is how much energy those particles have and how tightly they are bound. In a solid they are locked in a fixed lattice, only vibrating; in a liquid they stay close but slide past one another; in a gas they break free and fly apart to fill all available space.</p>
-  <div class="hbox hb-cyan">❄️ solid = fixed shape &amp; volume &nbsp;|&nbsp; 💧 liquid = fixed volume, takes shape &nbsp;|&nbsp; 💨 gas = fills its container</div>
-  <h3>Heating and Cooling</h3><p>Adding heat speeds the particles up. Cooling slows them down. Enough heating and the bonds holding a solid together break — it <em>melts</em>. Keep going and the liquid <em>boils</em> into a gas. Reverse it and gas <em>condenses</em>, liquid <em>freezes</em>. Some solids skip the liquid step entirely and <em>sublime</em> straight to gas (dry ice, or frost vanishing on a cold morning).</p>
-  <h3>Latent Heat — the Hidden Energy</h3><p>Here is the surprise: while a substance changes phase, its <strong>temperature does not change</strong>. Melting ice stays at 0°C and boiling water stays at 100°C, no matter how hard you heat them. All the incoming energy goes into <em>breaking bonds</em> rather than raising temperature. This is the <strong>latent heat</strong>.</p>
-  <div class="eq">Q = m · L<div class="vars">L is the latent heat. For water, melting takes 334 J/g but boiling takes 2260 J/g — 6.8× more — because boiling must rip every molecule completely free. This is why steam carries such a scalding amount of energy.</div></div>
-  <h3>Pressure and the Phase Diagram</h3><p>Temperature is only half the story — <strong>pressure</strong> matters too. A phase diagram maps which state exists at each temperature and pressure. Lower the pressure and the boiling point falls: on Mount Everest, at a third of an atmosphere, water boils at about 71°C, so food cooks slowly. A pressure cooker raises the pressure to boil water at 121°C and cook faster.</p>
-  <div class="hbox hb-gold">At the <b>triple point</b> (0.006 atm, 0.01°C) solid, liquid and gas coexist. Below it, liquid cannot exist at all. Above the <b>critical point</b> (218 atm, 374°C) the distinction between liquid and gas disappears entirely — a <em>supercritical fluid</em>.</p></div>
-  <h3>Everyday Wonders</h3><p>Sweat cools you because evaporation carries away latent heat. Frost forms by gas turning straight to solid. Freeze-drying, cloud formation, the water cycle, even how a refrigerator works — all are phase changes governed by exactly the physics in this lab.</p>`;}
-let fr=0;
-function loop(now){try{if(!lastT)lastT=now;const dt=Math.max(0,Math.min(2,(now-lastT)/16.67));lastT=now;tNow=now;
-  if((S.mode==='lab'||S.mode==='curve')&&S.auto!==0){S.H=Math.max(0,Math.min(100,S.H+S.auto*0.18*dt));const sl=$('heat-sld');if(sl){sl.value=S.H;sl.previous? null:0;}const pv=sl&&sl.parentElement.querySelector('.param-val');if(pv)pv.textContent=Math.round(S.H)+'%';}
-  if(S.mode==='lab')stepMols(dt);
-  drawStage();drawAux();if(fr++%6===0)upd();
- }catch(e){console.error('loop',e);}requestAnimationFrame(loop);}
-function init(){initMols();modeBar();bindUI();buildTheory();setMode('lab');requestAnimationFrame(loop);}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 
-</script></body></html>
+function rc(l, v, s, c) {
+  return `<div class="rcell"><div class="r-label">${l}</div><div class="r-value ${c || 'sm'}">${v}</div><div class="r-sub">${s || ''}</div></div>`;
+}
+
+function upd() {
+  const g = $('readout-grid'); let h, law;
+  if (S.mode === 'lab' || S.mode === 'curve') {
+    const hs = heatState(S.H);
+    h = rc('Phase', PHASE_NAME[hs.phase].replace(/^[^ ]+ /, ''), '', 'gold') +
+        rc('Temperature', `${hs.T.toFixed(0)}°C`, '', hs.T <= 0 ? 'cyan' : hs.T >= 100 ? 'red' : 'green') +
+        rc('Heat added', `${Math.round(S.H)}%`, 'of full range', 'violet') +
+        rc('Changing?', (hs.phase === 'melting' || hs.phase === 'boiling') ? 'bonds breaking' : 'warming up', '', (hs.phase === 'melting' || hs.phase === 'boiling') ? 'gold' : 'sm');
+    setB(PHASE_NAME[hs.phase].split(' ')[0], `${hs.T.toFixed(0)}°C`);
+    law = '<b>Adding heat doesn\'t always raise temperature.</b> Warming ice, water or steam does. But at the melting and boiling points the temperature <b>stops rising</b> — all the heat goes into breaking the bonds that hold molecules together (the <b>latent heat</b>). Boiling water needs 6.8× more energy than melting the same ice, which is why a pot lingers at 100°C.';
+  } else {
+    const P = Math.pow(10, S.pP), ph = phaseAt(S.pT, P);
+    h = rc('Temperature', `${S.pT}°C`, '', 'gold') +
+        rc('Pressure', `${P.toFixed(3)} atm`, '', 'cyan') +
+        rc('Phase', ph, '', ph === 'liquid' ? 'green' : ph === 'solid' ? 'cyan' : 'violet') +
+        rc('Boils at', P > 0.006 ? `${boilT(P).toFixed(0)}°C` : 'sublimes', 'this pressure', 'red');
+    setB(`${P.toFixed(2)} atm`, ph);
+    law = '<b>The phase diagram maps it all.</b> Every point of temperature and pressure puts water into solid, liquid or gas. Cross a line and it changes phase. Lower the pressure and the boiling line drops — water boils cooler up a mountain; raise it and a pressure cooker boils hotter. Below the triple point, ice sublimes straight to vapour.';
+  }
+  g.innerHTML = h;
+  $('law-strip').innerHTML = law;
+}
+
+function setB(l, r) { $('badge-l').textContent = l; $('badge-r').textContent = r; }
+
+const MODES = [
+  { id: 'lab', l: 'Heat Lab', t: 'melt & boil' },
+  { id: 'curve', l: 'Heating Curve', t: 'latent heat' },
+  { id: 'diagram', l: 'Phase Diagram', t: 'pressure' }
+];
+const TT = {
+  lab: 'Melt It, Boil It',
+  curve: 'The Heating Curve',
+  diagram: 'The Phase Diagram'
+};
+const HH = {
+  lab: 'add heat, watch the molecules',
+  curve: 'watch temperature pause',
+  diagram: 'drag through the phases'
+};
+
+const SC = {
+  lab: 'Watch what heat does to matter. In a solid, molecules are locked in a lattice, just vibrating. Add heat and they jiggle harder until the lattice breaks and they flow as a liquid. Add more and they tear free completely, flying apart as a gas. Notice that while ice melts or water boils, the temperature stops climbing, because the heat is busy breaking bonds instead.',
+  curve: 'This is the heating curve of water. On the sloped parts, heat raises the temperature. But on the flat parts, the temperature freezes even as you pour in heat, because that energy is breaking bonds, not warming the water. This hidden energy is called latent heat, and boiling needs almost seven times more of it than melting.',
+  diagram: 'Whether water is solid, liquid or gas depends on both temperature and pressure. This phase diagram maps every combination. Lower the pressure and the boiling point drops, which is why water boils at just seventy degrees on Everest. A pressure cooker does the reverse. And below the triple point, ice skips liquid entirely and turns straight to vapour.'
+};
+
+function modeBar() {
+  const b = $('mode-bar'); b.innerHTML = '';
+  MODES.forEach(m => {
+    const t = el('button', `mode-tab${m.id === S.mode ? ' active' : ''}`, `${m.l} <span class="mode-tag">${m.t}</span>`);
+    t.onclick = () => setMode(m.id);
+    b.appendChild(t);
+  });
+}
+
+function setMode(id) {
+  stopNarration();
+  S.mode = id;
+  $('stage-title').firstChild.textContent = `${TT[id]} `;
+  $('stage-hint').textContent = HH[id];
+  modeBar();
+  buildControls();
+  if (narrateOn) narrate(SC[id]);
+}
+
+function bindUI() {
+  stage = $('stage'); sctx = stage.getContext('2d');
+  aux = $('aux'); actx = aux.getContext('2d');
+  fit();
+  window.addEventListener('resize', fit);
+
+  function pt(e) {
+    const r = stage.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX);
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY);
+    return { x: (cx - r.left) * (W / r.width), y: (cy - r.top) * (H / r.height) };
+  }
+
+  let drag = false;
+  function setFromPtr(p) {
+    if (S.mode !== 'diagram') return;
+    const x0 = 54, y0 = H - 54, w = W - x0 - 30, h = H - 90;
+    S.pT = Math.max(-40, Math.min(400, -40 + (p.x - x0) / w * 440));
+    S.pP = Math.max(-3, Math.min(2.6, -3 + (y0 - p.y) / h * 5.6));
+    buildControls();
+  }
+
+  stage.addEventListener('mousedown', e => { drag = true; setFromPtr(pt(e)); });
+  window.addEventListener('mousemove', e => { if (drag) setFromPtr(pt(e)); });
+  window.addEventListener('mouseup', () => { drag = false; });
+  stage.addEventListener('touchstart', e => { drag = true; setFromPtr(pt(e)); e.preventDefault && e.preventDefault(); }, { passive: false });
+  window.addEventListener('touchmove', e => { if (drag) { setFromPtr(pt(e)); e.preventDefault && e.preventDefault(); } }, { passive: false });
+  window.addEventListener('touchend', () => { drag = false; });
+
+  // Theme selector initialization
+  const themeSelector = document.getElementById('theme-selector');
+  const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeSelector.value = savedTheme;
+  themeSelector.addEventListener('change', (e) => {
+    const selectedTheme = e.target.value;
+    document.documentElement.setAttribute('data-theme', selectedTheme);
+    localStorage.setItem('sim_theme', selectedTheme);
+  });
+
+  // Narration button
+  document.getElementById('btn-narrate').onclick = function() {
+    if (!window.speechSynthesis) { alert('Speech not supported. Please use Chrome, Edge, or Safari.'); return; }
+    narrateOn = !narrateOn;
+    this.textContent = narrateOn ? '🔊 Voice ON' : '🔇 Voice';
+    this.style.color = narrateOn ? 'var(--cyan)' : '';
+    document.getElementById('nbox').style.display = narrateOn ? 'block' : 'none';
+    if (narrateOn) {
+      populateVoices();
+      narrate(SC[S.mode]);
+    } else {
+      stopNarration();
+      document.getElementById('narr-text').textContent = '—';
+    }
+  };
+  document.getElementById('vsel').onchange = function() {
+    const v = speechSynthesis.getVoices().find(v => v.name === this.value);
+    if (v) chosenVoice = v;
+  };
+  document.getElementById('sl-rate').oninput = function() {
+    speechRate = parseFloat(this.value);
+    document.getElementById('rate-v').textContent = `${speechRate.toFixed(1)}×`;
+  };
+
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stopNarration(); });
+}
+
+function fit() {
+  W = 560; H = 400; AUXW = 560; AUXH = 300;
+  stage.width = W; stage.height = H;
+  aux.width = AUXW; aux.height = AUXH;
+}
+
+function buildTheory() {
+  $('theory').innerHTML = `
+    <div class="theory-hdr">Theory — States of Matter &amp; Phase Changes</div>
+    <h3>The Three States</h3>
+    <p>All matter is made of particles in constant motion. What differs between a <em>solid</em>, a <em>liquid</em> and a <em>gas</em> is how much energy those particles have and how tightly they are bound. In a solid they are locked in a fixed lattice, only vibrating; in a liquid they stay close but slide past one another; in a gas they break free and fly apart to fill all available space.</p>
+    <div class="hbox hb-cyan">❄️ solid = fixed shape &amp; volume &nbsp;|&nbsp; 💧 liquid = fixed volume, takes shape &nbsp;|&nbsp; 💨 gas = fills its container</div>
+    <h3>Heating and Cooling</h3>
+    <p>Adding heat speeds the particles up. Cooling slows them down. Enough heating and the bonds holding a solid together break — it <em>melts</em>. Keep going and the liquid <em>boils</em> into a gas. Reverse it and gas <em>condenses</em>, liquid <em>freezes</em>. Some solids skip the liquid step entirely and <em>sublime</em> straight to gas (dry ice, or frost vanishing on a cold morning).</p>
+    <h3>Latent Heat — the Hidden Energy</h3>
+    <p>Here is the surprise: while a substance changes phase, its <strong>temperature does not change</strong>. Melting ice stays at 0°C and boiling water stays at 100°C, no matter how hard you heat them. All the incoming energy goes into <em>breaking bonds</em> rather than raising temperature. This is the <strong>latent heat</strong>.</p>
+    <div class="eq">Q = m · L<div class="vars">L is the latent heat. For water, melting takes 334 J/g but boiling takes 2260 J/g — 6.8× more — because boiling must rip every molecule completely free. This is why steam carries such a scalding amount of energy.</div></div>
+    <h3>Pressure and the Phase Diagram</h3>
+    <p>Temperature is only half the story — <strong>pressure</strong> matters too. A phase diagram maps which state exists at each temperature and pressure. Lower the pressure and the boiling point falls: on Mount Everest, at a third of an atmosphere, water boils at about 71°C, so food cooks slowly. A pressure cooker raises the pressure to boil water at 121°C and cook faster.</p>
+    <div class="hbox hb-gold">At the <b>triple point</b> (0.006 atm, 0.01°C) solid, liquid and gas coexist. Below it, liquid cannot exist at all. Above the <b>critical point</b> (218 atm, 374°C) the distinction between liquid and gas disappears entirely — a <em>supercritical fluid</em>.</div>
+    <h3>Everyday Wonders</h3>
+    <p>Sweat cools you because evaporation carries away latent heat. Frost forms by gas turning straight to solid. Freeze-drying, cloud formation, the water cycle, even how a refrigerator works — all are phase changes governed by exactly the physics in this lab.</p>
+  `;
+}
+
+let fr = 0;
+function loop(now) {
+  try {
+    if (!lastT) lastT = now;
+    const dt = Math.max(0, Math.min(2, (now - lastT) / 16.67));
+    lastT = now; tNow = now;
+    if ((S.mode === 'lab' || S.mode === 'curve') && S.auto !== 0) {
+      S.H = Math.max(0, Math.min(100, S.H + S.auto * 0.18 * dt));
+      const sl = $('heat-sld');
+      if (sl) sl.value = S.H;
+      const pv = sl && sl.parentElement.querySelector('.param-val');
+      if (pv) pv.textContent = `${Math.round(S.H)}%`;
+    }
+    if (S.mode === 'lab') stepMols(dt);
+    drawStage();
+    drawAux();
+    if (fr++ % 6 === 0) upd();
+  } catch (e) {
+    console.error('loop', e);
+  }
+  requestAnimationFrame(loop);
+}
+
+function init() {
+  initMols();
+  modeBar();
+  bindUI();
+  buildTheory();
+  setMode('lab');
+  requestAnimationFrame(loop);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
