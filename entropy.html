@@ -14,7 +14,11 @@
 <meta name="description" content="An interactive entropy and thermodynamics simulation. Watch a gas spread and never un-mix, discover why disorder wins by counting microstates (S = k ln W), see heat flow hot to cold, and explore the four laws of thermodynamics and the arrow of time.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
+
+/* =========================================================
+   6-THEME PALETTE SYSTEM
+   ========================================================= */
+:root, [data-theme="midnight"] {
   --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
   --border:#152035;--border2:#1e3050;
   --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
@@ -23,27 +27,63 @@
   --stage-bg:#020912;
   --grid-stroke:rgba(30,50,80,.22);
 }
-body.light-theme{
-  --bg:#f6f8fa;--bg2:#ffffff;--bg3:#eef3f9;
-  --border:#d0d7de;--border2:#b6c2d1;
-  --text:#24292f;--text2:#57606a;--text3:#6e7781;--text-bright:#091e36;
-  --accent:#0969da;--gold:#9a6700;--gold-bright:#7a5200;
-  --cyan:#0550ae;--violet:#6f42c1;--green:#1a7f37;--pink:#cf222e;--red:#cf222e;--orange:#bc4c00;
-  --stage-bg:#0a1220;
-  --grid-stroke:rgba(9,105,218,0.06);
+[data-theme="cosmos"] {
+  --bg:#fbf8f0; --bg2:#fffdf8; --bg3:#fffefb;
+  --border:#ddd3c1; --border2:#c9bea8;
+  --text:#12345d; --text2:#617087; --text3:#8899aa; --text-bright:#091e36;
+  --accent:#10a9a5; --gold:#d88b00; --gold-bright:#b87400;
+  --cyan:#10a9a5; --violet:#7c56bd; --green:#2e8b22; --pink:#d84090; --red:#e85c4a; --orange:#d87020;
+  --stage-bg:#f5f0e6;
+  --grid-stroke:rgba(18,52,93,0.08);
 }
+[data-theme="chalk"] {
+  --bg:#f2fbfa; --bg2:#fbfffe; --bg3:#ffffff;
+  --border:#c9dfdc; --border2:#b0c8c5;
+  --text:#123c44; --text2:#62767b; --text3:#7a8e93; --text-bright:#08282d;
+  --accent:#2db7b2; --gold:#d08010; --gold-bright:#a06000;
+  --cyan:#2db7b2; --violet:#5868bd; --green:#2f8f42; --pink:#c84080; --red:#d95f55; --orange:#d07010;
+  --stage-bg:#e8f4f3;
+  --grid-stroke:rgba(18,60,68,0.08);
+}
+[data-theme="neon"] {
+  --bg:#fff6f2; --bg2:#fffdfb; --bg3:#ffffff;
+  --border:#ead0c7; --border2:#d5b8ae;
+  --text:#4a2d31; --text2:#806b6e; --text3:#9a8386; --text-bright:#2d181b;
+  --accent:#168f92; --gold:#d88000; --gold-bright:#a86000;
+  --cyan:#168f92; --violet:#8861bd; --green:#2d8c45; --pink:#c03070; --red:#d9443b; --orange:#d06010;
+  --stage-bg:#fcede8;
+  --grid-stroke:rgba(74,45,49,0.08);
+}
+[data-theme="ember"] {
+  --bg:#fffaf0; --bg2:#fffef9; --bg3:#ffffff;
+  --border:#ead9b8; --border2:#d4c09a;
+  --text:#493617; --text2:#7d705d; --text3:#968873; --text-bright:#2d200c;
+  --accent:#218d8b; --gold:#d88000; --gold-bright:#b84920;
+  --cyan:#218d8b; --violet:#7358b5; --green:#3c8c3d; --pink:#c03565; --red:#d95745; --orange:#d05010;
+  --stage-bg:#f5eedc;
+  --grid-stroke:rgba(73,54,23,0.08);
+}
+[data-theme="aurora"] {
+  --bg:#f8f4ff; --bg2:#fefcff; --bg3:#ffffff;
+  --border:#ddd1ec; --border2:#c4b4d6;
+  --text:#352b59; --text2:#736c86; --text3:#8b839c; --text-bright:#1d1633;
+  --accent:#119f9a; --gold:#c88000; --gold-bright:#996000;
+  --cyan:#119f9a; --violet:#7654b8; --green:#358f45; --pink:#c84078; --red:#d95d68; --orange:#d06015;
+  --stage-bg:#efeaf8;
+  --grid-stroke:rgba(53,43,89,0.08);
+}
+
 body{background:var(--bg);color:var(--text);font-family:'Georgia','Times New Roman',serif;line-height:1.6;min-height:100vh;transition:background .2s,color .2s;}
 
-header{display:flex;align-items:center;gap:18px;padding:13px 28px;border-bottom:1px solid var(--border);background:rgba(1,4,9,.97);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
-body.light-theme header{background:rgba(255,255,255,.96);}
-.logo{font-family:monospace;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;}
+header{display:flex;align-items:center;gap:16px;padding:12px 28px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:20;transition:background .2s,border-color .2s;}
+.logo{font-family:monospace;font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;}
 .logo span{color:var(--text2);}
 .logo a{color:inherit;text-decoration:none;}
-.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:18px;letter-spacing:2px;}
+.page-subtitle{font-family:monospace;font-size:11px;color:var(--text2);border-left:1px solid var(--border2);padding-left:16px;letter-spacing:1.5px;}
 .header-spacer{flex:1;}
-.header-link{font-family:monospace;font-size:10px;letter-spacing:2px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;}
-.header-link:hover{color:var(--accent);border-color:var(--border2);background:var(--bg3);}
-.theme-toggle-btn{font-weight:bold;color:var(--gold);}
+.header-link{font-family:monospace;font-size:10px;letter-spacing:1.5px;color:var(--text2);text-decoration:none;padding:6px 11px;border-radius:5px;border:1px solid transparent;cursor:pointer;user-select:none;transition:all .2s;background:transparent;}
+.header-link:hover{color:var(--gold);border-color:var(--border2);background:var(--bg3);}
+select.header-link option{background:var(--bg2);color:var(--text);}
 
 .mode-bar{max-width:1080px;margin:18px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
 .mode-tab{font-family:monospace;font-size:10.5px;letter-spacing:1px;padding:7px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
@@ -65,10 +105,15 @@ body.light-theme header{background:rgba(255,255,255,.96);}
 canvas#stage{display:block;width:100%;height:auto;cursor:default;touch-action:none;}
 canvas#aux{display:block;width:100%;height:auto;background:var(--stage-bg);}
 .aux-small canvas#aux{max-height:280px;}
-.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:rgba(1,6,16,.9);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);}
-body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text);}
+.stage-badge{position:absolute;font-family:monospace;font-size:9.5px;background:var(--bg2);padding:4px 9px;border-radius:4px;pointer-events:none;letter-spacing:1px;border:1px solid var(--border2);color:var(--text);}
 .sb-tl{top:9px;left:9px;color:var(--gold);}
 .sb-tr{top:9px;right:9px;color:var(--cyan);}
+
+/* ── Narration Box ── */
+.nbox{display:none;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 7px 7px 0;padding:12px 14px;margin:0 14px 12px;font-family:monospace;font-size:10.5px;line-height:1.85;}
+.nctrls{display:flex;gap:7px;align-items:center;margin-bottom:7px;flex-wrap:wrap;}
+.nctrls select{flex:1;min-width:110px;background:var(--bg);color:var(--text);border:1px solid var(--border2);border-radius:4px;font-family:monospace;font-size:10px;padding:3px 6px;}
+#narr-text{color:var(--gold-bright);line-height:1.75;}
 
 .play-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:background .2s,border-color .2s;}
 .sb-controls{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;}
@@ -76,8 +121,7 @@ body.light-theme .stage-badge{background:rgba(255,255,255,.92);color:var(--text)
 .ctl .param-row{display:flex;justify-content:space-between;align-items:baseline;font-family:monospace;font-size:11px;color:var(--text2);margin-bottom:3px;}
 .ctl .param-val{font-size:12px;font-weight:bold;color:var(--gold);}
 .ctl .sb-mini{font-family:monospace;font-size:8.5px;color:var(--text3);margin-top:2px;}
-input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
-.wl-slider{height:14px;border-radius:7px;-webkit-appearance:none;appearance:none;outline:none;}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;height:16px;}
 
 .section-label{font-family:monospace;font-size:9px;letter-spacing:2.5px;color:var(--text3);text-transform:uppercase;margin:0 0 9px;}
 .btn-grid{display:grid;gap:6px;}
@@ -86,8 +130,6 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 .minibtn:hover{background:var(--bg3);color:var(--text);border-color:var(--accent);}
 .minibtn.active{border-color:var(--gold);color:var(--gold);background:rgba(240,192,96,.08);}
 .toggle-row{display:flex;flex-wrap:wrap;gap:6px;}
-.toggle-chip{font-family:monospace;font-size:9.5px;padding:5px 9px;background:var(--bg3);border:1px solid var(--border2);border-radius:12px;color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
-.toggle-chip.on{border-color:var(--cyan);color:var(--cyan);}
 
 .readout-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
 .rcell{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;transition:background .2s,border-color .2s;}
@@ -101,15 +143,6 @@ input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer;}
 
 .law-strip{background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:11px 15px;margin-top:12px;font-family:monospace;font-size:11px;line-height:1.7;color:var(--text2);}
 .law-strip b{color:var(--gold-bright);}
-body.light-theme .law-strip b{color:var(--gold);}
-.law-strip .big{font-size:13px;color:var(--cyan);}
-
-.verdict{margin-top:12px;padding:11px 15px;border-radius:8px;font-family:monospace;font-size:12px;display:none;}
-.verdict.show{display:block;}
-.verdict.go{background:rgba(64,255,170,.06);border:1px solid rgba(64,255,170,.3);color:#8effc8;}
-body.light-theme .verdict.go{color:var(--green);}
-.verdict.no{background:rgba(255,79,96,.06);border:1px solid rgba(255,79,96,.3);color:#ff9aa6;}
-body.light-theme .verdict.no{color:var(--red);}
 
 .theory-wrap{max-width:1080px;margin:20px auto 0;padding:0 20px 60px;}
 .theory{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:30px clamp(20px,4vw,42px);transition:background .2s,border-color .2s;}
@@ -118,24 +151,11 @@ body.light-theme .verdict.no{color:var(--red);}
 .theory h3:first-of-type{margin-top:0;}
 .theory p{font-size:14px;color:var(--text2);margin-bottom:10px;line-height:1.85;}
 .theory em{color:var(--gold-bright);font-style:italic;}
-body.light-theme .theory em{color:var(--gold);}
 .theory strong{color:var(--text);}
 .theory .eq{font-family:monospace;font-size:13px;background:var(--bg3);border-left:3px solid var(--gold);padding:12px 20px;margin:14px 0;border-radius:0 8px 8px 0;color:var(--gold-bright);line-height:1.85;}
-body.light-theme .theory .eq{color:var(--gold);}
 .theory .eq .vars{font-size:10.5px;color:var(--text3);margin-top:6px;line-height:1.7;font-family:'Georgia',serif;font-style:italic;}
 .theory .hbox{border-radius:8px;padding:14px 18px;margin:16px 0;font-family:monospace;font-size:12px;line-height:1.9;}
-.hb-cyan{background:rgba(32,208,255,.04);border:1px solid rgba(32,208,255,.18);color:#7ae4ff;}
-body.light-theme .hb-cyan{color:var(--cyan);}
-.hb-gold{background:rgba(240,192,96,.04);border:1px solid rgba(240,192,96,.22);color:#ffd690;}
-body.light-theme .hb-gold{color:var(--gold);}
-.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:#d090ff;}
-body.light-theme .hb-violet{color:var(--violet);}
-.ctable{width:100%;border-collapse:collapse;font-family:monospace;font-size:11.5px;margin-top:10px;}
-.ctable th{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);font-weight:normal;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);}
-.ctable td{padding:8px 10px;color:var(--text);vertical-align:top;border-bottom:1px solid var(--border);}
-.ctable td:first-child{color:var(--gold-bright);}
-body.light-theme .ctable td:first-child{color:var(--gold);}
-.ctable tr:last-child td{border-bottom:none;}
+.hb-violet{background:rgba(192,96,255,.05);border:1px solid rgba(192,96,255,.22);color:var(--violet);}
 
 footer{border-top:1px solid var(--border);padding:18px 28px;text-align:center;font-family:monospace;font-size:10px;color:var(--text3);letter-spacing:3px;}
 footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--accent);}
@@ -149,8 +169,15 @@ footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--acc
   <div class="logo"><a href="index.html">⭐ Science<span> Wonders</span></a></div>
   <div class="page-subtitle">Entropy &amp; the Arrow of Time</div>
   <div class="header-spacer"></div>
-  <a class="header-link" id="voice-switcher">🔇 Voice off</a>
-  <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
+  <button id="btn-narrate" class="header-link">🔇 Voice</button>
+  <select id="theme-selector" class="header-link" aria-label="Select theme">
+    <option value="midnight">🌙 Midnight (Dark)</option>
+    <option value="cosmos">🪐 Cosmos</option>
+    <option value="chalk">📋 Chalk</option>
+    <option value="neon">⚡ Neon</option>
+    <option value="ember">🔥 Ember</option>
+    <option value="aurora">✨ Aurora</option>
+  </select>
   <a class="header-link" href="index.html">← All Simulations</a>
 </header>
 
@@ -161,6 +188,19 @@ footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--acc
     <div class="left-col">
       <div class="card">
         <div class="card-title" id="stage-title">A Gas Fills Its Box <span class="hint" id="stage-hint">release it</span></div>
+        
+        <!-- FULL VOICE NARRATION BOX -->
+        <div class="nbox" id="nbox">
+          <div class="nctrls">
+            <span style="color:var(--text3);font-size:9px;">VOICE</span>
+            <select id="vsel"><option>Loading…</option></select>
+            <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".90" style="width:60px;">
+            <span id="rate-v" style="color:var(--gold);min-width:30px;">0.9×</span>
+          </div>
+          <div style="font-size:9px;color:var(--text3);margin-bottom:4px;">NOW SPEAKING</div>
+          <div id="narr-text">—</div>
+        </div>
+
         <div class="stage-wrap">
           <canvas id="stage" width="560" height="380"></canvas>
           <div class="stage-badge sb-tl" id="badge-l">—</div>
@@ -199,7 +239,53 @@ footer a{color:var(--text2);text-decoration:none;}footer a:hover{color:var(--acc
 <script>
 'use strict';
 // ============================================================================
-// ENTROPY & THE ARROW OF TIME — engine
+// NARRATION STATE (Standardized Rules)
+// ============================================================================
+let narrateOn=false, speaking=false, chosenVoice=null, speechRate=0.90;
+
+function populateVoices(){
+  if(!window.speechSynthesis)return;
+  const voices=speechSynthesis.getVoices(), sel=document.getElementById('vsel');
+  if(!voices.length)return; sel.innerHTML='';
+  const groups=[
+    {l:'— Female English —',v:voices.filter(v=>v.lang.startsWith('en')&&/female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Male English —',  v:voices.filter(v=>v.lang.startsWith('en')&&/male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name))},
+    {l:'— English —',       v:voices.filter(v=>v.lang.startsWith('en')&&!/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+    {l:'— Other —',         v:voices.filter(v=>!v.lang.startsWith('en'))},
+  ];
+  groups.forEach(g=>{
+    if(!g.v.length)return;
+    const og=document.createElement('optgroup'); og.label=g.l;
+    g.v.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;og.appendChild(o);});
+    sel.appendChild(og);
+  });
+  const pref=voices.find(v=>v.name==='Google UK English Female')||voices.find(v=>v.lang==='en-GB'&&/female/i.test(v.name))||voices.find(v=>v.lang.startsWith('en'));
+  if(pref){sel.value=pref.name;chosenVoice=pref;}
+  else if(voices[0]){sel.value=voices[0].name;chosenVoice=voices[0];}
+}
+if(window.speechSynthesis){speechSynthesis.onvoiceschanged=populateVoices;populateVoices();}
+
+function narrate(text){
+  if(!narrateOn||!window.speechSynthesis)return;
+  speechSynthesis.cancel(); speaking=true;
+  document.getElementById('narr-text').textContent=text;
+  const sents=text.match(/[^.!?]+[.!?]+[\s]*/g)||[text];
+  let idx=0;
+  function next(){
+    if(!narrateOn){speaking=false;return;}
+    if(idx>=sents.length){speaking=false;return;}
+    const u=new SpeechSynthesisUtterance(sents[idx].trim());
+    if(chosenVoice)u.voice=chosenVoice;
+    u.rate=speechRate;u.pitch=1;u.volume=1;
+    u.onend=()=>{idx++;next();}; u.onerror=()=>{idx++;next();};
+    speechSynthesis.speak(u);
+  }
+  next();
+}
+function stopNarration(){if(window.speechSynthesis)speechSynthesis.cancel();speaking=false;}
+
+// ============================================================================
+// ENTROPY & THE ARROW OF TIME — STATISTICAL ENGINE
 // ============================================================================
 const KB = 1.380649e-23;
 let W=560,H=380,AUXW=560,AUXH=300;
@@ -216,44 +302,60 @@ const S = {
   released:false,
   paused:false,
   speed:1,
-  // microstates
   mN:60, mLeft:60, hopRun:false,
-  // heat
   Th:420, Tc:280, conductivity:1, contact:false,
-  // four laws
   law:0,
-  // entropy history
   entHist:[], tEl:0
 };
 
 let parts=[];
-let BX0=24,BY0=24,BX1=W-24,BY1=H-58;   // box inner bounds (room for strip)
+let BX0=24,BY0=24,BX1=W-24,BY1=H-58;
 let partitionX;
 
-// ---- particle box (modes: arrow, heat) ----
+// Enhanced particle effects
+let collisionSparks = [];
+let heatSparks = [];
+let pistonMolecules = [];
+
+function initPistonMolecules(){
+  pistonMolecules = [];
+  for(let i=0; i<18; i++){
+    pistonMolecules.push({
+      x: 200 + Math.random()*80,
+      y: 140 + Math.random()*60,
+      vx: (Math.random()-0.5)*3.5,
+      vy: (Math.random()-0.5)*3.5
+    });
+  }
+}
+initPistonMolecules();
+
 function makeParts(){
   parts=[]; S.entHist=[]; S.tEl=0; S.released=false; S.contact=false;
+  collisionSparks = []; heatSparks = [];
   BX0=24;BY0=24;BX1=W-24;BY1=H-58; partitionX=(BX0+BX1)/2;
   if(S.mode==='arrow'){
     for(let i=0;i<S.N;i++){ const x=rand(BX0+4,partitionX-6), y=rand(BY0+4,BY1-4);
-      const a=Math.random()*6.28, sp=1.6; parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,side:0,r:3}); }
+      const a=Math.random()*6.28, sp=1.6;
+      parts.push({x,y,px:x,py:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,side:0,r:3}); }
   } else if(S.mode==='heat'){
     const n=Math.min(S.N,160);
     for(let i=0;i<n;i++){ const hot=i<n/2; const x= hot?rand(BX0+4,partitionX-6):rand(partitionX+6,BX1-4); const y=rand(BY0+4,BY1-4);
       const sp=hot?Math.sqrt(S.Th)/12:Math.sqrt(S.Tc)/12; const a=Math.random()*6.28;
-      parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,hot,r:3}); }
+      parts.push({x,y,px:x,py:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,hot,r:3}); }
   }
 }
 function rand(a,b){ return a+Math.random()*(b-a); }
 
 function stepParts(dt){
   const sp=S.speed*dt;
-  for(const p of parts){ p.x+=p.vx*sp; p.y+=p.vy*sp; }
-  // walls
+  for(const p of parts){
+    p.px = p.x; p.py = p.y;
+    p.x+=p.vx*sp; p.y+=p.vy*sp;
+  }
   for(const p of parts){
     if(p.x<BX0+p.r){p.x=BX0+p.r;p.vx=Math.abs(p.vx);} if(p.x>BX1-p.r){p.x=BX1-p.r;p.vx=-Math.abs(p.vx);}
     if(p.y<BY0+p.r){p.y=BY0+p.r;p.vy=Math.abs(p.vy);} if(p.y>BY1-p.r){p.y=BY1-p.r;p.vy=-Math.abs(p.vy);}
-    // partition (arrow before release; heat always — solid conducting wall)
     if((S.mode==='arrow'&&!S.released) || S.mode==='heat'){
       if(Math.abs(p.x-partitionX)<p.r+2){
         if(S.mode==='heat'){ if(p.hot&&p.x<partitionX){p.x=partitionX-p.r-2;p.vx=-Math.abs(p.vx);} else if(!p.hot&&p.x>partitionX){p.x=partitionX+p.r+2;p.vx=Math.abs(p.vx);} else { p.x<partitionX?(p.x=partitionX-p.r-2,p.vx=-Math.abs(p.vx)):(p.x=partitionX+p.r+2,p.vx=Math.abs(p.vx)); } }
@@ -261,11 +363,37 @@ function stepParts(dt){
       }
     }
   }
-  // particle collisions (chaos) — only arrow mode needs it; cheap grid
   if(S.mode==='arrow') collideAll();
-  // heat conduction across the wall
   if(S.mode==='heat' && S.contact) conduct(dt);
-  // entropy history
+  
+  // Update collision sparkles
+  for(let i=collisionSparks.length-1; i>=0; i--){
+    let s = collisionSparks[i];
+    s.x += s.vx * dt;
+    s.y += s.vy * dt;
+    s.life -= 1.8 * dt;
+    if(s.life <= 0) collisionSparks.splice(i, 1);
+  }
+
+  // Update thermal conduction sparkles
+  if(S.mode==='heat' && S.contact && Math.random() < 0.45){
+    heatSparks.push({
+      x: partitionX,
+      y: rand(BY0+10, BY1-10),
+      vx: rand(15, 45),
+      vy: rand(-12, 12),
+      r: rand(2, 3.5),
+      life: 1.0
+    });
+  }
+  for(let i=heatSparks.length-1; i>=0; i--){
+    let hs = heatSparks[i];
+    hs.x += hs.vx * dt;
+    hs.y += hs.vy * dt;
+    hs.life -= 1.4 * dt;
+    if(hs.life <= 0) heatSparks.splice(i, 1);
+  }
+
   S.tEl+=dt;
   if(S.entHist.length===0 || S.tEl - (S.entHist[S.entHist.length-1].t)>0.4){
     S.entHist.push({t:S.tEl, s: S.mode==='heat'? heatEntropy() : posEntropyOverK()});
@@ -282,19 +410,30 @@ function collideAll(){
 }
 function pair(a,b){ const dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy,rs=a.r+b.r; if(d2>rs*rs||d2===0)return; const d=Math.sqrt(d2);
   const nx=dx/d,ny=dy/d; const rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny; if(rel>0)return; a.vx+=rel*nx;a.vy+=rel*ny;b.vx-=rel*nx;b.vy-=rel*ny;
-  const ov=rs-d; a.x-=nx*ov/2;a.y-=ny*ov/2;b.x+=nx*ov/2;b.y+=ny*ov/2; }
+  const ov=rs-d; a.x-=nx*ov/2;a.y-=ny*ov/2;b.x+=nx*ov/2;b.y+=ny*ov/2;
+  
+  // Emit energetic collision sparkles
+  if(Math.abs(rel) > 2.0 && Math.random() < 0.4){
+    collisionSparks.push({
+      x: (a.x+b.x)/2,
+      y: (a.y+b.y)/2,
+      vx: (Math.random()-0.5)*15,
+      vy: (Math.random()-0.5)*15,
+      r: 1.8,
+      life: 0.8
+    });
+  }
+}
 
-// ---- coarse-grained positional entropy S/k = ln W ----
 function posEntropyOverK(){
   const cols=10, rows=6, cells=cols*rows; const occ=new Array(cells).fill(0);
   for(const p of parts){ const cx=Math.min(cols-1,((p.x-BX0)/(BX1-BX0)*cols)|0), cy=Math.min(rows-1,((p.y-BY0)/(BY1-BY0)*rows)|0); occ[cy*cols+cx]++; }
-  let lnW=lnFact(parts.length); for(const o of occ) lnW-=lnFact(o);   // multinomial
-  return lnW; // = ln W
+  let lnW=lnFact(parts.length); for(const o of occ) lnW-=lnFact(o);
+  return lnW;
 }
 function fracLeft(){ let l=0; for(const p of parts) if(p.x<partitionX)l++; return parts.length? l/parts.length:0; }
 
-// ---- heat-flow model ----
-function sideTemp(hot){ let s=0,c=0; for(const p of parts){ if(p.hot===hot){ s+=p.vx*p.vx+p.vy*p.vy; c++; } } return c? s/c*144 : 0; } // ~T scale
+function sideTemp(hot){ let s=0,c=0; for(const p of parts){ if(p.hot===hot){ s+=p.vx*p.vx+p.vy*p.vy; c++; } } return c? s/c*144 : 0; }
 function conduct(dt){
   const Th=sideTemp(true), Tc=sideTemp(false); if(Th<=0||Tc<=0)return;
   const dQ=S.conductivity*0.0009*(Th-Tc)*dt*60;
@@ -302,10 +441,34 @@ function conduct(dt){
   for(const p of parts){ if(p.hot){p.vx*=fh;p.vy*=fh;} else {p.vx*=fc;p.vy*=fc;} }
 }
 function heatEntropy(){
-  // S/k ∝ (3/2)N ln T per side; report relative total
   const Th=sideTemp(true), Tc=sideTemp(false); const nh=parts.filter(p=>p.hot).length, nc=parts.length-nh;
   if(Th<=0||Tc<=0)return 0;
-  return nh*Math.log(Th)+nc*Math.log(Tc); // arbitrary const dropped; monotonic in real S
+  return nh*Math.log(Th)+nc*Math.log(Tc);
+}
+
+// --- microstates hopping demo with smooth gliding ---
+let microParts=[];
+function makeMicro(){
+  microParts=[];
+  for(let i=0;i<S.mN;i++){
+    microParts.push({side:0, targetSide:0, ox:Math.random(), oy:Math.random(), xNorm:0});
+  }
+  S.mLeft=S.mN;
+}
+function stepMicro(dt){
+  if(!S.hopRun)return;
+  const hops=Math.max(1,Math.round(dt*2));
+  for(let i=0;i<hops;i++){
+    const p=microParts[(Math.random()*microParts.length)|0];
+    p.targetSide = Math.random()<0.5 ? 0 : 1;
+    p.ox = Math.random();
+    p.oy = Math.random();
+  }
+  for(let p of microParts){
+    p.side = p.targetSide;
+    p.xNorm += (p.targetSide - p.xNorm) * 0.18;
+  }
+  S.mLeft=microParts.filter(p=>p.side===0).length;
 }
 
 // ============================================================================
@@ -323,14 +486,38 @@ function boxFrame(){ sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=1.5; sct
 
 function drawArrow(){
   boxFrame();
-  if(!S.released){ sctx.strokeStyle=cssv('--gold'); sctx.lineWidth=2.5; sctx.beginPath(); sctx.moveTo(partitionX,BY0); sctx.lineTo(partitionX,BY1); sctx.stroke();
-    sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('partition — press Release', partitionX-58, BY0-7); }
-  for(const p of parts){ sctx.fillStyle=cssv('--cyan'); sctx.beginPath(); sctx.arc(p.x,p.y,p.r,0,7); sctx.fill(); }
-  // left/right fill bars
+  if(!S.released){
+    sctx.strokeStyle=cssv('--gold'); sctx.lineWidth=2.5; sctx.beginPath(); sctx.moveTo(partitionX,BY0); sctx.lineTo(partitionX,BY1); sctx.stroke();
+    sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace'; sctx.fillText('partition — press Release', partitionX-58, BY0-7);
+  }
+  
+  // Render subtle motion trails
+  for(const p of parts){
+    if(p.px){
+      sctx.strokeStyle='rgba(32,208,255,0.35)';
+      sctx.lineWidth=1.5;
+      sctx.beginPath();
+      sctx.moveTo(p.px, p.py);
+      sctx.lineTo(p.x, p.y);
+      sctx.stroke();
+    }
+    sctx.fillStyle=cssv('--cyan');
+    sctx.beginPath();
+    sctx.arc(p.x,p.y,p.r,0,7);
+    sctx.fill();
+  }
+
+  // Draw collision sparkles
+  for(const s of collisionSparks){
+    sctx.fillStyle=`rgba(255,232,160,${s.life})`;
+    sctx.beginPath();
+    sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    sctx.fill();
+  }
+
   const fl=fracLeft();
   sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace';
   sctx.fillText('left '+(fl*100).toFixed(0)+'%', BX0+4, BY1+16); sctx.fillText('right '+((1-fl)*100).toFixed(0)+'%', BX1-58, BY1+16);
-  // entropy meter
   const sk=posEntropyOverK(), skMax=parts.length*Math.log(60);
   sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace'; sctx.fillText('entropy  S/k = ln W = '+sk.toFixed(0), W/2-70, BY1+16);
   if(S.released && Math.abs(fl-0.5)<0.06){ sctx.fillStyle=cssv('--green'); sctx.font='10px monospace'; sctx.fillText('≈ equilibrium — and it never goes back', W/2-90, BY0-7); }
@@ -338,11 +525,26 @@ function drawArrow(){
 
 function drawHeat(){
   boxFrame();
-  // conducting wall
   sctx.strokeStyle=cssv('--gold'); sctx.lineWidth=3; sctx.beginPath(); sctx.moveTo(partitionX,BY0); sctx.lineTo(partitionX,BY1); sctx.stroke();
   sctx.fillStyle=cssv('--text3'); sctx.font='8px monospace'; sctx.fillText(S.contact?'conducting wall':'insulated (press Contact)', partitionX-50, BY0-7);
+  
   const refH=Math.sqrt(S.Th)/8;
-  for(const p of parts){ const v2=p.vx*p.vx+p.vy*p.vy; sctx.fillStyle=speedCol(v2,refH); sctx.beginPath(); sctx.arc(p.x,p.y,p.r,0,7); sctx.fill(); }
+  for(const p of parts){
+    const v2=p.vx*p.vx+p.vy*p.vy;
+    sctx.fillStyle=speedCol(v2,refH);
+    sctx.beginPath();
+    sctx.arc(p.x,p.y,p.r,0,7);
+    sctx.fill();
+  }
+
+  // Draw thermal conduction sparkles crossing the partition
+  for(const hs of heatSparks){
+    sctx.fillStyle=`rgba(255,157,79,${hs.life})`;
+    sctx.beginPath();
+    sctx.arc(hs.x, hs.y, hs.r, 0, Math.PI*2);
+    sctx.fill();
+  }
+
   const Th=sideTemp(true), Tc=sideTemp(false);
   sctx.font='11px monospace';
   sctx.fillStyle=cssv('--red'); sctx.fillText('HOT  ~'+(Th).toFixed(0)+' K', BX0+8, BY1+16);
@@ -350,62 +552,70 @@ function drawHeat(){
   if(S.contact && Math.abs(Th-Tc)<8){ sctx.fillStyle=cssv('--green'); sctx.font='10px monospace'; sctx.fillText('thermal equilibrium reached', W/2-78, BY0-7); }
 }
 
-// --- microstates hopping demo ---
-let microParts=[];
-function makeMicro(){ microParts=[]; for(let i=0;i<S.mN;i++) microParts.push({side:0, ox:Math.random(), oy:Math.random()}); S.mLeft=S.mN; }
-function stepMicro(dt){ if(!S.hopRun)return; const hops=Math.max(1,Math.round(dt*2));
-  for(let i=0;i<hops;i++){ const p=microParts[(Math.random()*microParts.length)|0]; p.side=Math.random()<0.5?0:1; p.ox=Math.random();p.oy=Math.random(); }
-  S.mLeft=microParts.filter(p=>p.side===0).length; }
 function drawMicro(){
   const midX=W/2, bw=midX-34, bh=BY1-BY0;
   sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=1.5;
   sctx.strokeRect(24,BY0,bw,bh); sctx.strokeRect(midX+10,BY0,bw,bh);
-  for(const p of microParts){ const bx=p.side===0?24:midX+10; sctx.fillStyle=p.side===0?cssv('--cyan'):cssv('--violet');
-    sctx.beginPath(); sctx.arc(bx+8+p.ox*(bw-16), BY0+8+p.oy*(bh-16), 3.2,0,7); sctx.fill(); }
+  
+  for(const p of microParts){
+    // Smooth gliding position across the compartments
+    const bx = 24 + p.xNorm * (midX - 14);
+    sctx.fillStyle = p.xNorm < 0.5 ? cssv('--cyan') : cssv('--violet');
+    sctx.beginPath();
+    sctx.arc(bx+8+p.ox*(bw-16), BY0+8+p.oy*(bh-16), 3.2, 0, 7);
+    sctx.fill();
+  }
+  
   const k=S.mLeft, N=S.mN;
   sctx.fillStyle=cssv('--text2'); sctx.font='10px monospace';
   sctx.fillText('LEFT: '+k, 30, BY0-7); sctx.fillText('RIGHT: '+(N-k), midX+16, BY0-7);
-  // W for this macrostate
   const lnw=lnC(N,k); const Wstr=lnw>700? 'e^'+lnw.toFixed(0) : Math.exp(lnw).toExponential(2);
   sctx.fillStyle=cssv('--gold'); sctx.font='11px monospace';
   sctx.fillText('this split can happen W = C('+N+','+k+') = '+Wstr+' ways', 30, BY1+16);
-  const allLn=0; // all-left W=1
   sctx.fillStyle=cssv('--text3'); sctx.font='9px monospace';
   sctx.fillText('"all on left" happens just 1 way → vanishingly rare for large N', 30, BY1+30);
 }
 
-// --- four laws demos ---
 function drawLaws(){
   const cx=W/2;
-  if(S.law===0){ // Zeroth — thermal equilibrium defines temperature
+  if(S.law===0){ // Zeroth Law
     const T=[ 360+40*Math.sin(tNow*0.001), 330, 300+40*Math.sin(tNow*0.001+1) ];
-    const conv = 330; // they all drift to B's reading
+    const conv = 330;
     ['A','B','C'].forEach((nm,i)=>{ const x=cx-150+i*150, y=150;
       const tt = i===1?conv: conv + (T[i]-conv)*Math.max(0,1-tNow*0.00003);
       sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=2; sctx.strokeRect(x-34,y-50,68,80);
-      // thermometer fill
       const f=(tt-280)/120; sctx.fillStyle=cssv('--red'); sctx.globalAlpha=.5; sctx.fillRect(x-10,y+30-f*70,20,f*70); sctx.globalAlpha=1;
       sctx.fillStyle=cssv('--text'); sctx.font='12px monospace'; sctx.fillText(nm, x-4,y-58); sctx.fillStyle=cssv('--text2'); sctx.font='9px monospace'; sctx.fillText(tt.toFixed(0)+'K', x-12,y+46);
     });
     sctx.fillStyle=cssv('--gold'); sctx.font='12px monospace'; sctx.fillText('A ↔ B  and  B ↔ C   ⟹   A ↔ C  (all at the same temperature)', cx-200, 250);
     sctx.fillStyle=cssv('--text3'); sctx.font='10px monospace'; sctx.fillText('Thermal equilibrium is what lets us define "temperature" at all.', cx-185, 275);
   }
-  else if(S.law===1){ // First — energy conservation, piston
+  else if(S.law===1){ // First Law - Piston with animated gas molecules
     const cy=170, pw=180, ph=90, px=cx-pw/2;
     sctx.strokeStyle=cssv('--border2'); sctx.lineWidth=2; sctx.strokeRect(px,cy-ph/2,pw,ph);
     const piston=px+pw*0.55+Math.sin(tNow*0.002)*18;
     sctx.fillStyle=cssv('--accent'); sctx.globalAlpha=.25; sctx.fillRect(px,cy-ph/2,piston-px,ph); sctx.globalAlpha=1;
     sctx.fillStyle=cssv('--text2'); sctx.fillRect(piston,cy-ph/2-3,6,ph+6);
-    // heat in arrows
+    
+    // Animate gas molecules bouncing inside the cylinder
+    for(let m of pistonMolecules){
+      m.x += m.vx; m.y += m.vy;
+      if(m.x < px+6){ m.x=px+6; m.vx *= -1; }
+      if(m.x > piston-6){ m.x=piston-6; m.vx *= -1; }
+      if(m.y < cy-ph/2+6){ m.y=cy-ph/2+6; m.vy *= -1; }
+      if(m.y > cy+ph/2-6){ m.y=cy+ph/2-6; m.vy *= -1; }
+      sctx.fillStyle=cssv('--cyan');
+      sctx.beginPath(); sctx.arc(m.x, m.y, 2.3, 0, Math.PI*2); sctx.fill();
+    }
+
     sctx.strokeStyle=cssv('--red'); sctx.lineWidth=2; for(let i=0;i<3;i++){ const ax=px+15+i*18; sctx.beginPath(); sctx.moveTo(ax,cy+ph/2+22); sctx.lineTo(ax,cy+ph/2+4); sctx.stroke(); sctx.beginPath(); sctx.moveTo(ax-3,cy+ph/2+10);sctx.lineTo(ax,cy+ph/2+4);sctx.lineTo(ax+3,cy+ph/2+10);sctx.fill(); }
     sctx.fillStyle=cssv('--red'); sctx.font='10px monospace'; sctx.fillText('heat in  Q', px+6, cy+ph/2+36);
     sctx.fillStyle=cssv('--gold'); sctx.font='10px monospace'; sctx.fillText('work out  W →', piston+10, cy);
     sctx.fillStyle=cssv('--cyan'); sctx.font='14px monospace'; sctx.fillText('ΔU = Q − W', cx-46, cy-ph/2-18);
     sctx.fillStyle=cssv('--text3'); sctx.font='10px monospace'; sctx.fillText('Energy is never created or destroyed — only moved and converted.', cx-200, 260);
   }
-  else if(S.law===2){ // Second — entropy / arrow
+  else if(S.law===2){ // Second Law
     sctx.fillStyle=cssv('--text2'); sctx.font='11px monospace';
-    // forward allowed
     sctx.fillStyle=cssv('--green'); sctx.fillText('✓ ALLOWED', 60, 70);
     drawMiniSpread(60,80,1); 
     sctx.fillStyle=cssv('--red'); sctx.fillText('✕ NEVER HAPPENS', 330, 70);
@@ -414,7 +624,7 @@ function drawLaws(){
     sctx.fillStyle=cssv('--cyan'); sctx.font='14px monospace'; sctx.fillText('ΔS_universe ≥ 0', cx-58, 230);
     sctx.fillStyle=cssv('--text3'); sctx.font='10px monospace'; sctx.fillText('Heat flows hot→cold; order spreads into disorder. Time gets a direction.', cx-205, 255);
   }
-  else { // Third — absolute zero unreachable
+  else { // Third Law
     const baseY=240, x0=70;
     sctx.strokeStyle=cssv('--border2'); sctx.beginPath(); sctx.moveTo(x0,baseY); sctx.lineTo(W-40,baseY); sctx.stroke();
     let T=300, x=x0;
@@ -428,8 +638,7 @@ function drawLaws(){
   }
 }
 function drawMiniSpread(x,y,dir){ sctx.strokeStyle=cssv('--border2'); sctx.strokeRect(x,y,120,60);
-  for(let i=0;i<24;i++){ const left = dir>0? false:true; // forward shows spread, reverse shows gathered
-    const px = dir>0? x+8+Math.random()*104 : x+8+Math.random()*52; sctx.fillStyle=cssv('--cyan'); sctx.beginPath(); sctx.arc(px, y+8+Math.random()*44,2.4,0,7); sctx.fill(); } }
+  for(let i=0;i<24;i++){ const px = dir>0? x+8+Math.random()*104 : x+8+Math.random()*52; sctx.fillStyle=cssv('--cyan'); sctx.beginPath(); sctx.arc(px, y+8+Math.random()*44,2.4,0,7); sctx.fill(); } }
 
 // ============================================================================
 // AUX CHARTS
@@ -451,7 +660,6 @@ function auxHeatCurve(){
   actx.strokeStyle=cssv('--border2'); actx.beginPath(); actx.moveTo(x0,16); actx.lineTo(x0,y0); actx.lineTo(x0+w,y0); actx.stroke();
   actx.fillStyle=cssv('--text3'); actx.font='9px monospace'; actx.fillText('T (K)',6,14); actx.fillText('time →',x0+w-44,y0+16);
   const Tmax=Math.max(S.Th,200)*1.1;
-  // we stored heatEntropy in entHist.s; recompute temps live for two lines via a parallel store
   if(!S.heatHist) S.heatHist=[];
   drawHeatLines(x0,y0,w,h,Tmax);
 }
@@ -470,7 +678,6 @@ function auxBinomial(){
   let lnMax=lnC(N,Math.round(N/2));
   for(let kk=0;kk<=N;kk++){ const lnw=lnC(N,kk); const bh=Math.exp(lnw-lnMax)*h; const px=x0+(kk/N)*w;
     actx.fillStyle = kk===S.mLeft?cssv('--gold'):cssv('--accent'); actx.globalAlpha=kk===S.mLeft?1:.5; actx.fillRect(px-1,y0-bh,Math.max(1.5,w/N-1),bh); actx.globalAlpha=1; }
-  // markers
   actx.strokeStyle=cssv('--text3'); actx.setLineDash([3,3]); actx.beginPath(); actx.moveTo(x0+0.5*w,16); actx.lineTo(x0+0.5*w,y0); actx.stroke(); actx.setLineDash([]);
   actx.fillStyle=cssv('--gold'); actx.font='9px monospace'; actx.fillText('you: '+S.mLeft+' on left',x0+6,24);
   actx.fillStyle=cssv('--text3'); actx.fillText('almost all arrangements sit near half-and-half',x0+6,AUXH-10);
@@ -583,34 +790,59 @@ const MODES=[ {id:'arrow',label:'Arrow of Time',tag:'irreversible'},{id:'micro',
 const TITLE={arrow:'A Gas Fills Its Box',micro:'Counting Arrangements',heat:'Hot Meets Cold',laws:'The Laws of Thermodynamics'};
 const HINT={arrow:'release it — then try to reverse it',micro:'shuffle and watch where it settles',heat:'bring them into contact',laws:'pick a law to explore'};
 const AUXT={arrow:'Entropy vs Time',micro:'How Many Ways (W)',heat:'Temperatures vs Time',laws:'The Law'};
-let voiceOn=false,sceneToken=0;
 const SCRIPT={
-  arrow:"Here is a gas squeezed into the left half of a box. Release the partition and it spreads out to fill the whole space — and here is the deep part: it never crowds back on its own. Even if you reverse every particle\u2019s motion, the chaos of collisions keeps it spread. That one-way behaviour is the arrow of time itself.",
+  arrow:"Here is a gas squeezed into the left half of a box. Release the partition and it spreads out to fill the whole space — and here is the deep part: it never crowds back on its own. Even if you reverse every particle's motion, the chaos of collisions keeps it spread. That one-way behaviour is the arrow of time itself.",
   micro:"Why does a gas always spread out? Not because of a force — because of counting. There is exactly one way to put every particle on the left, but an astronomical number of ways to spread them evenly. Left to chance, the system is overwhelmingly likely to be found in the spread-out state. Entropy is just a measure of how many ways.",
   heat:"Put a hot object against a cold one and heat always flows from hot to cold, never the other way, until both reach the same temperature. The hot side loses some entropy, the cold side gains more, and the total always increases. This is the Second Law of Thermodynamics in action.",
   laws:"There are four laws of thermodynamics. The Zeroth defines temperature. The First says energy is conserved. The Second says entropy always increases — giving time its direction. And the Third says you can approach absolute zero but never quite reach it. Pick each one to see it demonstrated."
 };
-function speak(t){ if(!voiceOn||!t||typeof speechSynthesis==='undefined')return; const my=++sceneToken; try{speechSynthesis.cancel();}catch(e){}
-  setTimeout(()=>{ if(my!==sceneToken||!voiceOn)return; try{const u=new SpeechSynthesisUtterance(t);u.rate=0.97;speechSynthesis.speak(u);}catch(e){} },80); }
-function stopSpeech(){ sceneToken++; try{ if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel(); }catch(e){} }
-function updateVoiceBtn(){ const v=$('voice-switcher'); v.textContent=voiceOn?'🔊 Voice on':'🔇 Voice off'; v.style.color=voiceOn?'var(--cyan)':''; }
+
 function buildModeBar(){ const b=$('mode-bar'); b.innerHTML=''; MODES.forEach(m=>{ const t=el('button','mode-tab'+(m.id===S.mode?' active':''),m.label+' <span class="mode-tag">'+m.tag+'</span>'); t.onclick=()=>setMode(m.id); b.appendChild(t); }); }
 function setMode(id){
-  stopSpeech(); S.mode=id;
+  stopNarration(); S.mode=id;
   $('stage-title').firstChild.textContent=TITLE[id]+' '; $('stage-hint').textContent=HINT[id];
   $('aux-title').firstChild.textContent=AUXT[id]+' ';
   if(id==='arrow'||id==='heat'){ makeParts(); S.heatHist=[]; } if(id==='micro') makeMicro();
-  buildModeBar(); buildControls(); buildToggles(); speak(SCRIPT[id]);
+  buildModeBar(); buildControls(); buildToggles();
+  if(narrateOn) narrate(SCRIPT[id]);
 }
 
 function bindUI(){
   stage=$('stage'); sctx=stage.getContext('2d'); aux=$('aux'); actx=aux.getContext('2d');
   fitCanvas(); window.addEventListener('resize',()=>{ fitCanvas(); if(S.mode==='arrow'||S.mode==='heat')makeParts(); });
-  const ts=$('theme-switcher'); try{ if(localStorage.getItem('theme')==='light') document.body.classList.add('light-theme'); }catch(e){}
-  ts.onclick=()=>{ document.body.classList.toggle('light-theme'); try{localStorage.setItem('theme',document.body.classList.contains('light-theme')?'light':'dark');}catch(e){} };
-  const vs=$('voice-switcher'); try{ if(localStorage.getItem('en-voice')==='on')voiceOn=true; }catch(e){}
-  updateVoiceBtn(); vs.onclick=()=>{ voiceOn=!voiceOn; try{localStorage.setItem('en-voice',voiceOn?'on':'off');}catch(e){} updateVoiceBtn(); if(voiceOn)speak(SCRIPT[S.mode]); else stopSpeech(); };
-  document.addEventListener('visibilitychange',()=>{ if(document.hidden)stopSpeech(); });
+  
+  const themeSelector = document.getElementById('theme-selector');
+  const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeSelector.value = savedTheme;
+  themeSelector.addEventListener('change', (e) => {
+    const selectedTheme = e.target.value;
+    document.documentElement.setAttribute('data-theme', selectedTheme);
+    localStorage.setItem('sim_theme', selectedTheme);
+  });
+
+  document.getElementById('btn-narrate').onclick = function(){
+    if(!window.speechSynthesis){alert('Speech not supported. Please use Chrome, Edge, or Safari.');return;}
+    narrateOn = !narrateOn;
+    this.textContent = narrateOn ? '🔊 Voice ON' : '🔇 Voice';
+    this.style.color = narrateOn ? 'var(--cyan)' : '';
+    document.getElementById('nbox').style.display = narrateOn ? 'block' : 'none';
+    if(narrateOn){
+      populateVoices();
+      narrate(SCRIPT[S.mode]);
+    } else {
+      stopNarration();
+      document.getElementById('narr-text').textContent = '—';
+    }
+  };
+  document.getElementById('vsel').onchange = function(){
+    const v = speechSynthesis.getVoices().find(v => v.name === this.value);
+    if(v) chosenVoice = v;
+  };
+  document.getElementById('sl-rate').oninput = function(){
+    speechRate = parseFloat(this.value);
+    document.getElementById('rate-v').textContent = speechRate.toFixed(1) + '×';
+  };
 }
 function fitCanvas(){ W=560;H=380;AUXW=560;AUXH=300; stage.width=W;stage.height=H;aux.width=AUXW;aux.height=AUXH; }
 
