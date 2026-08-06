@@ -1,1973 +1,1886 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🌊 Tides, Tectonics & Tsunamis — Science Wonders</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        :root {
-            --bg: #010a14;
-            --bg2: #071a2a;
-            --bg3: #0c2640;
-            --border: #123a55;
-            --border2: #1a5070;
-            --text: #b8d8ee;
-            --text2: #5a8aaa;
-            --text3: #3a5a78;
-            --text-bright: #dceefc;
-            --accent: #20b0ff;
-            --gold: #f0c860;
-            --gold-bright: #ffe8a0;
-            --cyan: #30d8ff;
-            --ocean: #1068b0;
-            --ocean-light: #3090d8;
-            --ocean-dark: #083860;
-            --stage-bg: #020a16;
-            --grid-stroke: rgba(30, 80, 140, .25);
-            --red: #ff4f60;
-            --orange: #ff9d4f;
-            --green: #40ffaa;
-            --violet: #c060ff;
-        }
-        body.light-theme {
-            --bg: #eaf0f6;
-            --bg2: #ffffff;
-            --bg3: #dce6f0;
-            --border: #c0d0dd;
-            --border2: #9ab0c5;
-            --text: #1a2a3a;
-            --text2: #3a5a70;
-            --text3: #5a7a90;
-            --text-bright: #081a2a;
-            --accent: #0077cc;
-            --gold: #9a7800;
-            --gold-bright: #7a5a00;
-            --cyan: #0066aa;
-            --ocean: #1a7ab8;
-            --ocean-light: #40a0d8;
-            --ocean-dark: #0a4870;
-            --stage-bg: #d4e2ee;
-            --grid-stroke: rgba(0, 100, 200, .10);
-            --red: #cc2233;
-            --orange: #b86000;
-            --green: #1a7f37;
-            --violet: #6f42c1;
-        }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Georgia', 'Times New Roman', serif;
-            line-height: 1.6;
-            min-height: 100vh;
-            transition: background .2s, color .2s;
-        }
-        header {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 13px 28px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(1, 10, 20, .97);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            transition: background .2s, border-color .2s;
-            flex-wrap: wrap;
-        }
-        body.light-theme header {
-            background: rgba(255, 255, 255, .96);
-        }
-        .logo {
-            font-family: monospace;
-            font-size: 11px;
-            letter-spacing: 5px;
-            color: var(--gold);
-            text-transform: uppercase;
-        }
-        .logo a {
-            color: inherit;
-            text-decoration: none;
-        }
-        .page-subtitle {
-            font-family: monospace;
-            font-size: 11px;
-            color: var(--text2);
-            border-left: 1px solid var(--border2);
-            padding-left: 18px;
-            letter-spacing: 2px;
-        }
-        .header-spacer {
-            flex: 1;
-        }
-        .header-link {
-            font-family: monospace;
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: var(--text2);
-            text-decoration: none;
-            padding: 6px 11px;
-            border-radius: 5px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            user-select: none;
-            transition: all .2s;
-        }
-        .header-link:hover {
-            color: var(--accent);
-            border-color: var(--border2);
-            background: var(--bg3);
-        }
-        .theme-toggle-btn {
-            font-weight: bold;
-            color: var(--gold);
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🌊 Tides, Tectonics &amp; Tsunamis — Science Wonders</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* =========================================================
+     6-THEME PALETTE SYSTEM
+     ========================================================= */
+  :root, [data-theme="midnight"] {
+    --bg:#010409;--bg2:#080f1e;--bg3:#0c1830;
+    --border:#152035;--border2:#1e3050;
+    --text:#b8ceec;--text2:#5878a0;--text3:#3a5070;--text-bright:#ddeeff;
+    --accent:#3a8fff;--gold:#f0c060;--gold-bright:#ffe8a0;
+    --cyan:#20d0ff;--violet:#c060ff;--green:#40ffaa;--pink:#ff6090;--red:#ff4f60;--orange:#ff9d4f;
+    --stage-bg:#020912;
+    --grid-stroke:rgba(30,50,80,.22);
+  }
+  [data-theme="cosmos"] {
+    --bg:#fbf8f0; --bg2:#fffdf8; --bg3:#fffefb;
+    --border:#ddd3c1; --border2:#c9bea8;
+    --text:#12345d; --text2:#617087; --text3:#8899aa; --text-bright:#091e36;
+    --accent:#10a9a5; --gold:#d88b00; --gold-bright:#b87400;
+    --cyan:#10a9a5; --violet:#7c56bd; --green:#2e8b22; --pink:#d84090; --red:#e85c4a; --orange:#d87020;
+    --stage-bg:#f5f0e6;
+    --grid-stroke:rgba(18,52,93,0.08);
+  }
+  [data-theme="chalk"] {
+    --bg:#f2fbfa; --bg2:#fbfffe; --bg3:#ffffff;
+    --border:#c9dfdc; --border2:#b0c8c5;
+    --text:#123c44; --text2:#62767b; --text3:#7a8e93; --text-bright:#08282d;
+    --accent:#2db7b2; --gold:#d08010; --gold-bright:#a06000;
+    --cyan:#2db7b2; --violet:#5868bd; --green:#2f8f42; --pink:#c84080; --red:#d95f55; --orange:#d07010;
+    --stage-bg:#e8f4f3;
+    --grid-stroke:rgba(18,60,68,0.08);
+  }
+  [data-theme="neon"] {
+    --bg:#fff6f2; --bg2:#fffdfb; --bg3:#ffffff;
+    --border:#ead0c7; --border2:#d5b8ae;
+    --text:#4a2d31; --text2:#806b6e; --text3:#9a8386; --text-bright:#2d181b;
+    --accent:#168f92; --gold:#d88000; --gold-bright:#a86000;
+    --cyan:#168f92; --violet:#8861bd; --green:#2d8c45; --pink:#c03070; --red:#d9443b; --orange:#d06010;
+    --stage-bg:#fcede8;
+    --grid-stroke:rgba(74,45,49,0.08);
+  }
+  [data-theme="ember"] {
+    --bg:#fffaf0; --bg2:#fffef9; --bg3:#ffffff;
+    --border:#ead9b8; --border2:#d4c09a;
+    --text:#493617; --text2:#7d705d; --text3:#968873; --text-bright:#2d200c;
+    --accent:#218d8b; --gold:#d88000; --gold-bright:#b84920;
+    --cyan:#218d8b; --violet:#7358b5; --green:#3c8c3d; --pink:#c03565; --red:#d95745; --orange:#d05010;
+    --stage-bg:#f5eedc;
+    --grid-stroke:rgba(73,54,23,0.08);
+  }
+  [data-theme="aurora"] {
+    --bg:#f8f4ff; --bg2:#fefcff; --bg3:#ffffff;
+    --border:#ddd1ec; --border2:#c4b4d6;
+    --text:#352b59; --text2:#736c86; --text3:#8b839c; --text-bright:#1d1633;
+    --accent:#119f9a; --gold:#c88000; --gold-bright:#996000;
+    --cyan:#119f9a; --violet:#7654b8; --green:#358f45; --pink:#c84078; --red:#d95d68; --orange:#d06015;
+    --stage-bg:#efeaf8;
+    --grid-stroke:rgba(53,43,89,0.08);
+  }
 
-        .mode-bar {
-            max-width: 1160px;
-            margin: 16px auto 0;
-            padding: 0 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            justify-content: center;
-        }
-        .mode-tab {
-            font-family: monospace;
-            font-size: 10.5px;
-            letter-spacing: 1px;
-            padding: 7px 14px;
-            background: var(--bg2);
-            border: 1px solid var(--border2);
-            border-radius: 6px;
-            color: var(--text2);
-            cursor: pointer;
-            transition: all .15s;
-            white-space: nowrap;
-        }
-        .mode-tab:hover {
-            color: var(--text);
-            border-color: var(--accent);
-        }
-        .mode-tab.active {
-            background: var(--bg3);
-            color: var(--gold);
-            border-color: var(--gold);
-        }
-        .mode-tag {
-            font-size: 8px;
-            opacity: .7;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background .2s, color .2s;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    transition: background .2s, border-color .2s;
+    flex-wrap: wrap;
+  }
+  .logo {
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .logo span { color: var(--text2); }
+  .logo a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .page-subtitle {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--text2);
+    border-left: 1px solid var(--border2);
+    padding-left: 16px;
+    letter-spacing: 1.5px;
+  }
+  .header-spacer { flex: 1; }
+  .header-link {
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 6px 11px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: all .2s;
+    background: transparent;
+  }
+  .header-link:hover {
+    color: var(--gold);
+    border-color: var(--border2);
+    background: var(--bg3);
+  }
+  select.header-link option {
+    background: var(--bg2);
+    color: var(--text);
+  }
 
-        .wrap {
-            max-width: 1160px;
-            margin: 14px auto 0;
-            padding: 0 20px;
-        }
-        .top-grid {
-            display: grid;
-            grid-template-columns: 1.3fr 0.7fr;
-            gap: 12px;
-            align-items: start;
-        }
-        .left-col,
-        .right-col {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-width: 0;
-        }
-        @media(max-width:860px) {
-            .top-grid {
-                display: flex;
-                flex-direction: column;
-            }
-            .left-col {
-                order: 1;
-            }
-            .right-col {
-                order: 2;
-            }
-        }
+  /* ── Voice Controls Box (No Subtitle Text Displayed) ── */
+  .nbox {
+    display: none;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 7px 7px 0;
+    padding: 10px 14px;
+    margin: 0 14px 12px;
+    font-family: monospace;
+    font-size: 10.5px;
+  }
+  .nctrls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .nctrls select {
+    flex: 1;
+    min-width: 130px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 10px;
+    padding: 4px 6px;
+  }
 
-        .card {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: background .2s, border-color .2s;
-        }
-        .card-pad {
-            padding: 16px 18px;
-        }
-        .card-title {
-            font-family: monospace;
-            font-size: 9px;
-            letter-spacing: 4px;
-            color: var(--text2);
-            text-transform: uppercase;
-            padding: 14px 18px 10px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .card-title .hint {
-            font-size: 8.5px;
-            letter-spacing: 1px;
-            color: var(--text3);
-            text-transform: none;
-        }
+  .mode-bar {
+    max-width: 1160px;
+    margin: 16px auto 0;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  .mode-tab {
+    font-family: monospace;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    padding: 7px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .mode-tab:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+  .mode-tab.active {
+    background: var(--bg3);
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+  .mode-tag {
+    font-size: 8px;
+    opacity: .7;
+  }
 
-        .stage-wrap {
-            position: relative;
-            background: var(--stage-bg);
-        }
-        canvas#stage {
-            display: block;
-            width: 100%;
-            height: auto;
-            cursor: default;
-            touch-action: none;
-        }
-        canvas#aux {
-            display: block;
-            width: 100%;
-            height: auto;
-            background: var(--stage-bg);
-        }
-        .aux-small canvas#aux {
-            max-height: 280px;
-        }
-        .stage-badge {
-            position: absolute;
-            font-family: monospace;
-            font-size: 9px;
-            background: rgba(1, 6, 16, .92);
-            padding: 4px 9px;
-            border-radius: 4px;
-            pointer-events: none;
-            letter-spacing: 1px;
-            border: 1px solid var(--border2);
-        }
-        body.light-theme .stage-badge {
-            background: rgba(255, 255, 255, .92);
-            color: var(--text);
-        }
-        .sb-tl {
-            top: 9px;
-            left: 9px;
-            color: var(--gold);
-        }
-        .sb-tr {
-            top: 9px;
-            right: 9px;
-            color: var(--cyan);
-        }
-        .sb-bl {
-            bottom: 9px;
-            left: 9px;
-            color: var(--text2);
-            font-size: 8px;
-        }
+  .wrap {
+    max-width: 1160px;
+    margin: 14px auto 0;
+    padding: 0 20px;
+  }
+  .top-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .left-col, .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+  @media(max-width:860px) {
+    .top-grid { display: flex; flex-direction: column; }
+    .left-col { order: 1; }
+    .right-col { order: 2; }
+  }
 
-        .play-bar {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 14px;
-            transition: background .2s, border-color .2s;
-        }
-        .sb-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 11px 16px;
-        }
-        @media(max-width:430px) {
-            .sb-controls {
-                grid-template-columns: 1fr;
-            }
-        }
-        .ctl {
-            min-width: 0;
-        }
-        .ctl .param-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            font-family: monospace;
-            font-size: 11px;
-            color: var(--text2);
-            margin-bottom: 3px;
-        }
-        .ctl .param-val {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--gold);
-        }
-        .ctl .sb-mini {
-            font-family: monospace;
-            font-size: 8px;
-            color: var(--text3);
-            margin-top: 2px;
-            line-height: 1.4;
-        }
-        input[type=range] {
-            width: 100%;
-            accent-color: var(--accent);
-            cursor: pointer;
-        }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: background .2s, border-color .2s;
+  }
+  .card-pad { padding: 16px 18px; }
+  .card-title {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--text2);
+    text-transform: uppercase;
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .card-title .hint {
+    font-size: 8.5px;
+    letter-spacing: 1px;
+    color: var(--text3);
+    text-transform: none;
+  }
 
-        .section-label {
-            font-family: monospace;
-            font-size: 8.5px;
-            letter-spacing: 2.5px;
-            color: var(--text3);
-            text-transform: uppercase;
-            margin: 0 0 6px;
-        }
-        .btn-grid {
-            display: grid;
-            gap: 6px;
-        }
-        .btn-grid.c2 {
-            grid-template-columns: 1fr 1fr;
-        }
-        .btn-grid.c3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        .btn-grid.c4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-        .minibtn {
-            font-family: monospace;
-            font-size: 9.5px;
-            padding: 7px 5px;
-            background: transparent;
-            border: 1px solid var(--border2);
-            border-radius: 5px;
-            color: var(--text2);
-            cursor: pointer;
-            transition: all .15s;
-            text-align: center;
-        }
-        .minibtn:hover {
-            background: var(--bg3);
-            color: var(--text);
-            border-color: var(--accent);
-        }
-        .minibtn.active {
-            border-color: var(--gold);
-            color: var(--gold);
-            background: rgba(240, 192, 96, .08);
-        }
-        .minibtn.danger {
-            border-color: var(--red);
-            color: var(--red);
-        }
-        .minibtn.danger:hover {
-            background: rgba(255, 79, 96, .12);
-            border-color: var(--red);
-        }
-        .minibtn.danger.active {
-            background: rgba(255, 79, 96, .15);
-            border-color: var(--red);
-            color: var(--red);
-        }
-        .minibtn.primary {
-            border-color: var(--cyan);
-            color: var(--cyan);
-        }
-        .minibtn.primary:hover {
-            background: rgba(32, 208, 255, .12);
-        }
-        .toggle-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .toggle-chip {
-            font-family: monospace;
-            font-size: 9px;
-            padding: 5px 9px;
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-radius: 12px;
-            color: var(--text2);
-            cursor: pointer;
-            user-select: none;
-            transition: all .15s;
-        }
-        .toggle-chip.on {
-            border-color: var(--cyan);
-            color: var(--cyan);
-        }
+  .stage-wrap {
+    position: relative;
+    background: var(--stage-bg);
+  }
+  canvas#stage {
+    display: block;
+    width: 100%;
+    height: auto;
+    cursor: default;
+    touch-action: none;
+  }
+  canvas#aux {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--stage-bg);
+  }
+  .aux-small canvas#aux { max-height: 280px; }
+  .stage-badge {
+    position: absolute;
+    font-family: monospace;
+    font-size: 9.5px;
+    background: var(--bg2);
+    padding: 4px 9px;
+    border-radius: 4px;
+    pointer-events: none;
+    letter-spacing: 1px;
+    border: 1px solid var(--border2);
+    color: var(--text);
+  }
+  .sb-tl { top: 9px; left: 9px; color: var(--gold); }
+  .sb-tr { top: 9px; right: 9px; color: var(--cyan); }
+  .sb-bl { bottom: 9px; left: 9px; color: var(--text2); font-size: 8.5px; }
 
-        .readout-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 7px;
-        }
-        .rcell {
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-radius: 8px;
-            padding: 8px 10px;
-            transition: background .2s, border-color .2s;
-        }
-        .r-label {
-            font-family: monospace;
-            font-size: 7.5px;
-            letter-spacing: 1.5px;
-            color: var(--text3);
-            text-transform: uppercase;
-            margin-bottom: 3px;
-        }
-        .r-value {
-            font-family: monospace;
-            font-size: 13px;
-            color: var(--text-bright);
-            letter-spacing: .3px;
-        }
-        .r-value.sm {
-            font-size: 11px;
-        }
-        .r-value.gold {
-            color: var(--gold);
-        }
-        .r-value.cyan {
-            color: var(--cyan);
-        }
-        .r-value.green {
-            color: var(--green);
-        }
-        .r-value.violet {
-            color: var(--violet);
-        }
-        .r-value.orange {
-            color: var(--orange);
-        }
-        .r-value.red {
-            color: var(--red);
-        }
-        .r-value.blue {
-            color: #40a0ff;
-        }
-        .r-sub {
-            font-family: monospace;
-            font-size: 8px;
-            color: var(--text3);
-            margin-top: 2px;
-            line-height: 1.3;
-        }
+  .play-bar {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: background .2s, border-color .2s;
+  }
+  .sb-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 11px 16px;
+  }
+  @media(max-width:430px) { .sb-controls { grid-template-columns: 1fr; } }
+  .ctl { min-width: 0; }
+  .ctl .param-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 3px;
+  }
+  .ctl .param-val {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--gold);
+  }
+  .ctl .sb-mini {
+    font-family: monospace;
+    font-size: 8.5px;
+    color: var(--text3);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+    height: 16px;
+  }
 
-        .law-strip {
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-left: 3px solid var(--gold);
-            border-radius: 0 8px 8px 0;
-            padding: 11px 15px;
-            margin-top: 12px;
-            font-family: monospace;
-            font-size: 10.5px;
-            line-height: 1.7;
-            color: var(--text2);
-        }
-        .law-strip b {
-            color: var(--gold-bright);
-        }
-        body.light-theme .law-strip b {
-            color: var(--gold);
-        }
-        .law-strip .big {
-            font-size: 12px;
-            color: var(--cyan);
-        }
-        .law-strip .warning {
-            color: var(--red);
-        }
+  .section-label {
+    font-family: monospace;
+    font-size: 8.5px;
+    letter-spacing: 2.5px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+  .btn-grid { display: grid; gap: 6px; }
+  .btn-grid.c2 { grid-template-columns: 1fr 1fr; }
+  .btn-grid.c3 { grid-template-columns: repeat(3, 1fr); }
+  .btn-grid.c4 { grid-template-columns: repeat(4, 1fr); }
+  .minibtn {
+    font-family: monospace;
+    font-size: 9.5px;
+    padding: 7px 5px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .minibtn:hover {
+    background: var(--bg3);
+    color: var(--text);
+    border-color: var(--accent);
+  }
+  .minibtn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(240, 192, 96, .08);
+  }
+  .minibtn.danger { border-color: var(--red); color: var(--red); }
+  .minibtn.danger:hover {
+    background: rgba(255, 79, 96, .12);
+    border-color: var(--red);
+  }
+  .minibtn.danger.active {
+    background: rgba(255, 79, 96, .15);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .minibtn.primary { border-color: var(--cyan); color: var(--cyan); }
+  .minibtn.primary:hover { background: rgba(32, 208, 255, .12); }
+  .toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .toggle-chip {
+    font-family: monospace;
+    font-size: 9px;
+    padding: 5px 9px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s;
+  }
+  .toggle-chip.on {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
 
-        .theory-wrap {
-            max-width: 1160px;
-            margin: 20px auto 0;
-            padding: 0 20px 60px;
-        }
-        .theory {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 30px clamp(20px, 4vw, 42px);
-            transition: background .2s, border-color .2s;
-        }
-        .theory-hdr {
-            font-family: monospace;
-            font-size: 9px;
-            letter-spacing: 5px;
-            color: var(--text2);
-            text-transform: uppercase;
-            margin-bottom: 24px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-        .theory h3 {
-            font-family: monospace;
-            font-size: 10.5px;
-            font-weight: normal;
-            color: var(--gold);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin: 28px 0 10px;
-        }
-        .theory h3:first-of-type {
-            margin-top: 0;
-        }
-        .theory p {
-            font-size: 13.5px;
-            color: var(--text2);
-            margin-bottom: 10px;
-            line-height: 1.85;
-        }
-        .theory em {
-            color: var(--gold-bright);
-            font-style: italic;
-        }
-        body.light-theme .theory em {
-            color: var(--gold);
-        }
-        .theory strong {
-            color: var(--text);
-        }
-        .theory .eq {
-            font-family: monospace;
-            font-size: 12px;
-            background: var(--bg3);
-            border-left: 3px solid var(--gold);
-            padding: 10px 18px;
-            margin: 12px 0;
-            border-radius: 0 8px 8px 0;
-            color: var(--gold-bright);
-            line-height: 1.8;
-        }
-        body.light-theme .theory .eq {
-            color: var(--gold);
-        }
-        .theory .eq .vars {
-            font-size: 10px;
-            color: var(--text3);
-            margin-top: 4px;
-            line-height: 1.6;
-            font-family: 'Georgia', serif;
-            font-style: italic;
-        }
-        .theory .hbox {
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin: 14px 0;
-            font-family: monospace;
-            font-size: 11px;
-            line-height: 1.8;
-        }
-        .hb-cyan {
-            background: rgba(32, 208, 255, .04);
-            border: 1px solid rgba(32, 208, 255, .18);
-            color: #7ae4ff;
-        }
-        body.light-theme .hb-cyan {
-            color: var(--cyan);
-        }
-        .hb-gold {
-            background: rgba(240, 192, 96, .04);
-            border: 1px solid rgba(240, 192, 96, .22);
-            color: #ffd690;
-        }
-        body.light-theme .hb-gold {
-            color: var(--gold);
-        }
-        .hb-red {
-            background: rgba(255, 79, 96, .06);
-            border: 1px solid rgba(255, 79, 96, .25);
-            color: #ff9aa6;
-        }
-        body.light-theme .hb-red {
-            color: #cc2233;
-        }
-        .hb-green {
-            background: rgba(64, 255, 170, .05);
-            border: 1px solid rgba(64, 255, 170, .2);
-            color: #80ffc0;
-        }
-        body.light-theme .hb-green {
-            color: var(--green);
-        }
+  .readout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 7px;
+  }
+  .rcell {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    transition: background .2s, border-color .2s;
+  }
+  .r-label {
+    font-family: monospace;
+    font-size: 7.5px;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .r-value {
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--text-bright);
+    letter-spacing: .3px;
+  }
+  .r-value.sm { font-size: 11px; }
+  .r-value.gold { color: var(--gold); }
+  .r-value.cyan { color: var(--cyan); }
+  .r-value.green { color: var(--green); }
+  .r-value.violet { color: var(--violet); }
+  .r-value.orange { color: var(--orange); }
+  .r-value.red { color: var(--red); }
+  .r-value.blue { color: #40a0ff; }
+  .r-sub {
+    font-family: monospace;
+    font-size: 8.5px;
+    color: var(--text3);
+    margin-top: 2px;
+    line-height: 1.3;
+  }
 
-        .event-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-            font-family: monospace;
-            font-size: 10.5px;
-        }
-        .event-card {
-            background: var(--bg3);
-            border: 1px solid var(--border2);
-            border-radius: 8px;
-            padding: 11px 13px;
-            transition: all .2s;
-        }
-        .event-card:hover {
-            border-color: var(--accent);
-        }
-        .event-card .ev-title {
-            font-weight: bold;
-            color: var(--text-bright);
-            font-size: 11px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        .event-badge {
-            display: inline-block;
-            font-size: 8px;
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-family: monospace;
-            letter-spacing: .5px;
-        }
-        .event-badge.tsunami {
-            background: rgba(255, 79, 96, .2);
-            border: 1px solid rgba(255, 79, 96, .3);
-            color: #ff9aa6;
-        }
-        .event-badge.typhoon {
-            background: rgba(255, 157, 79, .2);
-            border: 1px solid rgba(255, 157, 79, .3);
-            color: #ffc08a;
-        }
-        .event-badge.quake {
-            background: rgba(192, 96, 255, .2);
-            border: 1px solid rgba(192, 96, 255, .3);
-            color: #d090ff;
-        }
-        .event-card .ev-date {
-            font-size: 9px;
-            color: var(--text3);
-            margin-top: 2px;
-        }
-        .event-card .ev-desc {
-            font-size: 9.5px;
-            color: var(--text2);
-            margin-top: 4px;
-            line-height: 1.5;
-        }
-        .event-card .ev-impact {
-            font-size: 8.5px;
-            color: var(--text3);
-            margin-top: 4px;
-        }
+  .law-strip {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 11px 15px;
+    margin-top: 12px;
+    font-family: monospace;
+    font-size: 10.5px;
+    line-height: 1.7;
+    color: var(--text2);
+  }
+  .law-strip b { color: var(--gold-bright); }
+  .law-strip .big { font-size: 12px; color: var(--cyan); }
+  .law-strip .warning { color: var(--red); }
 
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 18px 28px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 10px;
-            color: var(--text3);
-            letter-spacing: 3px;
-        }
-        footer a {
-            color: var(--text2);
-            text-decoration: none;
-        }
-        footer a:hover {
-            color: var(--accent);
-        }
+  .theory-wrap {
+    max-width: 1160px;
+    margin: 20px auto 0;
+    padding: 0 20px 60px;
+  }
+  .theory {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 30px clamp(20px, 4vw, 42px);
+    transition: background .2s, border-color .2s;
+  }
+  .theory-hdr {
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--text2);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .theory h3 {
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: normal;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 28px 0 10px;
+  }
+  .theory h3:first-of-type { margin-top: 0; }
+  .theory p {
+    font-size: 13.5px;
+    color: var(--text2);
+    margin-bottom: 10px;
+    line-height: 1.85;
+  }
+  .theory em { color: var(--gold-bright); font-style: italic; }
+  .theory strong { color: var(--text); }
+  .theory .eq {
+    font-family: monospace;
+    font-size: 12px;
+    background: var(--bg3);
+    border-left: 3px solid var(--gold);
+    padding: 10px 18px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+    color: var(--gold-bright);
+    line-height: 1.8;
+  }
+  .theory .eq .vars {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 4px;
+    line-height: 1.6;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+  }
+  .theory .hbox {
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  .hb-cyan {
+    background: rgba(32, 208, 255, .04);
+    border: 1px solid rgba(32, 208, 255, .18);
+    color: var(--cyan);
+  }
+  .hb-gold {
+    background: rgba(240, 192, 96, .04);
+    border: 1px solid rgba(240, 192, 96, .22);
+    color: var(--gold);
+  }
+  .hb-red {
+    background: rgba(255, 79, 96, .06);
+    border: 1px solid rgba(255, 79, 96, .25);
+    color: var(--red);
+  }
+  .hb-green {
+    background: rgba(64, 255, 170, .05);
+    border: 1px solid rgba(64, 255, 170, .2);
+    color: var(--green);
+  }
 
-        @media(max-width:600px) {
-            header {
-                padding: 10px 14px;
-                gap: 8px;
-            }
-            .page-subtitle {
-                display: none;
-            }
-            .mode-tab {
-                font-size: 9px;
-                padding: 5px 8px;
-            }
-            .sb-controls {
-                gap: 8px;
-            }
-        }
+  .event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    font-family: monospace;
+    font-size: 10.5px;
+  }
+  .event-card {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 11px 13px;
+    transition: all .2s;
+  }
+  .event-card:hover { border-color: var(--accent); }
+  .event-card .ev-title {
+    font-weight: bold;
+    color: var(--text-bright);
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .event-badge {
+    display: inline-block;
+    font-size: 8px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-family: monospace;
+    letter-spacing: .5px;
+  }
+  .event-badge.tsunami {
+    background: rgba(255, 79, 96, .2);
+    border: 1px solid rgba(255, 79, 96, .3);
+    color: var(--red);
+  }
+  .event-badge.typhoon {
+    background: rgba(255, 157, 79, .2);
+    border: 1px solid rgba(255, 157, 79, .3);
+    color: var(--orange);
+  }
+  .event-badge.quake {
+    background: rgba(192, 96, 255, .2);
+    border: 1px solid rgba(192, 96, 255, .3);
+    color: var(--violet);
+  }
+  .event-card .ev-date {
+    font-size: 9px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .event-card .ev-desc {
+    font-size: 9.5px;
+    color: var(--text2);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .event-card .ev-impact {
+    font-size: 8.5px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
 
-        .quake-flash {
-            animation: flash 0.3s ease 3;
-        }
-        @keyframes flash {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.2;
-            }
-        }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 18px 28px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 3px;
+  }
+  footer a {
+    color: var(--text2);
+    text-decoration: none;
+  }
+  footer a:hover { color: var(--accent); }
 
-        .indicator {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 8px;
-            font-family: monospace;
-            margin: 1px 2px;
-        }
-        .indicator.red {
-            background: rgba(255, 79, 96, .2);
-            color: var(--red);
-        }
-        .indicator.yellow {
-            background: rgba(255, 157, 79, .2);
-            color: var(--orange);
-        }
-        .indicator.green {
-            background: rgba(64, 255, 170, .15);
-            color: var(--green);
-        }
+  @media(max-width:600px) {
+    header { padding: 10px 14px; gap: 8px; }
+    .page-subtitle { display: none; }
+    .mode-tab { font-size: 9px; padding: 5px 8px; }
+    .sb-controls { gap: 8px; }
+  }
 
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        .beach-canvas-wrap canvas#beach {
-            display: block;
-            width: 100%;
-            height: auto;
-            background: var(--stage-bg);
-        }
-        .action-btn {
-            font-size: 12px;
-            padding: 10px 5px;
-            font-weight: bold;
-        }
-        .action-btn.danger {
-            background: rgba(255, 79, 96, .2);
-            border-color: var(--red);
-            color: var(--red);
-        }
-        .action-btn.danger:hover {
-            background: rgba(255, 79, 96, .3);
-        }
-        .action-btn.primary {
-            background: rgba(32, 208, 255, .15);
-            border-color: var(--cyan);
-            color: var(--cyan);
-        }
-        .action-btn.primary:hover {
-            background: rgba(32, 208, 255, .25);
-        }
-        .action-btn.gold {
-            background: rgba(240, 192, 96, .15);
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-        .action-btn.gold:hover {
-            background: rgba(240, 192, 96, .25);
-        }
-    </style>
+  .quake-flash {
+    animation: flash 0.3s ease 3;
+  }
+  @keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .indicator {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 8px;
+    font-family: monospace;
+    margin: 1px 2px;
+  }
+  .indicator.red {
+    background: rgba(255, 79, 96, .2);
+    color: var(--red);
+  }
+  .indicator.yellow {
+    background: rgba(255, 157, 79, .2);
+    color: var(--orange);
+  }
+  .indicator.green {
+    background: rgba(64, 255, 170, .15);
+    color: var(--green);
+  }
+
+  .full-width { grid-column: 1 / -1; }
+  .beach-canvas-wrap canvas#beach {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--stage-bg);
+  }
+  .action-btn {
+    font-size: 11px;
+    padding: 9px 5px;
+    font-weight: bold;
+  }
+  .action-btn.danger {
+    background: rgba(255, 79, 96, .2);
+    border-color: var(--red);
+    color: var(--red);
+  }
+  .action-btn.danger:hover { background: rgba(255, 79, 96, .3); }
+  .action-btn.primary {
+    background: rgba(32, 208, 255, .15);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+  .action-btn.primary:hover { background: rgba(32, 208, 255, .25); }
+  .action-btn.gold {
+    background: rgba(240, 192, 96, .15);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .action-btn.gold:hover { background: rgba(240, 192, 96, .25); }
+  
+  .ctable {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-family: monospace;
+    font-size: 11px;
+  }
+  .ctable th, .ctable td {
+    padding: 8px 12px;
+    border: 1px solid var(--border2);
+    text-align: left;
+  }
+  .ctable th {
+    background: var(--bg3);
+    color: var(--gold);
+  }
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="logo"><a href="#">🌍 Science<span>Wonders</span></a></div>
-        <div class="page-subtitle">Tides · Tectonics · Tsunamis</div>
-        <div class="header-spacer"></div>
-        <a class="header-link" id="voice-switcher">🔇 Voice off</a>
-        <a class="header-link theme-toggle-btn" id="theme-switcher">🌓 Theme</a>
-        <a class="header-link" href="#">← All Simulations</a>
-    </header>
+  <header>
+    <div class="logo"><a href="#">🌍 Science<span>Wonders</span></a></div>
+    <div class="page-subtitle">Tides · Tectonics · Tsunamis</div>
+    <div class="header-spacer"></div>
+    <button id="btn-narrate" class="header-link">🔇 Voice</button>
+    <select id="theme-selector" class="header-link" aria-label="Select theme">
+      <option value="midnight">🌙 Midnight (Dark)</option>
+      <option value="cosmos">🪐 Cosmos</option>
+      <option value="chalk">📋 Chalk</option>
+      <option value="neon">⚡ Neon</option>
+      <option value="ember">🔥 Ember</option>
+      <option value="aurora">✨ Aurora</option>
+    </select>
+    <a class="header-link" href="#">← All Simulations</a>
+  </header>
 
-    <div class="mode-bar" id="mode-bar"></div>
+  <div class="mode-bar" id="mode-bar"></div>
 
-    <div class="wrap">
-        <!-- Top row: main stage + gauges -->
-        <div class="top-grid">
-            <div class="left-col">
-                <div class="card">
-                    <div class="card-title" id="stage-title">🌊 Tides &amp; Tectonics <span class="hint" id="stage-hint">drag moon · click plates</span></div>
-                    <div class="stage-wrap">
-                        <canvas id="stage" width="600" height="420"></canvas>
-                        <div class="stage-badge sb-tl" id="badge-l">🌙 0°</div>
-                        <div class="stage-badge sb-tr" id="badge-r">🌊 tide</div>
-                        <div class="stage-badge sb-bl" id="badge-bl">⚡ drag moon · click plates</div>
-                    </div>
-                </div>
-                <div class="play-bar">
-                    <div class="sb-controls" id="mode-controls"></div>
-                </div>
+  <div class="wrap">
+    <!-- Top row: main stage + gauges -->
+    <div class="top-grid">
+      <div class="left-col">
+        <div class="card">
+          <div class="card-title" id="stage-title">🌊 Tides &amp; Tectonics <span class="hint" id="stage-hint">drag moon · click plates</span></div>
+          
+          <!-- FULL VOICE NARRATION CONTROLS (WITHOUT SUBTITLE TEXT) -->
+          <div class="nbox" id="nbox">
+            <div class="nctrls">
+              <span style="color:var(--text3);font-size:9px;">VOICE</span>
+              <select id="vsel"><option>Loading…</option></select>
+              <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".92" style="width:70px;">
+              <span id="rate-v" style="color:var(--gold);min-width:30px;">0.9×</span>
             </div>
-            <div class="right-col">
-                <div class="card">
-                    <div class="card-title">📊 Live Gauges <span class="hint">tide · quake · surge</span></div>
-                    <div class="card-pad">
-                        <div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div>
-                    </div>
-                </div>
-                <div class="card" style="flex:1;">
-                    <div class="card-title">🏖️ Beach View <span class="hint" id="beach-hint">tide &amp; tsunami</span></div>
-                    <div class="stage-wrap beach-canvas-wrap">
-                        <canvas id="beach" width="600" height="280"></canvas>
-                    </div>
-                </div>
-            </div>
+          </div>
+
+          <div class="stage-wrap">
+            <canvas id="stage" width="600" height="420"></canvas>
+            <div class="stage-badge sb-tl" id="badge-l">🌙 0°</div>
+            <div class="stage-badge sb-tr" id="badge-r">🌊 tide</div>
+            <div class="stage-badge sb-bl" id="badge-bl">⚡ drag moon · click plates</div>
+          </div>
         </div>
-
-        <!-- Principle strip -->
-        <div class="card" style="margin-top:12px;">
-            <div class="card-title">⚡ The Principle <span class="hint" id="principle-hint">what's happening now</span></div>
-            <div class="card-pad">
-                <div class="law-strip" id="law-strip" style="margin-top:0;"></div>
-            </div>
+        <div class="play-bar">
+          <div class="sb-controls" id="mode-controls"></div>
         </div>
-
-        <!-- Warning signs -->
-        <div class="card" style="margin-top:12px;">
-            <div class="card-title">🚨 Tsunami Warning Signs <span class="hint">what nature tells you</span></div>
-            <div class="card-pad" id="warning-signs" style="display:flex;flex-wrap:wrap;gap:8px;font-family:monospace;font-size:10px;color:var(--text2);">
-                <span class="indicator red">🔴 strong earthquake</span>
-                <span class="indicator yellow">🟡 ocean recedes</span>
-                <span class="indicator red">🔴 roaring sound</span>
-                <span class="indicator yellow">🟡 unusual waves</span>
-                <span class="indicator green">🟢 move to high ground</span>
-            </div>
+      </div>
+      <div class="right-col">
+        <div class="card">
+          <div class="card-title">📊 Live Gauges <span class="hint">tide · quake · surge</span></div>
+          <div class="card-pad">
+            <div class="readout-grid" id="readout-grid" style="grid-template-columns:1fr 1fr;"></div>
+          </div>
         </div>
-
-        <!-- Historical events -->
-        <div class="card" style="margin-top:12px;">
-            <div class="card-title">🌪️ Historical Events <span class="hint">tectonic &amp; tidal disasters</span></div>
-            <div class="card-pad">
-                <div id="events-grid" class="event-grid"></div>
-            </div>
+        <div class="card" style="flex:1;">
+          <div class="card-title">🏖️ Beach View <span class="hint" id="beach-hint">tide &amp; tsunami</span></div>
+          <div class="stage-wrap beach-canvas-wrap">
+            <canvas id="beach" width="600" height="280"></canvas>
+          </div>
         </div>
+      </div>
     </div>
 
-    <div class="theory-wrap">
-        <div class="theory" id="theory"></div>
+    <!-- Principle strip -->
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">⚡ The Principle <span class="hint" id="principle-hint">what's happening now</span></div>
+      <div class="card-pad">
+        <div class="law-strip" id="law-strip" style="margin-top:0;"></div>
+      </div>
     </div>
 
-    <footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="#">← BACK TO ALL SIMULATIONS</a></footer>
+    <!-- Warning signs -->
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">🚨 Tsunami Warning Signs <span class="hint">what nature tells you</span></div>
+      <div class="card-pad" id="warning-signs" style="display:flex;flex-wrap:wrap;gap:8px;font-family:monospace;font-size:10px;color:var(--text2);">
+        <span class="indicator red">🔴 strong earthquake</span>
+        <span class="indicator yellow">🟡 ocean recedes</span>
+        <span class="indicator red">🔴 roaring sound</span>
+        <span class="indicator yellow">🟡 unusual waves</span>
+        <span class="indicator green">🟢 move to high ground</span>
+      </div>
+    </div>
 
-    <script>
-        'use strict';
+    <!-- Historical events -->
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">🌪️ Historical Events <span class="hint">tectonic &amp; tidal disasters</span></div>
+      <div class="card-pad">
+        <div id="events-grid" class="event-grid"></div>
+      </div>
+    </div>
+  </div>
 
-        // ---------- CONSTANTS ----------
-        const W = 600,
-            H = 420,
-            AUXW = 600,
-            AUXH = 280;
-        const D2R = Math.PI / 180,
-            R2D = 180 / Math.PI;
+  <div class="theory-wrap">
+    <div class="theory" id="theory"></div>
+  </div>
 
-        // ---------- STATE ----------
-        const STATE = {
-            mode: 'tides',
-            moonAngle: 30,
-            autoRotate: true,
-            speed: 0.8,
-            showSun: true,
-            showLabels: true,
-            drag: false,
-            tideAmp: 0.28,
-            earthR: 90,
-            moonDist: 175,
-            moonR: 18,
-            sunAngle: 180,
-            time: 0,
-            quakeIntensity: 0,
-            tsunamiActive: false,
-            tsunamiProgress: 0,
-            plates: [
-                { x: -38, y: -12, w: 34, h: 18, label: 'Pacific', color: '#4a7a9a' },
-                { x: 22, y: -20, w: 28, h: 16, label: 'Nazca', color: '#5a8a7a' },
-                { x: -10, y: 18, w: 30, h: 20, label: 'Indo-Australian', color: '#7a6a5a' },
-                { x: 40, y: 8, w: 20, h: 14, label: 'Philippine', color: '#6a7a8a' },
-            ],
-            selectedPlate: 0, // default to Pacific
-            quakeCooldown: 0,
-            tsunamiWaveHeight: 1.0,
+  <footer>SCIENCE WONDERS &nbsp;·&nbsp; <a href="#">← BACK TO ALL SIMULATIONS</a></footer>
+
+  <script>
+    'use strict';
+
+    // ============================================================================
+    // NARRATION STATE (Standardized Rules - No Subtitles Displayed)
+    // ============================================================================
+    let narrateOn = false, speaking = false, chosenVoice = null, speechRate = 0.92;
+
+    function populateVoices() {
+      if (!window.speechSynthesis) return;
+      const voices = speechSynthesis.getVoices(), sel = document.getElementById('vsel');
+      if (!voices.length || !sel) return;
+      sel.innerHTML = '';
+      const groups = [
+        { l: '— Female English —', v: voices.filter(v => v.lang.startsWith('en') && /female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name)) },
+        { l: '— Male English —', v: voices.filter(v => v.lang.startsWith('en') && /male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name)) },
+        { l: '— English —', v: voices.filter(v => v.lang.startsWith('en') && !/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name)) },
+        { l: '— Other —', v: voices.filter(v => !v.lang.startsWith('en')) },
+      ];
+      groups.forEach(g => {
+        if (!g.v.length) return;
+        const og = document.createElement('optgroup'); og.label = g.l;
+        g.v.forEach(v => { const o = document.createElement('option'); o.value = v.name; o.textContent = `${v.name} (${v.lang})`; og.appendChild(o); });
+        sel.appendChild(og);
+      });
+      const pref = voices.find(v => v.name === 'Google UK English Female') || voices.find(v => v.lang === 'en-GB' && /female/i.test(v.name)) || voices.find(v => v.lang.startsWith('en'));
+      if (pref) { sel.value = pref.name; chosenVoice = pref; }
+      else if (voices[0]) { sel.value = voices[0].name; chosenVoice = voices[0]; }
+    }
+    if (window.speechSynthesis) { speechSynthesis.onvoiceschanged = populateVoices; populateVoices(); }
+
+    function narrate(text) {
+      if (!narrateOn || !window.speechSynthesis || !text) return;
+      speechSynthesis.cancel(); speaking = true;
+      // Per user instructions: Do not show text of what you are speaking.
+      const sents = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text];
+      let idx = 0;
+      function next() {
+        if (!narrateOn || idx >= sents.length) { speaking = false; return; }
+        const u = new SpeechSynthesisUtterance(sents[idx].trim());
+        if (chosenVoice) u.voice = chosenVoice;
+        u.rate = speechRate; u.pitch = 1; u.volume = 1;
+        u.onend = () => { idx++; next(); }; u.onerror = () => { idx++; next(); };
+        speechSynthesis.speak(u);
+      }
+      next();
+    }
+    function stopNarration() { if (window.speechSynthesis) speechSynthesis.cancel(); speaking = false; }
+
+    // ---------- CONSTANTS ----------
+    const W = 600, H = 420, AUXW = 600, AUXH = 280;
+    const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+
+    // ---------- STATE ----------
+    const STATE = {
+      mode: 'tides',
+      moonAngle: 30,
+      autoRotate: true,
+      speed: 0.8,
+      showSun: true,
+      showLabels: true,
+      drag: false,
+      tideAmp: 0.28,
+      earthR: 90,
+      moonDist: 175,
+      moonR: 18,
+      sunAngle: 180,
+      time: 0,
+      quakeIntensity: 0,
+      tsunamiActive: false,
+      tsunamiProgress: 0,
+      plates: [
+        { x: -38, y: -12, w: 34, h: 18, label: 'Pacific', color: '#4a7a9a' },
+        { x: 22, y: -20, w: 28, h: 16, label: 'Nazca', color: '#5a8a7a' },
+        { x: -10, y: 18, w: 30, h: 20, label: 'Indo-Australian', color: '#7a6a5a' },
+        { x: 40, y: 8, w: 20, h: 14, label: 'Philippine', color: '#6a7a8a' },
+      ],
+      selectedPlate: 0, // default to Pacific
+      quakeCooldown: 0,
+      tsunamiWaveHeight: 1.0,
+    };
+
+    let stage, sctx, beach, bctx, tNow = 0;
+
+    // ---------- HELPERS ----------
+    function cv(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || '#fff'; }
+
+    function clr(c, w, h) {
+      c.clearRect(0, 0, w, h);
+      c.fillStyle = cv('--stage-bg');
+      c.fillRect(0, 0, w, h);
+    }
+
+    // ---------- MAIN STAGE DRAWING ----------
+    let SPRAY = [];
+    function starField(c, w, h) {
+      for (let i = 0; i < 80; i++) {
+        const x = (i * 97) % w, y = (i * 61) % Math.floor(h * 0.92);
+        const tw = 0.3 + 0.7 * Math.abs(Math.sin(tNow * 0.002 + i));
+        c.fillStyle = 'rgba(200,220,255,' + (0.06 + 0.2 * tw) + ')';
+        c.fillRect(x, y, 1.6, 1.6);
+      }
+    }
+    function shakeAmt() {
+      let s = 0;
+      if (STATE.quakeIntensity > 0.05) s = STATE.quakeIntensity * 7;
+      if (STATE.tsunamiActive) { const p = STATE.tsunamiProgress; if (p > 0.6 && p < 0.86) s = Math.max(s, 4); }
+      return s;
+    }
+    function springFactor() {
+      return Math.abs(Math.cos((STATE.moonAngle - STATE.sunAngle) * D2R));
+    }
+
+    function drawSunStage(cx, cy, r) {
+      if (!STATE.showSun) return;
+      const a = STATE.sunAngle * D2R, dist = r + 150;
+      const sx = cx + dist * Math.cos(a), sy = cy + dist * Math.sin(a);
+      const g = sctx.createRadialGradient(sx, sy, 2, sx, sy, 46);
+      g.addColorStop(0, 'rgba(255,230,140,0.95)'); g.addColorStop(0.4, 'rgba(255,200,80,0.5)'); g.addColorStop(1, 'rgba(255,180,60,0)');
+      sctx.fillStyle = g; sctx.beginPath(); sctx.arc(sx, sy, 46, 0, 7); sctx.fill();
+      sctx.fillStyle = '#ffdf80'; sctx.beginPath(); sctx.arc(sx, sy, 15, 0, 7); sctx.fill();
+      const sf = springFactor();
+      if (sf > 0.8) {
+        sctx.strokeStyle = 'rgba(255,220,120,' + (0.05 + 0.18 * (sf - 0.8) / 0.2) + ')';
+        sctx.lineWidth = r * 1.5; sctx.beginPath(); sctx.moveTo(sx, sy); sctx.lineTo(cx - (sx - cx), cy - (sy - cy)); sctx.stroke();
+      }
+    }
+
+    function tidalEnvelope(cx, cy, r, moonAngle, qInt) {
+      const c = sctx, pts = 120;
+      const sf = springFactor();
+      const amp = STATE.tideAmp * r * (0.55 + 0.55 * sf);
+      const radii = [];
+      for (let i = 0; i <= pts; i++) {
+        const th = (i / pts) * 2 * Math.PI;
+        const diff = th - moonAngle * D2R;
+        let bulge = amp * (Math.cos(diff) * Math.cos(diff));
+        if (STATE.tsunamiActive && STATE.tsunamiProgress > 0) {
+          const src = (STATE.selectedPlate >= 0) ? Math.atan2(STATE.plates[STATE.selectedPlate].y, STATE.plates[STATE.selectedPlate].x) : 0;
+          bulge += STATE.tsunamiProgress * 14 * Math.exp(-Math.abs(((th - src + Math.PI) % (2 * Math.PI)) - Math.PI) * 2) * Math.sin(th * 9 - tNow * 0.02) * STATE.tsunamiWaveHeight;
+        }
+        if (qInt > 0.1) bulge += qInt * 5 * Math.sin(th * 5 + tNow * 0.02);
+        radii.push(r + 3 + bulge);
+      }
+      c.beginPath();
+      for (let i = 0; i <= pts; i++) { const th = (i / pts) * 2 * Math.PI, rr = radii[i]; const x = cx + rr * Math.cos(th), y = cy + rr * Math.sin(th); i === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+      c.closePath();
+      const wg = c.createRadialGradient(cx, cy, r * 0.6, cx, cy, r + amp + 6);
+      wg.addColorStop(0, 'rgba(24,110,200,0.55)'); wg.addColorStop(0.7, 'rgba(30,150,235,0.75)'); wg.addColorStop(1, 'rgba(90,215,255,0.55)');
+      c.fillStyle = wg; c.fill();
+      c.strokeStyle = 'rgba(120,230,255,0.5)'; c.lineWidth = 2; c.stroke();
+      for (let i = 0; i < pts; i += 2) {
+        const th = (i / pts) * 2 * Math.PI, rr = radii[i];
+        const b = 0.15 + 0.35 * (0.5 + 0.5 * Math.sin(th * 6 + tNow * 0.004 + i));
+        c.fillStyle = 'rgba(200,245,255,' + b + ')';
+        c.beginPath(); c.arc(cx + rr * Math.cos(th), cy + rr * Math.sin(th), 1.4, 0, 7); c.fill();
+      }
+      return { radii, amp };
+    }
+
+    function drawEarthTop(cx, cy, r, qInt) {
+      const c = sctx;
+      const ga = c.createRadialGradient(cx, cy, r * 0.85, cx, cy, r * 1.35);
+      ga.addColorStop(0, 'rgba(80,170,255,0.18)'); ga.addColorStop(1, 'rgba(80,170,255,0)');
+      c.fillStyle = ga; c.beginPath(); c.arc(cx, cy, r * 1.35, 0, 7); c.fill();
+      const og = c.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+      og.addColorStop(0, '#2a86c0'); og.addColorStop(0.6, '#0f5590'); og.addColorStop(1, '#06315f');
+      c.save(); c.beginPath(); c.arc(cx, cy, r, 0, 7); c.clip();
+      c.fillStyle = og; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+      const spin = tNow * 0.00025;
+      const conts = [[0.2, -0.15, 26, 18], [-0.35, 0.1, 22, 16], [0.05, 0.4, 30, 14], [-0.1, -0.45, 18, 12], [0.5, 0.25, 16, 12]];
+      conts.forEach((k, idx) => {
+        const a = Math.atan2(k[1], k[0]) + spin, rad = Math.hypot(k[0], k[1]) * r;
+        const x = cx + rad * Math.cos(a), y = cy + rad * Math.sin(a);
+        c.fillStyle = idx % 2 ? '#3f8a4a' : '#4d954f';
+        c.beginPath(); c.ellipse(x, y, k[2], k[3], a, 0, 7); c.fill();
+        c.fillStyle = 'rgba(90,70,40,0.25)'; c.beginPath(); c.ellipse(x + 4, y + 3, k[2] * 0.5, k[3] * 0.5, a, 0, 7); c.fill();
+      });
+      const term = c.createLinearGradient(cx - r, cy, cx + r, cy);
+      term.addColorStop(0, 'rgba(0,0,20,0.35)'); term.addColorStop(0.5, 'rgba(0,0,20,0)'); term.addColorStop(1, 'rgba(0,0,20,0.15)');
+      c.fillStyle = term; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
+      c.restore();
+      c.strokeStyle = 'rgba(150,220,255,0.4)'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.stroke();
+      STATE.plates.forEach((p, idx) => {
+        const px = cx + p.x, py = cy + p.y, sel = idx === STATE.selectedPlate, quake = qInt > 0 && sel;
+        c.save(); c.globalAlpha = sel ? 1 : 0.72;
+        c.beginPath(); c.ellipse(px, py, p.w, p.h, 0, 0, 7); c.fillStyle = quake ? '#ff4f60' : p.color; c.fill();
+        c.strokeStyle = sel ? cv('--gold') : 'rgba(255,255,255,0.35)'; c.lineWidth = sel ? 2.5 : 1; c.stroke();
+        c.globalAlpha = 1; c.fillStyle = sel ? cv('--gold-bright') : 'rgba(255,255,255,0.85)';
+        c.font = 'bold 8px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.label, px, py);
+        if (sel) {
+          c.strokeStyle = 'rgba(240,192,96,' + (0.25 + 0.25 * Math.sin(tNow * 0.006)) + ')'; c.lineWidth = 1.5; c.setLineDash([3, 5]);
+          c.beginPath(); c.ellipse(px, py, p.w * 1.35, p.h * 1.35, 0, 0, 7); c.stroke(); c.setLineDash([]);
+        }
+        if (quake) {
+          for (let k = 0; k < 3; k++) { const rr = (tNow * 0.05 + k * 20) % 60; c.strokeStyle = 'rgba(255,120,90,' + (0.5 * (1 - rr / 60)) + ')'; c.lineWidth = 2; c.beginPath(); c.arc(px, py, rr, 0, 7); c.stroke(); }
+        }
+        c.restore();
+      });
+    }
+
+    function drawMoonBig(cx, cy, r, angle, dist) {
+      const c = sctx, a = angle * D2R, mx = cx + dist * Math.cos(a), my = cy + dist * Math.sin(a);
+      c.strokeStyle = 'rgba(150,180,255,0.12)'; c.lineWidth = 1; c.setLineDash([2, 6]); c.beginPath(); c.arc(cx, cy, dist, 0, 7); c.stroke(); c.setLineDash([]);
+      const pg = c.createLinearGradient(cx, cy, mx, my);
+      pg.addColorStop(0, 'rgba(120,210,255,0)'); pg.addColorStop(1, 'rgba(120,210,255,0.4)');
+      c.strokeStyle = pg; c.lineWidth = 2; c.setLineDash([4, 5]); c.beginPath(); c.moveTo(cx, cy); c.lineTo(mx, my); c.stroke(); c.setLineDash([]);
+      const g = c.createRadialGradient(mx, my, r * 0.4, mx, my, r * 2.2);
+      g.addColorStop(0, 'rgba(230,240,255,0.4)'); g.addColorStop(1, 'rgba(230,240,255,0)');
+      c.fillStyle = g; c.beginPath(); c.arc(mx, my, r * 2.2, 0, 7); c.fill();
+      const mg = c.createRadialGradient(mx - r * 0.3, my - r * 0.3, r * 0.1, mx, my, r);
+      mg.addColorStop(0, '#f4f6ff'); mg.addColorStop(0.7, '#c8cfe0'); mg.addColorStop(1, '#9aa2b8');
+      c.fillStyle = mg; c.beginPath(); c.arc(mx, my, r, 0, 7); c.fill();
+      c.fillStyle = 'rgba(120,130,150,0.5)';
+      [[-.3, -.2, .22], [.3, .1, .28], [.05, .4, .18], [-.35, .35, .15]].forEach(k => { c.beginPath(); c.arc(mx + k[0] * r, my + k[1] * r, k[2] * r, 0, 7); c.fill(); });
+      c.fillStyle = cv('--text'); c.font = 'bold 9px monospace'; c.textAlign = 'center'; c.fillText('🌙', mx, my - r - 6);
+      return { x: mx, y: my };
+    }
+
+    function drawStage() {
+      if (!sctx) return;
+      const c = sctx; clr(c, W, H);
+      const cx = W / 2, cy = H / 2 - 4, r = STATE.earthR;
+      const sh = shakeAmt();
+      c.save();
+      if (sh > 0) c.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
+      starField(c, W, H);
+      drawSunStage(cx, cy, r);
+      const env = tidalEnvelope(cx, cy, r, STATE.moonAngle, STATE.quakeIntensity);
+      drawEarthTop(cx, cy, r, STATE.quakeIntensity);
+      if (STATE.showLabels) {
+        const sf = springFactor();
+        [[STATE.moonAngle, '⬆ HIGH', '#40ffaa'], [STATE.moonAngle + 180, '⬆ HIGH', '#40ffaa'], [STATE.moonAngle + 90, '⬇ LOW', '#ff9d4f'], [STATE.moonAngle + 270, '⬇ LOW', '#ff9d4f']].forEach(L => {
+          const th = L[0] * D2R, rr = r + 3 + STATE.tideAmp * r * (0.55 + 0.55 * sf) * (L[1][0] === '⬆' ? 1 : 0.05);
+          c.fillStyle = L[2]; c.font = 'bold 10px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+          c.fillText(L[1], cx + (rr + 20) * Math.cos(th), cy + (rr + 20) * Math.sin(th));
+        });
+      }
+      const mp = drawMoonBig(cx, cy, STATE.moonR, STATE.moonAngle, STATE.moonDist);
+      if (STATE.tsunamiActive && STATE.tsunamiProgress > 0.05) {
+        const waveR = r + 10 + STATE.tsunamiProgress * 80;
+        c.strokeStyle = 'rgba(255,90,110,' + (0.4 * (1 - STATE.tsunamiProgress / 1.4)) + ')'; c.lineWidth = 3; c.setLineDash([10, 12]);
+        c.beginPath(); c.arc(cx, cy, waveR, 0, 7); c.stroke(); c.setLineDash([]);
+      }
+      c.restore();
+      if (springFactor() > 0.85) { c.fillStyle = '#40ffaa'; c.font = 'bold 11px monospace'; c.textAlign = 'center'; c.fillText('☀ SPRING TIDE — Sun & Moon aligned', cx, 24); }
+      else if (springFactor() < 0.2) { c.fillStyle = '#ff9d4f'; c.font = 'bold 11px monospace'; c.textAlign = 'center'; c.fillText('🌗 NEAP TIDE — Sun & Moon at right angles', cx, 24); }
+      c.textAlign = 'left'; c.fillStyle = cv('--text2'); c.font = '11px monospace';
+      c.fillText('drag the Moon · click a plate · use the buttons below', 14, H - 12);
+      if (STATE.quakeIntensity > 0.3) { c.fillStyle = '#ff4f60'; c.font = 'bold 13px monospace'; c.textAlign = 'center'; c.fillText('⚡ EARTHQUAKE!', cx, 44); c.textAlign = 'left'; }
+    }
+
+    // ---------- BEACH VIEW ----------
+    function oceanSurfaceY(x, baseY, t, amp) {
+      return baseY + Math.sin(x * 0.05 + t * 0.004) * amp + Math.sin(x * 0.11 - t * 0.006) * amp * 0.5;
+    }
+    function drawBeach() {
+      if (!bctx) return;
+      const c = bctx, w = AUXW, h = AUXH, t = tNow;
+      c.clearRect(0, 0, w, h);
+      const sh = shakeAmt();
+      c.save(); if (sh > 0) c.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
+      const sky = c.createLinearGradient(0, 0, 0, h * 0.55);
+      sky.addColorStop(0, '#0c2b52'); sky.addColorStop(0.7, '#3a6f9a'); sky.addColorStop(1, '#7fb0cf');
+      c.fillStyle = sky; c.fillRect(-10, -10, w + 20, h * 0.6);
+      c.fillStyle = 'rgba(255,235,150,0.9)'; c.beginPath(); c.arc(w * 0.82, h * 0.16, 16, 0, 7); c.fill();
+      c.fillStyle = 'rgba(255,255,255,0.12)';
+      for (let i = 0; i < 5; i++) { const x = ((i * 150 + t * 0.006 * (0.5 + i * 0.1)) % (w + 140)) - 70, y = 26 + i * 16; c.beginPath(); c.ellipse(x, y, 44, 12, 0, 0, 7); c.ellipse(x - 28, y + 6, 26, 9, 0, 0, 7); c.ellipse(x + 30, y + 5, 22, 8, 0, 0, 7); c.fill(); }
+      c.fillStyle = '#20404f'; c.beginPath(); c.moveTo(0, h * 0.5); for (let x = 0; x <= w; x += 20) c.lineTo(x, h * 0.5 - 26 * Math.abs(Math.sin(x * 0.01 + 1))); c.lineTo(w, h); c.lineTo(0, h); c.fill();
+
+      const shoreX = w * 0.32;
+      const seaBase = h * 0.60;
+      const tideFrac = getTidePercent() / 100;
+      const p = STATE.tsunamiActive ? STATE.tsunamiProgress : 0;
+
+      let recede = 0, wallX = w + 60, wallH = 0, flood = 0;
+      if (p > 0) {
+        if (p < 0.22) recede = (p / 0.22) * 120 * STATE.tsunamiWaveHeight;
+        else if (p < 0.62) { recede = 120 * STATE.tsunamiWaveHeight * (1 - (p - 0.22) / 0.4); wallX = w - ((p - 0.22) / 0.4) * (w - shoreX + 40); wallH = 30 + 90 * ((p - 0.22) / 0.4) * STATE.tsunamiWaveHeight; }
+        else if (p < 0.86) { wallX = shoreX - 30 - (p - 0.62) / 0.24 * 80; wallH = 120 * STATE.tsunamiWaveHeight; flood = (p - 0.62) / 0.24; }
+        else { flood = Math.max(0, 1 - (p - 0.86) / 0.4); wallX = shoreX - 110; wallH = 90 * STATE.tsunamiWaveHeight * (1 - (p - 0.86) / 0.4); }
+      }
+
+      const curShore = shoreX + recede;
+      const seaY = seaBase - tideFrac * 14 + recede * 0.15;
+
+      const sand = c.createLinearGradient(0, h * 0.4, 0, h); sand.addColorStop(0, '#c8a86a'); sand.addColorStop(1, '#8a7038');
+      c.fillStyle = sand; c.beginPath(); c.moveTo(0, h * 0.42);
+      for (let x = 0; x <= w; x += 6) { const y = h * 0.42 + (x / w) * (h * 0.5); c.lineTo(x, Math.min(h, y)); }
+      c.lineTo(w, h); c.lineTo(0, h); c.fill();
+
+      drawPalm(c, 46, h * 0.44, t); drawPalm(c, 92, h * 0.47, t + 300);
+      c.fillStyle = '#b85c4a'; c.fillRect(120, h * 0.4 - 14, 22, 16); c.fillStyle = '#7a3a2e'; c.beginPath(); c.moveTo(117, h * 0.4 - 14); c.lineTo(143, h * 0.4 - 14); c.lineTo(130, h * 0.4 - 26); c.fill();
+      const runX = 150 + (flood > 0.1 ? -Math.min(120, flood * 160) : 0);
+      drawPerson(c, runX, h * 0.42 + (runX / w) * (h * 0.5) - 2, flood > 0.1);
+
+      const amp = 3 + p * 4;
+      c.beginPath(); c.moveTo(curShore, seaY);
+      for (let x = curShore; x <= w; x += 4) c.lineTo(x, oceanSurfaceY(x, seaY, t, amp));
+      c.lineTo(w, h); c.lineTo(curShore, h); c.closePath();
+      const wg = c.createLinearGradient(0, seaY - 20, 0, h); wg.addColorStop(0, 'rgba(40,150,225,0.9)'); wg.addColorStop(1, 'rgba(10,55,120,0.95)');
+      c.fillStyle = wg; c.fill();
+      c.strokeStyle = 'rgba(220,245,255,0.7)'; c.lineWidth = 2; c.beginPath();
+      for (let x = curShore; x <= w; x += 4) { const y = oceanSurfaceY(x, seaY, t, amp); x === curShore ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke();
+      for (let i = 0; i < 30; i++) { const x = curShore + ((i * 53 + t * 0.02) % (w - curShore)); const y = oceanSurfaceY(x, seaY, t, amp) + 4 + (i % 5) * 3; c.fillStyle = 'rgba(200,240,255,' + (0.1 + 0.15 * Math.sin(i + t * 0.005)) + ')'; c.fillRect(x, y, 2, 1.5); }
+
+      if (recede > 8 && p < 0.62) {
+        c.fillStyle = 'rgba(120,150,120,0.25)'; c.fillRect(shoreX, seaBase, curShore - shoreX, h - seaBase);
+        c.fillStyle = '#ffd34d'; c.font = 'bold 12px monospace'; c.textAlign = 'center';
+        c.fillText('⚠ THE SEA IS PULLING BACK — RUN!', w / 2, h * 0.5);
+      }
+
+      if (wallH > 4 && wallX < w + 20) {
+        const topY = seaY - wallH;
+        c.beginPath(); c.moveTo(wallX, h); c.lineTo(wallX, topY + 10);
+        c.quadraticCurveTo(wallX + 6, topY - 6, wallX + 34, topY);
+        c.quadraticCurveTo(wallX + 20, topY + 12, wallX + 30, topY + 26);
+        c.lineTo(wallX + 120, seaY); c.lineTo(wallX + 120, h); c.closePath();
+        const twg = c.createLinearGradient(0, topY, 0, h); twg.addColorStop(0, '#7fd6ff'); twg.addColorStop(0.3, '#2a86c8'); twg.addColorStop(1, '#0a3a72');
+        c.fillStyle = twg; c.fill();
+        c.fillStyle = 'rgba(255,255,255,0.85)'; c.beginPath(); c.ellipse(wallX + 18, topY + 2, 20, 9, -0.3, 0, 7); c.fill();
+        if (p > 0.6 && p < 0.86 && Math.random() < 0.6) SPRAY.push({ x: wallX + 20, y: topY, vx: -1 - Math.random() * 2, vy: -2 - Math.random() * 3, life: 1 });
+        c.fillStyle = '#ff4f60'; c.font = 'bold 13px monospace'; c.textAlign = 'center'; c.fillText('🌊 TSUNAMI', wallX + 40, topY - 10);
+      }
+      if (flood > 0.05) {
+        c.fillStyle = 'rgba(40,120,190,' + (0.45 * flood) + ')';
+        const floodX = curShore - flood * (curShore);
+        c.fillRect(floodX, seaBase - 10, curShore - floodX + 4, h);
+      }
+      for (let i = SPRAY.length - 1; i >= 0; i--) { const s = SPRAY[i]; s.x += s.vx; s.y += s.vy; s.vy += 0.15; s.life -= 0.02; if (s.life <= 0) { SPRAY.splice(i, 1); continue; } c.fillStyle = 'rgba(230,248,255,' + s.life + ')'; c.beginPath(); c.arc(s.x, s.y, 2, 0, 7); c.fill(); }
+
+      c.restore();
+      c.fillStyle = cv('--text'); c.font = 'bold 11px monospace'; c.textAlign = 'left'; c.fillText('🏖 side view', 10, 18);
+      c.fillStyle = '#ffd34d'; c.font = '11px monospace';
+      c.fillText('tide ' + getTidePercent() + '%', 10, 34);
+      if (p > 0 && p < 0.62) { c.fillStyle = '#ff4f60'; c.textAlign = 'right'; c.font = 'bold 11px monospace'; c.fillText('⚠ TSUNAMI INCOMING', w - 10, 18); c.textAlign = 'left'; }
+    }
+    function drawPalm(c, x, y, t) {
+      c.strokeStyle = '#6b4a2a'; c.lineWidth = 4; c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + 4, y - 20, x + 2, y - 34); c.stroke();
+      const sway = Math.sin(t * 0.002) * 3;
+      c.strokeStyle = '#2f8a4a'; c.lineWidth = 3;
+      for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(x + 2, y - 34); c.quadraticCurveTo(x + 2 + k * 10 + sway, y - 44, x + 2 + k * 20 + sway, y - 34 + Math.abs(k) * 4); c.stroke(); }
+    }
+    function drawPerson(c, x, y, running) {
+      c.strokeStyle = '#1a1a1a'; c.lineWidth = 2; c.fillStyle = '#1a1a1a';
+      c.beginPath(); c.arc(x, y - 12, 3, 0, 7); c.fill();
+      c.beginPath(); c.moveTo(x, y - 9); c.lineTo(x, y - 3); c.stroke();
+      const s = running ? Math.sin(tNow * 0.02) * 3 : 1;
+      c.beginPath(); c.moveTo(x, y - 3); c.lineTo(x - 3 - s, y + 2); c.moveTo(x, y - 3); c.lineTo(x + 3 + s, y + 2); c.stroke();
+      c.beginPath(); c.moveTo(x, y - 7); c.lineTo(x - 4, y - 5 - (running ? 3 : 0)); c.moveTo(x, y - 7); c.lineTo(x + 4, y - 9); c.stroke();
+    }
+
+    // ---------- CONTROLS ----------
+    function buildControls() {
+      const p = document.getElementById('mode-controls');
+      p.innerHTML = '';
+
+      // --- Row 1: Moon angle ---
+      const c1 = document.createElement('div');
+      c1.className = 'ctl';
+      c1.style.gridColumn = 'span 2';
+      const r1 = document.createElement('div');
+      r1.className = 'param-row';
+      r1.innerHTML = `<span>🌙 Moon position</span><span class="param-val" id="angle-val">${STATE.moonAngle.toFixed(0)}°</span>`;
+      const inp1 = document.createElement('input');
+      inp1.type = 'range';
+      inp1.min = 0; inp1.max = 360; inp1.step = 1; inp1.value = STATE.moonAngle;
+      inp1.oninput = function() {
+        STATE.moonAngle = +this.value;
+        document.getElementById('angle-val').textContent = STATE.moonAngle.toFixed(0) + '°';
+        if (STATE.autoRotate) {
+          STATE.autoRotate = false;
+          const toggleBtn = document.getElementById('auto-toggle');
+          if (toggleBtn) {
+            toggleBtn.textContent = '▶ Auto';
+            toggleBtn.classList.remove('on');
+          }
+        }
+        updateAll();
+      };
+      const m1 = document.createElement('div');
+      m1.className = 'sb-mini';
+      m1.textContent = 'drag the moon or use slider';
+      c1.append(r1, inp1, m1);
+      p.appendChild(c1);
+
+      // --- Row 2: Speed + Auto ---
+      const c2 = document.createElement('div');
+      c2.className = 'ctl';
+      const r2 = document.createElement('div');
+      r2.className = 'param-row';
+      r2.innerHTML = `<span>⏱ Speed</span><span class="param-val" id="speed-val">${(STATE.speed * 100).toFixed(0)}%</span>`;
+      const inp2 = document.createElement('input');
+      inp2.type = 'range';
+      inp2.min = 5; inp2.max = 300; inp2.step = 5; inp2.value = STATE.speed * 100;
+      inp2.oninput = function() {
+        STATE.speed = +this.value / 100;
+        document.getElementById('speed-val').textContent = (STATE.speed * 100).toFixed(0) + '%';
+      };
+      const m2 = document.createElement('div');
+      m2.className = 'sb-mini';
+      m2.textContent = 'faster = more visible rotation';
+      c2.append(r2, inp2, m2);
+      p.appendChild(c2);
+
+      const c3 = document.createElement('div');
+      c3.className = 'ctl';
+      const r3 = document.createElement('div');
+      r3.className = 'param-row';
+      r3.innerHTML = `<span>🔄 Rotation</span><span class="param-val" id="auto-toggle" style="cursor:pointer;color:${STATE.autoRotate?'var(--cyan)':'var(--text2)'}">${STATE.autoRotate?'⏸ Auto':'▶ Auto'}</span>`;
+      r3.querySelector('#auto-toggle').onclick = function() {
+        STATE.autoRotate = !STATE.autoRotate;
+        this.textContent = STATE.autoRotate ? '⏸ Auto' : '▶ Auto';
+        this.style.color = STATE.autoRotate ? 'var(--cyan)' : 'var(--text2)';
+        this.classList.toggle('on', STATE.autoRotate);
+      };
+      const m3 = document.createElement('div');
+      m3.className = 'sb-mini';
+      m3.textContent = 'auto-rotate moon around Earth';
+      c3.append(r3, m3);
+      p.appendChild(c3);
+
+      // --- Row 3: Action Buttons ---
+      const cAction = document.createElement('div');
+      cAction.className = 'ctl';
+      cAction.style.gridColumn = 'span 2';
+      const actionLabel = document.createElement('div');
+      actionLabel.className = 'section-label';
+      if (STATE.mode === 'tides') {
+        actionLabel.textContent = '🌊 Tides Mode — no action needed';
+      } else if (STATE.mode === 'quake') {
+        actionLabel.textContent = '⚡ Trigger an Earthquake';
+      } else if (STATE.mode === 'tsunami') {
+        actionLabel.textContent = '🌊 Generate a Tsunami (spring tide + quake)';
+      }
+      cAction.appendChild(actionLabel);
+
+      const actionGrid = document.createElement('div');
+      actionGrid.className = 'btn-grid c2';
+
+      if (STATE.mode === 'quake') {
+        const btnQuake = document.createElement('button');
+        btnQuake.className = 'minibtn danger action-btn';
+        btnQuake.textContent = '💥 EARTHQUAKE!';
+        btnQuake.onclick = function() {
+          if (STATE.selectedPlate < 0) STATE.selectedPlate = 0;
+          triggerQuake();
         };
+        actionGrid.appendChild(btnQuake);
 
-        let stage, sctx, beach, bctx, tNow = 0;
-
-        // ---------- HELPERS ----------
-        function cv(n) { return getComputedStyle(document.body).getPropertyValue(n).trim() || '#fff'; }
-
-        function clr(c, w, h) {
-            c.clearRect(0, 0, w, h);
-            c.fillStyle = cv('--stage-bg');
-            c.fillRect(0, 0, w, h);
-        }
-
-        // ---------- MAIN STAGE DRAWING (upgraded, animated) ----------
-        let SPRAY = [];
-        function starField(c, w, h) {
-            for (let i = 0; i < 80; i++) {
-                const x = (i * 97) % w, y = (i * 61) % Math.floor(h * 0.92);
-                const tw = 0.3 + 0.7 * Math.abs(Math.sin(tNow * 0.002 + i));
-                c.fillStyle = 'rgba(200,220,255,' + (0.06 + 0.2 * tw) + ')';
-                c.fillRect(x, y, 1.6, 1.6);
-            }
-        }
-        function shakeAmt() {
-            let s = 0;
-            if (STATE.quakeIntensity > 0.05) s = STATE.quakeIntensity * 7;
-            if (STATE.tsunamiActive) { const p = STATE.tsunamiProgress; if (p > 0.6 && p < 0.86) s = Math.max(s, 4); }
-            return s;
-        }
-        function springFactor() { // 1 when Sun & Moon aligned, 0 at right angles
-            return Math.abs(Math.cos((STATE.moonAngle - STATE.sunAngle) * D2R));
-        }
-
-        function drawSunStage(cx, cy, r) {
-            if (!STATE.showSun) return;
-            const a = STATE.sunAngle * D2R, dist = r + 150;
-            const sx = cx + dist * Math.cos(a), sy = cy + dist * Math.sin(a);
-            const g = sctx.createRadialGradient(sx, sy, 2, sx, sy, 46);
-            g.addColorStop(0, 'rgba(255,230,140,0.95)'); g.addColorStop(0.4, 'rgba(255,200,80,0.5)'); g.addColorStop(1, 'rgba(255,180,60,0)');
-            sctx.fillStyle = g; sctx.beginPath(); sctx.arc(sx, sy, 46, 0, 7); sctx.fill();
-            sctx.fillStyle = '#ffdf80'; sctx.beginPath(); sctx.arc(sx, sy, 15, 0, 7); sctx.fill();
-            // alignment beam on spring tide
-            const sf = springFactor();
-            if (sf > 0.8) {
-                sctx.strokeStyle = 'rgba(255,220,120,' + (0.05 + 0.18 * (sf - 0.8) / 0.2) + ')';
-                sctx.lineWidth = r * 1.5; sctx.beginPath(); sctx.moveTo(sx, sy); sctx.lineTo(cx - (sx - cx), cy - (sy - cy)); sctx.stroke();
-            }
-        }
-
-        function tidalEnvelope(cx, cy, r, moonAngle, qInt) {
-            const c = sctx, pts = 120;
-            const sf = springFactor();
-            const amp = STATE.tideAmp * r * (0.55 + 0.55 * sf); // spring bigger, neap smaller
-            const radii = [];
-            for (let i = 0; i <= pts; i++) {
-                const th = (i / pts) * 2 * Math.PI;
-                const diff = th - moonAngle * D2R;
-                let bulge = amp * (Math.cos(diff) * Math.cos(diff)); // two bulges
-                if (STATE.tsunamiActive && STATE.tsunamiProgress > 0) {
-                    const src = (STATE.selectedPlate >= 0) ? Math.atan2(STATE.plates[STATE.selectedPlate].y, STATE.plates[STATE.selectedPlate].x) : 0;
-                    bulge += STATE.tsunamiProgress * 14 * Math.exp(-Math.abs(((th - src + Math.PI) % (2 * Math.PI)) - Math.PI) * 2) * Math.sin(th * 9 - tNow * 0.02) * STATE.tsunamiWaveHeight;
-                }
-                if (qInt > 0.1) bulge += qInt * 5 * Math.sin(th * 5 + tNow * 0.02);
-                radii.push(r + 3 + bulge);
-            }
-            // filled water shell
-            c.beginPath();
-            for (let i = 0; i <= pts; i++) { const th = (i / pts) * 2 * Math.PI, rr = radii[i]; const x = cx + rr * Math.cos(th), y = cy + rr * Math.sin(th); i === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
-            c.closePath();
-            const wg = c.createRadialGradient(cx, cy, r * 0.6, cx, cy, r + amp + 6);
-            wg.addColorStop(0, 'rgba(24,110,200,0.55)'); wg.addColorStop(0.7, 'rgba(30,150,235,0.75)'); wg.addColorStop(1, 'rgba(90,215,255,0.55)');
-            c.fillStyle = wg; c.fill();
-            c.strokeStyle = 'rgba(120,230,255,0.5)'; c.lineWidth = 2; c.stroke();
-            // moving foam sparkles along the rim
-            for (let i = 0; i < pts; i += 2) {
-                const th = (i / pts) * 2 * Math.PI, rr = radii[i];
-                const b = 0.15 + 0.35 * (0.5 + 0.5 * Math.sin(th * 6 + tNow * 0.004 + i));
-                c.fillStyle = 'rgba(200,245,255,' + b + ')';
-                c.beginPath(); c.arc(cx + rr * Math.cos(th), cy + rr * Math.sin(th), 1.4, 0, 7); c.fill();
-            }
-            return { radii, amp };
-        }
-
-        function drawEarthTop(cx, cy, r, qInt) {
-            const c = sctx;
-            // atmosphere glow
-            const ga = c.createRadialGradient(cx, cy, r * 0.85, cx, cy, r * 1.35);
-            ga.addColorStop(0, 'rgba(80,170,255,0.18)'); ga.addColorStop(1, 'rgba(80,170,255,0)');
-            c.fillStyle = ga; c.beginPath(); c.arc(cx, cy, r * 1.35, 0, 7); c.fill();
-            // ocean disk
-            const og = c.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
-            og.addColorStop(0, '#2a86c0'); og.addColorStop(0.6, '#0f5590'); og.addColorStop(1, '#06315f');
-            c.save(); c.beginPath(); c.arc(cx, cy, r, 0, 7); c.clip();
-            c.fillStyle = og; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
-            // rotating continents
-            const spin = tNow * 0.00025;
-            const conts = [[0.2, -0.15, 26, 18], [-0.35, 0.1, 22, 16], [0.05, 0.4, 30, 14], [-0.1, -0.45, 18, 12], [0.5, 0.25, 16, 12]];
-            conts.forEach((k, idx) => {
-                const a = Math.atan2(k[1], k[0]) + spin, rad = Math.hypot(k[0], k[1]) * r;
-                const x = cx + rad * Math.cos(a), y = cy + rad * Math.sin(a);
-                c.fillStyle = idx % 2 ? '#3f8a4a' : '#4d954f';
-                c.beginPath(); c.ellipse(x, y, k[2], k[3], a, 0, 7); c.fill();
-                c.fillStyle = 'rgba(90,70,40,0.25)'; c.beginPath(); c.ellipse(x + 4, y + 3, k[2] * 0.5, k[3] * 0.5, a, 0, 7); c.fill();
-            });
-            // day/night shading
-            const term = c.createLinearGradient(cx - r, cy, cx + r, cy);
-            term.addColorStop(0, 'rgba(0,0,20,0.35)'); term.addColorStop(0.5, 'rgba(0,0,20,0)'); term.addColorStop(1, 'rgba(0,0,20,0.15)');
-            c.fillStyle = term; c.fillRect(cx - r, cy - r, 2 * r, 2 * r);
-            c.restore();
-            c.strokeStyle = 'rgba(150,220,255,0.4)'; c.lineWidth = 1.5; c.beginPath(); c.arc(cx, cy, r, 0, 7); c.stroke();
-            // plates (kept interactive)
-            STATE.plates.forEach((p, idx) => {
-                const px = cx + p.x, py = cy + p.y, sel = idx === STATE.selectedPlate, quake = qInt > 0 && sel;
-                c.save(); c.globalAlpha = sel ? 1 : 0.72;
-                c.beginPath(); c.ellipse(px, py, p.w, p.h, 0, 0, 7); c.fillStyle = quake ? '#ff4f60' : p.color; c.fill();
-                c.strokeStyle = sel ? cv('--gold') : 'rgba(255,255,255,0.35)'; c.lineWidth = sel ? 2.5 : 1; c.stroke();
-                c.globalAlpha = 1; c.fillStyle = sel ? cv('--gold-bright') : 'rgba(255,255,255,0.85)';
-                c.font = 'bold 8px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.label, px, py);
-                if (sel) {
-                    c.strokeStyle = 'rgba(240,192,96,' + (0.25 + 0.25 * Math.sin(tNow * 0.006)) + ')'; c.lineWidth = 1.5; c.setLineDash([3, 5]);
-                    c.beginPath(); c.ellipse(px, py, p.w * 1.35, p.h * 1.35, 0, 0, 7); c.stroke(); c.setLineDash([]);
-                }
-                if (quake) {
-                    for (let k = 0; k < 3; k++) { const rr = (tNow * 0.05 + k * 20) % 60; c.strokeStyle = 'rgba(255,120,90,' + (0.5 * (1 - rr / 60)) + ')'; c.lineWidth = 2; c.beginPath(); c.arc(px, py, rr, 0, 7); c.stroke(); }
-                }
-                c.restore();
-            });
-        }
-
-        function drawMoonBig(cx, cy, r, angle, dist) {
-            const c = sctx, a = angle * D2R, mx = cx + dist * Math.cos(a), my = cy + dist * Math.sin(a);
-            // orbit ring
-            c.strokeStyle = 'rgba(150,180,255,0.12)'; c.lineWidth = 1; c.setLineDash([2, 6]); c.beginPath(); c.arc(cx, cy, dist, 0, 7); c.stroke(); c.setLineDash([]);
-            // pull line (gradient toward moon)
-            const pg = c.createLinearGradient(cx, cy, mx, my);
-            pg.addColorStop(0, 'rgba(120,210,255,0)'); pg.addColorStop(1, 'rgba(120,210,255,0.4)');
-            c.strokeStyle = pg; c.lineWidth = 2; c.setLineDash([4, 5]); c.beginPath(); c.moveTo(cx, cy); c.lineTo(mx, my); c.stroke(); c.setLineDash([]);
-            // glow
-            const g = c.createRadialGradient(mx, my, r * 0.4, mx, my, r * 2.2);
-            g.addColorStop(0, 'rgba(230,240,255,0.4)'); g.addColorStop(1, 'rgba(230,240,255,0)');
-            c.fillStyle = g; c.beginPath(); c.arc(mx, my, r * 2.2, 0, 7); c.fill();
-            // body
-            const mg = c.createRadialGradient(mx - r * 0.3, my - r * 0.3, r * 0.1, mx, my, r);
-            mg.addColorStop(0, '#f4f6ff'); mg.addColorStop(0.7, '#c8cfe0'); mg.addColorStop(1, '#9aa2b8');
-            c.fillStyle = mg; c.beginPath(); c.arc(mx, my, r, 0, 7); c.fill();
-            // craters
-            c.fillStyle = 'rgba(120,130,150,0.5)';
-            [[-.3, -.2, .22], [.3, .1, .28], [.05, .4, .18], [-.35, .35, .15]].forEach(k => { c.beginPath(); c.arc(mx + k[0] * r, my + k[1] * r, k[2] * r, 0, 7); c.fill(); });
-            c.fillStyle = cv('--text'); c.font = 'bold 9px monospace'; c.textAlign = 'center'; c.fillText('🌙', mx, my - r - 6);
-            return { x: mx, y: my };
-        }
-
-        function drawStage() {
-            if (!sctx) return;
-            const c = sctx; clr(c, W, H);
-            const cx = W / 2, cy = H / 2 - 4, r = STATE.earthR;
-            const sh = shakeAmt();
-            c.save();
-            if (sh > 0) c.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
-            starField(c, W, H);
-            drawSunStage(cx, cy, r);
-            const env = tidalEnvelope(cx, cy, r, STATE.moonAngle, STATE.quakeIntensity);
-            drawEarthTop(cx, cy, r, STATE.quakeIntensity);
-            // tide labels at bulge tips
-            if (STATE.showLabels) {
-                const sf = springFactor();
-                [[STATE.moonAngle, '⬆ HIGH', '#40ffaa'], [STATE.moonAngle + 180, '⬆ HIGH', '#40ffaa'], [STATE.moonAngle + 90, '⬇ LOW', '#ff9d4f'], [STATE.moonAngle + 270, '⬇ LOW', '#ff9d4f']].forEach(L => {
-                    const th = L[0] * D2R, rr = r + 3 + STATE.tideAmp * r * (0.55 + 0.55 * sf) * (L[1][0] === '⬆' ? 1 : 0.05);
-                    c.fillStyle = L[2]; c.font = 'bold 10px monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
-                    c.fillText(L[1], cx + (rr + 20) * Math.cos(th), cy + (rr + 20) * Math.sin(th));
-                });
-            }
-            const mp = drawMoonBig(cx, cy, STATE.moonR, STATE.moonAngle, STATE.moonDist);
-            // quake global shockwave
-            if (STATE.tsunamiActive && STATE.tsunamiProgress > 0.05) {
-                const waveR = r + 10 + STATE.tsunamiProgress * 80;
-                c.strokeStyle = 'rgba(255,90,110,' + (0.4 * (1 - STATE.tsunamiProgress / 1.4)) + ')'; c.lineWidth = 3; c.setLineDash([10, 12]);
-                c.beginPath(); c.arc(cx, cy, waveR, 0, 7); c.stroke(); c.setLineDash([]);
-            }
-            c.restore();
-            // HUD (no shake)
-            if (springFactor() > 0.85) { c.fillStyle = '#40ffaa'; c.font = 'bold 11px monospace'; c.textAlign = 'center'; c.fillText('☀ SPRING TIDE — Sun & Moon aligned', cx, 24); }
-            else if (springFactor() < 0.2) { c.fillStyle = '#ff9d4f'; c.font = 'bold 11px monospace'; c.textAlign = 'center'; c.fillText('🌗 NEAP TIDE — Sun & Moon at right angles', cx, 24); }
-            c.textAlign = 'left'; c.fillStyle = cv('--text2'); c.font = '11px monospace';
-            c.fillText('drag the Moon · click a plate · use the buttons below', 14, H - 12);
-            if (STATE.quakeIntensity > 0.3) { c.fillStyle = '#ff4f60'; c.font = 'bold 13px monospace'; c.textAlign = 'center'; c.fillText('⚡ EARTHQUAKE!', cx, 44); c.textAlign = 'left'; }
-        }
-
-        // ---------- BEACH VIEW (cinematic side view) ----------
-        function oceanSurfaceY(x, baseY, t, amp) {
-            return baseY + Math.sin(x * 0.05 + t * 0.004) * amp + Math.sin(x * 0.11 - t * 0.006) * amp * 0.5;
-        }
-        function drawBeach() {
-            if (!bctx) return;
-            const c = bctx, w = AUXW, h = AUXH, t = tNow;
-            c.clearRect(0, 0, w, h);
-            const sh = shakeAmt();
-            c.save(); if (sh > 0) c.translate((Math.random() - 0.5) * sh, (Math.random() - 0.5) * sh);
-            // sky
-            const sky = c.createLinearGradient(0, 0, 0, h * 0.55);
-            sky.addColorStop(0, '#0c2b52'); sky.addColorStop(0.7, '#3a6f9a'); sky.addColorStop(1, '#7fb0cf');
-            c.fillStyle = sky; c.fillRect(-10, -10, w + 20, h * 0.6);
-            // sun/moon in sky
-            c.fillStyle = 'rgba(255,235,150,0.9)'; c.beginPath(); c.arc(w * 0.82, h * 0.16, 16, 0, 7); c.fill();
-            // clouds
-            c.fillStyle = 'rgba(255,255,255,0.12)';
-            for (let i = 0; i < 5; i++) { const x = ((i * 150 + t * 0.006 * (0.5 + i * 0.1)) % (w + 140)) - 70, y = 26 + i * 16; c.beginPath(); c.ellipse(x, y, 44, 12, 0, 0, 7); c.ellipse(x - 28, y + 6, 26, 9, 0, 0, 7); c.ellipse(x + 30, y + 5, 22, 8, 0, 0, 7); c.fill(); }
-            // hills backdrop
-            c.fillStyle = '#20404f'; c.beginPath(); c.moveTo(0, h * 0.5); for (let x = 0; x <= w; x += 20) c.lineTo(x, h * 0.5 - 26 * Math.abs(Math.sin(x * 0.01 + 1))); c.lineTo(w, h); c.lineTo(0, h); c.fill();
-
-            // layout
-            const shoreX = w * 0.32;          // where sand meets sea (normal)
-            const seaBase = h * 0.60;
-            const tideFrac = getTidePercent() / 100;   // 0..1
-            const p = STATE.tsunamiActive ? STATE.tsunamiProgress : 0;
-
-            // tsunami staging
-            let recede = 0, wallX = w + 60, wallH = 0, flood = 0;
-            if (p > 0) {
-                if (p < 0.22) recede = (p / 0.22) * 120 * STATE.tsunamiWaveHeight;               // sea pulls back
-                else if (p < 0.62) { recede = 120 * STATE.tsunamiWaveHeight * (1 - (p - 0.22) / 0.4); wallX = w - ((p - 0.22) / 0.4) * (w - shoreX + 40); wallH = 30 + 90 * ((p - 0.22) / 0.4) * STATE.tsunamiWaveHeight; }
-                else if (p < 0.86) { wallX = shoreX - 30 - (p - 0.62) / 0.24 * 80; wallH = 120 * STATE.tsunamiWaveHeight; flood = (p - 0.62) / 0.24; }
-                else { flood = Math.max(0, 1 - (p - 0.86) / 0.4); wallX = shoreX - 110; wallH = 90 * STATE.tsunamiWaveHeight * (1 - (p - 0.86) / 0.4); }
-            }
-
-            const curShore = shoreX + recede;                 // shoreline shifts right on recede
-            const seaY = seaBase - tideFrac * 14 + recede * 0.15;
-
-            // sand / seabed
-            const sand = c.createLinearGradient(0, h * 0.4, 0, h); sand.addColorStop(0, '#c8a86a'); sand.addColorStop(1, '#8a7038');
-            c.fillStyle = sand; c.beginPath(); c.moveTo(0, h * 0.42);
-            for (let x = 0; x <= w; x += 6) { const y = h * 0.42 + (x / w) * (h * 0.5); c.lineTo(x, Math.min(h, y)); }
-            c.lineTo(w, h); c.lineTo(0, h); c.fill();
-
-            // palm trees + house on the dune (left)
-            drawPalm(c, 46, h * 0.44, t); drawPalm(c, 92, h * 0.47, t + 300);
-            c.fillStyle = '#b85c4a'; c.fillRect(120, h * 0.4 - 14, 22, 16); c.fillStyle = '#7a3a2e'; c.beginPath(); c.moveTo(117, h * 0.4 - 14); c.lineTo(143, h * 0.4 - 14); c.lineTo(130, h * 0.4 - 26); c.fill();
-            // a person (flees during crash)
-            const runX = 150 + (flood > 0.1 ? -Math.min(120, flood * 160) : 0);
-            drawPerson(c, runX, h * 0.42 + (runX / w) * (h * 0.5) - 2, flood > 0.1);
-
-            // ocean water (from shoreline to right)
-            const amp = 3 + p * 4;
-            c.beginPath(); c.moveTo(curShore, seaY);
-            for (let x = curShore; x <= w; x += 4) c.lineTo(x, oceanSurfaceY(x, seaY, t, amp));
-            c.lineTo(w, h); c.lineTo(curShore, h); c.closePath();
-            const wg = c.createLinearGradient(0, seaY - 20, 0, h); wg.addColorStop(0, 'rgba(40,150,225,0.9)'); wg.addColorStop(1, 'rgba(10,55,120,0.95)');
-            c.fillStyle = wg; c.fill();
-            // foam line at shore
-            c.strokeStyle = 'rgba(220,245,255,0.7)'; c.lineWidth = 2; c.beginPath();
-            for (let x = curShore; x <= w; x += 4) { const y = oceanSurfaceY(x, seaY, t, amp); x === curShore ? c.moveTo(x, y) : c.lineTo(x, y); } c.stroke();
-            // sparkles
-            for (let i = 0; i < 30; i++) { const x = curShore + ((i * 53 + t * 0.02) % (w - curShore)); const y = oceanSurfaceY(x, seaY, t, amp) + 4 + (i % 5) * 3; c.fillStyle = 'rgba(200,240,255,' + (0.1 + 0.15 * Math.sin(i + t * 0.005)) + ')'; c.fillRect(x, y, 2, 1.5); }
-
-            // recede warning + exposed seabed shimmer
-            if (recede > 8 && p < 0.62) {
-                c.fillStyle = 'rgba(120,150,120,0.25)'; c.fillRect(shoreX, seaBase, curShore - shoreX, h - seaBase);
-                c.fillStyle = '#ffd34d'; c.font = 'bold 12px monospace'; c.textAlign = 'center';
-                c.fillText('⚠ THE SEA IS PULLING BACK — RUN!', w / 2, h * 0.5);
-            }
-
-            // tsunami wall
-            if (wallH > 4 && wallX < w + 20) {
-                const topY = seaY - wallH;
-                c.beginPath(); c.moveTo(wallX, h); c.lineTo(wallX, topY + 10);
-                c.quadraticCurveTo(wallX + 6, topY - 6, wallX + 34, topY); // curling crest
-                c.quadraticCurveTo(wallX + 20, topY + 12, wallX + 30, topY + 26);
-                c.lineTo(wallX + 120, seaY); c.lineTo(wallX + 120, h); c.closePath();
-                const twg = c.createLinearGradient(0, topY, 0, h); twg.addColorStop(0, '#7fd6ff'); twg.addColorStop(0.3, '#2a86c8'); twg.addColorStop(1, '#0a3a72');
-                c.fillStyle = twg; c.fill();
-                // crest foam
-                c.fillStyle = 'rgba(255,255,255,0.85)'; c.beginPath(); c.ellipse(wallX + 18, topY + 2, 20, 9, -0.3, 0, 7); c.fill();
-                // spawn spray at crest
-                if (p > 0.6 && p < 0.86 && Math.random() < 0.6) SPRAY.push({ x: wallX + 20, y: topY, vx: -1 - Math.random() * 2, vy: -2 - Math.random() * 3, life: 1 });
-                c.fillStyle = '#ff4f60'; c.font = 'bold 13px monospace'; c.textAlign = 'center'; c.fillText('🌊 TSUNAMI', wallX + 40, topY - 10);
-            }
-            // flood overlay on the sand
-            if (flood > 0.05) {
-                c.fillStyle = 'rgba(40,120,190,' + (0.45 * flood) + ')';
-                const floodX = curShore - flood * (curShore);
-                c.fillRect(floodX, seaBase - 10, curShore - floodX + 4, h);
-            }
-            // spray particles
-            for (let i = SPRAY.length - 1; i >= 0; i--) { const s = SPRAY[i]; s.x += s.vx; s.y += s.vy; s.vy += 0.15; s.life -= 0.02; if (s.life <= 0) { SPRAY.splice(i, 1); continue; } c.fillStyle = 'rgba(230,248,255,' + s.life + ')'; c.beginPath(); c.arc(s.x, s.y, 2, 0, 7); c.fill(); }
-
-            c.restore();
-            // labels (no shake)
-            c.fillStyle = cv('--text'); c.font = 'bold 11px monospace'; c.textAlign = 'left'; c.fillText('🏖 side view', 10, 18);
-            c.fillStyle = '#ffd34d'; c.font = '11px monospace';
-            c.fillText('tide ' + getTidePercent() + '%', 10, 34);
-            if (p > 0 && p < 0.62) { c.fillStyle = '#ff4f60'; c.textAlign = 'right'; c.font = 'bold 11px monospace'; c.fillText('⚠ TSUNAMI INCOMING', w - 10, 18); c.textAlign = 'left'; }
-        }
-        function drawPalm(c, x, y, t) {
-            c.strokeStyle = '#6b4a2a'; c.lineWidth = 4; c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + 4, y - 20, x + 2, y - 34); c.stroke();
-            const sway = Math.sin(t * 0.002) * 3;
-            c.strokeStyle = '#2f8a4a'; c.lineWidth = 3;
-            for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(x + 2, y - 34); c.quadraticCurveTo(x + 2 + k * 10 + sway, y - 44, x + 2 + k * 20 + sway, y - 34 + Math.abs(k) * 4); c.stroke(); }
-        }
-        function drawPerson(c, x, y, running) {
-            c.strokeStyle = '#1a1a1a'; c.lineWidth = 2; c.fillStyle = '#1a1a1a';
-            c.beginPath(); c.arc(x, y - 12, 3, 0, 7); c.fill();
-            c.beginPath(); c.moveTo(x, y - 9); c.lineTo(x, y - 3); c.stroke();
-            const s = running ? Math.sin(tNow * 0.02) * 3 : 1;
-            c.beginPath(); c.moveTo(x, y - 3); c.lineTo(x - 3 - s, y + 2); c.moveTo(x, y - 3); c.lineTo(x + 3 + s, y + 2); c.stroke();
-            c.beginPath(); c.moveTo(x, y - 7); c.lineTo(x - 4, y - 5 - (running ? 3 : 0)); c.moveTo(x, y - 7); c.lineTo(x + 4, y - 9); c.stroke();
-        }
-
-
-        // ---------- CONTROLS ----------
-        function buildControls() {
-            const p = document.getElementById('mode-controls');
-            p.innerHTML = '';
-
-            // --- Row 1: Moon angle ---
-            const c1 = document.createElement('div');
-            c1.className = 'ctl';
-            c1.style.gridColumn = 'span 2';
-            const r1 = document.createElement('div');
-            r1.className = 'param-row';
-            r1.innerHTML =
-                `<span>🌙 Moon position</span><span class="param-val" id="angle-val">${STATE.moonAngle.toFixed(0)}°</span>`;
-            const inp1 = document.createElement('input');
-            inp1.type = 'range';
-            inp1.min = 0;
-            inp1.max = 360;
-            inp1.step = 1;
-            inp1.value = STATE.moonAngle;
-            inp1.oninput = function() {
-                STATE.moonAngle = +this.value;
-                document.getElementById('angle-val').textContent = STATE.moonAngle.toFixed(0) + '°';
-                if (STATE.autoRotate) { STATE.autoRotate = false;
-                    document.getElementById('auto-toggle').textContent = '▶ Auto';
-                    document.getElementById('auto-toggle').classList.remove('on'); }
-                updateAll();
-            };
-            const m1 = document.createElement('div');
-            m1.className = 'sb-mini';
-            m1.textContent = 'drag the moon or use slider';
-            c1.append(r1, inp1, m1);
-            p.appendChild(c1);
-
-            // --- Row 2: Speed + Auto ---
-            const c2 = document.createElement('div');
-            c2.className = 'ctl';
-            const r2 = document.createElement('div');
-            r2.className = 'param-row';
-            r2.innerHTML =
-                `<span>⏱ Speed</span><span class="param-val" id="speed-val">${(STATE.speed * 100).toFixed(0)}%</span>`;
-            const inp2 = document.createElement('input');
-            inp2.type = 'range';
-            inp2.min = 5;
-            inp2.max = 300;
-            inp2.step = 5;
-            inp2.value = STATE.speed * 100;
-            inp2.oninput = function() {
-                STATE.speed = +this.value / 100;
-                document.getElementById('speed-val').textContent = (STATE.speed * 100).toFixed(0) + '%';
-            };
-            const m2 = document.createElement('div');
-            m2.className = 'sb-mini';
-            m2.textContent = 'faster = more visible rotation';
-            c2.append(r2, inp2, m2);
-            p.appendChild(c2);
-
-            const c3 = document.createElement('div');
-            c3.className = 'ctl';
-            const r3 = document.createElement('div');
-            r3.className = 'param-row';
-            r3.innerHTML =
-                `<span>🔄 Rotation</span><span class="param-val" id="auto-toggle" style="cursor:pointer;color:${STATE.autoRotate?'var(--cyan)':'var(--text2)'}">${STATE.autoRotate?'⏸ Auto':'▶ Auto'}</span>`;
-            r3.querySelector('#auto-toggle').onclick = function() {
-                STATE.autoRotate = !STATE.autoRotate;
-                this.textContent = STATE.autoRotate ? '⏸ Auto' : '▶ Auto';
-                this.style.color = STATE.autoRotate ? 'var(--cyan)' : 'var(--text2)';
-                this.classList.toggle('on', STATE.autoRotate);
-            };
-            const m3 = document.createElement('div');
-            m3.className = 'sb-mini';
-            m3.textContent = 'auto-rotate moon around Earth';
-            c3.append(r3, m3);
-            p.appendChild(c3);
-
-            // --- Row 3: Action Buttons (mode-specific) ---
-            const cAction = document.createElement('div');
-            cAction.className = 'ctl';
-            cAction.style.gridColumn = 'span 2';
-            const actionLabel = document.createElement('div');
-            actionLabel.className = 'section-label';
-            if (STATE.mode === 'tides') {
-                actionLabel.textContent = '🌊 Tides Mode — no action needed';
-            } else if (STATE.mode === 'quake') {
-                actionLabel.textContent = '⚡ Trigger an Earthquake';
-            } else if (STATE.mode === 'tsunami') {
-                actionLabel.textContent = '🌊 Generate a Tsunami (spring tide + quake)';
-            }
-            cAction.appendChild(actionLabel);
-
-            const actionGrid = document.createElement('div');
-            actionGrid.className = 'btn-grid c2';
-
-            if (STATE.mode === 'quake') {
-                const btnQuake = document.createElement('button');
-                btnQuake.className = 'minibtn danger action-btn';
-                btnQuake.textContent = '💥 EARTHQUAKE!';
-                btnQuake.onclick = function() {
-                    if (STATE.selectedPlate < 0) STATE.selectedPlate = 0;
-                    triggerQuake();
-                };
-                actionGrid.appendChild(btnQuake);
-
-                const btnReset = document.createElement('button');
-                btnReset.className = 'minibtn action-btn';
-                btnReset.textContent = '🔄 Reset';
-                btnReset.onclick = function() {
-                    STATE.quakeIntensity = 0;
-                    STATE.tsunamiActive = false;
-                    STATE.tsunamiProgress = 0;
-                    updateAll();
-                    document.getElementById('law-strip').innerHTML =
-                        '<b>✅ Reset.</b> Press 💥 EARTHQUAKE to trigger a quake and see the effects.';
-                };
-                actionGrid.appendChild(btnReset);
-            } else if (STATE.mode === 'tsunami') {
-                const btnTsunami = document.createElement('button');
-                btnTsunami.className = 'minibtn primary action-btn';
-                btnTsunami.textContent = '🌊 GENERATE TSUNAMI';
-                btnTsunami.onclick = function() {
-                    // Set moon to align with sun (spring tide) for max effect
-                    // Sun angle is at 180° (fixed), so set moon to 0° (new moon) or 180° (full moon)
-                    // We'll set to 0° (new moon) – sun and moon aligned
-                    STATE.moonAngle = 0;
-                    // Update slider
-                    const range = document.querySelector('#mode-controls input[type=range]');
-                    if (range) range.value = 0;
-                    document.getElementById('angle-val').textContent = '0°';
-                    if (STATE.autoRotate) {
-                        STATE.autoRotate = false;
-                        document.getElementById('auto-toggle').textContent = '▶ Auto';
-                        document.getElementById('auto-toggle').classList.remove('on');
-                    }
-                    // Trigger quake
-                    if (STATE.selectedPlate < 0) STATE.selectedPlate = 0;
-                    triggerQuake();
-                    // Override law strip to mention spring tide
-                    setTimeout(() => {
-                        document.getElementById('law-strip').innerHTML =
-                            `<b>🌊 TSUNAMI GENERATED!</b> Spring tide (Sun & Moon aligned) + earthquake on ${STATE.plates[STATE.selectedPlate].label} plate. The combination creates a massive tsunami wave. Watch the beach view!`;
-                    }, 100);
-                };
-                actionGrid.appendChild(btnTsunami);
-
-                const btnReset = document.createElement('button');
-                btnReset.className = 'minibtn action-btn';
-                btnReset.textContent = '🔄 Reset';
-                btnReset.onclick = function() {
-                    STATE.quakeIntensity = 0;
-                    STATE.tsunamiActive = false;
-                    STATE.tsunamiProgress = 0;
-                    updateAll();
-                    document.getElementById('law-strip').innerHTML =
-                        '<b>✅ Reset.</b> Press 🌊 GENERATE TSUNAMI to create a spring tide + earthquake and trigger a tsunami.';
-                };
-                actionGrid.appendChild(btnReset);
-            } else {
-                // Tides mode: show a "Spring Tide" preset button
-                const btnSpring = document.createElement('button');
-                btnSpring.className = 'minibtn gold action-btn';
-                btnSpring.textContent = '🌊 Spring Tide (align)';
-                btnSpring.onclick = function() {
-                    STATE.moonAngle = 0;
-                    const range = document.querySelector('#mode-controls input[type=range]');
-                    if (range) range.value = 0;
-                    document.getElementById('angle-val').textContent = '0°';
-                    if (STATE.autoRotate) {
-                        STATE.autoRotate = false;
-                        document.getElementById('auto-toggle').textContent = '▶ Auto';
-                        document.getElementById('auto-toggle').classList.remove('on');
-                    }
-                    updateAll();
-                    document.getElementById('law-strip').innerHTML =
-                        '<b>🌊 Spring tide activated!</b> Sun and Moon are aligned (new moon). Tides are at their strongest.';
-                };
-                actionGrid.appendChild(btnSpring);
-
-                const btnNeap = document.createElement('button');
-                btnNeap.className = 'minibtn action-btn';
-                btnNeap.textContent = '🌗 Neap Tide (90°)';
-                btnNeap.onclick = function() {
-                    STATE.moonAngle = 90;
-                    const range = document.querySelector('#mode-controls input[type=range]');
-                    if (range) range.value = 90;
-                    document.getElementById('angle-val').textContent = '90°';
-                    if (STATE.autoRotate) {
-                        STATE.autoRotate = false;
-                        document.getElementById('auto-toggle').textContent = '▶ Auto';
-                        document.getElementById('auto-toggle').classList.remove('on');
-                    }
-                    updateAll();
-                    document.getElementById('law-strip').innerHTML =
-                        '<b>🌗 Neap tide activated.</b> Sun and Moon are at right angles. Tides are weaker.';
-                };
-                actionGrid.appendChild(btnNeap);
-            }
-
-            cAction.appendChild(actionGrid);
-            p.appendChild(cAction);
-
-            // --- Row 4: Tsunami height (always visible) ---
-            const c4b = document.createElement('div');
-            c4b.className = 'ctl';
-            c4b.style.gridColumn = 'span 2';
-            const r4b = document.createElement('div');
-            r4b.className = 'param-row';
-            r4b.innerHTML =
-                `<span>🌊 Tsunami height</span><span class="param-val" id="wave-height-val">${(STATE.tsunamiWaveHeight * 100).toFixed(0)}%</span>`;
-            const inp4b = document.createElement('input');
-            inp4b.type = 'range';
-            inp4b.min = 10;
-            inp4b.max = 200;
-            inp4b.step = 5;
-            inp4b.value = STATE.tsunamiWaveHeight * 100;
-            inp4b.oninput = function() {
-                STATE.tsunamiWaveHeight = +this.value / 100;
-                document.getElementById('wave-height-val').textContent = (STATE.tsunamiWaveHeight * 100).toFixed(0) + '%';
-                updateAll();
-            };
-            const m4b = document.createElement('div');
-            m4b.className = 'sb-mini';
-            m4b.textContent = 'amplify the tsunami wave';
-            c4b.append(r4b, inp4b, m4b);
-            p.appendChild(c4b);
-
-            // --- Row 5: Plate selection ---
-            const c5 = document.createElement('div');
-            c5.className = 'ctl';
-            c5.style.gridColumn = 'span 2';
-            const lbl2 = document.createElement('div');
-            lbl2.className = 'section-label';
-            lbl2.textContent = '📍 Select Plate (click on Earth or here)';
-            c5.appendChild(lbl2);
-            const g2 = document.createElement('div');
-            g2.className = 'btn-grid c4';
-            STATE.plates.forEach((p, idx) => {
-                const b = document.createElement('button');
-                b.className = 'minibtn' + (idx === STATE.selectedPlate ? ' active' : '');
-                b.textContent = p.label;
-                b.style.borderColor = idx === STATE.selectedPlate ? 'var(--gold)' : '';
-                b.onclick = function() {
-                    STATE.selectedPlate = (idx === STATE.selectedPlate) ? -1 : idx;
-                    updateAll();
-                    buildControls();
-                };
-                g2.appendChild(b);
-            });
-            c5.appendChild(g2);
-            p.appendChild(c5);
-
-            // --- Row 6: Toggles (Sun & Labels) ---
-            const c6 = document.createElement('div');
-            c6.className = 'ctl';
-            c6.style.gridColumn = 'span 2';
-            const tog = document.createElement('div');
-            tog.className = 'toggle-row';
-            const toggles = [
-                { id: 'showSun', label: '☀ Show Sun', val: STATE.showSun },
-                { id: 'showLabels', label: '🏷 Show Labels', val: STATE.showLabels }
-            ];
-            toggles.forEach(t => {
-                const chip = document.createElement('span');
-                chip.className = 'toggle-chip' + (t.val ? ' on' : '');
-                chip.textContent = t.label;
-                chip.onclick = function() {
-                    STATE[t.id] = !STATE[t.id];
-                    this.classList.toggle('on', STATE[t.id]);
-                    updateAll();
-                };
-                tog.appendChild(chip);
-            });
-            c6.append(tog);
-            p.appendChild(c6);
-
-            // Update range value
-            const range = p.querySelector('input[type=range]');
-            if (range) range.value = STATE.moonAngle;
-        }
-
-        // ---------- QUAKE TRIGGER ----------
-        function triggerQuake() {
-            if (STATE.selectedPlate < 0) {
-                STATE.selectedPlate = 0;
-                buildControls();
-                updateAll();
-            }
-            STATE.quakeIntensity = 0.6 + 0.4 * Math.random();
-            STATE.tsunamiActive = true;
-            STATE.tsunamiProgress = 0.05;
-            const stage = document.getElementById('stage');
-            stage.classList.add('quake-flash');
-            setTimeout(() => stage.classList.remove('quake-flash'), 900);
-
-            const p = STATE.plates[STATE.selectedPlate];
-            const mag = (4.5 + 3.5 * STATE.quakeIntensity).toFixed(1);
-            document.getElementById('law-strip').innerHTML =
-                `<b>⚡ EARTHQUAKE!</b> ${p.label} plate moves — magnitude ${mag}. <span class="warning">🌊 TSUNAMI WARNING!</span> The seafloor suddenly shifts, displacing water upward. A tsunami wave is born — it travels at 800 km/h in deep water! Check the beach view!`;
-
-            speak(`Earthquake on the ${p.label} plate. Magnitude ${mag}. Tsunami warning issued. Move to high ground.`);
-            updateAll();
-        }
-
-        // ---------- UPDATE ALL ----------
-        function updateAll() {
-            updateReadout();
-            drawStage();
-            drawBeach();
-            document.getElementById('badge-l').textContent = `🌙 ${(STATE.moonAngle % 360).toFixed(0)}°`;
-            const tp = getTidePercent();
-            document.getElementById('badge-r').textContent =
-                STATE.quakeIntensity > 0.3 ? '⚡ QUAKE!' :
-                STATE.tsunamiProgress > 0.2 ? '🌊 TSUNAMI!' :
-                `🌊 ${tp}% tide`;
-            document.getElementById('badge-bl').textContent =
-                STATE.selectedPlate >= 0 ? `📍 ${STATE.plates[STATE.selectedPlate].label} plate` :
-                '⚡ click a plate → shake!';
-        }
-
-        function getTidePercent() {
-            const amp = STATE.tideAmp;
-            const maxAmp = amp * STATE.earthR * 0.45;
-            const diff0 = -STATE.moonAngle * D2R;
-            const tide0 = maxAmp * (Math.cos(diff0) * Math.cos(diff0) - 0.5) * 0.8 + maxAmp * 0.5;
-            return ((tide0 / maxAmp) * 100).toFixed(0);
-        }
-
-        // ---------- READOUT ----------
-        function updateReadout() {
-            const g = document.getElementById('readout-grid');
-            const moonA = STATE.moonAngle;
-            const amp = STATE.tideAmp;
-            const maxAmp = amp * STATE.earthR * 0.45;
-            const diff0 = -moonA * D2R;
-            const tide0 = maxAmp * (Math.cos(diff0) * Math.cos(diff0) - 0.5) * 0.8 + maxAmp * 0.5;
-            const tidePct = ((tide0 / maxAmp) * 100).toFixed(0);
-
-            const sunA = STATE.sunAngle;
-            const diffSun = ((moonA - sunA) % 360 + 360) % 360;
-            const isSpring = Math.abs(diffSun - 180) < 30 || Math.abs(diffSun - 0) < 30 || Math.abs(diffSun - 360) < 30;
-            const isNeap = Math.abs(diffSun - 90) < 30 || Math.abs(diffSun - 270) < 30;
-            let tideType = '🌊 Mixed';
-            let tc = 'cyan';
-            if (isSpring) { tideType = '🌊 Spring (strong)';
-                tc = 'green'; }
-            if (isNeap) { tideType = '🌊 Neap (weak)';
-                tc = 'orange'; }
-
-            const hazard = Math.max(STATE.quakeIntensity * 0.7, STATE.tsunamiProgress * 0.8);
-            let hazardLabel = '✅ All clear';
-            let hCol = 'green';
-            if (hazard > 0.6) { hazardLabel = '🚨 DANGER!';
-                hCol = 'red'; } else if (hazard > 0.3) { hazardLabel = '⚠️ Caution';
-                hCol = 'orange'; }
-
-            const plateLabel = STATE.selectedPlate >= 0 ? STATE.plates[STATE.selectedPlate].label : 'None';
-
-            g.innerHTML = `
-                <div class="rcell"><div class="r-label">🌙 Moon</div><div class="r-value gold">${(moonA % 360).toFixed(0)}°</div><div class="r-sub">position</div></div>
-                <div class="rcell"><div class="r-label">🌊 Tide</div><div class="r-value ${tidePct > 60 ? 'green' : 'orange'}">${tidePct}%</div><div class="r-sub">${tideType}</div></div>
-                <div class="rcell"><div class="r-label">⚡ Quake</div><div class="r-value ${STATE.quakeIntensity > 0.3 ? 'red' : 'cyan'}">${(STATE.quakeIntensity * 100).toFixed(0)}%</div><div class="r-sub">${STATE.quakeIntensity > 0.3 ? 'ACTIVE' : 'idle'}</div></div>
-                <div class="rcell"><div class="r-label">🌊 Tsunami</div><div class="r-value ${STATE.tsunamiProgress > 0.2 ? 'red' : 'cyan'}">${(STATE.tsunamiProgress * 100).toFixed(0)}%</div><div class="r-sub">${STATE.tsunamiProgress > 0.2 ? 'WAVE PROPAGATING' : 'none'}</div></div>
-                <div class="rcell"><div class="r-label">⚠️ Hazard</div><div class="r-value ${hCol}">${hazardLabel}</div><div class="r-sub">${(hazard * 100).toFixed(0)}% intensity</div></div>
-                <div class="rcell"><div class="r-label">📍 Plate</div><div class="r-value gold">${plateLabel}</div><div class="r-sub">${STATE.selectedPlate >= 0 ? 'selected — press action' : 'click a plate'}</div></div>
-            `;
-
-            if (STATE.quakeIntensity < 0.1) {
-                const law = document.getElementById('law-strip');
-                let msg =
-                    `<b>🌊 Tides are caused by the Moon's gravity.</b> The Moon pulls water toward it, creating a bulge. A second bulge forms on the opposite side. As Earth rotates, we get two high and two low tides daily. `;
-                if (isSpring) msg +=
-                    ` <b style="color:#40ffaa;">☀️ Spring tide:</b> Sun & Moon align → extra strong tides.`;
-                if (isNeap) msg +=
-                    ` <b style="color:#ff9d4f;">🌗 Neap tide:</b> Sun & Moon at 90° → weaker tides.`;
-                msg +=
-                    ` <span style="color:var(--text3);">Switch to <b>Tectonics</b> or <b>Tsunami</b> tab for action buttons.</span>`;
-                law.innerHTML = msg;
-            }
-        }
-
-        // ---------- EVENTS ----------
-        function renderEvents() {
-            const g = document.getElementById('events-grid');
-            const events = [{
-                date: 'Dec 26, 2004',
-                name: 'Sumatra–Andaman Earthquake & Tsunami',
-                type: 'tsunami',
-                desc: 'Magnitude 9.1 — the Indian plate subducted under the Burma plate, displacing huge water volumes. Waves reached 30 m. ~230,000 deaths across 14 countries.',
-                impact: '230,000+ deaths · $15B damage'
-            }, {
-                date: 'Mar 11, 2011',
-                name: 'Tōhoku Earthquake & Tsunami (Japan)',
-                type: 'tsunami',
-                desc: 'Magnitude 9.0 — Pacific plate subducts beneath Japan. Waves up to 40 m. Fukushima nuclear disaster. ~20,000 deaths.',
-                impact: '~20,000 deaths · $235B damage'
-            }, {
-                date: 'Nov 8, 2013',
-                name: 'Typhoon Haiyan (Yolanda)',
-                type: 'typhoon',
-                desc: 'Category 5 super typhoon with 315 km/h winds. Storm surge at Tacloban, amplified by spring tide, killed over 6,000.',
-                impact: '6,300+ deaths · $2.9B damage'
-            }, {
-                date: 'Nov 12, 1970',
-                name: 'Bhola Cyclone (Bangladesh)',
-                type: 'typhoon',
-                desc: 'Storm surge coincided with high tide, creating a 10 m wall of water. The deadliest tropical cyclone in history.',
-                impact: '300,000+ deaths'
-            }, {
-                date: 'Jan 17, 1995',
-                name: 'Kobe Earthquake (Japan)',
-                type: 'quake',
-                desc: 'Magnitude 6.9 — not a tsunami event, but a stark reminder of how tectonic stress builds and releases along plate boundaries.',
-                impact: '6,400 deaths · $200B damage'
-            }, {
-                date: 'Apr 25, 2015',
-                name: 'Gorkha Earthquake (Nepal)',
-                type: 'quake',
-                desc: 'Magnitude 7.8 — Indian plate colliding with Eurasian plate. Triggered avalanches on Everest. ~9,000 deaths.',
-                impact: '~9,000 deaths · $10B damage'
-            }];
-            g.innerHTML = events.map(e =>
-                `<div class="event-card">
-                    <div class="ev-title">
-                        <span>${e.name}</span>
-                        <span class="event-badge ${e.type}">${e.type.toUpperCase()}</span>
-                    </div>
-                    <div class="ev-date">📅 ${e.date}</div>
-                    <div class="ev-desc">${e.desc}</div>
-                    <div class="ev-impact">💥 ${e.impact}</div>
-                </div>`
-            ).join('');
-        }
-
-        // ---------- MODE SWITCHING ----------
-        const MODES = [
-            { id: 'tides', l: '🌊 Tides', t: 'moon & gravity' },
-            { id: 'quake', l: '⚡ Tectonics', t: 'plates & quakes' },
-            { id: 'tsunami', l: '🌊 Tsunami', t: 'wave propagation' },
-        ];
-        const SC = {
-            tides: 'Tides are caused by the Moon pulling on Earth\'s oceans. The Moon\'s gravity creates two bulges of water — one facing the Moon and one opposite. As Earth rotates, we experience two high tides and two low tides each day. The Sun also plays a role, creating spring and neap tides.',
-            quake: 'Earthquakes happen when tectonic plates — massive slabs of Earth\'s crust — grind against each other. Stress builds up over years, and when it suddenly releases, the ground shakes. Most earthquakes occur along plate boundaries like the Pacific Ring of Fire.',
-            tsunami: 'A tsunami is a series of ocean waves caused by a sudden displacement of water — usually an underwater earthquake. The wave travels at jet speed across deep water, but near shore it slows and piles up into a towering wall. Warning signs include strong ground shaking, rapid ocean recession, and a roaring sound.'
+        const btnReset = document.createElement('button');
+        btnReset.className = 'minibtn action-btn';
+        btnReset.textContent = '🔄 Reset';
+        btnReset.onclick = function() {
+          STATE.quakeIntensity = 0;
+          STATE.tsunamiActive = false;
+          STATE.tsunamiProgress = 0;
+          updateAll();
+          document.getElementById('law-strip').innerHTML = '<b>✅ Reset.</b> Press 💥 EARTHQUAKE to trigger a quake and see the effects.';
         };
-        let voiceOn = false,
-            tok = 0;
-
-        function speak(t) {
-            if (!voiceOn || !t || typeof speechSynthesis === 'undefined') return;
-            const my = ++tok;
-            try { speechSynthesis.cancel(); } catch (e) {}
-            setTimeout(() => {
-                if (my !== tok || !voiceOn) return;
-                try { const u = new SpeechSynthesisUtterance(t);
-                    u.rate = 0.92;
-                    speechSynthesis.speak(u); } catch (e) {}
-            }, 80);
-        }
-
-        function stopV() { tok++;
-            try { if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); } catch (e) {} }
-
-        function vBtn() {
-            const v = document.getElementById('voice-switcher');
-            v.textContent = voiceOn ? '🔊 Voice on' : '🔇 Voice off';
-            v.style.color = voiceOn ? 'var(--cyan)' : '';
-        }
-
-        function modeBar() {
-            const b = document.getElementById('mode-bar');
-            b.innerHTML = '';
-            MODES.forEach(m => {
-                const t = document.createElement('button');
-                t.className = 'mode-tab' + (m.id === STATE.mode ? ' active' : '');
-                t.innerHTML = m.l + ' <span class="mode-tag">' + m.t + '</span>';
-                t.onclick = () => setMode(m.id);
-                b.appendChild(t);
-            });
-        }
-
-        function setMode(id) {
-            stopV();
-            STATE.mode = id;
-            const titles = {
-                tides: '🌊 Tides & Moon',
-                quake: '⚡ Tectonic Plates',
-                tsunami: '🌊 Tsunami Generation'
-            };
-            const hints = {
-                tides: 'drag moon · see tides',
-                quake: 'click plate · trigger quake',
-                tsunami: 'click button → tsunami'
-            };
-            document.getElementById('stage-title').firstChild.textContent = titles[id] + ' ';
-            document.getElementById('stage-hint').textContent = hints[id];
-            document.getElementById('principle-hint').textContent =
-                id === 'tides' ? 'gravity creates tides' :
-                id === 'quake' ? 'plates collide → earthquakes' :
-                'quake + spring tide → tsunami';
-            document.getElementById('beach-hint').textContent =
-                id === 'tides' ? 'tide level' :
-                id === 'quake' ? 'quake effects' :
-                'watch the tsunami wave';
-            modeBar();
-            buildControls();
-            speak(SC[id] || '');
-            updateAll();
-            // Reset law strip for mode
-            if (id === 'tides') {
-                document.getElementById('law-strip').innerHTML =
-                    '<b>🌊 Tides mode.</b> Use the sliders to change moon position. Click "Spring Tide" or "Neap Tide" buttons to see tidal extremes.';
-            } else if (id === 'quake') {
-                document.getElementById('law-strip').innerHTML =
-                    '<b>⚡ Tectonics mode.</b> Select a plate (or use default Pacific) and press <b>💥 EARTHQUAKE!</b> to trigger a quake. Watch the beach view for tsunami.';
-            } else if (id === 'tsunami') {
-                document.getElementById('law-strip').innerHTML =
-                    '<b>🌊 Tsunami mode.</b> Press <b>🌊 GENERATE TSUNAMI</b> to create a spring tide + earthquake and see the tsunami wave on the beach.';
+        actionGrid.appendChild(btnReset);
+      } else if (STATE.mode === 'tsunami') {
+        const btnTsunami = document.createElement('button');
+        btnTsunami.className = 'minibtn primary action-btn';
+        btnTsunami.textContent = '🌊 GENERATE TSUNAMI';
+        btnTsunami.onclick = function() {
+          STATE.moonAngle = 0;
+          const range = document.querySelector('#mode-controls input[type=range]');
+          if (range) range.value = 0;
+          document.getElementById('angle-val').textContent = '0°';
+          if (STATE.autoRotate) {
+            STATE.autoRotate = false;
+            const toggleBtn = document.getElementById('auto-toggle');
+            if (toggleBtn) {
+              toggleBtn.textContent = '▶ Auto';
+              toggleBtn.classList.remove('on');
             }
+          }
+          if (STATE.selectedPlate < 0) STATE.selectedPlate = 0;
+          triggerQuake();
+          setTimeout(() => {
+            document.getElementById('law-strip').innerHTML = `<b>🌊 TSUNAMI GENERATED!</b> Spring tide (Sun & Moon aligned) + earthquake on ${STATE.plates[STATE.selectedPlate].label} plate. The combination creates a massive tsunami wave. Watch the beach view!`;
+          }, 100);
+        };
+        actionGrid.appendChild(btnTsunami);
+
+        const btnReset = document.createElement('button');
+        btnReset.className = 'minibtn action-btn';
+        btnReset.textContent = '🔄 Reset';
+        btnReset.onclick = function() {
+          STATE.quakeIntensity = 0;
+          STATE.tsunamiActive = false;
+          STATE.tsunamiProgress = 0;
+          updateAll();
+          document.getElementById('law-strip').innerHTML = '<b>✅ Reset.</b> Press 🌊 GENERATE TSUNAMI to create a spring tide + earthquake and trigger a tsunami.';
+        };
+        actionGrid.appendChild(btnReset);
+      } else {
+        const btnSpring = document.createElement('button');
+        btnSpring.className = 'minibtn gold action-btn';
+        btnSpring.textContent = '🌊 Spring Tide (align)';
+        btnSpring.onclick = function() {
+          STATE.moonAngle = 0;
+          const range = document.querySelector('#mode-controls input[type=range]');
+          if (range) range.value = 0;
+          document.getElementById('angle-val').textContent = '0°';
+          if (STATE.autoRotate) {
+            STATE.autoRotate = false;
+            const toggleBtn = document.getElementById('auto-toggle');
+            if (toggleBtn) {
+              toggleBtn.textContent = '▶ Auto';
+              toggleBtn.classList.remove('on');
+            }
+          }
+          updateAll();
+          document.getElementById('law-strip').innerHTML = '<b>🌊 Spring tide activated!</b> Sun and Moon are aligned (new moon). Tides are at their strongest.';
+        };
+        actionGrid.appendChild(btnSpring);
+
+        const btnNeap = document.createElement('button');
+        btnNeap.className = 'minibtn action-btn';
+        btnNeap.textContent = '🌗 Neap Tide (90°)';
+        btnNeap.onclick = function() {
+          STATE.moonAngle = 90;
+          const range = document.querySelector('#mode-controls input[type=range]');
+          if (range) range.value = 90;
+          document.getElementById('angle-val').textContent = '90°';
+          if (STATE.autoRotate) {
+            STATE.autoRotate = false;
+            const toggleBtn = document.getElementById('auto-toggle');
+            if (toggleBtn) {
+              toggleBtn.textContent = '▶ Auto';
+              toggleBtn.classList.remove('on');
+            }
+          }
+          updateAll();
+          document.getElementById('law-strip').innerHTML = '<b>🌗 Neap tide activated.</b> Sun and Moon are at right angles. Tides are weaker.';
+        };
+        actionGrid.appendChild(btnNeap);
+      }
+
+      cAction.appendChild(actionGrid);
+      p.appendChild(cAction);
+
+      // --- Row 4: Tsunami height ---
+      const c4b = document.createElement('div');
+      c4b.className = 'ctl';
+      c4b.style.gridColumn = 'span 2';
+      const r4b = document.createElement('div');
+      r4b.className = 'param-row';
+      r4b.innerHTML = `<span>🌊 Tsunami height</span><span class="param-val" id="wave-height-val">${(STATE.tsunamiWaveHeight * 100).toFixed(0)}%</span>`;
+      const inp4b = document.createElement('input');
+      inp4b.type = 'range';
+      inp4b.min = 10; inp4b.max = 200; inp4b.step = 5; inp4b.value = STATE.tsunamiWaveHeight * 100;
+      inp4b.oninput = function() {
+        STATE.tsunamiWaveHeight = +this.value / 100;
+        document.getElementById('wave-height-val').textContent = (STATE.tsunamiWaveHeight * 100).toFixed(0) + '%';
+        updateAll();
+      };
+      const m4b = document.createElement('div');
+      m4b.className = 'sb-mini';
+      m4b.textContent = 'amplify the tsunami wave';
+      c4b.append(r4b, inp4b, m4b);
+      p.appendChild(c4b);
+
+      // --- Row 5: Plate selection ---
+      const c5 = document.createElement('div');
+      c5.className = 'ctl';
+      c5.style.gridColumn = 'span 2';
+      const lbl2 = document.createElement('div');
+      lbl2.className = 'section-label';
+      lbl2.textContent = '📍 Select Plate (click on Earth or here)';
+      c5.appendChild(lbl2);
+      const g2 = document.createElement('div');
+      g2.className = 'btn-grid c4';
+      STATE.plates.forEach((p, idx) => {
+        const b = document.createElement('button');
+        b.className = 'minibtn' + (idx === STATE.selectedPlate ? ' active' : '');
+        b.textContent = p.label;
+        b.style.borderColor = idx === STATE.selectedPlate ? 'var(--gold)' : '';
+        b.onclick = function() {
+          STATE.selectedPlate = (idx === STATE.selectedPlate) ? -1 : idx;
+          updateAll();
+          buildControls();
+        };
+        g2.appendChild(b);
+      });
+      c5.appendChild(g2);
+      p.appendChild(c5);
+
+      // --- Row 6: Toggles ---
+      const c6 = document.createElement('div');
+      c6.className = 'ctl';
+      c6.style.gridColumn = 'span 2';
+      const tog = document.createElement('div');
+      tog.className = 'toggle-row';
+      const toggles = [
+        { id: 'showSun', label: '☀ Show Sun', val: STATE.showSun },
+        { id: 'showLabels', label: '🏷 Show Labels', val: STATE.showLabels }
+      ];
+      toggles.forEach(t => {
+        const chip = document.createElement('span');
+        chip.className = 'toggle-chip' + (t.val ? ' on' : '');
+        chip.textContent = t.label;
+        chip.onclick = function() {
+          STATE[t.id] = !STATE[t.id];
+          this.classList.toggle('on', STATE[t.id]);
+          updateAll();
+        };
+        tog.appendChild(chip);
+      });
+      c6.append(tog);
+      p.appendChild(c6);
+
+      const range = p.querySelector('input[type=range]');
+      if (range) range.value = STATE.moonAngle;
+    }
+
+    // ---------- QUAKE TRIGGER ----------
+    function triggerQuake() {
+      if (STATE.selectedPlate < 0) {
+        STATE.selectedPlate = 0;
+        buildControls();
+        updateAll();
+      }
+      STATE.quakeIntensity = 0.6 + 0.4 * Math.random();
+      STATE.tsunamiActive = true;
+      STATE.tsunamiProgress = 0.05;
+      const stage = document.getElementById('stage');
+      stage.classList.add('quake-flash');
+      setTimeout(() => stage.classList.remove('quake-flash'), 900);
+
+      const p = STATE.plates[STATE.selectedPlate];
+      const mag = (4.5 + 3.5 * STATE.quakeIntensity).toFixed(1);
+      document.getElementById('law-strip').innerHTML = `<b>⚡ EARTHQUAKE!</b> ${p.label} plate moves — magnitude ${mag}. <span class="warning">🌊 TSUNAMI WARNING!</span> The seafloor suddenly shifts, displacing water upward. A tsunami wave is born — it travels at 800 km/h in deep water! Check the beach view!`;
+
+      if (narrateOn) {
+        narrate(`Earthquake on the ${p.label} plate. Magnitude ${mag}. Tsunami warning issued. Move to high ground.`);
+      }
+      updateAll();
+    }
+
+    // ---------- UPDATE ALL ----------
+    function updateAll() {
+      updateReadout();
+      drawStage();
+      drawBeach();
+      document.getElementById('badge-l').textContent = `🌙 ${(STATE.moonAngle % 360).toFixed(0)}°`;
+      const tp = getTidePercent();
+      document.getElementById('badge-r').textContent =
+        STATE.quakeIntensity > 0.3 ? '⚡ QUAKE!' :
+        STATE.tsunamiProgress > 0.2 ? '🌊 TSUNAMI!' :
+        `🌊 ${tp}% tide`;
+      document.getElementById('badge-bl').textContent =
+        STATE.selectedPlate >= 0 ? `📍 ${STATE.plates[STATE.selectedPlate].label} plate` :
+        '⚡ click a plate → shake!';
+    }
+
+    function getTidePercent() {
+      const amp = STATE.tideAmp;
+      const maxAmp = amp * STATE.earthR * 0.45;
+      const diff0 = -STATE.moonAngle * D2R;
+      const tide0 = maxAmp * (Math.cos(diff0) * Math.cos(diff0) - 0.5) * 0.8 + maxAmp * 0.5;
+      return ((tide0 / maxAmp) * 100).toFixed(0);
+    }
+
+    // ---------- READOUT ----------
+    function updateReadout() {
+      const g = document.getElementById('readout-grid');
+      const moonA = STATE.moonAngle;
+      const amp = STATE.tideAmp;
+      const maxAmp = amp * STATE.earthR * 0.45;
+      const diff0 = -moonA * D2R;
+      const tide0 = maxAmp * (Math.cos(diff0) * Math.cos(diff0) - 0.5) * 0.8 + maxAmp * 0.5;
+      const tidePct = ((tide0 / maxAmp) * 100).toFixed(0);
+
+      const sunA = STATE.sunAngle;
+      const diffSun = ((moonA - sunA) % 360 + 360) % 360;
+      const isSpring = Math.abs(diffSun - 180) < 30 || Math.abs(diffSun - 0) < 30 || Math.abs(diffSun - 360) < 30;
+      const isNeap = Math.abs(diffSun - 90) < 30 || Math.abs(diffSun - 270) < 30;
+      let tideType = '🌊 Mixed';
+      let tc = 'cyan';
+      if (isSpring) { tideType = '🌊 Spring (strong)'; tc = 'green'; }
+      if (isNeap) { tideType = '🌊 Neap (weak)'; tc = 'orange'; }
+
+      const hazard = Math.max(STATE.quakeIntensity * 0.7, STATE.tsunamiProgress * 0.8);
+      let hazardLabel = '✅ All clear';
+      let hCol = 'green';
+      if (hazard > 0.6) { hazardLabel = '🚨 DANGER!'; hCol = 'red'; }
+      else if (hazard > 0.3) { hazardLabel = '⚠️ Caution'; hCol = 'orange'; }
+
+      const plateLabel = STATE.selectedPlate >= 0 ? STATE.plates[STATE.selectedPlate].label : 'None';
+
+      g.innerHTML = `
+        <div class="rcell"><div class="r-label">🌙 Moon</div><div class="r-value gold">${(moonA % 360).toFixed(0)}°</div><div class="r-sub">position</div></div>
+        <div class="rcell"><div class="r-label">🌊 Tide</div><div class="r-value ${tidePct > 60 ? 'green' : 'orange'}">${tidePct}%</div><div class="r-sub">${tideType}</div></div>
+        <div class="rcell"><div class="r-label">⚡ Quake</div><div class="r-value ${STATE.quakeIntensity > 0.3 ? 'red' : 'cyan'}">${(STATE.quakeIntensity * 100).toFixed(0)}%</div><div class="r-sub">${STATE.quakeIntensity > 0.3 ? 'ACTIVE' : 'idle'}</div></div>
+        <div class="rcell"><div class="r-label">🌊 Tsunami</div><div class="r-value ${STATE.tsunamiProgress > 0.2 ? 'red' : 'cyan'}">${(STATE.tsunamiProgress * 100).toFixed(0)}%</div><div class="r-sub">${STATE.tsunamiProgress > 0.2 ? 'WAVE PROPAGATING' : 'none'}</div></div>
+        <div class="rcell"><div class="r-label">⚠️ Hazard</div><div class="r-value ${hCol}">${hazardLabel}</div><div class="r-sub">${(hazard * 100).toFixed(0)}% intensity</div></div>
+        <div class="rcell"><div class="r-label">📍 Plate</div><div class="r-value gold">${plateLabel}</div><div class="r-sub">${STATE.selectedPlate >= 0 ? 'selected — press action' : 'click a plate'}</div></div>
+      `;
+
+      if (STATE.quakeIntensity < 0.1) {
+        const law = document.getElementById('law-strip');
+        let msg = `<b>🌊 Tides are caused by the Moon's gravity.</b> The Moon pulls water toward it, creating a bulge. A second bulge forms on the opposite side. As Earth rotates, we get two high and two low tides daily. `;
+        if (isSpring) msg += ` <b style="color:#40ffaa;">☀️ Spring tide:</b> Sun & Moon align → extra strong tides.`;
+        if (isNeap) msg += ` <b style="color:#ff9d4f;">🌗 Neap tide:</b> Sun & Moon at 90° → weaker tides.`;
+        msg += ` <span style="color:var(--text3);">Switch to <b>Tectonics</b> or <b>Tsunami</b> tab for action buttons.</span>`;
+        law.innerHTML = msg;
+      }
+    }
+
+    // ---------- EVENTS ----------
+    function renderEvents() {
+      const g = document.getElementById('events-grid');
+      const events = [{
+        date: 'Dec 26, 2004',
+        name: 'Sumatra–Andaman Earthquake & Tsunami',
+        type: 'tsunami',
+        desc: 'Magnitude 9.1 — the Indian plate subducted under the Burma plate, displacing huge water volumes. Waves reached 30 m. ~230,000 deaths across 14 countries.',
+        impact: '230,000+ deaths · $15B damage'
+      }, {
+        date: 'Mar 11, 2011',
+        name: 'Tōhoku Earthquake & Tsunami (Japan)',
+        type: 'tsunami',
+        desc: 'Magnitude 9.0 — Pacific plate subducts beneath Japan. Waves up to 40 m. Fukushima nuclear disaster. ~20,000 deaths.',
+        impact: '~20,000 deaths · $235B damage'
+      }, {
+        date: 'Nov 8, 2013',
+        name: 'Typhoon Haiyan (Yolanda)',
+        type: 'typhoon',
+        desc: 'Category 5 super typhoon with 315 km/h winds. Storm surge at Tacloban, amplified by spring tide, killed over 6,000.',
+        impact: '6,300+ deaths · $2.9B damage'
+      }, {
+        date: 'Nov 12, 1970',
+        name: 'Bhola Cyclone (Bangladesh)',
+        type: 'typhoon',
+        desc: 'Storm surge coincided with high tide, creating a 10 m wall of water. The deadliest tropical cyclone in history.',
+        impact: '300,000+ deaths'
+      }, {
+        date: 'Jan 17, 1995',
+        name: 'Kobe Earthquake (Japan)',
+        type: 'quake',
+        desc: 'Magnitude 6.9 — not a tsunami event, but a stark reminder of how tectonic stress builds and releases along plate boundaries.',
+        impact: '6,400 deaths · $200B damage'
+      }, {
+        date: 'Apr 25, 2015',
+        name: 'Gorkha Earthquake (Nepal)',
+        type: 'quake',
+        desc: 'Magnitude 7.8 — Indian plate colliding with Eurasian plate. Triggered avalanches on Everest. ~9,000 deaths.',
+        impact: '~9,000 deaths · $10B damage'
+      }];
+      g.innerHTML = events.map(e => `
+        <div class="event-card">
+          <div class="ev-title">
+            <span>${e.name}</span>
+            <span class="event-badge ${e.type}">${e.type.toUpperCase()}</span>
+          </div>
+          <div class="ev-date">📅 ${e.date}</div>
+          <div class="ev-desc">${e.desc}</div>
+          <div class="ev-impact">💥 ${e.impact}</div>
+        </div>
+      `).join('');
+    }
+
+    // ---------- MODE SWITCHING ----------
+    const MODES = [
+      { id: 'tides', l: '🌊 Tides', t: 'moon & gravity' },
+      { id: 'quake', l: '⚡ Tectonics', t: 'plates & quakes' },
+      { id: 'tsunami', l: '🌊 Tsunami', t: 'wave propagation' },
+    ];
+    const SC = {
+      tides: 'Tides are caused by the Moon pulling on Earth\'s oceans. The Moon\'s gravity creates two bulges of water — one facing the Moon and one opposite. As Earth rotates, we experience two high tides and two low tides each day. The Sun also plays a role, creating spring and neap tides.',
+      quake: 'Earthquakes happen when tectonic plates — massive slabs of Earth\'s crust — grind against each other. Stress builds up over years, and when it suddenly releases, the ground shakes. Most earthquakes occur along plate boundaries like the Pacific Ring of Fire.',
+      tsunami: 'A tsunami is a series of ocean waves caused by a sudden displacement of water — usually an underwater earthquake. The wave travels at jet speed across deep water, but near shore it slows and piles up into a towering wall. Warning signs include strong ground shaking, rapid ocean recession, and a roaring sound.'
+    };
+
+    function modeBar() {
+      const b = document.getElementById('mode-bar');
+      b.innerHTML = '';
+      MODES.forEach(m => {
+        const t = document.createElement('button');
+        t.className = 'mode-tab' + (m.id === STATE.mode ? ' active' : '');
+        t.innerHTML = m.l + ' <span class="mode-tag">' + m.t + '</span>';
+        t.onclick = () => setMode(m.id);
+        b.appendChild(t);
+      });
+    }
+
+    function setMode(id) {
+      stopNarration();
+      STATE.mode = id;
+      const titles = {
+        tides: '🌊 Tides & Moon',
+        quake: '⚡ Tectonic Plates',
+        tsunami: '🌊 Tsunami Generation'
+      };
+      const hints = {
+        tides: 'drag moon · see tides',
+        quake: 'click plate · trigger quake',
+        tsunami: 'click button → tsunami'
+      };
+      document.getElementById('stage-title').firstChild.textContent = titles[id] + ' ';
+      document.getElementById('stage-hint').textContent = hints[id];
+      document.getElementById('principle-hint').textContent =
+        id === 'tides' ? 'gravity creates tides' :
+        id === 'quake' ? 'plates collide → earthquakes' :
+        'quake + spring tide → tsunami';
+      document.getElementById('beach-hint').textContent =
+        id === 'tides' ? 'tide level' :
+        id === 'quake' ? 'quake effects' :
+        'watch the tsunami wave';
+      modeBar();
+      buildControls();
+      if (narrateOn) {
+        narrate(SC[id] || '');
+      }
+      updateAll();
+      if (id === 'tides') {
+        document.getElementById('law-strip').innerHTML = '<b>🌊 Tides mode.</b> Use the sliders to change moon position. Click "Spring Tide" or "Neap Tide" buttons to see tidal extremes.';
+      } else if (id === 'quake') {
+        document.getElementById('law-strip').innerHTML = '<b>⚡ Tectonics mode.</b> Select a plate (or use default Pacific) and press <b>💥 EARTHQUAKE!</b> to trigger a quake. Watch the beach view for tsunami.';
+      } else if (id === 'tsunami') {
+        document.getElementById('law-strip').innerHTML = '<b>🌊 Tsunami mode.</b> Press <b>🌊 GENERATE TSUNAMI</b> to create a spring tide + earthquake and see the tsunami wave on the beach.';
+      }
+    }
+
+    // ---------- DRAG ----------
+    function dragMoon(mx, my) {
+      const cx = W / 2, cy = H / 2 - 4;
+      const dx = mx - cx, dy = my - cy;
+      if (Math.sqrt(dx * dx + dy * dy) < 20) return;
+      let angle = Math.atan2(dy, dx) * R2D;
+      if (angle < 0) angle += 360;
+      STATE.moonAngle = angle;
+      const range = document.querySelector('#mode-controls input[type=range]');
+      if (range) range.value = angle;
+      const av = document.getElementById('angle-val');
+      if (av) av.textContent = angle.toFixed(0) + '°';
+      if (STATE.autoRotate) {
+        STATE.autoRotate = false;
+        const at = document.getElementById('auto-toggle');
+        if (at) {
+          at.textContent = '▶ Auto';
+          at.style.color = 'var(--text2)';
+          at.classList.remove('on');
         }
+      }
+      updateAll();
+    }
 
-        // ---------- DRAG ----------
-        function dragMoon(mx, my) {
-            const cx = W / 2,
-                cy = H / 2 - 4;
-            const dx = mx - cx,
-                dy = my - cy;
-            if (Math.sqrt(dx * dx + dy * dy) < 20) return;
-            let angle = Math.atan2(dy, dx) * R2D;
-            if (angle < 0) angle += 360;
-            STATE.moonAngle = angle;
-            const range = document.querySelector('#mode-controls input[type=range]');
-            if (range) range.value = angle;
-            const av = document.getElementById('angle-val');
-            if (av) av.textContent = angle.toFixed(0) + '°';
-            if (STATE.autoRotate) {
-                STATE.autoRotate = false;
-                const at = document.getElementById('auto-toggle');
-                if (at) { at.textContent = '▶ Auto';
-                    at.style.color = 'var(--text2)';
-                    at.classList.remove('on'); }
-            }
-            updateAll();
+    function handlePlateClick(mx, my) {
+      const cx = W / 2, cy = H / 2 - 4;
+      const r = STATE.earthR;
+      const dx = mx - cx, dy = my - cy;
+      if (Math.sqrt(dx * dx + dy * dy) > r * 1.4) return false;
+      for (let i = 0; i < STATE.plates.length; i++) {
+        const p = STATE.plates[i];
+        const px = cx + p.x, py = cy + p.y;
+        const dx2 = mx - px, dy2 = my - py;
+        if ((dx2 * dx2) / (p.w * p.w) + (dy2 * dy2) / (p.h * p.h) < 1.2) {
+          STATE.selectedPlate = (STATE.selectedPlate === i) ? -1 : i;
+          buildControls();
+          updateAll();
+          if (STATE.selectedPlate >= 0) {
+            if (narrateOn) narrate(`Selected ${p.label} plate. Use the action button below.`);
+            document.getElementById('law-strip').innerHTML = `<b>📍 ${p.label} plate selected.</b> Now press the action button (e.g., 💥 EARTHQUAKE) to trigger an event.`;
+          }
+          return true;
         }
+      }
+      return false;
+    }
 
-        function handlePlateClick(mx, my) {
-            const cx = W / 2,
-                cy = H / 2 - 4;
-            const r = STATE.earthR;
-            const dx = mx - cx,
-                dy = my - cy;
-            if (Math.sqrt(dx * dx + dy * dy) > r * 1.4) return false;
-            for (let i = 0; i < STATE.plates.length; i++) {
-                const p = STATE.plates[i];
-                const px = cx + p.x,
-                    py = cy + p.y;
-                const dx2 = mx - px,
-                    dy2 = my - py;
-                if ((dx2 * dx2) / (p.w * p.w) + (dy2 * dy2) / (p.h * p.h) < 1.2) {
-                    STATE.selectedPlate = (STATE.selectedPlate === i) ? -1 : i;
-                    buildControls();
-                    updateAll();
-                    if (STATE.selectedPlate >= 0) {
-                        speak(`Selected ${p.label} plate. Use the action button below.`);
-                        document.getElementById('law-strip').innerHTML =
-                            `<b>📍 ${p.label} plate selected.</b> Now press the action button (e.g., 💥 EARTHQUAKE) to trigger an event.`;
-                    }
-                    return true;
-                }
-            }
-            return false;
+    // ---------- UI BINDING ----------
+    function bindUI() {
+      stage = document.getElementById('stage');
+      sctx = stage.getContext('2d');
+      beach = document.getElementById('beach');
+      bctx = beach.getContext('2d');
+      stage.width = W;
+      stage.height = H;
+      beach.width = AUXW;
+      beach.height = AUXH;
+
+      function pt(e) {
+        const r = stage.getBoundingClientRect();
+        const cx = (e.touches ? e.touches[0].clientX : e.clientX);
+        const cy = (e.touches ? e.touches[0].clientY : e.clientY);
+        return { x: (cx - r.left) * (W / r.width), y: (cy - r.top) * (H / r.height) };
+      }
+
+      function dn(e) {
+        const p = pt(e);
+        if (handlePlateClick(p.x, p.y)) {
+          e.preventDefault && e.preventDefault();
+          return;
         }
+        const cx = W / 2, cy = H / 2 - 4;
+        const dx = p.x - cx, dy = p.y - cy;
+        if (Math.sqrt(dx * dx + dy * dy) < 30) return;
+        STATE.drag = true;
+        dragMoon(p.x, p.y);
+        e.preventDefault && e.preventDefault();
+      }
 
-        // ---------- UI BINDING ----------
-        function bindUI() {
-            stage = document.getElementById('stage');
-            sctx = stage.getContext('2d');
-            beach = document.getElementById('beach');
-            bctx = beach.getContext('2d');
-            stage.width = W;
-            stage.height = H;
-            beach.width = AUXW;
-            beach.height = AUXH;
+      function mv(e) {
+        if (!STATE.drag) return;
+        const p = pt(e);
+        dragMoon(p.x, p.y);
+        e.preventDefault && e.preventDefault();
+      }
 
-            function pt(e) {
-                const r = stage.getBoundingClientRect();
-                const cx = (e.touches ? e.touches[0].clientX : e.clientX);
-                const cy = (e.touches ? e.touches[0].clientY : e.clientY);
-                return { x: (cx - r.left) * (W / r.width), y: (cy - r.top) * (H / r.height) };
-            }
+      function up() { STATE.drag = false; }
 
-            function dn(e) {
-                const p = pt(e);
-                if (handlePlateClick(p.x, p.y)) {
-                    e.preventDefault && e.preventDefault();
-                    return;
-                }
-                const cx = W / 2,
-                    cy = H / 2 - 4;
-                const dx = p.x - cx,
-                    dy = p.y - cy;
-                if (Math.sqrt(dx * dx + dy * dy) < 30) return;
-                STATE.drag = true;
-                dragMoon(p.x, p.y);
-                e.preventDefault && e.preventDefault();
-            }
+      stage.addEventListener('mousedown', dn);
+      window.addEventListener('mousemove', mv);
+      window.addEventListener('mouseup', up);
+      stage.addEventListener('touchstart', dn, { passive: false });
+      window.addEventListener('touchmove', mv, { passive: false });
+      window.addEventListener('touchend', up);
 
-            function mv(e) {
-                if (!STATE.drag) return;
-                const p = pt(e);
-                dragMoon(p.x, p.y);
-                e.preventDefault && e.preventDefault();
-            }
+      // 6-Theme Palette Switcher
+      const themeSelector = document.getElementById('theme-selector');
+      const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      themeSelector.value = savedTheme;
+      themeSelector.addEventListener('change', (e) => {
+        const selectedTheme = e.target.value;
+        document.documentElement.setAttribute('data-theme', selectedTheme);
+        localStorage.setItem('sim_theme', selectedTheme);
+      });
 
-            function up() { STATE.drag = false; }
-
-            stage.addEventListener('mousedown', dn);
-            window.addEventListener('mousemove', mv);
-            window.addEventListener('mouseup', up);
-            stage.addEventListener('touchstart', dn, { passive: false });
-            window.addEventListener('touchmove', mv, { passive: false });
-            window.addEventListener('touchend', up);
-
-            // Theme
-            const ts = document.getElementById('theme-switcher');
-            try { if (localStorage.getItem('theme') === 'light') document.body.classList.add('light-theme'); } catch (e) {}
-            ts.onclick = function() {
-                document.body.classList.toggle('light-theme');
-                try { localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark'); } catch (
-                e) {}
-                updateAll();
-            };
-
-            // Voice
-            const vs = document.getElementById('voice-switcher');
-            try { if (localStorage.getItem('tide-voice') === 'on') voiceOn = true; } catch (e) {}
-            vBtn();
-            vs.onclick = function() {
-                voiceOn = !voiceOn;
-                try { localStorage.setItem('tide-voice', voiceOn ? 'on' : 'off'); } catch (e) {}
-                vBtn();
-                if (voiceOn) speak(SC[STATE.mode] || '');
-                else stopV();
-            };
-            document.addEventListener('visibilitychange', () => { if (document.hidden) stopV(); });
+      // Voice Narration Toggle (No Subtitle Text Box)
+      const btnNarrate = document.getElementById('btn-narrate');
+      btnNarrate.onclick = function() {
+        if (!window.speechSynthesis) {
+          alert('Speech synthesis not supported. Please use a modern browser.');
+          return;
         }
-
-        // ---------- THEORY ----------
-        function buildTheory() {
-            document.getElementById('theory').innerHTML = `
-                <div class="theory-hdr">🌍 The Science of Tides, Tectonics &amp; Tsunamis</div>
-
-                <h3>🌊 What Causes Tides?</h3>
-                <p><strong>The Moon's gravity</strong> pulls on Earth's oceans, creating two tidal bulges — one facing the Moon and one on the opposite side. The second bulge forms because the Earth itself is pulled toward the Moon more than the water on the far side. As Earth rotates, these bulges sweep around, giving most coastlines <em>two high tides and two low tides</em> every 24 hours and 50 minutes.</p>
-
-                <div class="eq">🌙 Tidal force ∝ 1 / r³<div class="vars">The Moon's tidal force drops with the cube of distance — that's why the Moon dominates tides even though the Sun is vastly more massive.</div></div>
-
-                <h3>☀️ Spring &amp; Neap Tides</h3>
-                <p>The <strong>Sun</strong> also exerts a tidal force, about 46% as strong as the Moon's. When the Sun, Moon, and Earth align (new moon or full moon), their forces combine to create <em>spring tides</em> — extra-high highs and extra-low lows. When they're at right angles (first or last quarter), the forces partially cancel, giving <em>neap tides</em> with more moderate ranges.</p>
-
-                <div class="hbox hb-cyan">🌊 <b>Spring tide:</b> Sun &amp; Moon aligned → strong tides &nbsp;|&nbsp; 🌗 <b>Neap tide:</b> Sun &amp; Moon at 90° → weak tides</div>
-
-                <h3>⚡ Why Do Earthquakes Happen?</h3>
-                <p><strong>Earthquakes</strong> occur when <em>tectonic plates</em> — massive slabs of Earth's crust and upper mantle — move against each other. Stress builds up over decades or centuries as plates grind, collide, or subduct (one plate diving beneath another). When the stress overcomes friction, the plates suddenly slip, releasing enormous energy as <em>seismic waves</em> — the ground shakes.</p>
-                <p>Most earthquakes happen along plate boundaries, especially the <strong>Pacific Ring of Fire</strong>, where the Pacific plate subducts beneath surrounding plates.</p>
-
-                <div class="hbox hb-red">⚡ <b>Key fact:</b> The 2004 Sumatra quake (M9.1) occurred when the Indian plate subducted under the Burma plate — the fault line ruptured over 1,200 km, displacing the seafloor and triggering a deadly tsunami.</div>
-
-                <h3>🇯🇵 The 2011 Tōhoku Earthquake and Tsunami</h3>
-                <p>On <strong>March 11, 2011</strong>, a magnitude 9.0 earthquake struck off the coast of Japan. The Pacific plate subducted beneath the Okhotsk plate, causing a massive rupture that shifted the seafloor by up to 40 metres. This displacement generated a tsunami with waves reaching <strong>40 metres</strong> in height, which swept inland for up to 10 km. The disaster killed nearly 20,000 people, destroyed over 400,000 buildings, and triggered the <strong>Fukushima Daiichi nuclear meltdown</strong> — one of the worst nuclear accidents in history. The event also moved Japan's main island by 2.4 metres east and shifted the Earth's axis by 10 cm.</p>
-
-                <div class="hbox hb-red">⚠️ <b>Lesson:</b> The 2011 tsunami demonstrated the importance of early warning systems and coastal defences. Despite Japan's advanced preparedness, the sheer scale of the wave overwhelmed protective measures. The tragedy spurred global improvements in tsunami detection and evacuation planning.</div>
-
-                <h3>🌊 How Do Tsunamis Form?</h3>
-                <p>A <strong>tsunami</strong> is a series of ocean waves caused by a sudden displacement of water — usually an <em>underwater earthquake</em> (magnitude 7+), but also landslides, volcanic eruptions, or asteroid impacts. Unlike wind-driven waves, tsunami waves travel at <em>700–900 km/h</em> in deep water, with very long wavelengths (100+ km) and small amplitudes (less than a metre). As they enter shallow water, they slow down and <em>pile up</em> into devastating walls of water, sometimes over 30 metres high.</p>
-
-                <div class="eq">🌊 Tsunami speed = √(g × depth)<div class="vars">In deep water (4,000 m), speed ≈ 200 m/s (720 km/h). In shallow water (10 m), speed ≈ 10 m/s (36 km/h) — the wave piles up!</div></div>
-
-                <div class="hbox hb-red">⚠️ <b>Tsunamis are NOT tidal waves.</b> They have nothing to do with the Moon's tides. The name is a historical misnomer. Tsunamis are seismic in origin.</div>
-
-                <h3>🚨 Tsunami Warning Signs</h3>
-                <ul style="color:var(--text2);font-size:13px;line-height:2;list-style:none;padding-left:0;">
-                    <li>🔴 <b>Strong earthquake</b> — if you feel the ground shake violently near the coast, don't wait.</li>
-                    <li>🟡 <b>Ocean recedes</b> — the water suddenly pulls back, exposing the seafloor. This is a classic warning.</li>
-                    <li>🔴 <b>Roaring sound</b> — an approaching tsunami can sound like a freight train or jet engine.</li>
-                    <li>🟡 <b>Unusual waves</b> — rapid rise or fall of water level, or a series of strong waves.</li>
-                    <li>🟢 <b>Move to high ground</b> — if you see any of these signs, evacuate immediately to at least 30 metres above sea level.</li>
-                </ul>
-
-                <h3>📊 Are These Calculations Real?</h3>
-                <p><strong>This simulation uses simplified models</strong> to illustrate the fundamental physics. The tidal bulge is computed using a qualitative approximation of the gravitational gradient, not a full numerical ocean model. The tsunami wave is generated by a simple pulse, not a full hydrodynamic simulation. However, the <strong>principles</strong> — gravity, plate tectonics, wave speed dependence on depth — are all real and accurately represented for educational purposes. This is a learning tool, not a forecasting instrument.</p>
-
-                <h3>📊 Historical Events</h3>
-                <table class="ctable">
-                    <tr><th>Event</th><th>Year</th><th>Type</th><th>Key Factor</th></tr>
-                    <tr><td>Sumatra–Andaman</td><td>2004</td><td>Tsunami</td><td>M9.1 — Indian plate subducts under Burma plate</td></tr>
-                    <tr><td>Tōhoku (Japan)</td><td>2011</td><td>Tsunami</td><td>M9.0 — Pacific plate subducts beneath Japan</td></tr>
-                    <tr><td>Typhoon Haiyan</td><td>2013</td><td>Storm surge</td><td>Spring tide amplified the surge</td></tr>
-                    <tr><td>Bhola Cyclone</td><td>1970</td><td>Storm surge</td><td>Coincided with high tide → 300,000+ deaths</td></tr>
-                </table>
-
-                <h3>🌍 Did You Know?</h3>
-                <p>The Moon is slowly moving away from Earth — about 3.8 cm per year. A billion years ago, tides were <em>much</em> stronger, and a day was only about 21 hours long. The Moon's gravity is gradually slowing Earth's rotation, transferring angular momentum to the Moon's orbit. Also, the <strong>Pacific Ring of Fire</strong> is home to 75% of the world's active volcanoes and 90% of its earthquakes.</p>
-            `;
+        narrateOn = !narrateOn;
+        this.textContent = narrateOn ? '🔊 Voice ON' : '🔇 Voice';
+        this.style.color = narrateOn ? 'var(--cyan)' : '';
+        document.getElementById('nbox').style.display = narrateOn ? 'block' : 'none';
+        if (narrateOn) {
+          populateVoices();
+          narrate(SC[STATE.mode]);
+        } else {
+          stopNarration();
         }
+      };
+      document.getElementById('vsel').onchange = function() {
+        const v = speechSynthesis.getVoices().find(v => v.name === this.value);
+        if (v) chosenVoice = v;
+      };
+      document.getElementById('sl-rate').oninput = function() {
+        speechRate = parseFloat(this.value);
+        document.getElementById('rate-v').textContent = speechRate.toFixed(1) + '×';
+      };
+    }
 
-        // ---------- LOOP ----------
-        let frame = 0;
+    // ---------- THEORY ----------
+    function buildTheory() {
+      document.getElementById('theory').innerHTML = `
+        <div class="theory-hdr">🌍 The Science of Tides, Tectonics &amp; Tsunamis</div>
 
-        function loop(now) {
-            tNow = now;
-            STATE.sunAngle = (now * 0.000012 + 200) % 360;
+        <h3>🌊 What Causes Tides?</h3>
+        <p><strong>The Moon's gravity</strong> pulls on Earth's oceans, creating two tidal bulges — one facing the Moon and one on the opposite side. The second bulge forms because the Earth itself is pulled toward the Moon more than the water on the far side. As Earth rotates, these bulges sweep around, giving most coastlines <em>two high tides and two low tides</em> every 24 hours and 50 minutes.</p>
 
-            if (STATE.autoRotate) {
-                STATE.moonAngle = (STATE.moonAngle + STATE.speed * 0.15) % 360;
-                const range = document.querySelector('#mode-controls input[type=range]');
-                if (range) range.value = STATE.moonAngle;
-                const av = document.getElementById('angle-val');
-                if (av) av.textContent = STATE.moonAngle.toFixed(0) + '°';
-            }
+        <div class="eq">🌙 Tidal force ∝ 1 / r³<div class="vars">The Moon's tidal force drops with the cube of distance — that's why the Moon dominates tides even though the Sun is vastly more massive.</div></div>
 
-            if (STATE.quakeIntensity > 0) {
-                STATE.quakeIntensity *= 0.995;
-                if (STATE.quakeIntensity < 0.005) STATE.quakeIntensity = 0;
-            }
+        <h3>☀️ Spring &amp; Neap Tides</h3>
+        <p>The <strong>Sun</strong> also exerts a tidal force, about 46% as strong as the Moon's. When the Sun, Moon, and Earth align (new moon or full moon), their forces combine to create <em>spring tides</em> — extra-high highs and extra-low lows. When they're at right angles (first or last quarter), the forces partially cancel, giving <em>neap tides</em> with more moderate ranges.</p>
 
-            if (STATE.tsunamiActive) {
-                STATE.tsunamiProgress += 0.002 * (1 + STATE.speed * 0.5);
-                if (STATE.tsunamiProgress > 1.4) {
-                    STATE.tsunamiActive = false;
-                    STATE.tsunamiProgress = 0;
-                    if (STATE.quakeIntensity < 0.05) {
-                        document.getElementById('law-strip').innerHTML =
-                            '<b>🌊 Tsunami wave has passed.</b> Remember: if you see the ocean receding, run to high ground immediately!';
-                    }
-                }
-            }
+        <div class="hbox hb-cyan">🌊 <b>Spring tide:</b> Sun &amp; Moon aligned → strong tides &nbsp;|&nbsp; 🌗 <b>Neap tide:</b> Sun &amp; Moon at 90° → weak tides</div>
 
-            drawStage();
-            drawBeach();
-            if (frame % 3 === 0) updateReadout();
-            frame++;
-            requestAnimationFrame(loop);
+        <h3>⚡ Why Do Earthquakes Happen?</h3>
+        <p><strong>Earthquakes</strong> occur when <em>tectonic plates</em> — massive slabs of Earth's crust and upper mantle — move against each other. Stress builds up over decades or centuries as plates grind, collide, or subduct (one plate diving beneath another). When the stress overcomes friction, the plates suddenly slip, releasing enormous energy as <em>seismic waves</em> — the ground shakes.</p>
+        <p>Most earthquakes happen along plate boundaries, especially the <strong>Pacific Ring of Fire</strong>, where the Pacific plate subducts beneath surrounding plates.</p>
+
+        <div class="hbox hb-red">⚡ <b>Key fact:</b> The 2004 Sumatra quake (M9.1) occurred when the Indian plate subducted under the Burma plate — the fault line ruptured over 1,200 km, displacing the seafloor and triggering a deadly tsunami.</div>
+
+        <h3>🇯🇵 The 2011 Tōhoku Earthquake and Tsunami</h3>
+        <p>On <strong>March 11, 2011</strong>, a magnitude 9.0 earthquake struck off the coast of Japan. The Pacific plate subducted beneath the Okhotsk plate, causing a massive rupture that shifted the seafloor by up to 40 metres. This displacement generated a tsunami with waves reaching <strong>40 metres</strong> in height, which swept inland for up to 10 km. The disaster killed nearly 20,000 people, destroyed over 400,000 buildings, and triggered the <strong>Fukushima Daiichi nuclear meltdown</strong> — one of the worst nuclear accidents in history. The event also moved Japan's main island by 2.4 metres east and shifted the Earth's axis by 10 cm.</p>
+
+        <div class="hbox hb-red">⚠️ <b>Lesson:</b> The 2011 tsunami demonstrated the importance of early warning systems and coastal defences. Despite Japan's advanced preparedness, the sheer scale of the wave overwhelmed protective measures. The tragedy spurred global improvements in tsunami detection and evacuation planning.</div>
+
+        <h3>🌊 How Do Tsunamis Form?</h3>
+        <p>A <strong>tsunami</strong> is a series of ocean waves caused by a sudden displacement of water — usually an <em>underwater earthquake</em> (magnitude 7+), but also landslides, volcanic eruptions, or asteroid impacts. Unlike wind-driven waves, tsunami waves travel at <em>700–900 km/h</em> in deep water, with very long wavelengths (100+ km) and small amplitudes (less than a metre). As they enter shallow water, they slow down and <em>pile up</em> into devastating walls of water, sometimes over 30 metres high.</p>
+
+        <div class="eq">🌊 Tsunami speed = √(g × depth)<div class="vars">In deep water (4,000 m), speed ≈ 200 m/s (720 km/h). In shallow water (10 m), speed ≈ 10 m/s (36 km/h) — the wave piles up!</div></div>
+
+        <div class="hbox hb-red">⚠️ <b>Tsunamis are NOT tidal waves.</b> They have nothing to do with the Moon's tides. The name is a historical misnomer. Tsunamis are seismic in origin.</div>
+
+        <h3>🚨 Tsunami Warning Signs</h3>
+        <ul style="color:var(--text2);font-size:13px;line-height:2;list-style:none;padding-left:0;">
+          <li>🔴 <b>Strong earthquake</b> — if you feel the ground shake violently near the coast, don't wait.</li>
+          <li>🟡 <b>Ocean recedes</b> — the water suddenly pulls back, exposing the seafloor. This is a classic warning.</li>
+          <li>🔴 <b>Roaring sound</b> — an approaching tsunami can sound like a freight train or jet engine.</li>
+          <li>🟡 <b>Unusual waves</b> — rapid rise or fall of water level, or a series of strong waves.</li>
+          <li>🟢 <b>Move to high ground</b> — if you see any of these signs, evacuate immediately to at least 30 metres above sea level.</li>
+        </ul>
+
+        <h3>📊 Are These Calculations Real?</h3>
+        <p><strong>This simulation uses simplified models</strong> to illustrate the fundamental physics. The tidal bulge is computed using a qualitative approximation of the gravitational gradient, not a full numerical ocean model. The tsunami wave is generated by a simple pulse, not a full hydrodynamic simulation. However, the <strong>principles</strong> — gravity, plate tectonics, wave speed dependence on depth — are all real and accurately represented for educational purposes. This is a learning tool, not a forecasting instrument.</p>
+
+        <h3>📊 Historical Events</h3>
+        <table class="ctable">
+          <tr><th>Event</th><th>Year</th><th>Type</th><th>Key Factor</th></tr>
+          <tr><td>Sumatra–Andaman</td><td>2004</td><td>Tsunami</td><td>M9.1 — Indian plate subducts under Burma plate</td></tr>
+          <tr><td>Tōhoku (Japan)</td><td>2011</td><td>Tsunami</td><td>M9.0 — Pacific plate subducts beneath Japan</td></tr>
+          <tr><td>Typhoon Haiyan</td><td>2013</td><td>Storm surge</td><td>Spring tide amplified the surge</td></tr>
+          <tr><td>Bhola Cyclone</td><td>1970</td><td>Storm surge</td><td>Coincided with high tide → 300,000+ deaths</td></tr>
+        </table>
+
+        <h3>🌍 Did You Know?</h3>
+        <p>The Moon is slowly moving away from Earth — about 3.8 cm per year. A billion years ago, tides were <em>much</em> stronger, and a day was only about 21 hours long. The Moon's gravity is gradually slowing Earth's rotation, transferring angular momentum to the Moon's orbit. Also, the <strong>Pacific Ring of Fire</strong> is home to 75% of the world's active volcanoes and 90% of its earthquakes.</p>
+      `;
+    }
+
+    // ---------- LOOP ----------
+    let frame = 0;
+    function loop(now) {
+      tNow = now;
+      STATE.sunAngle = (now * 0.000012 + 200) % 360;
+
+      if (STATE.autoRotate) {
+        STATE.moonAngle = (STATE.moonAngle + STATE.speed * 0.15) % 360;
+        const range = document.querySelector('#mode-controls input[type=range]');
+        if (range) range.value = STATE.moonAngle;
+        const av = document.getElementById('angle-val');
+        if (av) av.textContent = STATE.moonAngle.toFixed(0) + '°';
+      }
+
+      if (STATE.quakeIntensity > 0) {
+        STATE.quakeIntensity *= 0.995;
+        if (STATE.quakeIntensity < 0.005) STATE.quakeIntensity = 0;
+      }
+
+      if (STATE.tsunamiActive) {
+        STATE.tsunamiProgress += 0.002 * (1 + STATE.speed * 0.5);
+        if (STATE.tsunamiProgress > 1.4) {
+          STATE.tsunamiActive = false;
+          STATE.tsunamiProgress = 0;
+          if (STATE.quakeIntensity < 0.05) {
+            document.getElementById('law-strip').innerHTML = '<b>🌊 Tsunami wave has passed.</b> Remember: if you see the ocean receding, run to high ground immediately!';
+          }
         }
+      }
 
-        // ---------- INIT ----------
-        function init() {
-            modeBar();
-            bindUI();
-            buildTheory();
-            renderEvents();
-            setMode('tides');
-            STATE.sunAngle = 180;
-            STATE.selectedPlate = 0;
-            buildControls();
-            updateAll();
-            document.getElementById('law-strip').innerHTML =
-                '<b>🌊 Welcome!</b> Switch to <b>Tectonics</b> or <b>Tsunami</b> tab for action buttons to trigger earthquakes and tsunamis.';
-            requestAnimationFrame(loop);
-        }
+      drawStage();
+      drawBeach();
+      if (frame % 3 === 0) updateReadout();
+      frame++;
+      requestAnimationFrame(loop);
+    }
 
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-        else init();
-    </script>
+    // ---------- INIT ----------
+    function init() {
+      modeBar();
+      bindUI();
+      buildTheory();
+      renderEvents();
+      setMode('tides');
+      STATE.sunAngle = 180;
+      STATE.selectedPlate = 0;
+      buildControls();
+      updateAll();
+      document.getElementById('law-strip').innerHTML = '<b>🌊 Welcome!</b> Switch to <b>Tectonics</b> or <b>Tsunami</b> tab for action buttons to trigger earthquakes and tsunamis.';
+      requestAnimationFrame(loop);
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  </script>
 </body>
 </html>
