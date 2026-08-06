@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-32ZMW31TWT"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-32ZMW31TWT');
-</script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-32ZMW31TWT');
+  </script>
 
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,13 +20,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
-:root {
+/* =========================================================
+   6-THEME PALETTE SYSTEM
+   ========================================================= */
+:root, [data-theme="midnight"] {
   --bg-deep: #03050d;
   --bg-mid: #080d1c;
-  --bg-panel: rgba(14, 22, 44, 0.7);
-  --bg-glass: rgba(20, 30, 56, 0.45);
-  --border: rgba(120, 180, 255, 0.16);
-  --border-strong: rgba(150, 200, 255, 0.32);
+  --bg-panel: rgba(14, 22, 44, 0.75);
+  --bg-glass: rgba(20, 30, 56, 0.55);
+  --border: rgba(120, 180, 255, 0.18);
+  --border-strong: rgba(150, 200, 255, 0.35);
   --text: #e8eeff;
   --text-dim: #8a96b8;
   --text-mute: #5b6688;
@@ -42,29 +45,63 @@
   --ff-body: 'DM Sans', sans-serif;
   --scene-bg: #010812;
 }
-
-/* HIGH-CONTRAST LIGHT OBSERVATORY THEME SCHEME MAP */
-body.light-theme {
-  --bg-deep: #f4f6fa;
-  --bg-mid: #e1e6f0;
-  --bg-panel: rgba(255, 255, 255, 0.85);
-  --bg-glass: rgba(230, 236, 245, 0.7);
-  --border: rgba(9, 105, 218, 0.15);
-  --border-strong: rgba(9, 105, 218, 0.3);
-  --text: #0a122c;
-  --text-dim: #444e6e;
-  --text-mute: #6a7596;
-  --cyan: #0066cc;
-  --cyan-glow: rgba(0, 102, 204, 0.15);
-  --violet: #6f42c1;
-  --violet-glow: rgba(111, 66, 193, 0.15);
-  --amber: #b07d00;
-  --amber-glow: rgba(176, 125, 0, 0.15);
-  --scene-bg: #fafbfc;
+[data-theme="cosmos"] {
+  --bg-deep: #fbf8f0; --bg-mid: #fffdf8; --bg-panel: rgba(255, 255, 255, 0.88);
+  --bg-glass: rgba(245, 240, 230, 0.8);
+  --border: rgba(18, 52, 93, 0.16); --border-strong: rgba(18, 52, 93, 0.32);
+  --text: #12345d; --text-dim: #617087; --text-mute: #8899aa;
+  --cyan: #10a9a5; --cyan-glow: rgba(16, 169, 165, 0.25);
+  --violet: #7c56bd; --violet-glow: rgba(124, 86, 189, 0.25);
+  --amber: #d88b00; --amber-glow: rgba(216, 139, 0, 0.25);
+  --danger: #e85c4a; --success: #2e8b22;
+  --scene-bg: #f5f0e6;
+}
+[data-theme="chalk"] {
+  --bg-deep: #f2fbfa; --bg-mid: #fbfffe; --bg-panel: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(235, 248, 246, 0.85);
+  --border: rgba(18, 60, 68, 0.16); --border-strong: rgba(18, 60, 68, 0.32);
+  --text: #123c44; --text-dim: #62767b; --text-mute: #7a8e93;
+  --cyan: #2db7b2; --cyan-glow: rgba(45, 183, 178, 0.25);
+  --violet: #5868bd; --violet-glow: rgba(88, 104, 189, 0.25);
+  --amber: #d08010; --amber-glow: rgba(208, 128, 16, 0.25);
+  --danger: #d95f55; --success: #2f8f42;
+  --scene-bg: #e8f4f3;
+}
+[data-theme="neon"] {
+  --bg-deep: #fff6f2; --bg-mid: #fffdfb; --bg-panel: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(255, 240, 235, 0.85);
+  --border: rgba(74, 45, 49, 0.16); --border-strong: rgba(74, 45, 49, 0.32);
+  --text: #4a2d31; --text-dim: #806b6e; --text-mute: #9a8386;
+  --cyan: #168f92; --cyan-glow: rgba(22, 143, 146, 0.25);
+  --violet: #8861bd; --violet-glow: rgba(136, 97, 189, 0.25);
+  --amber: #d88000; --amber-glow: rgba(216, 128, 0, 0.25);
+  --danger: #d9443b; --success: #2d8c45;
+  --scene-bg: #fcede8;
+}
+[data-theme="ember"] {
+  --bg-deep: #fffaf0; --bg-mid: #fffef9; --bg-panel: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(248, 240, 225, 0.85);
+  --border: rgba(73, 54, 23, 0.16); --border-strong: rgba(73, 54, 23, 0.32);
+  --text: #493617; --text-dim: #7d705d; --text-mute: #968873;
+  --cyan: #218d8b; --cyan-glow: rgba(33, 141, 139, 0.25);
+  --violet: #7358b5; --violet-glow: rgba(115, 88, 181, 0.25);
+  --amber: #d88000; --amber-glow: rgba(216, 128, 0, 0.25);
+  --danger: #d95745; --success: #3c8c3d;
+  --scene-bg: #f5eedc;
+}
+[data-theme="aurora"] {
+  --bg-deep: #f8f4ff; --bg-mid: #fefcff; --bg-panel: rgba(255, 255, 255, 0.9);
+  --bg-glass: rgba(240, 235, 250, 0.85);
+  --border: rgba(53, 43, 89, 0.16); --border-strong: rgba(53, 43, 89, 0.32);
+  --text: #352b59; --text-dim: #736c86; --text-mute: #8b839c;
+  --cyan: #119f9a; --cyan-glow: rgba(17, 159, 154, 0.25);
+  --violet: #7654b8; --violet-glow: rgba(118, 84, 184, 0.25);
+  --amber: #c88000; --amber-glow: rgba(200, 128, 0, 0.25);
+  --danger: #d95d68; --success: #358f45;
+  --scene-bg: #efeaf8;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 html, body { background: var(--bg-deep); }
 
 body {
@@ -78,23 +115,17 @@ body {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* Cosmic gradient background */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 18% 20%, rgba(79, 209, 255, 0.10), transparent 60%),
-    radial-gradient(ellipse 70% 60% at 82% 78%, rgba(177, 140, 255, 0.10), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255, 200, 87, 0.04), transparent 70%),
+    radial-gradient(ellipse 80% 60% at 18% 20%, rgba(79, 209, 255, 0.08), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 82% 78%, rgba(177, 140, 255, 0.08), transparent 60%),
     var(--bg-deep);
   z-index: -3;
 }
-body.light-theme::before {
-  background: var(--bg-deep);
-}
 
-/* Starfield visibility safety wrap */
 .starfield {
   position: fixed;
   inset: 0;
@@ -102,7 +133,12 @@ body.light-theme::before {
   overflow: hidden;
   pointer-events: none;
 }
-body.light-theme .starfield { display: none; }
+[data-theme="cosmos"] .starfield,
+[data-theme="chalk"] .starfield,
+[data-theme="neon"] .starfield,
+[data-theme="ember"] .starfield,
+[data-theme="aurora"] .starfield { display: none; }
+
 .star {
   position: absolute;
   background: white;
@@ -115,53 +151,63 @@ body.light-theme .starfield { display: none; }
   50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* Layout */
 .shell {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 28px 20px 60px;
+  padding: 16px 20px 60px;
   position: relative;
   z-index: 1;
 }
 
-/* Header */
+/* Header & Controls Bar */
 header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--bg-mid);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.logo { font-family: monospace; font-size: 12px; letter-spacing: 4px; color: var(--amber); text-transform: uppercase; }
+.logo span { color: var(--text-dim); }
+.page-subtitle { font-family: monospace; font-size: 11px; color: var(--text-dim); border-left: 1px solid var(--border); padding-left: 16px; letter-spacing: 1.5px; }
+.header-spacer { flex: 1; }
+.header-link { font-family: monospace; font-size: 10.5px; letter-spacing: 1px; color: var(--text-dim); text-decoration: none; padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; user-select: none; transition: all .2s; background: var(--bg-glass); }
+.header-link:hover { color: var(--amber); border-color: var(--border-strong); }
+select.header-link option { background: var(--bg-mid); color: var(--text); }
+
+.hero-text {
   text-align: center;
-  margin-bottom: 28px;
-  padding: 12px 0 4px;
+  margin-bottom: 24px;
 }
-header .eyebrow {
-  font-family: var(--ff-body);
-  font-size: 11px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  margin-bottom: 10px;
-  opacity: 0.85;
-}
-header h1 {
+.hero-text h1 {
   font-family: var(--ff-display);
   font-weight: 800;
-  font-size: clamp(28px, 5vw, 52px);
-  line-height: 1.05;
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.1;
   letter-spacing: -0.01em;
-  background: linear-gradient(120deg, #fff 0%, var(--cyan) 40%, var(--violet) 70%, var(--amber) 100%);
+  background: linear-gradient(120deg, var(--text) 0%, var(--cyan) 40%, var(--violet) 70%, var(--amber) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
 }
-body.light-theme header h1 {
-  background: linear-gradient(120deg, var(--text) 0%, var(--cyan) 40%, var(--violet) 70%, var(--amber) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-header .tagline {
+.hero-text .tagline {
   font-size: 15px;
   color: var(--text-dim);
-  max-width: 580px;
+  max-width: 620px;
   margin: 0 auto;
 }
+
+/* Narration Box */
+.nbox { display: none; margin-bottom: 18px; }
+.nbox-inner { background: var(--bg-panel); border: 1px solid var(--border-strong); border-left: 4px solid var(--amber); border-radius: 12px; padding: 14px 18px; font-family: monospace; font-size: 11.5px; line-height: 1.8; }
+.nctrls { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.nctrls select { flex: 1; min-width: 140px; background: var(--bg-deep); color: var(--text); border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 11px; padding: 4px 8px; }
+#narr-text { color: var(--amber); line-height: 1.75; }
 
 /* Panels */
 .panel {
@@ -171,10 +217,9 @@ header .tagline {
   padding: 18px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
   transition: background 0.2s ease, border-color 0.2s ease;
 }
-body.light-theme .panel { box-shadow: 0 4px 20px rgba(9,105,218,0.05); }
 
 /* Scene panel */
 .scene-panel {
@@ -185,34 +230,14 @@ body.light-theme .panel { box-shadow: 0 4px 20px rgba(9,105,218,0.05); }
   padding: 0;
   background: var(--scene-bg);
 }
-.scene-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+.scene-svg { width: 100%; height: 100%; display: block; }
 .scene-warp-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background:
-    repeating-linear-gradient(90deg,
-      transparent 0,
-      transparent 40px,
-      rgba(255,255,255,0.06) 40px,
-      rgba(255,255,255,0.10) 41px,
-      transparent 41px,
-      transparent 80px);
-  transition: opacity 0.5s ease;
-  mix-blend-mode: screen;
+  position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: repeating-linear-gradient(90deg, transparent 0, transparent 40px, rgba(255,255,255,0.08) 40px, rgba(255,255,255,0.14) 41px, transparent 41px, transparent 80px);
+  transition: opacity 0.5s ease; mix-blend-mode: screen;
 }
-.scene-panel.warping .scene-warp-overlay {
-  opacity: 1;
-  animation: warpStreak 0.6s linear infinite;
-}
-@keyframes warpStreak {
-  to { background-position: -80px 0; }
-}
+.scene-panel.warping .scene-warp-overlay { opacity: 1; animation: warpStreak 0.6s linear infinite; }
+@keyframes warpStreak { to { background-position: -80px 0; } }
 
 /* Twins row */
 .twins-row {
@@ -223,7 +248,7 @@ body.light-theme .panel { box-shadow: 0 4px 20px rgba(9,105,218,0.05); }
 }
 .twin-panel {
   position: relative;
-  height: 360px;
+  height: 380px;
   padding: 0;
   overflow: hidden;
   border-radius: 18px;
@@ -232,88 +257,38 @@ body.light-theme .panel { box-shadow: 0 4px 20px rgba(9,105,218,0.05); }
   transition: background 0.2s, border-color 0.2s;
 }
 .twin-panel .twin-label {
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  z-index: 4;
-  font-family: var(--ff-display);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text);
-  background: rgba(0,0,0,0.45);
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+  position: absolute; top: 14px; left: 16px; z-index: 4;
+  font-family: var(--ff-display); font-weight: 600; font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text); background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border);
   backdrop-filter: blur(8px);
 }
-body.light-theme .twin-panel .twin-label { background: rgba(255,255,255,0.85); }
 .earth-twin .twin-label { color: var(--cyan); border-color: var(--cyan-glow); }
 .traveler-twin .twin-label { color: var(--violet); border-color: var(--violet-glow); }
 
 .twin-panel .age-readout {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  z-index: 4;
-  font-family: var(--ff-display);
-  font-weight: 800;
-  font-size: 32px;
-  color: var(--text);
-  background: rgba(0,0,0,0.55);
-  padding: 6px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border-strong);
-  backdrop-filter: blur(8px);
-  min-width: 80px;
-  text-align: center;
-  line-height: 1;
+  position: absolute; top: 14px; right: 16px; z-index: 4;
+  font-family: var(--ff-display); font-weight: 800; font-size: 32px; color: var(--text);
+  background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 14px; border: 1px solid var(--border-strong);
+  backdrop-filter: blur(8px); min-width: 86px; text-align: center; line-height: 1;
 }
-body.light-theme .twin-panel .age-readout { background: rgba(255,255,255,0.9); }
 .earth-twin .age-readout { color: var(--cyan); }
 .traveler-twin .age-readout { color: var(--violet); }
 .twin-panel .age-readout small {
-  display: block;
-  font-family: var(--ff-body);
-  font-weight: 500;
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--text-mute);
-  margin-top: 4px;
+  display: block; font-family: var(--ff-body); font-weight: 500; font-size: 9px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text-mute); margin-top: 4px;
 }
 
 .twin-figure-wrap {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 3;
+  position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; z-index: 3;
 }
 .twin-figure {
-  width: 60%;
-  max-width: 200px;
-  height: 70%;
-  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.6));
+  width: 70%; max-width: 230px; height: 80%;
+  filter: drop-shadow(0 14px 28px rgba(0,0,0,0.65));
 }
 
-/* Civilization background SVG */
-.civ-bg, .traveler-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-.civ-stage, .trav-stage {
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-.civ-stage.active, .trav-stage.active {
-  opacity: 1;
-}
+.civ-bg, .traveler-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+.civ-stage, .trav-stage { opacity: 0; transition: opacity 1s ease; }
+.civ-stage.active, .trav-stage.active { opacity: 1; }
 
 /* Stats row */
 .stats-row {
@@ -323,568 +298,173 @@ body.light-theme .twin-panel .age-readout { background: rgba(255,255,255,0.9); }
   margin-bottom: 18px;
 }
 .stat-card {
-  padding: 14px 16px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  text-align: center;
-  transition: background 0.2s, border-color 0.2s;
+  padding: 14px 16px; background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: 14px; text-align: center; transition: background 0.2s, border-color 0.2s;
 }
-.stat-card .stat-label {
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--text-mute);
-  margin-bottom: 6px;
-}
-.stat-card .stat-value {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: clamp(16px, 2.8vw, 22px);
-  color: var(--text);
-  line-height: 1.1;
-  word-break: break-word;
-}
+.stat-card .stat-label { font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 6px; font-weight: 700; }
+.stat-card .stat-value { font-family: var(--ff-display); font-weight: 700; font-size: clamp(16px, 2.8vw, 22px); color: var(--text); line-height: 1.1; word-break: break-word; }
 .stat-card.earth .stat-value { color: var(--cyan); }
 .stat-card.trav .stat-value { color: var(--violet); }
 .stat-card.gamma .stat-value { color: var(--amber); }
 
 /* Controls panel */
-.controls-panel {
-  margin-bottom: 18px;
-}
+.controls-panel { margin-bottom: 18px; }
 .control-group { margin-bottom: 22px; }
 .control-group:last-child { margin-bottom: 0; }
 .control-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--text-mute);
-  margin-bottom: 12px;
-  font-weight: 500;
+  display: flex; align-items: center; justify-content: space-between; font-size: 11px;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 12px; font-weight: 700;
 }
-.control-label .control-value {
-  color: var(--cyan);
-  font-family: var(--ff-display);
-  font-weight: 600;
-  font-size: 13px;
-  letter-spacing: 0.05em;
-  text-transform: none;
-}
+.control-label .control-value { color: var(--cyan); font-family: var(--ff-display); font-weight: 600; font-size: 13px; letter-spacing: 0.05em; text-transform: none; }
 
-/* Destination chips */
-.dest-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+.dest-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .dest-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 14px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text-dim);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--bg-glass);
+  border: 1px solid var(--border); border-radius: 999px; color: var(--text-dim); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s ease; font-family: inherit;
 }
-.dest-chip:hover {
-  border-color: var(--border-strong);
-  color: var(--text);
-  transform: translateY(-1px);
-}
-.dest-chip.active {
-  background: rgba(79, 209, 255, 0.13);
-  border-color: var(--cyan);
-  color: var(--cyan);
-  box-shadow: 0 0 16px var(--cyan-glow);
-}
-body.light-theme .dest-chip.active { background: var(--bg-mid); box-shadow: none; }
+.dest-chip:hover { border-color: var(--border-strong); color: var(--text); transform: translateY(-1px); }
+.dest-chip.active { background: rgba(79, 209, 255, 0.15); border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 16px var(--cyan-glow); }
 .dest-chip .icon { font-size: 16px; line-height: 1; }
 
-/* Custom distance input */
 .custom-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
+  display: flex; gap: 8px; margin-top: 10px; opacity: 0; max-height: 0; overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease;
 }
-.custom-row.visible {
-  opacity: 1;
-  max-height: 80px;
-  margin-top: 12px;
-}
-.custom-row input {
-  flex: 1;
-  padding: 10px 14px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-strong);
-  border-radius: 10px;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-}
+.custom-row.visible { opacity: 1; max-height: 80px; margin-top: 12px; }
+.custom-row input { flex: 1; padding: 10px 14px; background: var(--bg-glass); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text); font-family: inherit; font-size: 14px; outline: none; }
 .custom-row input:focus { border-color: var(--cyan); }
-.custom-row select {
-  padding: 10px 14px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-strong);
-  border-radius: 10px;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 14px;
-  outline: none;
-  cursor: pointer;
-}
+.custom-row select { padding: 10px 14px; background: var(--bg-glass); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text); font-family: inherit; font-size: 14px; outline: none; cursor: pointer; }
 
-/* Speed presets */
-.speed-presets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-.speed-preset {
-  padding: 7px 13px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text-dim);
-  font-family: 'DM Sans', monospace;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+.speed-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.speed-preset { padding: 7px 13px; background: var(--bg-glass); border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); font-family: 'DM Sans', monospace; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .speed-preset:hover { color: var(--text); border-color: var(--border-strong); }
-.speed-preset.active {
-  background: rgba(177, 140, 255, 0.15);
-  border-color: var(--violet);
-  color: var(--violet);
-}
-body.light-theme .speed-preset.active { background: var(--bg-mid); }
+.speed-preset.active { background: rgba(177, 140, 255, 0.15); border-color: var(--violet); color: var(--violet); }
 
-/* Slider */
-.slider-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+.slider-row { display: flex; align-items: center; gap: 14px; }
 input[type="range"] {
-  flex: 1;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
+  flex: 1; -webkit-appearance: none; appearance: none; height: 8px;
   background: linear-gradient(to right, var(--cyan), var(--violet), var(--amber));
-  border-radius: 999px;
-  outline: none;
-  cursor: pointer;
+  border-radius: 999px; outline: none; cursor: pointer;
 }
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  background: var(--text);
-  border: 3px solid var(--bg-deep);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 14px var(--cyan-glow);
+  -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+  background: var(--text); border: 3px solid var(--bg-deep); border-radius: 50%;
+  cursor: pointer; box-shadow: 0 0 14px var(--cyan-glow);
 }
 
-/* Number input for starting age */
-.age-input-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.age-input {
-  width: 90px;
-  padding: 10px 14px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-strong);
-  border-radius: 10px;
-  color: var(--text);
-  font-family: var(--ff-display);
-  font-weight: 600;
-  font-size: 18px;
-  text-align: center;
-  outline: none;
-}
+.age-input-row { display: flex; align-items: center; gap: 12px; }
+.age-input { width: 90px; padding: 10px 14px; background: var(--bg-glass); border: 1px solid var(--border-strong); border-radius: 10px; color: var(--text); font-family: var(--ff-display); font-weight: 600; font-size: 18px; text-align: center; outline: none; }
 .age-input:focus { border-color: var(--cyan); }
-.age-hint {
-  font-size: 12px;
-  color: var(--text-mute);
-}
+.age-hint { font-size: 12px; color: var(--text-mute); }
 
-/* Survival warning */
 .survival-card {
-  display: none;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(255, 107, 139, 0.10), rgba(255, 200, 87, 0.08));
-  border: 1px solid rgba(255, 107, 139, 0.4);
-  border-radius: 14px;
-  margin-bottom: 16px;
-  align-items: center;
-  gap: 14px;
+  display: none; padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(255, 107, 139, 0.12), rgba(255, 200, 87, 0.10));
+  border: 1px solid rgba(255, 107, 139, 0.4); border-radius: 14px; margin-bottom: 16px;
+  align-items: center; gap: 14px;
 }
 .survival-card.visible { display: flex; }
-.survival-card .warn-icon {
-  font-size: 26px;
-  flex-shrink: 0;
-}
-.survival-card .warn-content {
-  flex: 1;
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.4;
-}
+.survival-card .warn-icon { font-size: 26px; flex-shrink: 0; }
+.survival-card .warn-content { flex: 1; font-size: 13px; color: var(--text); line-height: 1.4; }
 .survival-card .warn-content strong { color: var(--danger); }
-.save-btn {
-  flex-shrink: 0;
-  padding: 9px 16px;
-  background: var(--success);
-  color: var(--bg-deep);
-  border: none;
-  border-radius: 10px;
-  font-family: var(--ff-display);
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-body.light-theme .save-btn { color: #fff; background: #1a7f37; }
+.save-btn { flex-shrink: 0; padding: 9px 16px; background: var(--success); color: var(--bg-deep); border: none; border-radius: 10px; font-family: var(--ff-display); font-weight: 600; font-size: 12px; letter-spacing: 0.06em; cursor: pointer; transition: transform 0.2s; }
 .save-btn:hover { transform: scale(1.04); }
 
-/* Action buttons */
-.action-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
+.action-row { display: flex; gap: 12px; margin-top: 20px; }
 .btn {
-  box-sizing: border-box;
-  padding: 14px 20px;
-  border: none;
-  border-radius: 12px;
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  box-sizing: border-box; padding: 14px 20px; border: none; border-radius: 12px;
+  font-family: var(--ff-display); font-weight: 700; font-size: 14px; letter-spacing: 0.1em;
+  text-transform: uppercase; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
-.btn-launch {
-  flex: 1;
-  background: linear-gradient(135deg, var(--cyan), var(--violet));
-  color: #03050d;
-  box-shadow: 0 6px 24px rgba(79, 209, 255, 0.35);
-}
-body.light-theme .btn-launch { color: #fff; box-shadow: none; }
-.btn-launch:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(79, 209, 255, 0.5);
-}
-body.light-theme .btn-launch:hover:not(:disabled) { box-shadow: none; }
+.btn-launch { flex: 1; background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #03050d; box-shadow: 0 6px 24px rgba(79, 209, 255, 0.35); }
+.btn-launch:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79, 209, 255, 0.5); }
 .btn-launch:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-reset {
-  background: transparent;
-  color: var(--text-dim);
-  border: 1px solid var(--border-strong);
-  flex: 0 0 auto;
-  padding: 14px 24px;
-}
+.btn-reset { background: transparent; color: var(--text-dim); border: 1px solid var(--border-strong); flex: 0 0 auto; padding: 14px 24px; }
 .btn-reset:hover { color: var(--text); border-color: var(--cyan); }
 
 /* Result modal */
 .result-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 5, 13, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 20px;
+  position: fixed; inset: 0; background: rgba(3, 5, 13, 0.85);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
   animation: fadeIn 0.4s ease;
 }
 .result-overlay.visible { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .result-card {
-  max-width: 580px;
-  width: 100%;
-  background: var(--bg-mid);
-  border: 1px solid var(--border-strong);
-  border-radius: 22px;
-  padding: 32px 28px;
-  position: relative;
+  max-width: 580px; width: 100%; background: var(--bg-mid); border: 1px solid var(--border-strong);
+  border-radius: 22px; padding: 32px 28px; position: relative;
   box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--cyan-glow);
-  animation: rise 0.6s cubic-bezier(.2,.8,.2,1);
 }
-body.light-theme .result-card { background: var(--bg-panel); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
 .result-close-x {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--bg-glass);
-  border: 1px solid var(--border-strong);
-  color: var(--text-dim);
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.25s ease, color 0.2s, border-color 0.2s;
-  font-family: inherit;
-  padding: 0;
-  z-index: 5;
+  position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--bg-glass); border: 1px solid var(--border-strong); color: var(--text-dim);
+  font-size: 22px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.25s ease, color 0.2s, border-color 0.2s; font-family: inherit; padding: 0; z-index: 5;
 }
-.result-close-x:hover {
-  color: var(--text);
-  border-color: var(--cyan);
-  transform: rotate(90deg);
-}
-
-.result-card .result-eyebrow {
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--amber);
-  margin-bottom: 10px;
-  text-align: center;
-}
-.result-card .result-headline {
-  font-family: var(--ff-display);
-  font-weight: 800;
-  font-size: clamp(24px, 5vw, 36px);
-  line-height: 1.1;
-  text-align: center;
-  margin-bottom: 18px;
-  background: linear-gradient(120deg, var(--cyan), var(--violet), var(--amber));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-body.light-theme .result-card .result-headline {
-  background: linear-gradient(120deg, var(--cyan), var(--violet), var(--amber));
-  -webkit-background-clip: text;
-}
-.result-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 20px;
-}
-.result-cell {
-  padding: 14px;
-  background: var(--bg-glass);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-align: center;
-}
-.result-cell .label {
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-mute);
-  margin-bottom: 6px;
-}
-.result-cell .value {
-  font-family: var(--ff-display);
-  font-weight: 700;
-  font-size: 22px;
-  color: var(--text);
-}
+.result-close-x:hover { color: var(--text); border-color: var(--cyan); transform: rotate(90deg); }
+.result-card .result-eyebrow { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; text-align: center; }
+.result-card .result-headline { font-family: var(--ff-display); font-weight: 800; font-size: clamp(24px, 5vw, 36px); line-height: 1.1; text-align: center; margin-bottom: 18px; background: linear-gradient(120deg, var(--cyan), var(--violet), var(--amber)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.result-cell { padding: 14px; background: var(--bg-glass); border: 1px solid var(--border); border-radius: 12px; text-align: center; }
+.result-cell .label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-mute); margin-bottom: 6px; }
+.result-cell .value { font-family: var(--ff-display); font-weight: 700; font-size: 22px; color: var(--text); }
 .result-cell.earth .value { color: var(--cyan); }
 .result-cell.trav .value { color: var(--violet); }
-.result-flavor {
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-dim);
-  text-align: center;
-  margin-bottom: 22px;
-  padding: 16px;
-  background: var(--bg-glass);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
+.result-flavor { font-size: 14px; line-height: 1.6; color: var(--text-dim); text-align: center; margin-bottom: 22px; padding: 16px; background: var(--bg-glass); border-radius: 12px; border: 1px solid var(--border); }
 .result-flavor strong { color: var(--amber); }
-.result-actions {
-  display: flex;
-  gap: 10px;
-}
+.result-actions { display: flex; gap: 10px; }
 .result-actions .btn { font-size: 13px; padding: 12px 16px; }
 
-/* Skip button during animation */
 .skip-btn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 50;
-  padding: 10px 18px;
-  background: rgba(20, 30, 56, 0.9);
-  border: 1px solid var(--border-strong);
-  border-radius: 999px;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  display: none;
-  backdrop-filter: blur(8px);
+  position: fixed; bottom: 24px; right: 24px; z-index: 50; padding: 10px 18px;
+  background: rgba(20, 30, 56, 0.9); border: 1px solid var(--border-strong);
+  border-radius: 999px; color: var(--text); font-family: inherit; font-size: 13px;
+  font-weight: 500; cursor: pointer; display: none; backdrop-filter: blur(8px);
 }
-body.light-theme .skip-btn { background: rgba(255,255,255,0.95); }
 .skip-btn.visible { display: block; }
 .skip-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-/* Footer */
-footer {
-  margin-top: 40px;
-  padding: 20px 0;
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-mute);
-  border-top: 1px solid var(--border);
-}
+footer { margin-top: 40px; padding: 20px 0; text-align: center; font-size: 12px; color: var(--text-mute); border-top: 1px solid var(--border); }
 footer a { color: var(--cyan); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
-/* Theory / Calculations section */
-.theory-wrap {
-  margin-top: 36px;
-}
+.theory-wrap { margin-top: 36px; }
 .theory {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 32px clamp(20px, 4vw, 40px);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-  transition: background 0.2s, border-color 0.2s;
+  background: var(--bg-panel); border: 1px solid var(--border); border-radius: 18px;
+  padding: 32px clamp(20px, 4vw, 40px); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4); transition: background 0.2s, border-color 0.2s;
 }
-.theory-hdr {
-  font-family: var(--ff-display);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.32em;
-  color: var(--cyan);
-  text-transform: uppercase;
-  margin-bottom: 26px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-}
-.theory h3 {
-  font-family: var(--ff-display);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--amber);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  margin: 28px 0 12px;
-}
-.theory p {
-  font-size: 15px;
-  color: var(--text-dim);
-  line-height: 1.75;
-  margin-bottom: 12px;
-}
+.theory-hdr { font-family: var(--ff-display); font-size: 11px; font-weight: 600; letter-spacing: 0.32em; color: var(--cyan); text-transform: uppercase; margin-bottom: 26px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+.theory h3 { font-family: var(--ff-display); font-size: 13px; font-weight: 700; color: var(--amber); letter-spacing: 0.16em; text-transform: uppercase; margin: 28px 0 12px; }
+.theory p { font-size: 15px; color: var(--text-dim); line-height: 1.75; margin-bottom: 12px; }
 .theory em { color: var(--amber); font-style: italic; }
 .theory strong { color: var(--text); }
-.theory .eq {
-  font-family: 'Consolas', 'DM Mono', ui-monospace, monospace;
-  font-size: 13.5px;
-  background: rgba(20, 30, 56, 0.55);
-  border-left: 3px solid var(--amber);
-  padding: 14px 20px;
-  margin: 16px 0;
-  border-radius: 0 10px 10px 0;
-  color: #ffe2a0;
-  line-height: 1.85;
-  word-wrap: break-word;
-  transition: background 0.2s;
-}
-body.light-theme .theory .eq { background: var(--bg-glass); color: var(--amber); }
-.theory .eq .vars {
-  font-size: 12px;
-  color: var(--text-mute);
-  margin-top: 8px;
-  font-family: var(--ff-body);
-  line-height: 1.6;
-}
-.hbox {
-  border-radius: 10px;
-  padding: 14px 18px;
-  margin: 16px 0;
-  font-size: 13.5px;
-  line-height: 1.75;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-.hbox strong { color: inherit; filter: brightness(1.15); }
-.hbox-cyan   { background: rgba(79, 209, 255, 0.06); border: 1px solid rgba(79, 209, 255, 0.22); color: #b3e5ff; }
-body.light-theme .hbox-cyan { color: var(--cyan); background: rgba(9,105,218,0.05); }
-.hbox-violet { background: rgba(177, 140, 255, 0.06); border: 1px solid rgba(177, 140, 255, 0.22); color: #d4bfff; }
-body.light-theme .hbox-violet { color: var(--violet); background: rgba(111,66,193,0.05); }
-.hbox-amber  { background: rgba(255, 200, 87, 0.06); border: 1px solid rgba(255, 200, 87, 0.22); color: #ffe2a0; }
-body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0.05); }
-.utab {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13.5px;
-  margin-top: 10px;
-}
-.utab td {
-  padding: 9px 14px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-dim);
-  vertical-align: top;
-  transition: border-color 0.2s;
-}
+.theory .eq { font-family: 'Consolas', 'DM Mono', ui-monospace, monospace; font-size: 13.5px; background: rgba(20, 30, 56, 0.55); border-left: 3px solid var(--amber); padding: 14px 20px; margin: 16px 0; border-radius: 0 10px 10px 0; color: #ffe2a0; line-height: 1.85; word-wrap: break-word; }
+.theory .eq .vars { font-size: 12px; color: var(--text-mute); margin-top: 8px; font-family: var(--ff-body); line-height: 1.6; }
+.hbox { border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 13.5px; line-height: 1.75; }
+.hbox-cyan   { background: rgba(79, 209, 255, 0.08); border: 1px solid rgba(79, 209, 255, 0.25); color: #b3e5ff; }
+.hbox-violet { background: rgba(177, 140, 255, 0.08); border: 1px solid rgba(177, 140, 255, 0.25); color: #d4bfff; }
+.hbox-amber  { background: rgba(255, 200, 87, 0.08); border: 1px solid rgba(255, 200, 87, 0.25); color: #ffe2a0; }
+.utab { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
+.utab td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text-dim); vertical-align: top; }
 .utab td:first-child { color: var(--amber); width: 38%; font-weight: 500; }
 .utab tr:last-child td { border-bottom: none; }
 
-/* Mobile */
 @media (max-width: 760px) {
-  .shell { padding: 18px 14px 50px; }
+  .shell { padding: 14px 14px 50px; }
   .twins-row { grid-template-columns: 1fr; }
-  .twin-panel { height: 320px; }
+  .twin-panel { height: 340px; }
   .stats-row { grid-template-columns: 1fr; gap: 8px; }
   .scene-panel { height: 140px; }
   .panel { padding: 14px; }
-  .twin-panel .age-readout { font-size: 24px; }
   .action-row { flex-direction: column; }
   .btn-reset { flex: 1; }
   .result-grid { grid-template-columns: 1fr; }
   .theory { padding: 22px 18px; }
-  .theory p { font-size: 14px; }
-  .theory .eq { font-size: 12.5px; padding: 12px 14px; }
-  .utab td { padding: 8px 10px; font-size: 12.5px; }
-  .utab td:first-child { width: 44%; }
 }
-
-/* Visually hidden label */
-.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 </style>
 </head>
 <body>
@@ -892,13 +472,41 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
 <div class="starfield" id="starfield"></div>
 
 <div class="shell">
-
   <header>
-    <div class="eyebrow">Science Wonders · Special Relativity</div>
-    <h1>Twin Paradox</h1>
-    <p class="tagline">Pick a destination. Pick a speed. Watch your twin grow old while you barely age — special relativity, made personal.</p>
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none;">⭐ Science<span> Wonders</span></a></div>
+    <div class="page-subtitle">Twin Paradox — Special Relativity</div>
+    <div class="header-spacer"></div>
+    <button id="btn-narrate" class="header-link">🔇 Voice</button>
+    <select id="theme-selector" class="header-link" aria-label="Select theme">
+      <option value="midnight">🌙 Midnight (Dark)</option>
+      <option value="cosmos">🪐 Cosmos</option>
+      <option value="chalk">📋 Chalk</option>
+      <option value="neon">⚡ Neon</option>
+      <option value="ember">🔥 Ember</option>
+      <option value="aurora">✨ Aurora</option>
+    </select>
+    <a class="header-link" href="index.html">← All Simulations</a>
   </header>
 
+  <!-- NARRATION BOX -->
+  <div class="nbox" id="nbox">
+    <div class="nbox-inner">
+      <div class="nctrls">
+        <span style="color:var(--text-mute);font-size:10px;">VOICE NARRATION</span>
+        <select id="vsel"><option>Loading…</option></select>
+        <input type="range" id="sl-rate" min=".5" max="1.4" step=".05" value=".90" style="width:70px;">
+        <span id="rate-v" style="color:var(--amber);min-width:32px;">0.9×</span>
+      </div>
+      <div id="narr-text">—</div>
+    </div>
+  </div>
+
+  <div class="hero-text">
+    <h1>Twin Paradox</h1>
+    <p class="tagline">Pick a destination. Pick a speed. Watch your twin grow old while you barely age — special relativity, made personal.</p>
+  </div>
+
+  <!-- UPGRADED TOP STARSHIP FLIGHT SCENE -->
   <div class="panel scene-panel" id="scenePanel">
     <svg class="scene-svg" viewBox="0 0 1200 180" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <defs>
@@ -907,42 +515,52 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
           <stop offset="55%" stop-color="#2c6db0"/>
           <stop offset="100%" stop-color="#0c2a4d"/>
         </radialGradient>
-        <radialGradient id="rocketFlame" cx="0.5" cy="0.5">
-          <stop offset="0%" stop-color="#fff8d4"/>
-          <stop offset="40%" stop-color="#ffc857"/>
-          <stop offset="100%" stop-color="rgba(255,107,139,0)"/>
+        <radialGradient id="planetGlow" cx="0.5" cy="0.5">
+          <stop offset="0%" stop-color="rgba(79,209,255,0.4)"/>
+          <stop offset="100%" stop-color="rgba(79,209,255,0)"/>
         </radialGradient>
-        <linearGradient id="rocketBody" x1="0" x2="1">
-          <stop offset="0%" stop-color="#e8eeff"/>
-          <stop offset="100%" stop-color="#8a96b8"/>
+        <linearGradient id="shipBody" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stop-color="#dceaff"/>
+          <stop offset="60%" stop-color="#8a96b8"/>
+          <stop offset="100%" stop-color="#3a4a6e"/>
+        </linearGradient>
+        <linearGradient id="ionPlume" x1="1" x2="0">
+          <stop offset="0%" stop-color="#fff8d4"/>
+          <stop offset="40%" stop-color="#4fd1ff"/>
+          <stop offset="100%" stop-color="rgba(79,209,255,0)"/>
         </linearGradient>
       </defs>
 
-      <g transform="translate(80, 90)">
-        <circle r="40" fill="url(#earthGrad)" />
-        <circle r="40" fill="none" stroke="rgba(79,209,255,0.25)" stroke-width="1"/>
-        <ellipse rx="50" ry="6" fill="rgba(79,209,255,0.08)" />
-        <text x="0" y="65" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8a96b8" letter-spacing="2">EARTH</text>
+      <g transform="translate(85, 90)">
+        <circle r="46" fill="url(#planetGlow)" />
+        <circle r="36" fill="url(#earthGrad)" />
+        <circle r="36" fill="none" stroke="rgba(79,209,255,0.3)" stroke-width="1.2"/>
+        <ellipse rx="48" ry="8" fill="rgba(79,209,255,0.12)" transform="rotate(-15)" />
+        <text x="0" y="66" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="700" fill="#8a96b8" letter-spacing="2">EARTH</text>
       </g>
 
-      <g id="destGroup" transform="translate(1100, 90)">
-        <circle id="destCircle" r="34" fill="#ffc857" opacity="0.9"/>
-        <circle r="34" fill="none" stroke="rgba(255,200,87,0.3)" stroke-width="1"/>
-        <text id="destText" x="0" y="65" text-anchor="middle" font-family="DM Sans" font-size="11" fill="#8a96b8" letter-spacing="2">MOON</text>
+      <g id="destGroup" transform="translate(1110, 90)">
+        <circle id="destCircle" r="34" fill="#ffc857" opacity="0.95"/>
+        <circle r="34" fill="none" stroke="rgba(255,200,87,0.35)" stroke-width="1.2"/>
+        <text id="destText" x="0" y="66" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="700" fill="#8a96b8" letter-spacing="2">MOON</text>
       </g>
 
-      <line x1="135" y1="90" x2="1055" y2="90" stroke="rgba(177,140,255,0.18)" stroke-width="1" stroke-dasharray="4 6"/>
+      <line x1="145" y1="90" x2="1055" y2="90" stroke="rgba(177,140,255,0.22)" stroke-width="1.5" stroke-dasharray="6 6"/>
 
-      <g id="rocket" transform="translate(135, 90)">
-        <ellipse cx="-22" cy="0" rx="20" ry="6" fill="url(#rocketFlame)" id="rocketFlame"/>
-        <path d="M -8 -8 L 14 0 L -8 8 Z" fill="url(#rocketBody)"/>
-        <circle cx="4" cy="0" r="2" fill="#4fd1ff"/>
+      <!-- Sleek Interstellar Starship -->
+      <g id="rocket" transform="translate(145, 90)">
+        <ellipse cx="-38" cy="0" rx="28" ry="7" fill="url(#ionPlume)" id="rocketFlame"/>
+        <path d="M -16 -11 L 18 0 L -16 11 L -10 0 Z" fill="url(#shipBody)" stroke="#fff" stroke-width="0.8"/>
+        <path d="M -8 -16 L 4 -4 L -4 -4 Z" fill="#4fd1ff" opacity="0.8"/>
+        <path d="M -8 16 L 4 4 L -4 4 Z" fill="#4fd1ff" opacity="0.8"/>
+        <circle cx="6" cy="0" r="2.5" fill="#4fd1ff"/>
       </g>
     </svg>
     <div class="scene-warp-overlay"></div>
   </div>
 
   <div class="twins-row">
+    <!-- Earth Twin Panel -->
     <div class="twin-panel earth-twin">
       <div class="twin-label">Earth Twin</div>
       <div class="age-readout">
@@ -950,177 +568,86 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
         <small>years</small>
       </div>
 
+      <!-- UPGRADED EARTH CIVILIZATION BACKGROUNDS (Stages 0 - 6) -->
       <svg class="civ-bg" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky0" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#0a1530"/><stop offset="100%" stop-color="#1a2a55"/></linearGradient>
+          <linearGradient id="sky1" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#15082a"/><stop offset="100%" stop-color="#0e1a3b"/></linearGradient>
+          <linearGradient id="sky2" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#0c1228"/><stop offset="100%" stop-color="#1c1640"/></linearGradient>
+          <linearGradient id="sky3" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#061a14"/><stop offset="100%" stop-color="#103828"/></linearGradient>
+        </defs>
+
+        <!-- Stage 0: Modern Cityscape -->
         <g class="civ-stage active" data-stage="0">
-          <rect x="0" y="0" width="400" height="360" fill="url(#sky-modern)"/>
-          <defs>
-            <linearGradient id="sky-modern" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stop-color="#0a1530"/>
-              <stop offset="100%" stop-color="#1a2a55"/>
-            </linearGradient>
-          </defs>
-          <g fill="#0e1a38" opacity="0.95">
-            <rect x="0" y="220" width="40" height="140"/>
-            <rect x="40" y="200" width="50" height="160"/>
-            <rect x="90" y="180" width="30" height="180"/>
-            <rect x="120" y="150" width="60" height="210"/>
-            <rect x="180" y="190" width="40" height="170"/>
-            <rect x="220" y="170" width="50" height="190"/>
-            <rect x="270" y="200" width="35" height="160"/>
-            <rect x="305" y="160" width="55" height="200"/>
-            <rect x="360" y="210" width="40" height="150"/>
+          <rect x="0" y="0" width="400" height="360" fill="url(#sky0)"/>
+          <g fill="#0e1a38">
+            <rect x="20" y="190" width="45" height="170"/><rect x="75" y="150" width="55" height="210"/><rect x="140" y="210" width="50" height="150"/>
+            <rect x="200" y="170" width="60" height="190"/><rect x="270" y="140" width="50" height="220"/><rect x="330" y="195" width="50" height="165"/>
           </g>
           <g fill="#ffc857" opacity="0.85">
-            <rect x="10" y="240" width="4" height="6"/><rect x="22" y="260" width="4" height="6"/><rect x="58" y="220" width="4" height="6"/>
-            <rect x="72" y="250" width="4" height="6"/><rect x="100" y="200" width="4" height="6"/><rect x="135" y="170" width="4" height="6"/>
-            <rect x="155" y="200" width="4" height="6"/><rect x="195" y="220" width="4" height="6"/><rect x="240" y="190" width="4" height="6"/>
-            <rect x="285" y="220" width="4" height="6"/><rect x="320" y="180" width="4" height="6"/><rect x="375" y="240" width="4" height="6"/>
+            <rect x="30" y="210" width="5" height="8"/><rect x="85" y="170" width="6" height="10"/><rect x="215" y="190" width="6" height="8"/><rect x="285" y="160" width="6" height="10"/>
           </g>
         </g>
 
+        <!-- Stage 1: Cyberpunk Spires -->
         <g class="civ-stage" data-stage="1">
-          <rect x="0" y="0" width="400" height="360" fill="#0d1838"/>
+          <rect x="0" y="0" width="400" height="360" fill="url(#sky1)"/>
           <g fill="#0c1a3b">
-            <polygon points="0,360 0,160 50,140 50,360"/>
-            <polygon points="60,360 60,100 110,80 130,360"/>
-            <polygon points="140,360 140,90 200,60 220,360"/>
-            <polygon points="230,360 230,130 280,110 280,360"/>
-            <polygon points="290,360 290,80 360,50 380,360"/>
+            <polygon points="10,360 10,120 50,90 90,120 90,360"/><polygon points="120,360 120,70 180,40 240,70 240,360"/><polygon points="280,360 280,100 340,80 390,360"/>
           </g>
-          <g stroke="#4fd1ff" stroke-width="1.2" opacity="0.7" fill="none">
-            <line x1="25" y1="160" x2="25" y2="360"/>
-            <line x1="95" y1="100" x2="115" y2="360"/>
-            <line x1="170" y1="90" x2="200" y2="360"/>
-            <line x1="255" y1="130" x2="255" y2="360"/>
-            <line x1="325" y1="80" x2="345" y2="360"/>
+          <g stroke="#4fd1ff" stroke-width="1.5" opacity="0.8" fill="none">
+            <line x1="50" y1="90" x2="50" y2="360"/><line x1="180" y1="40" x2="180" y2="360"/><line x1="340" y1="80" x2="340" y2="360"/>
           </g>
-          <g fill="#b18cff">
-            <ellipse cx="80" cy="50" rx="6" ry="2"/>
-            <ellipse cx="200" cy="35" rx="7" ry="2"/>
-            <ellipse cx="320" cy="60" rx="5" ry="2"/>
-          </g>
+          <g fill="#b18cff"><circle cx="180" cy="40" r="4"/><circle cx="50" cy="90" r="3"/><circle cx="340" cy="80" r="3"/></g>
         </g>
 
+        <!-- Stage 2: Megastructures & Orbital Rings -->
         <g class="civ-stage" data-stage="2">
-          <rect x="0" y="0" width="400" height="360" fill="#100d28"/>
-          <path d="M -60 80 Q 200 -20 460 80" fill="none" stroke="#b18cff" stroke-width="2" opacity="0.7"/>
-          <path d="M -60 80 Q 200 -20 460 80" fill="none" stroke="#fff" stroke-width="0.5" opacity="0.4"/>
+          <rect x="0" y="0" width="400" height="360" fill="url(#sky2)"/>
+          <path d="M -50 100 Q 200 -30 450 100" fill="none" stroke="#b18cff" stroke-width="2.5" opacity="0.8"/>
+          <path d="M -50 100 Q 200 -30 450 100" fill="none" stroke="#fff" stroke-width="0.8" opacity="0.5"/>
           <g fill="#1a1240">
-            <polygon points="0,360 0,40 40,30 60,360"/>
-            <polygon points="80,360 80,20 120,10 140,360"/>
-            <polygon points="160,360 160,0 220,-10 240,360"/>
-            <polygon points="260,360 260,30 310,15 330,360"/>
-            <polygon points="350,360 350,40 400,30 400,360"/>
+            <polygon points="0,360 0,30 60,15 100,360"/><polygon points="130,360 130,10 200,0 270,10 270,360"/><polygon points="300,360 300,25 360,15 400,360"/>
           </g>
-          <g stroke="#ffc857" stroke-width="1" opacity="0.6" fill="none">
-            <line x1="20" y1="40" x2="50" y2="360"/>
-            <line x1="100" y1="20" x2="130" y2="360"/>
-            <line x1="190" y1="0" x2="230" y2="360"/>
-            <line x1="285" y1="30" x2="320" y2="360"/>
-            <line x1="375" y1="40" x2="400" y2="360"/>
-          </g>
-          <g fill="#fff">
-            <circle cx="60" cy="100" r="1.5"/>
-            <circle cx="170" cy="80" r="1.5"/>
-            <circle cx="280" cy="110" r="1.5"/>
-            <circle cx="350" cy="90" r="1.5"/>
-          </g>
+          <g stroke="#ffc857" stroke-width="1.5" opacity="0.75"><line x1="30" y1="22" x2="30" y2="360"/><line x1="200" y1="0" x2="200" y2="360"/><line x1="330" y1="20" x2="330" y2="360"/></g>
         </g>
 
+        <!-- Stage 3: Solarpunk Reclamation -->
         <g class="civ-stage" data-stage="3">
-          <rect x="0" y="0" width="400" height="360" fill="#0a1a18"/>
-          <ellipse cx="320" cy="60" rx="40" ry="12" fill="rgba(255,200,87,0.12)"/>
-          <g fill="#1a2418">
-            <polygon points="0,360 0,180 30,170 38,200 50,190 60,360"/>
-            <polygon points="70,360 70,140 100,130 105,200 130,190 130,360"/>
-            <polygon points="150,360 150,160 200,150 195,250 220,240 230,360"/>
-            <polygon points="260,360 260,180 290,170 295,360"/>
-            <polygon points="320,360 320,200 360,190 360,360"/>
+          <rect x="0" y="0" width="400" height="360" fill="url(#sky3)"/>
+          <g fill="#1a2e20">
+            <ellipse cx="80" cy="280" rx="90" ry="60"/><ellipse cx="220" cy="260" rx="110" ry="80"/><ellipse cx="350" cy="290" rx="90" ry="60"/>
           </g>
-          <g fill="#2d4a2e" opacity="0.85">
-            <ellipse cx="20" cy="240" rx="30" ry="20"/>
-            <ellipse cx="85" cy="220" rx="40" ry="25"/>
-            <ellipse cx="180" cy="260" rx="50" ry="30"/>
-            <ellipse cx="280" cy="240" rx="35" ry="22"/>
-            <ellipse cx="350" cy="270" rx="40" ry="25"/>
-          </g>
-          <g fill="#3a5a3a">
-            <circle cx="40" cy="280" r="22"/>
-            <circle cx="135" cy="290" r="25"/>
-            <circle cx="240" cy="290" r="20"/>
-            <circle cx="320" cy="285" r="22"/>
+          <g fill="#4fd1ff" opacity="0.7">
+            <circle cx="80" cy="220" r="4"/><circle cx="220" cy="180" r="5"/><circle cx="330" cy="230" r="4"/>
           </g>
         </g>
 
+        <!-- Stage 4: Deep Time Megaliths -->
         <g class="civ-stage" data-stage="4">
           <rect x="0" y="0" width="400" height="360" fill="#251a10"/>
-          <ellipse cx="200" cy="40" rx="200" ry="40" fill="rgba(255,200,87,0.15)"/>
-          <g fill="#3a2a18" opacity="0.85">
-            <polygon points="40,260 100,180 160,260"/>
-            <polygon points="140,270 220,160 300,270"/>
-            <polygon points="270,260 330,190 390,260"/>
+          <g fill="#3a2a18" opacity="0.9">
+            <polygon points="30,360 80,180 130,360"/><polygon points="150,360 220,130 290,360"/><polygon points="280,360 340,190 400,360"/>
           </g>
-          <g fill="#5a4530">
-            <rect x="20" y="240" width="8" height="50"/>
-            <rect x="45" y="250" width="8" height="40"/>
-            <rect x="180" y="240" width="8" height="40"/>
-            <rect x="200" y="245" width="8" height="35"/>
-            <rect x="320" y="245" width="8" height="45"/>
-          </g>
-          <g fill="#3d2c18">
-            <path d="M 0 360 L 0 290 Q 100 270 200 295 Q 300 310 400 280 L 400 360 Z"/>
-          </g>
-          <g fill="#2a1f10">
-            <path d="M 0 360 L 0 320 Q 100 305 200 325 Q 300 335 400 315 L 400 360 Z"/>
-          </g>
+          <ellipse cx="220" cy="130" rx="18" ry="4" fill="#ffc857" opacity="0.6"/>
         </g>
 
+        <!-- Stage 5: Frozen Glacial Earth -->
         <g class="civ-stage" data-stage="5">
-          <rect x="0" y="0" width="400" height="360" fill="#0a1628"/>
-          <rect x="0" y="0" width="400" height="160" fill="url(#sky-glacial)"/>
-          <defs>
-            <linearGradient id="sky-glacial" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stop-color="#1a2540"/>
-              <stop offset="100%" stop-color="#3a5570"/>
-            </linearGradient>
-          </defs>
-          <g fill="#2a3a55">
-            <polygon points="0,260 60,140 90,180 130,120 180,180 220,150 270,200 320,140 370,200 400,180 400,260"/>
-          </g>
-          <g fill="#dae8f5" opacity="0.9">
-            <polygon points="60,140 70,160 90,180 50,180"/>
-            <polygon points="130,120 140,150 180,180 100,180"/>
-            <polygon points="270,200 290,170 320,140 340,180 290,200"/>
-          </g>
-          <g fill="#5a7090">
-            <path d="M 0 260 Q 200 240 400 260 L 400 360 L 0 360 Z"/>
-          </g>
-          <g fill="#aac0d8" opacity="0.6">
-            <ellipse cx="80" cy="320" rx="50" ry="6"/>
-            <ellipse cx="240" cy="340" rx="80" ry="8"/>
-            <ellipse cx="350" cy="310" rx="40" ry="5"/>
+          <rect x="0" y="0" width="400" height="360" fill="#0c1828"/>
+          <path d="M 0 160 Q 200 80 400 160 L 400 360 L 0 360 Z" fill="#1c3048" opacity="0.6"/>
+          <g fill="#dae8f5" opacity="0.85">
+            <polygon points="50,220 90,140 130,220"/><polygon points="170,240 220,130 270,240"/><polygon points="290,230 340,150 390,230"/>
           </g>
         </g>
 
+        <!-- Stage 6: Red Giant End of Earth -->
         <g class="civ-stage" data-stage="6">
           <rect x="0" y="0" width="400" height="360" fill="#1a0608"/>
-          <radialGradient id="redGiant" cx="0.5" cy="0.5">
-            <stop offset="0%" stop-color="#ffe0a0"/>
-            <stop offset="40%" stop-color="#ff7a3a"/>
-            <stop offset="80%" stop-color="#a02010"/>
-            <stop offset="100%" stop-color="rgba(160,32,16,0)"/>
-          </radialGradient>
-          <circle cx="200" cy="120" r="180" fill="url(#redGiant)" opacity="0.9"/>
-          <g fill="#3a1408">
-            <path d="M 0 360 L 0 240 Q 100 220 200 250 Q 300 280 400 240 L 400 360 Z"/>
-          </g>
-          <g fill="#1a0808">
-            <path d="M 0 360 L 0 290 Q 100 280 200 305 Q 300 320 400 295 L 400 360 Z"/>
-          </g>
-          <g stroke="#ff6b3b" stroke-width="1.5" fill="none" opacity="0.8">
-            <path d="M 30 320 Q 60 310 80 330 Q 100 350 120 340"/>
-            <path d="M 200 310 Q 230 320 260 305"/>
-            <path d="M 320 340 Q 350 325 380 340"/>
+          <radialGradient id="redSun" cx="0.5" cy="0.4"><stop offset="0%" stop-color="#ffe0a0"/><stop offset="45%" stop-color="#ff5520"/><stop offset="100%" stop-color="rgba(160,32,16,0)"/></radialGradient>
+          <circle cx="200" cy="120" r="170" fill="url(#redSun)"/>
+          <g fill="#2a0c08">
+            <polygon points="0,360 40,240 90,360"/><polygon points="120,360 200,210 280,360"/><polygon points="290,360 350,250 400,360"/>
           </g>
         </g>
       </svg>
@@ -1138,6 +665,7 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
       </div>
     </div>
 
+    <!-- Traveler Twin Panel -->
     <div class="twin-panel traveler-twin">
       <div class="twin-label">Traveler Twin</div>
       <div class="age-readout">
@@ -1145,31 +673,21 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
         <small>years</small>
       </div>
 
+      <!-- UPGRADED RELATIVISTIC SPACE BACKGROUND -->
       <svg class="traveler-bg" viewBox="0 0 400 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
         <defs>
-          <radialGradient id="cosmicBg" cx="0.5" cy="0.5">
-            <stop offset="0%" stop-color="#1a1840"/>
-            <stop offset="60%" stop-color="#0a0a25"/>
-            <stop offset="100%" stop-color="#03050d"/>
-          </radialGradient>
-          <radialGradient id="nebula1" cx="0.3" cy="0.4">
-            <stop offset="0%" stop-color="rgba(177,140,255,0.4)"/>
-            <stop offset="100%" stop-color="rgba(177,140,255,0)"/>
-          </radialGradient>
-          <radialGradient id="nebula2" cx="0.7" cy="0.6">
-            <stop offset="0%" stop-color="rgba(79,209,255,0.3)"/>
-            <stop offset="100%" stop-color="rgba(79,209,255,0)"/>
-          </radialGradient>
+          <radialGradient id="spaceBg" cx="0.5" cy="0.5"><stop offset="0%" stop-color="#181538"/><stop offset="100%" stop-color="#03050d"/></radialGradient>
+          <radialGradient id="nebulaA" cx="0.35" cy="0.4"><stop offset="0%" stop-color="rgba(177,140,255,0.45)"/><stop offset="100%" stop-color="rgba(177,140,255,0)"/></radialGradient>
+          <radialGradient id="nebulaB" cx="0.75" cy="0.65"><stop offset="0%" stop-color="rgba(79,209,255,0.4)"/><stop offset="100%" stop-color="rgba(79,209,255,0)"/></radialGradient>
         </defs>
-        <rect x="0" y="0" width="400" height="360" fill="url(#cosmicBg)"/>
-        <ellipse cx="120" cy="140" rx="160" ry="100" fill="url(#nebula1)"/>
-        <ellipse cx="280" cy="220" rx="140" ry="90" fill="url(#nebula2)"/>
-        <g fill="#fff">
-          <circle cx="50" cy="60" r="1.2"/><circle cx="120" cy="40" r="0.8"/><circle cx="200" cy="80" r="1.4"/>
-          <circle cx="280" cy="50" r="0.9"/><circle cx="350" cy="100" r="1.1"/><circle cx="80" cy="180" r="1.0"/>
-          <circle cx="160" cy="220" r="0.7"/><circle cx="240" cy="180" r="1.3"/><circle cx="320" cy="240" r="1.0"/>
-          <circle cx="40" cy="280" r="0.8"/><circle cx="180" cy="300" r="1.1"/><circle cx="290" cy="310" r="0.9"/>
-          <circle cx="370" cy="280" r="1.2"/><circle cx="100" cy="320" r="0.7"/><circle cx="220" cy="60" r="0.9"/>
+        <rect x="0" y="0" width="400" height="360" fill="url(#spaceBg)"/>
+        <ellipse cx="130" cy="140" rx="170" ry="110" fill="url(#nebulaA)"/>
+        <ellipse cx="290" cy="220" rx="150" ry="100" fill="url(#nebulaB)"/>
+        <g fill="#fff" opacity="0.85">
+          <circle cx="45" cy="65" r="1.5"/><circle cx="115" cy="45" r="1.2"/><circle cx="210" cy="85" r="1.8"/>
+          <circle cx="285" cy="55" r="1.1"/><circle cx="355" cy="105" r="1.5"/><circle cx="85" cy="185" r="1.3"/>
+          <circle cx="165" cy="225" r="1.1"/><circle cx="245" cy="185" r="1.6"/><circle cx="325" cy="245" r="1.3"/>
+          <circle cx="45" cy="285" r="1.1"/><circle cx="185" cy="305" r="1.4"/><circle cx="295" cy="315" r="1.2"/>
         </g>
       </svg>
 
@@ -1203,7 +721,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
   </div>
 
   <div class="panel controls-panel">
-
     <div class="control-group">
       <div class="control-label">
         <span>Destination</span>
@@ -1241,7 +758,7 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
       </div>
       <div class="age-input-row">
         <input type="number" id="startAge" class="age-input" min="3" max="80" value="8" />
-        <span class="age-hint">Both twins start as the same age. Default: 8 (child).</span>
+        <span class="age-hint">Both twins start at the exact same age. Default: 8 years old.</span>
       </div>
     </div>
 
@@ -1250,87 +767,65 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
       <div class="warn-content">
         <strong>You won't survive this trip.</strong>
         <span id="survivalDetail"></span>
-        Want to go faster and make it back alive?
+        Want to travel faster so time dilation gets you home alive?
       </div>
       <button class="save-btn" id="saveBtn">Yes, save me</button>
     </div>
 
     <div class="action-row">
-      <button class="btn btn-launch" id="launchBtn">🚀 Launch</button>
+      <button class="btn btn-launch" id="launchBtn">🚀 Launch Trip</button>
       <button class="btn btn-reset" id="resetBtn">Reset</button>
     </div>
   </div>
 
   <div class="theory-wrap"><div class="theory">
-    <div class="theory-hdr">Theory — The Math Behind the Time Travel</div>
+    <div class="theory-hdr">Theory — Why Do Moving Clocks Run Slow?</div>
 
     <h3>The Setup</h3>
-    <p>Two twins start at the same age. One stays on Earth. The other boards a rocket, accelerates to a fraction of light speed <em>v</em>, travels to a chosen destination, turns around, and returns. When they reunite, the traveling twin is <em>measurably younger</em>. This is not science fiction — it has been verified with atomic clocks on commercial aircraft, with GPS satellites, and with cosmic-ray muons. Time itself runs at different rates for the two twins, and the difference is real, permanent, and irreversible.</p>
+    <p>Two twins start at the exact same age. One stays on Earth. The other boards an interstellar starship, accelerates to a fraction of the speed of light $v$, flies to a target destination, turns around, and returns. When they reunite, the traveling twin is <strong>measurably younger</strong>. This has been verified experimentally with atomic clocks on jets, with GPS satellites, and with subatomic muons.</p>
 
-    <h3>The Equations Used by This Simulation</h3>
-    <p>Special relativity tells us that the rate at which a moving clock ticks, as seen by a stationary observer, slows down by a factor γ (gamma), the <strong>Lorentz factor</strong>:</p>
-    <div class="eq">gamma = 1 / sqrt(1 − beta²),  where beta = v/c
-      <div class="vars">v is the rocket's speed; c is the speed of light. As v → c, beta → 1 and gamma → ∞: time on the rocket essentially stops.</div>
+    <h3>The Relativistic Math</h3>
+    <p>Special relativity states that the rate at which an inertial clock ticks, as measured by a stationary observer, slows down by the Lorentz factor $\gamma$:</p>
+    <div class="eq">$$\gamma = \frac{1}{\sqrt{1 - \beta^2}}, \quad \text{where } \beta = \frac{v}{c}$$
+      <div class="vars">As $v \to c$, $\beta \to 1$ and $\gamma \to \infty$: time on the traveling ship slows to a standstill relative to Earth.</div>
     </div>
 
-    <p>For an idealized round-trip at constant speed v over a one-way distance d, the time elapsed on Earth is simply distance over speed (out and back):</p>
-    <div class="eq">t<sub>E</sub> = 2d / v
-      <div class="vars">Earth-frame elapsed time. Independent of gamma — Earth doesn't care how fast the rocket is going.</div>
+    <p>For a round-trip at constant cruise speed $v$ over a one-way distance $d$, the elapsed time measured by Earth is simply distance divided by speed:</p>
+    <div class="eq">$$t_E = \frac{2d}{v}$$
+      <div class="vars">Earth-frame elapsed time. Independent of time dilation.</div>
     </div>
 
-    <p>The traveler's clock, however, runs slow by a factor of gamma. So the time the traveler experiences is:</p>
-    <div class="eq">t<sub>T</sub> = t<sub>E</sub> / gamma = (2d/v) · sqrt(1 − v²/c²)
-      <div class="vars">Traveler-frame elapsed time. This is what the traveler ages during the round trip.</div>
+    <p>The traveler's onboard clock runs slow by a factor of $\gamma$, so the traveler's aging is given by:</p>
+    <div class="eq">$$t_T = \frac{t_E}{\gamma} = \frac{2d}{v} \sqrt{1 - \frac{v^2}{c^2}}$$
+      <div class="vars">Traveler-frame elapsed time. This is how many years the astronaut ages during the journey.</div>
     </div>
 
-    <p>The age gap when they reunite is the difference between the two clocks:</p>
-    <div class="eq">Deltat = t<sub>E</sub> − t<sub>T</sub> = t<sub>E</sub> · (1 − 1/gamma)
-      <div class="vars">How many more years the Earth twin aged than the traveler. At v = 0.99c, gamma ≈ 7.09, so the traveler ages only ~14% as much as Earth.</div>
+    <p>The relativistic age difference when they reunite is:</p>
+    <div class="eq">$$\Delta t = t_E - t_T = t_E \left(1 - \frac{1}{\gamma}\right)$$
+      <div class="vars">At $v = 0.99c$, $\gamma \approx 7.09$, meaning the traveler ages only ~14% as much as their twin on Earth.</div>
     </div>
 
-    <p>The "Yes, save me" button solves the inverse problem — given the destination and a maximum allowed traveler-time t<sub>max</sub> = (lifespan − starting age − 5), it finds the minimum velocity that keeps the traveler alive:</p>
-    <div class="eq">v<sub>min</sub> = 2d / sqrt(t<sub>max</sub>² + 4d²)
-      <div class="vars">Derived by solving t<sub>T</sub> ≤ t<sub>max</sub> for v. The 5-year buffer is for safety; we add a tiny margin of 1.0001× to ensure the traveler doesn't land on their deathbed.</div>
-    </div>
-
-    <h3>"But Wait — Isn't This a Paradox?"</h3>
-    <p>The classic puzzle: from the rocket's reference frame, <em>Earth</em> is the one moving away and coming back. Shouldn't time dilation be symmetric — and shouldn't the Earth twin end up younger? This is why the situation is called a "paradox."</p>
+    <h3>"Why Isn't It Symmetric?" (The Resolution)</h3>
+    <p>From the traveler's perspective, Earth appears to be moving away and returning. Why doesn't Earth end up younger?</p>
     <div class="hbox hbox-violet">
-      <strong>Resolution:</strong> the symmetry is broken by the <em>turnaround</em>. To return home, the traveler must decelerate, stop, and accelerate back — which means switching from one inertial reference frame to another. The Earth twin never does this. That asymmetry is physically real, and it's exactly where the "missing years" live in the traveler's accounting. The paradox is only apparent; the physics is unambiguous.
+      <strong>Resolution:</strong> The symmetry is broken by the <strong>turnaround</strong>. To return home, the traveler must fire engines, decelerate, and accelerate back — shifting from one inertial reference frame to another. The Earth twin remains in a single inertial frame throughout. This physical acceleration/frame-jump breaks the symmetry and proves whose clock slowed down.
     </div>
 
-    <h3>Experimental Verification</h3>
+    <h3>Experimental Proofs</h3>
     <div class="hbox hbox-cyan">
-      <strong>Hafele–Keating experiment (1971):</strong> Cesium atomic clocks were flown around the world on commercial jets, then compared with reference clocks on the ground. The flying clocks lost (or gained) tens of nanoseconds — exactly as predicted by special and general relativity combined.<br><br>
-      <strong>GPS satellites:</strong> must correct for ~38 microseconds per day of relativistic time dilation (a combination of velocity-induced slowing and weaker-gravity speeding). Without these corrections, GPS positions would drift by roughly 10 kilometers per day. Time dilation is the foundation of every map app on your phone.<br><br>
-      <strong>Muon decay:</strong> Cosmic-ray muons created in the upper atmosphere have a lab half-life of just 2.2 microseconds and should decay long before reaching the ground. Yet they arrive in droves, because at relativistic speeds <em>their</em> internal clocks run slow relative to ours — they live long enough to make the trip.
+      <strong>Hafele–Keating Experiment (1971):</strong> Atomic clocks flown around the world on jetliners showed nanosecond-level time shifts matching special and general relativity.<br><br>
+      <strong>GPS Navigation:</strong> Orbiting satellites must correct for ~38 microseconds per day of time dilation. Without relativity corrections, GPS coordinates would drift by ~10 km per day.
     </div>
 
-    <h3>What This Simulation Idealizes</h3>
-    <p>To stay simple and intuitive, the simulation makes four physical idealizations. They keep the headline result (traveler ages less by factor gamma) exactly correct, but smooth over engineering realities:</p>
     <table class="utab">
-      <tr><td>Instant turnaround</td><td>Real rockets accelerate gradually. We assume the cruise speed is reached immediately and reversed instantly. For interplanetary trips this is a tiny correction; for interstellar trips a realistic 1g acceleration profile gives a similar gamma but distributed over the journey.</td></tr>
-      <tr><td>No gravity wells</td><td>We ignore general-relativistic effects from planets and stars. They're small for free-flight trajectories far from massive bodies.</td></tr>
-      <tr><td>Constant velocity cruise</td><td>The rocket reaches v instantly, holds it, and reverses instantly at the destination. Real mission profiles use continuous acceleration.</td></tr>
-      <tr><td>Lifespan cap (~95 yrs)</td><td>Used by the "save me" suggestion. Real human lifespan varies; this is a simulation default, not a prediction.</td></tr>
+      <tr><td>Instant turnaround</td><td>Real starships accelerate gradually; we idealize instant cruise velocity to highlight the Lorentz age gap.</td></tr>
+      <tr><td>No gravity wells</td><td>We focus purely on special relativity, omitting general relativity gravitational shifts.</td></tr>
+      <tr><td>Lifespan cap (~95 yrs)</td><td>Used by the "save me" feature to suggest the minimum velocity needed to survive the trip.</td></tr>
     </table>
-
-    <h3>Quick gamma Reference — Build Your Intuition</h3>
-    <div class="hbox hbox-amber">
-      <strong>v = 0.5 c</strong> → gamma ≈ 1.155 — barely noticeable<br>
-      <strong>v = 0.9 c</strong> → gamma ≈ 2.294 — traveler ages less than half<br>
-      <strong>v = 0.99 c</strong> → gamma ≈ 7.089 — Earth ages 7× the traveler<br>
-      <strong>v = 0.999 c</strong> → gamma ≈ 22.37 — Earth ages 22× the traveler<br>
-      <strong>v = 0.9999 c</strong> → gamma ≈ 70.71 — interstellar destinations now reachable in a lifetime<br>
-      <strong>v = 0.99999999 c</strong> → gamma ≈ 7,071 — Andromeda in a few centuries of traveler time
-    </div>
-
-    <h3>Why It Matters</h3>
-    <p>The twin paradox is not a brain-teaser — it's a window into the structure of the universe. Time is not a universal background tick that everyone shares; it is a local quantity that depends on how fast you are moving and where you are in a gravitational field. Two clocks that read the same when they part can read different times when they meet again. <strong>This simulation lets you choose any destination and any speed, and watch the relativistic age gap unfold in real time.</strong> The math behind it is exactly the math used by physicists, navigators, and GPS engineers every day.</p>
   </div></div>
 
   <footer>
-    Part of <a href="https://yousuf-science.github.io/science-wonders" target="_blank" rel="noopener">Science Wonders</a> · Built for curiosity.
+    SCIENCE WONDERS &nbsp;·&nbsp; OPEN-SOURCE EDUCATIONAL PHYSICS SIMULATIONS
   </footer>
 </div>
 
@@ -1338,7 +833,7 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
 
 <div class="result-overlay" id="resultOverlay">
   <div class="result-card">
-    <button class="result-close-x" id="resultCloseX" aria-label="Close result popup">×</button>
+    <button class="result-close-x" id="resultCloseX" aria-label="Close modal">×</button>
     <div class="result-eyebrow" id="resultEyebrow">Trip Complete</div>
     <div class="result-headline" id="resultHeadline">You aged 4 years. Earth aged 9.</div>
     <div class="result-grid">
@@ -1362,7 +857,51 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
 (function(){
   'use strict';
 
-  /* ----------------- Constants ----------------- */
+  // ── Voice Narration Engine ────────────────────────────────────────────────
+  let narrateOn = false, speaking = false, chosenVoice = null, speechRate = 0.90;
+
+  function populateVoices(){
+    if(!window.speechSynthesis) return;
+    const voices = speechSynthesis.getVoices(), sel = document.getElementById('vsel');
+    if(!voices.length) return;
+    sel.innerHTML = '';
+    const groups = [
+      {l:'— Female English —', v:voices.filter(v=>v.lang.startsWith('en')&&/female|woman|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+      {l:'— Male English —',   v:voices.filter(v=>v.lang.startsWith('en')&&/male|man|david|mark|daniel|alex|james|george|rishi/i.test(v.name))},
+      {l:'— English —',        v:voices.filter(v=>v.lang.startsWith('en')&&!/female|woman|male|man|david|mark|daniel|alex|james|george|rishi|samantha|karen|moira|fiona|victoria|zira|kate/i.test(v.name))},
+      {l:'— Other —',          v:voices.filter(v=>!v.lang.startsWith('en'))},
+    ];
+    groups.forEach(g=>{
+      if(!g.v.length) return;
+      const og = document.createElement('optgroup'); og.label = g.l;
+      g.v.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=`${v.name} (${v.lang})`;og.appendChild(o);});
+      sel.appendChild(og);
+    });
+    const pref = voices.find(v=>v.name==='Google UK English Female')||voices.find(v=>v.lang==='en-GB'&&/female/i.test(v.name))||voices.find(v=>v.lang.startsWith('en'));
+    if(pref){sel.value=pref.name;chosenVoice=pref;}
+    else if(voices[0]){sel.value=voices[0].name;chosenVoice=voices[0];}
+  }
+  if(window.speechSynthesis){speechSynthesis.onvoiceschanged = populateVoices; populateVoices();}
+
+  function narrate(text){
+    if(!narrateOn || !window.speechSynthesis) return;
+    speechSynthesis.cancel(); speaking = true;
+    document.getElementById('narr-text').textContent = text;
+    const sents = text.match(/[^.!?]+[.!?]+[\s]*/g) || [text];
+    let idx = 0;
+    function next(){
+      if(!narrateOn || idx >= sents.length){speaking = false; return;}
+      const u = new SpeechSynthesisUtterance(sents[idx].trim());
+      if(chosenVoice) u.voice = chosenVoice;
+      u.rate = speechRate; u.pitch = 1; u.volume = 1;
+      u.onend = ()=>{idx++; next();}; u.onerror = ()=>{idx++; next();};
+      speechSynthesis.speak(u);
+    }
+    next();
+  }
+  function stopNarration(){if(window.speechSynthesis) speechSynthesis.cancel(); speaking = false;}
+
+  // ── Physics & Trip Constants ──────────────────────────────────────────────
   const C_KM_S = 299792.458;
   const SEC_PER_YEAR = 365.25 * 24 * 3600;
   const KM_PER_LY = C_KM_S * SEC_PER_YEAR;
@@ -1376,9 +915,9 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     { id: 'moon',    name: 'Moon',             icon: '🌙', distLy: 1.3 / SEC_PER_YEAR,         blurb: 'Just a hop.' },
     { id: 'mars',    name: 'Mars',             icon: '🔴', distLy: 12.5 * 60 / SEC_PER_YEAR,   blurb: 'Closest planetary neighbour.' },
     { id: 'jupiter', name: 'Jupiter',          icon: '🪐', distLy: 43 * 60 / SEC_PER_YEAR,     blurb: 'King of the planets.' },
-    { id: 'pluto',    name: 'Pluto',            icon: '❄️', distLy: 5.5 * 3600 / SEC_PER_YEAR,  blurb: 'Edge of the solar system.' },
-    { id: 'proxima', name: 'Proxima Centauri', icon: '⭐', distLy: 4.246,                      blurb: 'Nearest star.' },
-    { id: 'sirius',  name: 'Sirius',           icon: '✨', distLy: 8.6,                        blurb: 'Brightest in the night sky.' },
+    { id: 'pluto',   name: 'Pluto',            icon: '❄️', distLy: 5.5 * 3600 / SEC_PER_YEAR,  blurb: 'Edge of the solar system.' },
+    { id: 'proxima', name: 'Proxima Centauri', icon: '⭐', distLy: 4.246,                     blurb: 'Nearest star.' },
+    { id: 'sirius',  name: 'Sirius',           icon: '✨', distLy: 8.6,                       blurb: 'Brightest in the night sky.' },
     { id: 'vega',    name: 'Vega',             icon: '💫', distLy: 25.04,                      blurb: 'A cosmic landmark.' },
     { id: 'pleiades',name: 'Pleiades',         icon: '🌟', distLy: 444,                        blurb: 'The Seven Sisters.' },
     { id: 'gcenter', name: 'Galactic Center',  icon: '🌀', distLy: 26000,                      blurb: 'Heart of the Milky Way.' },
@@ -1395,7 +934,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     { label: '99.999%', v: 0.99999 }
   ];
 
-  /* ----------------- State ----------------- */
   const state = {
     destinationId: 'moon',
     distLy: DESTINATIONS[0].distLy,
@@ -1407,7 +945,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     animStart: 0
   };
 
-  /* ----------------- DOM refs ----------------- */
   const $ = (id) => document.getElementById(id);
   const els = {
     starfield: $('starfield'),
@@ -1447,7 +984,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     resultClose: $('resultClose')
   };
 
-  /* ----------------- Helpers ----------------- */
   function gammaOf(v) { return 1 / Math.sqrt(Math.max(1e-30, 1 - v*v)); }
 
   function formatDuration(years) {
@@ -1503,13 +1039,13 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
   }
 
   function ageStage(age) {
-    if (age < 13) return 0;       
-    if (age < 25) return 1;       
-    if (age < 45) return 2;       
-    if (age < 65) return 3;       
-    if (age < 85) return 4;       
+    if (age < 13) return 0;        
+    if (age < 25) return 1;        
+    if (age < 45) return 2;        
+    if (age < 65) return 3;        
+    if (age < 85) return 4;        
     if (age <= LIFESPAN + 15) return 5; 
-    return 6;                     
+    return 6;                      
   }
 
   function civStage(yearsElapsed) {
@@ -1522,197 +1058,172 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     return 6;
   }
 
-  /* ----------------- SVG character drawing ----------------- */
-  function drawCharacter(prefix, color) {
+  // ── OVERHAULED TWIN VECTOR CHARACTER ART (7 Life Stages) ──────────────────
+  function drawCharacter(prefix, color, isTraveler) {
     const stages = [
-      drawChild(color),
-      drawTeen(color),
-      drawAdult(color),
-      drawMiddleAged(color),
-      drawElderly(color),
-      drawVeryElderly(color),
+      drawChild(color, isTraveler),
+      drawTeen(color, isTraveler),
+      drawAdult(color, isTraveler),
+      drawMiddleAged(color, isTraveler),
+      drawElderly(color, isTraveler),
+      drawVeryElderly(color, isTraveler),
       drawMemorial(color)
     ];
     for (let i = 0; i < 7; i++) {
       const g = document.getElementById(`${prefix}-stage-${i}`);
-      g.innerHTML = stages[i];
-      g.style.display = (i === 0) ? '' : 'none';
+      if(g) {
+        g.innerHTML = stages[i];
+        g.style.display = (i === 0) ? '' : 'none';
+      }
     }
   }
 
-  function drawChild(c) {
+  function drawChild(c, trav) {
+    const suitCol = trav ? '#44366a' : '#2d456a';
     return `
-      <ellipse cx="100" cy="200" rx="36" ry="46" fill="#3a5a8a"/>
-      <rect x="78" y="160" width="44" height="50" fill="#3a5a8a"/>
-      <rect x="82" y="240" width="14" height="35" rx="6" fill="#3a5a8a"/>
-      <rect x="104" y="240" width="14" height="35" rx="6" fill="#3a5a8a"/>
-      <ellipse cx="89" cy="275" rx="10" ry="4" fill="#1a1a2a"/>
-      <ellipse cx="111" cy="275" rx="10" ry="4" fill="#1a1a2a"/>
+      <ellipse cx="100" cy="195" rx="34" ry="44" fill="${suitCol}"/>
+      <rect x="80" y="160" width="40" height="48" fill="${suitCol}"/>
+      <rect x="84" y="235" width="13" height="36" rx="6" fill="${suitCol}"/>
+      <rect x="103" y="235" width="13" height="36" rx="6" fill="${suitCol}"/>
+      <ellipse cx="90" cy="272" rx="10" ry="5" fill="#111"/>
+      <ellipse cx="110" cy="272" rx="10" ry="5" fill="#111"/>
       <ellipse cx="68" cy="180" rx="8" ry="22" fill="#f0c8a0"/>
       <ellipse cx="132" cy="180" rx="8" ry="22" fill="#f0c8a0"/>
-      <rect x="92" y="148" width="16" height="14" fill="#f0c8a0"/>
-      <circle cx="100" cy="115" r="38" fill="#f0c8a0"/>
-      <path d="M 65 110 Q 70 75 100 72 Q 130 75 135 110 Q 130 95 100 92 Q 75 95 65 110 Z" fill="#5a3a20"/>
-      <circle cx="88" cy="115" r="4" fill="#1a1a2a"/>
-      <circle cx="112" cy="115" r="4" fill="#1a1a2a"/>
-      <circle cx="89" cy="114" r="1.2" fill="#fff"/>
-      <circle cx="113" cy="114" r="1.2" fill="#fff"/>
-      <circle cx="78" cy="128" r="4" fill="#ffb0a0" opacity="0.6"/>
-      <circle cx="122" cy="128" r="4" fill="#ffb0a0" opacity="0.6"/>
-      <path d="M 88 134 Q 100 142 112 134" stroke="#1a1a2a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="115" r="44" fill="${c}" opacity="0.08"/>
+      <circle cx="100" cy="112" r="36" fill="#f0c8a0"/>
+      <path d="M 66 108 Q 70 74 100 70 Q 130 74 134 108 Q 130 94 100 90 Q 75 94 66 108 Z" fill="#4a2e18"/>
+      <circle cx="89" cy="112" r="4" fill="#181824"/>
+      <circle cx="111" cy="112" r="4" fill="#181824"/>
+      <circle cx="90" cy="111" r="1.2" fill="#fff"/>
+      <circle cx="112" cy="111" r="1.2" fill="#fff"/>
+      <path d="M 90 130 Q 100 136 110 130" stroke="#181824" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="112" r="44" fill="${c}" opacity="0.12"/>
     `;
   }
 
-  function drawTeen(c) {
+  function drawTeen(c, trav) {
+    const suitCol = trav ? '#583e84' : '#334e7a';
     return `
-      <path d="M 70 160 L 130 160 L 138 250 L 62 250 Z" fill="#5d3a8a"/>
-      <rect x="76" y="245" width="16" height="35" rx="4" fill="#2a3550"/>
-      <rect x="108" y="245" width="16" height="35" rx="4" fill="#2a3550"/>
-      <ellipse cx="84" cy="280" rx="11" ry="4" fill="#1a1a2a"/>
-      <ellipse cx="116" cy="280" rx="11" ry="4" fill="#1a1a2a"/>
-      <ellipse cx="62" cy="195" rx="8" ry="32" fill="#f0c8a0"/>
-      <ellipse cx="138" cy="195" rx="8" ry="32" fill="#f0c8a0"/>
-      <rect x="93" y="135" width="14" height="18" fill="#f0c8a0"/>
-      <ellipse cx="100" cy="105" rx="32" ry="36" fill="#f0c8a0"/>
-      <path d="M 68 100 Q 65 60 100 55 Q 138 58 134 105 Q 130 80 100 78 Q 75 82 68 100 Z" fill="#3a2010"/>
-      <ellipse cx="89" cy="105" rx="3" ry="3.5" fill="#1a1a2a"/>
-      <ellipse cx="111" cy="105" rx="3" ry="3.5" fill="#1a1a2a"/>
-      <path d="M 90 124 Q 100 132 110 124" stroke="#1a1a2a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="105" r="42" fill="${c}" opacity="0.08"/>
+      <path d="M 70 155 L 130 155 L 138 244 L 62 244 Z" fill="${suitCol}"/>
+      <rect x="76" y="240" width="16" height="36" rx="5" fill="#1e2538"/>
+      <rect x="108" y="240" width="16" height="36" rx="5" fill="#1e2538"/>
+      <ellipse cx="84" cy="278" rx="11" ry="5" fill="#0f1118"/>
+      <ellipse cx="116" cy="278" rx="11" ry="5" fill="#0f1118"/>
+      <ellipse cx="62" cy="192" rx="8" ry="32" fill="#f0c8a0"/>
+      <ellipse cx="138" cy="192" rx="8" ry="32" fill="#f0c8a0"/>
+      <ellipse cx="100" cy="104" rx="31" ry="35" fill="#f0c8a0"/>
+      <path d="M 69 98 Q 66 58 100 54 Q 134 58 131 98 Q 128 78 100 76 Q 74 78 69 98 Z" fill="#3a2010"/>
+      <circle cx="88" cy="104" r="3.5" fill="#181824"/>
+      <circle cx="112" cy="104" r="3.5" fill="#181824"/>
+      <path d="M 91 122 Q 100 128 109 122" stroke="#181824" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="104" r="43" fill="${c}" opacity="0.12"/>
     `;
   }
 
-  function drawAdult(c) {
+  function drawAdult(c, trav) {
+    const suitCol = trav ? '#3a2b5a' : '#243b5e';
     return `
-      <path d="M 65 158 L 135 158 L 145 255 L 55 255 Z" fill="#2a3a5a"/>
-      <path d="M 90 160 L 100 175 L 110 160" stroke="#fff" stroke-width="2" fill="none"/>
-      <rect x="74" y="248" width="18" height="36" rx="4" fill="#1a2030"/>
-      <rect x="108" y="248" width="18" height="36" rx="4" fill="#1a2030"/>
-      <ellipse cx="83" cy="282" rx="12" ry="4" fill="#0a0a18"/>
-      <ellipse cx="117" cy="282" rx="12" ry="4" fill="#0a0a18"/>
-      <ellipse cx="60" cy="200" rx="10" ry="34" fill="#2a3a5a"/>
-      <ellipse cx="140" cy="200" rx="10" ry="34" fill="#2a3a5a"/>
-      <circle cx="60" cy="234" r="8" fill="#e8b890"/>
-      <circle cx="140" cy="234" r="8" fill="#e8b890"/>
-      <rect x="93" y="133" width="14" height="20" fill="#e8b890"/>
+      <path d="M 64 154 L 136 154 L 146 250 L 54 250 Z" fill="${suitCol}"/>
+      <path d="M 90 156 L 100 172 L 110 156" stroke="#fff" stroke-width="2" fill="none"/>
+      <rect x="74" y="246" width="18" height="34" rx="4" fill="#161c28"/>
+      <rect x="108" y="246" width="18" height="34" rx="4" fill="#161c28"/>
+      <ellipse cx="83" cy="281" rx="12" ry="4.5" fill="#0c0d14"/>
+      <ellipse cx="117" cy="281" rx="12" ry="4.5" fill="#0c0d14"/>
+      <ellipse cx="58" cy="198" rx="10" ry="34" fill="${suitCol}"/>
+      <ellipse cx="142" cy="198" rx="10" ry="34" fill="${suitCol}"/>
+      <circle cx="58" cy="232" r="8" fill="#e8b890"/>
+      <circle cx="142" cy="232" r="8" fill="#e8b890"/>
       <ellipse cx="100" cy="100" rx="30" ry="34" fill="#e8b890"/>
-      <path d="M 70 95 Q 70 60 100 55 Q 130 60 130 95 Q 128 80 100 78 Q 75 82 70 95 Z" fill="#3a1f0a"/>
-      <circle cx="90" cy="100" r="2.5" fill="#1a1a2a"/>
-      <circle cx="110" cy="100" r="2.5" fill="#1a1a2a"/>
-      <path d="M 91 122 Q 100 128 109 122" stroke="#1a1a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="100" r="42" fill="${c}" opacity="0.07"/>
+      <path d="M 70 94 Q 70 58 100 54 Q 130 58 130 94 Q 128 78 100 76 Q 75 80 70 94 Z" fill="#2d1a0b"/>
+      <circle cx="89" cy="100" r="3" fill="#181824"/>
+      <circle cx="111" cy="100" r="3" fill="#181824"/>
+      <path d="M 92 120 Q 100 126 108 120" stroke="#181824" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="43" fill="${c}" opacity="0.12"/>
     `;
   }
 
-  function drawMiddleAged(c) {
+  function drawMiddleAged(c, trav) {
+    const suitCol = trav ? '#4a385a' : '#323c56';
     return `
-      <path d="M 62 158 L 138 158 L 150 256 L 50 256 Z" fill="#3a3a4a"/>
-      <path d="M 88 160 L 100 175 L 112 160" stroke="#bbb" stroke-width="2" fill="none"/>
-      <rect x="72" y="250" width="20" height="36" rx="4" fill="#1a2030"/>
-      <rect x="108" y="250" width="20" height="36" rx="4" fill="#1a2030"/>
-      <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <ellipse cx="56" cy="202" rx="10" ry="36" fill="#3a3a4a"/>
-      <ellipse cx="144" cy="202" rx="10" ry="36" fill="#3a3a4a"/>
-      <circle cx="56" cy="238" r="9" fill="#d8a888"/>
-      <circle cx="144" cy="238" r="9" fill="#d8a888"/>
-      <rect x="92" y="133" width="16" height="20" fill="#d8a888"/>
+      <path d="M 62 154 L 138 154 L 148 252 L 52 252 Z" fill="${suitCol}"/>
+      <rect x="72" y="248" width="20" height="34" rx="4" fill="#1a2030"/>
+      <rect x="108" y="248" width="20" height="34" rx="4" fill="#1a2030"/>
+      <ellipse cx="82" cy="282" rx="13" ry="4.5" fill="#0e1018"/>
+      <ellipse cx="118" cy="282" rx="13" ry="4.5" fill="#0e1018"/>
+      <ellipse cx="56" cy="200" rx="10" ry="36" fill="${suitCol}"/>
+      <ellipse cx="144" cy="200" rx="10" ry="36" fill="${suitCol}"/>
+      <circle cx="56" cy="236" r="9" fill="#d8a888"/>
+      <circle cx="144" cy="236" r="9" fill="#d8a888"/>
       <ellipse cx="100" cy="100" rx="30" ry="34" fill="#d8a888"/>
-      <path d="M 70 95 Q 72 62 100 58 Q 128 62 130 95 Q 128 82 100 80 Q 75 84 70 95 Z" fill="#4a3525"/>
-      <path d="M 75 78 Q 80 70 88 72" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M 113 72 Q 121 70 126 78" stroke="#aaa" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <circle cx="90" cy="100" r="2.5" fill="#1a1a2a"/>
-      <circle cx="110" cy="100" r="2.5" fill="#1a1a2a"/>
-      <path d="M 86 105 Q 90 108 94 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <path d="M 106 105 Q 110 118 114 105" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <path d="M 92 122 Q 100 124 108 122" stroke="#1a1a2a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <path d="M 84 82 Q 100 80 116 82" stroke="#a08070" stroke-width="0.8" fill="none" opacity="0.6"/>
-      <circle cx="100" cy="100" r="42" fill="${c}" opacity="0.06"/>
+      <path d="M 70 94 Q 72 60 100 56 Q 128 60 130 94 Q 128 80 100 78 Q 75 82 70 94 Z" fill="#4a3525"/>
+      <path d="M 74 76 Q 80 68 88 70" stroke="#b0a59a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 112 70 Q 120 68 126 76" stroke="#b0a59a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="89" cy="100" r="2.8" fill="#181824"/>
+      <circle cx="111" cy="100" r="2.8" fill="#181824"/>
+      <path d="M 92 120 Q 100 124 108 120" stroke="#181824" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="43" fill="${c}" opacity="0.10"/>
     `;
   }
 
-  function drawElderly(c) {
+  function drawElderly(c, trav) {
+    const suitCol = trav ? '#444052' : '#3d4452';
     return `
-      <path d="M 62 162 L 138 162 L 150 258 L 50 258 Z" fill="#4a4a55"/>
-      <path d="M 88 163 L 100 178 L 112 163" stroke="#999" stroke-width="2" fill="none"/>
-      <rect x="72" y="252" width="20" height="34" rx="4" fill="#2a2a35"/>
-      <rect x="108" y="252" width="20" height="34" rx="4" fill="#2a2a35"/>
-      <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <ellipse cx="56" cy="204" rx="10" ry="36" fill="#4a4a55"/>
-      <ellipse cx="144" cy="204" rx="10" ry="36" fill="#4a4a55"/>
-      <circle cx="56" cy="240" r="9" fill="#c89878"/>
-      <circle cx="144" cy="240" r="9" fill="#c89878"/>
-      <line x1="148" y1="245" x2="156" y2="285" stroke="#5a3a20" stroke-width="3" stroke-linecap="round"/>
-      <rect x="92" y="135" width="16" height="20" fill="#c89878"/>
+      <path d="M 62 158 L 138 158 L 148 254 L 52 254 Z" fill="${suitCol}"/>
+      <rect x="72" y="250" width="20" height="32" rx="4" fill="#222630"/>
+      <rect x="108" y="250" width="20" height="32" rx="4" fill="#222630"/>
+      <ellipse cx="82" cy="282" rx="13" ry="4.5" fill="#0e1018"/>
+      <ellipse cx="118" cy="282" rx="13" ry="4.5" fill="#0e1018"/>
+      <ellipse cx="56" cy="202" rx="10" ry="36" fill="${suitCol}"/>
+      <ellipse cx="144" cy="202" rx="10" ry="36" fill="${suitCol}"/>
+      <circle cx="56" cy="238" r="9" fill="#c89878"/>
+      <circle cx="144" cy="238" r="9" fill="#c89878"/>
+      <line x1="148" y1="242" x2="156" y2="284" stroke="#7a5436" stroke-width="3.5" stroke-linecap="round"/>
       <ellipse cx="100" cy="102" rx="30" ry="34" fill="#c89878"/>
-      <path d="M 70 96 Q 72 64 100 60 Q 128 64 130 96 Q 128 84 100 82 Q 75 86 70 96 Z" fill="#aaa"/>
-      <circle cx="90" cy="100" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
-      <circle cx="110" cy="100" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
-      <line x1="96" y1="100" x2="104" y2="100" stroke="#1a1a2a" stroke-width="1.5"/>
-      <circle cx="90" cy="100" r="1.8" fill="#1a1a2a"/>
-      <circle cx="110" cy="100" r="1.8" fill="#1a1a2a"/>
-      <path d="M 80 84 Q 100 82 120 84" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <path d="M 80 88 Q 100 86 120 88" stroke="#a08070" stroke-width="0.6" fill="none"/>
-      <path d="M 86 110 Q 90 113 94 110" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <path d="M 106 110 Q 110 113 114 110" stroke="#a08070" stroke-width="0.8" fill="none"/>
-      <path d="M 94 122 Q 100 124 106 122" stroke="#1a1a2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="102" r="42" fill="${c}" opacity="0.05"/>
+      <path d="M 70 96 Q 72 64 100 60 Q 128 64 130 96 Q 128 84 100 82 Q 75 86 70 96 Z" fill="#b0b4be"/>
+      <circle cx="89" cy="100" r="2.5" fill="#181824"/>
+      <circle cx="111" cy="100" r="2.5" fill="#181824"/>
+      <path d="M 80 84 Q 100 82 120 84" stroke="#a08070" stroke-width="1" fill="none"/>
+      <path d="M 94 122 Q 100 124 106 122" stroke="#181824" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="102" r="43" fill="${c}" opacity="0.10"/>
     `;
   }
 
-  function drawVeryElderly(c) {
+  function drawVeryElderly(c, trav) {
+    const suitCol = trav ? '#4e4856' : '#484c56';
     return `
-      <path d="M 60 168 L 140 168 L 152 260 L 48 260 Z" fill="#5a5560"/>
-      <path d="M 88 170 L 100 184 L 112 170" stroke="#888" stroke-width="2" fill="none"/>
-      <rect x="72" y="254" width="20" height="32" rx="4" fill="#3a3540"/>
-      <rect x="108" y="254" width="20" height="32" rx="4" fill="#3a3540"/>
-      <ellipse cx="82" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <ellipse cx="118" cy="284" rx="13" ry="4" fill="#0a0a18"/>
-      <ellipse cx="55" cy="206" rx="10" ry="36" fill="#5a5560"/>
-      <ellipse cx="145" cy="206" rx="10" ry="34" fill="#5a5560"/>
-      <circle cx="55" cy="242" r="8" fill="#b88868"/>
-      <circle cx="145" cy="240" r="8" fill="#b88868"/>
-      <line x1="149" y1="244" x2="158" y2="285" stroke="#5a3a20" stroke-width="3.5" stroke-linecap="round"/>
-      <circle cx="149" cy="244" r="3" fill="#3a2510"/>
-      <rect x="92" y="138" width="16" height="22" fill="#b88868"/>
+      <path d="M 60 164 L 140 164 L 150 258 L 50 258 Z" fill="${suitCol}"/>
+      <rect x="72" y="252" width="20" height="32" rx="4" fill="#2c303a"/>
+      <rect x="108" y="252" width="20" height="32" rx="4" fill="#2c303a"/>
+      <ellipse cx="82" cy="284" rx="13" ry="4.5" fill="#111"/>
+      <ellipse cx="118" cy="284" rx="13" ry="4.5" fill="#111"/>
+      <circle cx="55" cy="240" r="8" fill="#b88868"/>
+      <circle cx="145" cy="238" r="8" fill="#b88868"/>
+      <line x1="149" y1="242" x2="158" y2="284" stroke="#684224" stroke-width="4" stroke-linecap="round"/>
       <ellipse cx="100" cy="105" rx="30" ry="34" fill="#b88868"/>
-      <path d="M 75 100 Q 78 72 100 68 Q 122 72 125 100 Q 122 90 100 88 Q 78 92 75 100 Z" fill="#eee"/>
-      <circle cx="90" cy="103" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
-      <circle cx="110" cy="103" r="6" fill="none" stroke="#1a1a2a" stroke-width="1.8"/>
-      <line x1="96" y1="103" x2="104" y2="103" stroke="#1a1a2a" stroke-width="1.5"/>
-      <circle cx="90" cy="103" r="1.5" fill="#1a1a2a"/>
-      <circle cx="110" cy="103" r="1.5" fill="#1a1a2a"/>
-      <path d="M 78 86 Q 100 84 122 86" stroke="#806858" stroke-width="0.8" fill="none"/>
-      <path d="M 78 91 Q 100 89 122 91" stroke="#806858" stroke-width="0.7" fill="none"/>
-      <path d="M 78 96 Q 100 94 122 96" stroke="#806858" stroke-width="0.5" fill="none"/>
-      <path d="M 84 116 Q 90 119 96 116" stroke="#806858" stroke-width="0.8" fill="none"/>
-      <path d="M 104 116 Q 110 119 116 116" stroke="#806858" stroke-width="0.8" fill="none"/>
-      <path d="M 80 130 L 76 138" stroke="#806858" stroke-width="0.5"/>
-      <path d="M 120 130 L 124 138" stroke="#806858" stroke-width="0.5"/>
-      <path d="M 95 126 Q 100 127 105 126" stroke="#1a1a2a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="105" r="42" fill="${c}" opacity="0.04"/>
+      <path d="M 74 98 Q 78 70 100 66 Q 122 70 126 98 Q 122 88 100 86 Q 78 90 74 98 Z" fill="#e0e4ee"/>
+      <circle cx="89" cy="103" r="2.2" fill="#181824"/>
+      <circle cx="111" cy="103" r="2.2" fill="#181824"/>
+      <path d="M 80 86 Q 100 84 120 86" stroke="#8a7060" stroke-width="1.2" fill="none"/>
+      <path d="M 94 124 Q 100 126 106 124" stroke="#181824" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="105" r="43" fill="${c}" opacity="0.10"/>
     `;
   }
 
   function drawMemorial(c) {
     return `
-      <ellipse cx="100" cy="270" rx="70" ry="8" fill="#1a1a2a" opacity="0.6"/>
-      <path d="M 60 260 L 60 150 Q 60 110 100 110 Q 140 110 140 150 L 140 260 Z" fill="#3a3a48"/>
-      <path d="M 60 260 L 60 150 Q 60 110 100 110 Q 140 110 140 150 L 140 260 Z" fill="none" stroke="#5a5a70" stroke-width="2"/>
-      <line x1="100" y1="135" x2="100" y2="170" stroke="#9aa0b0" stroke-width="3" stroke-linecap="round"/>
-      <line x1="86" y1="148" x2="114" y2="148" stroke="#9aa0b0" stroke-width="3" stroke-linecap="round"/>
-      <text x="100" y="200" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="600" fill="var(--text)" letter-spacing="2">REMEMBERED</text>
-      <text x="100" y="222" text-anchor="middle" font-family="DM Sans" font-size="9" fill="#9aa0b0" letter-spacing="1">A LIFE WELL LIVED</text>
-      <circle cx="100" cy="180" r="60" fill="${c}" opacity="0.06"/>
-      <circle cx="78" cy="265" r="3" fill="#ff6b8b"/>
-      <circle cx="84" cy="266" r="2.5" fill="#ffc857"/>
-      <circle cx="90" cy="265" r="3" fill="#b18cff"/>
+      <ellipse cx="100" cy="272" rx="72" ry="8" fill="#111420" opacity="0.8"/>
+      <path d="M 60 262 L 60 152 Q 60 112 100 112 Q 140 112 140 152 L 140 262 Z" fill="#2a2e40" stroke="#4a5270" stroke-width="2"/>
+      <line x1="100" y1="135" x2="100" y2="172" stroke="#b0b8d0" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="85" y1="148" x2="115" y2="148" stroke="#b0b8d0" stroke-width="3.5" stroke-linecap="round"/>
+      <text x="100" y="202" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="700" fill="var(--text)" letter-spacing="2">REMEMBERED</text>
+      <text x="100" y="222" text-anchor="middle" font-family="DM Sans" font-size="9" fill="#8a96b8" letter-spacing="1">A LIFE WELL LIVED</text>
+      <circle cx="100" cy="180" r="62" fill="${c}" opacity="0.08"/>
+      <circle cx="78" cy="266" r="3" fill="#ff6b8b"/>
+      <circle cx="84" cy="267" r="2.5" fill="#ffc857"/>
+      <circle cx="90" cy="266" r="3" fill="#b18cff"/>
     `;
   }
 
-  /* ----------------- UI builders ----------------- */
+  // ── UI Builders & Control Logic ───────────────────────────────────────────
   function buildDestinationChips() {
     els.destChips.innerHTML = '';
     DESTINATIONS.forEach(d => {
@@ -1755,7 +1266,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     }
   }
 
-  /* ----------------- Selection / state changes ----------------- */
   function selectDestination(id) {
     state.destinationId = id;
     const dest = DESTINATIONS.find(d => d.id === id);
@@ -1819,7 +1329,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     els.destText.textContent = dest.name.toUpperCase();
   }
 
-  /* ----------------- Live readouts ----------------- */
   function updateReadouts() {
     const v = state.velocityC;
     const d = state.distLy;
@@ -1865,9 +1374,10 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     if (maxT <= 1) return;
     const vMin = minVelocityForSurvival(state.distLy, maxT);
     setVelocity(Math.min(0.999999999999, vMin * 1.0001));
+    if(narrateOn) narrate("Velocity increased to " + (state.velocityC * 100).toFixed(3) + "% of light speed. Lorentz time dilation will now keep you alive for the round trip.");
   }
 
-  /* ----------------- Animation ----------------- */
+  // ── Animation Loop ────────────────────────────────────────────────────────
   function launch() {
     if (state.isAnimating) return;
 
@@ -1880,6 +1390,11 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     els.launchBtn.disabled = true;
     els.skipBtn.classList.add('visible');
     els.scenePanel.classList.add('warping');
+
+    if (narrateOn) {
+      const dest = DESTINATIONS.find(d => d.id === state.destinationId);
+      narrate(`Launching towards ${dest.name} at ${state.velocityC.toFixed(4)} c. Watch your twin on Earth age as your onboard clock slows down.`);
+    }
 
     try {
       if (typeof gtag === 'function') {
@@ -1923,10 +1438,10 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     let pos;
     if (p < 0.5) {
       pos = p * 2; 
-      els.rocket.setAttribute('transform', `translate(${135 + pos * 920}, 90)`);
+      els.rocket.setAttribute('transform', `translate(${145 + pos * 910}, 90)`);
     } else {
       pos = (1 - p) * 2; 
-      els.rocket.setAttribute('transform', `translate(${135 + pos * 920}, 90) scale(-1, 1)`);
+      els.rocket.setAttribute('transform', `translate(${145 + pos * 910}, 90) scale(-1, 1)`);
     }
 
     if (p < 1) {
@@ -1964,7 +1479,6 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     animate(performance.now());
   }
 
-  /* ----------------- Result ----------------- */
   function flavorTextFor(tE, tT, gap) {
     if (tE < 1/SEC_PER_YEAR * 60) return `Barely a moment passed. Relativity exists at any speed — but at this distance and velocity, the effect is too tiny to feel.`;
     if (tE < 1) return `Less than a year passed on Earth. Time dilation was real, but small. Try farther — or faster.`;
@@ -2009,6 +1523,10 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     els.resultFlavor.innerHTML = flavorTextFor(tE, tT, gap);
 
     els.resultOverlay.classList.add('visible');
+
+    if (narrateOn) {
+      narrate(`Trip complete. You aged ${formatDuration(tT)} during the voyage, while your twin on Earth aged ${formatDuration(tE)}.`);
+    }
   }
 
   function closeResult() {
@@ -2024,7 +1542,7 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
       els.launchBtn.disabled = false;
     }
     closeResult();
-    els.rocket.setAttribute('transform', 'translate(135, 90)');
+    els.rocket.setAttribute('transform', 'translate(145, 90)');
     const sa = parseInt(els.startAge.value) || 8;
     state.startAge = Math.max(3, Math.min(80, sa));
     els.ageEarth.textContent = state.startAge;
@@ -2035,14 +1553,14 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
     updateReadouts();
   }
 
-  /* ----------------- Init ----------------- */
+  // ── Initialization ────────────────────────────────────────────────────────
   function init() {
     buildStarfield();
     buildDestinationChips();
     buildSpeedPresets();
 
-    drawCharacter('figEarth', '#4fd1ff');
-    drawCharacter('figTrav', '#b18cff');
+    drawCharacter('figEarth', '#4fd1ff', false);
+    drawCharacter('figTrav', '#b18cff', true);
 
     selectDestination('moon');
     setVelocity(0.5);
@@ -2093,16 +1611,41 @@ body.light-theme .hbox-amber { color: var(--amber); background: rgba(176,125,0,0
       if (ev.key === 'Escape' && els.resultOverlay.classList.contains('visible')) closeResult();
     });
 
-    // Theme selector initialization loop
-    const themeSwitcher = document.getElementById('theme-switcher');
-    if (localStorage.getItem('theme') === 'light') {
-      document.body.classList.add('light-theme');
-    }
-    themeSwitcher.addEventListener('click', () => {
-      document.body.classList.toggle('light-theme');
-      localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+    // ── 6-Theme Selector Binding ──────────────────────────────────────────────
+    const themeSelector = document.getElementById('theme-selector');
+    const savedTheme = localStorage.getItem('sim_theme') || 'midnight';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeSelector.value = savedTheme;
+    themeSelector.addEventListener('change', (e) => {
+      const selectedTheme = e.target.value;
+      document.documentElement.setAttribute('data-theme', selectedTheme);
+      localStorage.setItem('sim_theme', selectedTheme);
       updateReadouts();
     });
+
+    // ── Narration UI Bindings ────────────────────────────────────────────────
+    document.getElementById('btn-narrate').onclick = function() {
+      if(!window.speechSynthesis) { alert('Speech not supported. Please use Chrome, Edge, or Safari.'); return; }
+      narrateOn = !narrateOn;
+      this.textContent = narrateOn ? '🔊 Voice ON' : '🔇 Voice';
+      this.style.color = narrateOn ? 'var(--cyan)' : '';
+      document.getElementById('nbox').style.display = narrateOn ? 'block' : 'none';
+      if(narrateOn){
+        populateVoices();
+        narrate("Welcome to the Twin Paradox simulator. Select your destination and velocity to explore special relativity and time dilation.");
+      } else {
+        stopNarration();
+        document.getElementById('narr-text').textContent = '—';
+      }
+    };
+    document.getElementById('vsel').onchange = function() {
+      const v = speechSynthesis.getVoices().find(v => v.name === this.value);
+      if(v) chosenVoice = v;
+    };
+    document.getElementById('sl-rate').oninput = function() {
+      speechRate = parseFloat(this.value);
+      document.getElementById('rate-v').textContent = speechRate.toFixed(1) + '×';
+    };
 
     let resizeTimer;
     window.addEventListener('resize', () => {
